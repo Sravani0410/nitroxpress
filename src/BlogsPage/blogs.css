@@ -1,0 +1,252 @@
+/* @font-face {
+
+    font-family: avenir lt std;
+
+    src: url(./fonts/AvenirLTStd-Book.eot);
+
+    src: url(./fonts/AvenirLTStd-Book.eot?#iefix) format('embedded-opentype'), url(./fonts/AvenirLTStd-Book.woff2) format('woff2'), url(./fonts/AvenirLTStd-Book.woff) format('woff'), url(./fonts/AvenirLTStd-Book.ttf) format('truetype'), url(./fonts/AvenirLTStd-Book.svg#AvenirLTStd-Book) format('svg');
+
+    font-weight: 400;
+
+    font-style: normal;
+
+    font-display: swap
+
+}
+
+
+
+@font-face {
+
+    font-family: avenir lt std;
+
+    src: url(./fonts/AvenirLTStd-Medium.eot);
+
+    src: url(./fonts/AvenirLTStd-Medium.eot?#iefix) format('embedded-opentype'), url(./fonts/AvenirLTStd-Medium.woff2) format('woff2'), url(./fonts/AvenirLTStd-Medium.woff) format('woff'), url(./fonts/AvenirLTStd-Medium.ttf) format('truetype'), url(./fonts/AvenirLTStd-Medium.svg#AvenirLTStd-Medium) format('svg');
+
+    font-weight: 500;
+
+    font-style: normal;
+
+    font-display: swap
+
+}
+
+
+
+@font-face {
+
+    font-family: avenir lt std;
+
+    src: url(./fonts/AvenirLTStd-Heavy.eot);
+
+    src: url(./fonts/AvenirLTStd-Heavy.eot?#iefix) format('embedded-opentype'), url(./fonts/AvenirLTStd-Heavy.woff2) format('woff2'), url(./fonts/AvenirLTStd-Heavy.woff) format('woff'), url(./fonts/AvenirLTStd-Heavy.ttf) format('truetype'), url(./fonts/AvenirLTStd-Heavy.svg#AvenirLTStd-Heavy) format('svg');
+
+    font-weight: 900;
+
+    font-style: normal;
+
+    font-display: swap
+
+} */
+
+
+
+
+body {
+
+    padding: 0;
+
+    margin: 0;
+
+    font-family: avenir lt std;
+
+}
+
+
+
+* {
+
+    padding: 0;
+
+    margin: 0;
+
+}
+
+
+
+ul {
+
+    list-style: none;
+
+    padding: 0;
+
+    margin: 0;
+
+}
+
+
+
+.business-box {
+
+    width: 100%;
+
+    max-width: 297px;
+
+    margin: 0 auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    height: 100vh;
+
+    flex-direction: column;
+
+   
+
+   
+
+}
+
+
+
+.business-box figure {
+
+    width: 250px;
+
+    height: 250px;
+
+    border-radius: 50%;
+
+    border: 10px solid #ffc900;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: 0 auto;
+
+
+
+}
+
+.business-box figure > span {
+
+    box-shadow: 0px 4px 20px 0px #00000080;
+
+    display: block;
+
+    border-radius: 50%;
+
+    width: 90%;
+
+    height: 90%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    /* padding: 5px; */
+
+    overflow: hidden;
+
+
+
+}
+
+.business-box figure  img {
+
+    width: 100%;
+
+}
+
+
+
+.business-box h1 {
+
+    text-align: center;
+
+    font-size: 34px;
+
+    font-weight: bold;
+
+    margin: 15px 0;
+
+}
+
+
+
+.business-box p {
+
+    font-size: 24px;
+
+    text-align: center;
+
+    padding-bottom: 25px;
+
+    border-bottom: 1px solid #000;
+
+}
+
+
+
+
+.business-box .list1 {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-top: 25px;
+
+}
+
+
+
+.business-box .list1 >  li + li {
+
+    margin-left: 20px;
+
+}
+
+
+
+.business-box .list2 {
+
+    margin-top:15px;
+
+    text-align: center;
+
+}
+
+
+
+.business-box .list2 > li > a {
+
+    color: #000;
+
+    text-decoration: none;
+
+}
+
+.business-box .list2 > li + li {
+
+    margin-top: 5px;
+
+}
+
+
+

@@ -1,0 +1,1281 @@
+.profileheader {
+    padding: 35px 0;
+    background: #fff;
+}
+
+.profileheader-part {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.profileheader-part form {
+    margin-right: 40px;
+    width: 490px;
+}
+
+.profileheader-part form .form-control {
+    background: #F2F2F2;
+    color: #000;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.profileheader-part>.btn {
+    color: #000;
+    border: 1px solid #FFC900;
+    background-color: #FFC900;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 6px 25px;
+    margin-right: 40px;
+}
+
+.profileheader-part>.btn:hover {
+    border: 1px solid #FFC900;
+    background-color: #fff;
+}
+
+.user-box {
+    position: relative;
+    width: 54px;
+    cursor: pointer;
+}
+
+.order-details{
+    min-width: 330px;
+    padding: 15px;
+    margin-bottom: 15px;
+    margin-right: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 16px rgba(192, 192, 192, 0.25);
+    border-radius: 9px;
+}
+.order-container{
+    display: flex;
+    flex-wrap: wrap;
+    width: 1035px;
+}
+
+.level-generation{
+    position: relative;
+   }
+.level-generation:hover::before{
+      content: "level";
+      background: rgba(0, 0, 0, 0.5);
+      padding:3px 4px;
+      border-radius: 3px;
+      top: -25px;
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+      font-size: 14px;
+
+            
+   }  
+
+   /* label-generation */
+   .label-generation{
+    position: relative;
+   }
+.label-generation:hover::before{
+      content: "label";
+      background: rgba(0, 0, 0, 0.5);
+      padding:3px 4px;
+      border-radius: 3px;
+      top: -25px;
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+      font-size: 14px;
+
+            
+   }
+
+.query{
+    position: relative;
+   }
+.query:hover::before{
+      content: "Query";
+      background: rgba(0, 0, 0, 0.5);
+      padding:3px 4px;
+      border-radius: 3px;
+      top: -25px;
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+      font-size: 14px;
+
+            
+   }  
+
+.invoice{
+    position: relative;
+   }
+.invoice:hover::before{
+      content: "Invoice";
+      background: rgba(0, 0, 0, 0.5);
+      padding:3px 4px;
+      border-radius: 3px;
+      top: -25px;
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+      font-size: 14px;
+
+            
+  }  
+    
+            
+/* .feedback{
+  position: relative;
+ }
+  .feedback:hover::before{
+    content: "Feedback";
+    background: rgba(0, 0, 0, 0.5);
+    padding: "2px 3px";
+    border-radius: 3px;
+    top: -18px;
+    position: absolute;
+    left: 0;
+          
+     }   */
+
+ .feedback{
+  position: relative;
+  }    
+.feedback-text{
+    display: none;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.5);  
+    border-radius: 3px;
+    padding:3px 4px;
+    top: -25px;
+    left: 0;
+    opacity: 0;
+    transition: .5s ease;
+   
+
+}
+ .feedback:hover .feedback-text{
+    display: block;
+    opacity: 1;
+ }    
+                
+.download_icon_profile{
+    width:100px;
+    
+
+}
+
+
+.order-details div>p:first-child {
+    font-weight: bold;
+    white-space: nowrap;
+    margin-right: 20px;
+}
+
+.order-list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.order-list>li {
+    width: calc(100%/3 - 10px);
+    display: flex;
+    flex-wrap: wrap;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 16px rgba(192, 192, 192, 0.25);
+    border-radius: 9px;
+    padding: 10px;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.order-list>li:nth-child(3n+3) {
+    margin-right: 0;
+}
+
+.order-list>li>.left-part {
+    width: 100px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    padding-right: 5px;
+    font-size: 14px;
+}
+
+.order-list>li>.right-part {
+    width: calc(100% - 100px);
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.order-list>li .btn {
+    padding: 2px;
+    width: 68px;
+    font-size: 12px;
+    box-shadow: none;
+}
+
+.user-box:after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-top: 2px solid #000;
+    border-left: 2px solid #000;
+    transform: rotate(-135deg);
+}
+
+.user-box .dropdown-menubar {
+    position: absolute;
+    top: 40px;
+    left: -30px;
+    background: #fff;
+    padding: 3px 0;
+    border-radius: 4px;
+    z-index: 9;
+    width: 106px;
+    margin-bottom: 0;
+    box-shadow: 0px -3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.user-box .dropdown-menubar li a {
+    text-decoration: none;
+    color: #000;
+    font-weight: 400;
+    font-size: 12px;
+    transition: all .3s;
+    margin: 5px 12px;
+    display: block;
+}
+
+.user-box .dropdown-menubar li a:hover {
+    color: #FC8C20;
+    font-weight: 600;
+    border-left: 1px solid #FC8C20;
+    padding-left: 6px;
+    transition: all .3s;
+}
+
+.user-box .dropdown-menubar li+li {
+    border-top: 1px solid #eee;
+}
+
+.user-box .dropdown-menubar:after {
+    content: "";
+    display: block;
+    width: 19px;
+    height: 19px;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #fff;
+    position: absolute;
+    background-color: #fff;
+    right: 15px;
+    top: -8px;
+    border-radius: 0px;
+    transform: rotate(45deg);
+    z-index: -1;
+}
+
+.profile-form1 h2 {
+    font-size: 24px;
+    color: #FFDC5A;
+    font-weight: 600;
+    line-height: normal;
+    margin: 0 0 20px;
+}
+
+.password_eye1 {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+
+.close-btn {
+    position: absolute;
+    right: 25px;
+    top: 25px;
+    border: none;
+    background: transparent;
+}
+
+.Profileupdate_part h4 {
+    font-size: 24px;
+    color: #DED5B6;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.Profileupdate_part .form {
+    margin: 15px 0 30px;
+}
+
+.Profileupdate_part .form-box {
+    position: relative;
+}
+
+.Profileupdate_part .form-box+.form-box {
+    margin-top: 25px;
+}
+
+.Profileupdate_part .form-box label {
+    color: #707070;
+    font-size: 12px;
+    position: absolute;
+    top: -9px;
+    left: 10px;
+    background-color: #fff;
+    padding: 0px 5px;
+}
+
+.form-box input::placeholder {
+    color: #E4E4E4;
+    font-size: 12px;
+}
+
+.Profileupdate_part .form-box .form-control {
+    border-radius: 4px;
+    border: 1px solid #F0F0F0;
+    font-size: 16px;
+    color: #000;
+    box-shadow: none;
+    background: transparent;
+    padding: 10px 35px 10px 15px;
+}
+
+.active-border {
+    border: 1px solid #FFC900;
+}
+
+.Profileupdate_part input[type="submit"] {
+    background-color: #FFC900;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 12px;
+    border: 1px solid #FFC900;
+    padding: 5px 2px;
+    font-weight: 600;
+    margin-top: 18px;
+    width: 107px;
+}
+
+
+.profile-img>svg {
+    width: 100%;
+}
+
+.changepass-part {
+    margin-top: 30px;
+}
+
+.changepass-part h5 {
+    color: #FFC900;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+
+.Profileupdate_part::-webkit-scrollbar,
+.tracking-sec .right-part::-webkit-scrollbar,
+.shipping-sec::-webkit-scrollbar {
+    border-radius: 10px;
+    width: 5px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.Profileupdate_part::-webkit-scrollbar-thumb,
+.tracking-sec .right-part::-webkit-scrollbar-thumb,
+.shipping-sec::-webkit-scrollbar-thumb {
+    background-color: #FFC900;
+    border-radius: 10px;
+}
+
+.profile-content {
+    position: relative;
+}
+
+.profiletab-part {
+    padding: 30px 0 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.profiletab-part .nav-item .nav-link {
+    background-color: transparent;
+    font-size: 18px;
+    color: #000;
+    font-weight: 600;
+}
+
+.profiletab-part .nav-item .nav-link.active {
+    color: #FFC900;
+    background-color: transparent;
+}
+
+.profile-content .tab-pane table {
+    width: 100%;
+}
+
+.profiletab-part .tab-pane table tr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+}
+
+.profiletab-part .tab-pane table tr:not(:first-child) {
+    background-color: #fff;
+    box-shadow: 0px 0px 16px 0px #C0C0C040;
+    border-radius: 9px;
+    margin-bottom: 15px;
+}
+
+.profiletab-part .tab-pane table th {
+    color: #C6C6C6;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.profiletab-part .tab-pane table th:first-child,
+.profiletab-part .tab-pane table td:first-child {
+    width: 140px;
+}
+
+.profiletab-part .tab-pane table th:nth-child(2),
+.profiletab-part .tab-pane table td:nth-child(2) {
+    width: 150px;
+}
+
+.profiletab-part .tab-pane table th:nth-child(3),
+.profiletab-part .tab-pane table td:nth-child(3) {
+    width: 300px;
+}
+
+.profiletab-part .tab-pane table th:nth-child(4),
+.profiletab-part .tab-pane table td:nth-child(4) {
+    width: 100px;
+}
+
+.profiletab-part .tab-pane table th:nth-child(5),
+.profiletab-part .tab-pane table td:nth-child(5) {
+    width: 110px;
+}
+
+.profiletab-part .tab-pane table th:last-child,
+.profiletab-part .tab-pane table td:last-child {
+    width: 100px;
+}
+
+
+.profiletab-part .tab-pane table p,
+.profiletab-part .tab-pane table td {
+    font-size: 14px;
+    color: #000;
+    font-weight: 400;
+    margin-bottom: 0;
+}
+
+.profiletab-part .tab-pane table p:not(:last-child) {
+    margin-top: 5px;
+}
+
+.profiletab-part .tab-pane table tr>td>.btn {
+    width: 91px;
+    padding: 5px;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.profiletab-part .tab-pane table tr>td>.btn-green {
+    background: #58A35B;
+    border: 1px solid #58A35B;
+}
+
+.profiletab-part .tab-pane table tr>td>.btn-red {
+    background: #FE6161;
+    border: 1px solid #FE6161;
+}
+
+.profileaddres_part {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+
+}
+
+.profileaddres_part li {
+    /* width: calc(100%/3 - 14px); */
+    min-width: 300px;
+    width: 300px;
+    min-height: 230px;
+    box-shadow: 0px 0px 16px 0px #C0C0C040;
+    padding: 15px;
+    margin-bottom: 15px;
+    margin-right: 15px;
+    border-radius: 10px;
+
+}
+
+/* .profileaddres_part>li:nth-child(3n+3) {
+    margin-right: 0px;
+} */
+
+.profileaddres_part>li>span {
+    font-size: 12px;
+    color: #ABABAB;
+    display: block;
+    cursor: pointer;
+}
+
+.profileaddres_part>li>h3 {
+    font-size: 16px;
+    color: #000;
+    font-weight: bold;
+
+}
+
+.profileaddres_part>li>p {
+    font-size: 16px;
+    color: #000;
+    font-weight: 400;
+}
+@media only screen and (max-width: 1000px) {
+    .order-container{
+        display: block;
+        width: "100%";
+    }
+   
+    .order-details{
+        /* width: "100%"; */
+        width: 510px;
+        box-shadow: 0px 0px 16px rgba(192, 192, 192, 0.25);
+        border-radius: 9px;
+        padding: 10px;
+    }
+}
+
+
+
+
+/* --------------------------------------------------  shipping start start ----------------------------------------------- */
+.shipping {
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.shipping-sec {
+    height: calc(100vh - 108px);
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-right: 10px;
+}
+
+.shipping-sec .container {
+    max-width: 1180px;
+    padding-bottom: 15px;
+}
+
+.shippingleft-part {
+    background: #FBFBF9;
+    border: 1px solid #E9E9E9;
+    border-radius: 8px;
+    padding: 30px 50px;
+    overflow-y: auto;
+    height: calc(100vh - 110px);
+}
+
+.shippingleft-part::-webkit-scrollbar {
+    width: 5px;
+    border-radius: 10px;
+    background: #ddd;
+    box-shadow: inset 0 0 0 rgba(0, 0, 0, );
+}
+
+.shippingleft-part::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: rgba(255, 251, 0, 0.4);
+}
+
+.shippingleft-part h4 {
+    font-size: 16px;
+    color: #B4B4B4;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.shippingleft-part form .form-box {
+    position: relative;
+}
+
+.shippingleft-part form .form-box .autocomplete-dropdown-container {
+    position: absolute;
+    width: 100%;
+    z-index: 9;
+    background-color: #fff;
+}
+
+.shippingleft-part form .check-img {
+    position: absolute;
+    top: 30px;
+    right: 11px;
+}
+.shippingleft-part form .check-img svg {
+    width: 41px;
+    height: 41px;
+}
+
+.shippingleft-part form .form-label {
+    font-size: 14px;
+    color: #000;
+    font-weight: 600;
+}
+
+.shippingleft-part form .form-control {
+    box-shadow: none;
+    border: 1px solid #EDEDED;
+    background-color: transparent;
+}
+
+.shippingleft-part form .check-box,
+.shippingleft-part form .select-arrow .form-control {
+    padding: 8px 40px 8px 10px;
+}
+
+.alert_border {
+    border: 1px solid red !important;
+}
+
+.shippingleft-part form+p {
+    color: #000;
+    font-size: 15px;
+    font-weight: 300;
+    margin: 25px 0;
+}
+
+.select-arrow:after {
+    position: absolute;
+    content: "";
+    transform: rotate(-135deg);
+    right: 22px;
+    top: 45px;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid #CCCFDF;
+    border-left: 2px solid #CCCFDF;
+}
+
+.date-img {
+    position: absolute;
+    bottom: 10px;
+    right: 25px;
+}
+
+.kg-text {
+    position: absolute;
+    top: 42px;
+    right: 20px;
+    font-size: 12px;
+    color: #000;
+    font-weight: 600;
+}
+
+.shipment-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0 35px;
+}
+
+.shipment-box p {
+    margin-bottom: 0;
+}
+
+.shipment-box .shipment-btn {
+    border-radius: 10px;
+}
+
+.shipment-box .shipment-btn button {
+    border: none;
+    box-shadow: none;
+    outline: none;
+    font-size: 14px;
+    color: #707070;
+    padding: 4px;
+    background-color: #fff;
+    transition: all .3s;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.25);
+
+}
+
+.shipment-box .shipment-btn button.active,
+.shipment-box .shipment-btn button:hover {
+    background-color: #FFC900;
+    padding: 8px;
+    color: #000;
+    font-weight: 600;
+    /* transition: all .3s; */
+}
+
+.shipment-box .shipment-btn button.yes-btn {
+    border-radius: 4px 0 0 4px;
+
+}
+
+.shipment-box .shipment-btn button.no-btn {
+    border-radius: 0 4px 4px 0;
+}
+
+.shippingleft-part form input[type="submit"] {
+    color: #FFC900;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    width: auto;
+    margin-left: auto;
+    border: 1px solid #FFC900;
+    padding: 5px 20px;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.shippingleft-part form input[type="submit"]:hover {
+    background-color: #FFC900;
+    color: #fff;
+}
+
+.shipmentright-part {
+    margin-left: 50px;
+}
+
+.shipmentright-part h3 {
+    color: #000;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+hr {
+    border-color: #E2E4ED;
+}
+
+.shipmentright-part h5 {
+    color: #000;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.shipmentright-part p {
+    color: #7d7d7d;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.shipmentright-part h4 {
+    color: #000;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.shipmentright-part h2 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.shipmentright-part .btn {
+    background-color: #FFC900;
+    font-weight: 600;
+    font-size: 16px;
+    width: 100%;
+    border: 1px solid #FFC900;
+}
+
+.shipmentright-part .btn:hover {
+    color: #FFC900;
+    background-color: #fff;
+}
+
+.disable_opercity,
+.disable_opercity div,
+.disable_opercity input,
+.disable_opercity select,
+.disable_opercity button {
+        opacity: 0.6;
+        cursor: not-allowed !important;
+        z-index: -1 ; 
+
+}
+
+/* ----------------------------------------------------- shippingpayment page start  -------------------------------------- */
+.shippingpayment-sec {
+    padding: 50px 0 25px;
+}
+
+
+
+.creditcard-box {
+    display: block;
+    position: relative;
+    padding-left: 45px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.creditcard-box input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 5px;
+    left: 25px;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    border: 1px solid #FC8C20;
+}
+
+.creditcard-box .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.creditcard-box input:checked~.checkmark:after {
+    display: block;
+}
+
+.creditcard-box .checkmark:after {
+    left: 3px;
+    top: 3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: blue;
+}
+
+/* =============================================== */
+.shippingpayment-sec hr {
+    border-color: #707070;
+}
+
+.shippingpayment-sec .form-group {
+    max-width: 500px;
+}
+
+.shippingpayment-sec .form-group .form-control {
+    box-shadow: none;
+    border-color: #EDEDED;
+    background-color: #FBFBF9;
+    color: #000;
+    font-size: 16px;
+}
+
+.shippingpayment-sec h3 {
+    color: #000;
+    font-weight: 600;
+    font-size: 24px;
+
+}
+
+.shippingpayment-sec p {
+    font-size: 14px;
+    color: #707070;
+}
+
+.shippingpayment-sec p+p {
+    color: #000;
+}
+
+.shippingpayment-sec .btn {
+    font-size: 14px;
+    color: #000;
+    font-weight: 600;
+    border-radius: 10px;
+    background-color: #FFC900;
+    border-color: #FFC900;
+    padding: 6px 42px;
+}
+
+.shippingpayment-sec .btn:hover {
+    border-color: #FFC900;
+}
+
+.shippingpayment-sec .form-group input[type=date] ::-webkit-inner-spin-button,
+.shippingpayment-sec .form-group input[type=date]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+
+/* ----------------------------------------------------- shippingpayment page end  -------------------------------------- */
+
+/* ----------------------------------------------------- Tracking page Start  -------------------------------------- */
+.tracking-sec {
+    padding-bottom: 20px;
+}
+.tracking-sec .left-part {
+    width: 375px;
+}
+
+.tracking-sec .left-part ul li {
+    border: 1px solid #ededed;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.tracking-sec .left-part ul li+li {
+    margin-top: 25px;
+}
+
+.tracking-sec .left-part ul li h4 {
+    color: #000;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.tracking-sec .left-part ul li span {
+    color: #999;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.tracking-sec .left-part ul li span.booked-text {
+    color: #3997DC;
+}
+
+.tracking-sec .left-part ul li span.transit-text {
+    color: #28B446;
+
+}
+
+.tracking-sec .left-part ul li span.delivery-text {
+    color: #FFC900;
+}
+
+.tracking-sec .right-part {
+    width: calc(100% - 500px);
+    height: calc(100vh - 110px);
+    overflow-y: auto;
+}
+
+.tracking-sec .right-part figure {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.tracking-sec .right-part figure img {
+    min-height: 375px;
+    object-fit: cover;
+}
+
+.tracking-sec .right-part figure .form-box {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 385px;
+    border-radius: 4px;
+    border: 1px solid #EDEDED;
+    background-color: #FBFBF9;
+    overflow: hidden;
+
+}
+
+.tracking-sec .right-part figure .form-box input[type=search] {
+    width: 100%;
+    font-size: 14px;
+    color: #000;
+    border: 1px solid #EDEDED;
+    outline: none;
+    padding: 11px 109px 11px 10px;
+}
+
+.tracking-sec .right-part figure .form-box input::-webkit-input-placeholder {
+    color: #999999;
+}
+
+.tracking-sec .right-part figure .form-box input:-ms-input-placeholder {
+    color: #999999;
+}
+
+.tracking-sec .right-part figure .form-box input::placeholder {
+    color: #999999;
+}
+
+.tracking-sec .right-part figure .form-box input[type=submit] {
+    position: absolute;
+    background-color: #FFC900;
+    border: 1px solid #FFC900;
+    right: 0;
+    top: 0;
+    font-size: 14px;
+    color: #000;
+    padding: 11px 5px;
+    width: 109px;
+}
+
+.tracking-sec .right-part figure h2 {
+    color: #000;
+    font-weight: 600;
+    font-size: 36px;
+    position: absolute;
+    bottom: 15px;
+    left: 10px;
+}
+
+
+.tracking-table table {
+    width: 100%;
+}
+
+.tracking-table table tr {
+    margin-bottom: 0;
+}
+
+.tracking-table th,
+.tracking-table td {
+    color: #a8a8a8;
+    font-size: 20px;
+    padding: 10px;
+    font-weight: 400;
+}
+
+
+/* ----------------------------------------------------- Tracking page end  -------------------------------------- */
+
+
+
+
+/* ------------------------------------------------  Responsive start ------------------------------------------------- */
+
+@media(max-width:1199.50px) {
+    .tracking-sec .left-part {
+        width: 300px;
+    }
+
+    .tracking-sec .right-part {
+        width: calc(100% - 330px);
+    }
+
+    .tracking-table th,
+    .tracking-table td {
+        font-size: 16px;
+    }
+
+    .Profileupdate_part .form-box .form-control {
+        font-size: 15px;
+    }
+
+    .order-list>li,
+    .profileaddres_part>li {
+        width: calc(100%/2 - 8px);
+
+    }
+
+    .order-list>li:nth-child(3n+3),
+    .profileaddres_part>li:nth-child(3n+3) {
+        margin-right: 15px;
+    }
+
+    .order-list>li:nth-child(2n+2),
+    .profileaddres_part>li:nth-child(2n+2) {
+        margin-right: 0;
+    }
+}
+
+@media(max-width:991px) {
+    .profiletab-part .tab-content>.tabtable-part {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .profileheader-part form {
+        margin-right: 15px;
+        width: 310px;
+    }
+
+    .profileheader-part>.btn {
+        margin-right: 15px;
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+
+    .profiletab-part .tab-pane table p,
+    .profiletab-part .tab-pane table td {
+        font-size: 13px;
+    }
+
+    .profileheader {
+        text-align: center;
+        padding: 15px 0 30px;
+    }
+
+
+
+    .user-box {
+        text-align: left;
+    }
+
+    .profileaddres_part>li>p {
+        font-size: 14px;
+    }
+
+    .profileaddres_part>li {
+        margin-bottom: 15px;
+        margin-right: 15px;
+        width: calc(100%/3 - 10px);
+        padding: 15px 15px 20px;
+    }
+
+    .shippingleft-part {
+        padding: 20px;
+    }
+
+    .shipmentright-part {
+        margin-left: 0;
+    }
+
+    .tracking-sec .right-part,
+    .tracking-sec .left-part {
+        width: 100%;
+        height: auto;
+    }
+
+    .tracking-sec .right-part figure h2 {
+        font-size: 26px;
+    }
+
+
+}
+
+@media(max-width:767px) {
+    .profiletab-part .tab-content>.tabtable-part {
+        width: 100%;
+    }
+
+    .profiletab-part {
+        padding: 50px 0 20pxorde;
+    }
+
+    .profileaddres_part>li {
+        width: calc(100%/2 - 8px);
+    }
+
+    .profileaddres_part>li:nth-child(3n+3) {
+        margin-right: auto;
+    }
+
+    .profileaddres_part>li:nth-child(2n+2) {
+        margin-right: 0;
+    }
+
+    .shipmentright-part {
+        margin-top: 40px;
+    }
+
+    .shippingleft-part {
+        height: 100%;
+    }
+
+    .shippingpayment-sec {
+        padding: 15px 0 0;
+    }
+
+    .tracking-table {
+        width: 100%;
+        overflow: auto;
+        margin-bottom: 15px;
+    }
+
+    .tracking-table::-webkit-scrollbar {
+        border-radius: 10px;
+        width: 1px;
+        height: 10px;
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .tracking-table::-webkit-scrollbar-thumb {
+        background-color: #FFC900;
+        border-radius: 10px;
+    }
+
+    .tracking-table table {
+        width: 516px;
+    }
+
+    .tracking-sec .right-part figure .form-box input[type=search] {
+        padding: 11px 77px 11px 10px;
+    }
+
+    .tracking-sec .right-part figure .form-box input[type=submit] {
+        width: 75px;
+    }
+
+    .profiletab-part .nav-pills>.nav-item {
+        width: auto;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .profiletab-part .nav-pills>.nav-item+.nav-item {
+        margin-left: 15px;
+    }
+
+    .profileheader-part {
+        margin-top: 15px;
+    }
+
+    .order-list>li,
+    .profileaddres_part>li {
+        width: 100%;
+        margin: 0 10px 15px !important;
+    }
+    .creditcard-box .checkmark {
+        left: 5px;
+    }
+    .creditcard-box {
+        padding-left: 25px;
+    }
+    
+    
+
+}
+
+@media(max-width:576px) {
+
+    .profileheader-part {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .profileheader-part form {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .tracking-sec .right-part figure .form-box {
+        width: 95%;
+    }
+
+    .Profileupdate_part {
+        margin-top: 25px;
+    }
+}
