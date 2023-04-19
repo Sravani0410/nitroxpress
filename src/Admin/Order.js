@@ -32,7 +32,7 @@ import {
   PostOtpTrackingUpdateOrder,
   GetWalletBalance,
   PostDebitBalance,
-  PostAdminOrderRebook
+  PostAdminOrderRebook,
 } from "../Redux/action/ApiCollection";
 import tokenData from "../Authanticate";
 import { PostAdminOrderFilterationReducer } from "../Redux/reducer/Reducer";
@@ -40,10 +40,6 @@ import { PostAdminOrderFilterationReducer } from "../Redux/reducer/Reducer";
 import { PermissionData } from "../Permission";
 
 const Order = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  let param = useLocation();
-
   const [otpvalue, setOtpValue] = useState("");
 
   const [pendingconfirmbutton, setPendingConfirmButton] = useState(false);
@@ -67,6 +63,7 @@ const Order = () => {
   const [returntab, setReturnTab] = useState("");
   const [canceltab, setCancelTab] = useState("");
   const [loadspiner, setLoadSpiner] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [pendingpartner, setPendingPartner] = useState(false);
   const [paidcustomer, setPaidCustomer] = useState(false);
@@ -75,9 +72,8 @@ const Order = () => {
   const [codcheckBox, setCodCheckBox] = useState(false);
   const [prepaidcheckBox, setPrepaidCheckBox] = useState(false);
   const [shippingpartnervalue, setShippingPartnerValue] = useState("");
-  const [adminorderfilterationdata, setAdminOrderFilterationData] = useState(
-    false
-  );
+  const [adminorderfilterationdata, setAdminOrderFilterationData] =
+    useState(false);
   const [tabfiltersearchdata, setTabFilterSearchData] = useState("");
   const [adminorderpendingdata, setAdminOrderPendingData] = useState("");
   const [adminorderbookeddata, setAdminOrderBookedData] = useState("");
@@ -88,15 +84,11 @@ const Order = () => {
   const [adminorderreturnData, setAdminOrderReturnData] = useState("");
   const [adminordercancelData, setAdminOrderCancelData] = useState("");
 
-  const [
-    filterdatahideaftertabchange,
-    setFilterDataHideAfterTabChange
-  ] = useState(false);
+  const [filterdatahideaftertabchange, setFilterDataHideAfterTabChange] =
+    useState(false);
   const [editcancelobjectdata, setEditCancelObjectData] = useState(false);
-  const [
-    editcancelobjectdatatruefalse,
-    setEditCancelObjectDataTrueFalse
-  ] = useState(false);
+  const [editcancelobjectdatatruefalse, setEditCancelObjectDataTrueFalse] =
+    useState(false);
 
   const [b2bcheckBox, setB2BcheckBox] = useState("");
   const [b2ccheckBox, setB2ccheckBox] = useState("");
@@ -109,22 +101,18 @@ const Order = () => {
   const [reasonActionPopup, setReasonActionPopup] = useState(false);
   const [reasonActionValue, setReasonActionValue] = useState(false);
   const [reasonActionRowData, setReasonActionRowData] = useState(false);
-  const [reasonActionInputFieldData, setReasonActionInputFieldData] = useState(
-    ""
-  );
-  const [
-    ReasonActionInputFieldError,
-    setReasonActionInputFieldError
-  ] = useState(false);
+  const [reasonActionInputFieldData, setReasonActionInputFieldData] =
+    useState("");
+  const [ReasonActionInputFieldError, setReasonActionInputFieldError] =
+    useState(false);
   const [SelectedReasonTrue, setSelectedReasonTrue] = useState(false);
 
   const [otpActionPopup, setOtpActionPopup] = useState(false);
   const [otpActionValue, setOtpActionValue] = useState(false);
   const [otpActionRowData, setOtpActionRowData] = useState(false);
   const [otpActionInputFieldData, setOtpActionInputFieldData] = useState("");
-  const [OtpActionInputFieldError, setOtpActionInputFieldError] = useState(
-    false
-  );
+  const [OtpActionInputFieldError, setOtpActionInputFieldError] =
+    useState(false);
   const [SelectedOtpTrue, setSelectedOtpTrue] = useState(false);
 
   const [paymentmethodpopup, setPaymentMethodPopup] = useState(false);
@@ -133,55 +121,40 @@ const Order = () => {
   const [activepaymentrazorpay, setActivePaymentRazorPay] = useState(false);
   const [ReebookObjectDetails, setReebookObjectDetails] = useState("");
 
-  // pagination
-
-  const [items, setItems] = useState("");
-  // console.log("hgbdjsh", items)
-  const [pagesize, setPageSize] = useState(3);
+  const [pagesize, setPageSize] = useState(5);
   const [currentPage, setCurrentPage] = useState(0);
-  const [PageCount, setPageCount] = useState([]);
-  // console.log("hgbdjshhfj",items?.slice(0, pagesize))
-  const [pendingcurrentItems, setPendingCurrentItems] = useState([]);
-  // console.log("pendingcurrentItems", pendingcurrentItems)
-  const [bookedcurrentItems, setBookedCurrentItems] = useState([]);
-  // console.log("bookedcurrentItems",bookedcurrentItems)
-  const [intransitcurrentItems, setIntransitCurrentItems] = useState([]);
-  const [deliveredcurrentItems, setDeliveredCurrentItems] = useState([]);
-  // console.log("deliveredcurrentItems",deliveredcurrentItems)
-  const [
-    outfordeliveredcurrentItems,
-    setOutForDeliveredCurrentItems
-  ] = useState([]);
-  const [returncurrentItems, setReturnCurrentItems] = useState([]);
-  const [cancelcurrentItems, setCancelCurrentItems] = useState([]);
+  const [currentItems, setCurrentItems] = useState(
+    adminorderpendingdata?.slice(0, pagesize)
+  );
+  const [pageCountTab, setPageCountTab] = useState(0);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  let param = useLocation();
 
   const GetAdminOrderIntransitDate = useSelector(
-    (state) =>
-      state.GetAdminOrderIntransitReducer.GetAdminOrderIntransitData?.data
+    (state) => state.GetAdminOrderIntransitReducer.GetAdminOrderIntransitData
   );
   const GetAdminOrderDeliveredData = useSelector(
-    (state) =>
-      state.GetAdminOrderDeliveredReducer.GetAdminOrderDeliveredData?.data
+    (state) => state.GetAdminOrderDeliveredReducer.GetAdminOrderDeliveredData
   );
 
   const GetAdminOutForDeliveryData = useSelector(
-    (state) =>
-      state.GetAdminOutForDeliveryReducer.GetAdminOutForDeliveryData?.data
+    (state) => state.GetAdminOutForDeliveryReducer.GetAdminOutForDeliveryData
   );
 
   const GetAdminOrderPendingData = useSelector(
-    (state) => state.GetAdminOrderPendingReducer.GetAdminOrderPendingData?.data
+    (state) => state.GetAdminOrderPendingReducer.GetAdminOrderPendingData
   );
-  console.log("GetAdminOrderPendingData", GetAdminOrderDeliveredData);
   const GetAdminOrderReturnData = useSelector(
-    (state) => state.GetAdminOrderReturnReducer.GetAdminOrderReturnData?.data
+    (state) => state.GetAdminOrderReturnReducer.GetAdminOrderReturnData
   );
   const GetAdminOrderBookedData = useSelector(
-    (state) => state.GetAdminOrderBookedReducer.GetAdminOrderBookedData?.data
+    (state) => state.GetAdminOrderBookedReducer.GetAdminOrderBookedData
   );
-console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
+
   const GetCancelOrderDetailData = useSelector(
-    (state) => state.GetCancelOrderDetailReducer.GetCancelOrderDetailData.data
+    (state) => state.GetCancelOrderDetailReducer.GetCancelOrderDetailData
   );
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
@@ -250,137 +223,113 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     dispatch(GetCancelOrderDetail());
   }, []);
 
-  // pagination
   useEffect(() => {
-    // dispatch(GetAdminOrderPending());
+    onPageChange(0);
+  }, [adminorderpendingdata]);
 
+  useEffect(() => {
     if (param.hash === "#pending") {
-      // console.log("djjhj")
-      setAdminOrderPendingData(GetAdminOrderPendingData);
-      setItems(adminorderpendingdata);
-      setPendingCurrentItems(items?.slice(0, pagesize));
-      setPageCount(
-        Math?.ceil(items == undefined ? "0" : items?.length / pagesize)
-      );
-    } else if (param.hash === "#booked") {
-      // console.log("djjhj")
-      setAdminOrderBookedData(GetAdminOrderBookedData);
-      setItems(adminorderbookeddata);
-      setBookedCurrentItems(items?.slice(0, pagesize));
-      setPageCount(
-        Math?.ceil(items == undefined ? "0" : items?.length / pagesize)
-      );
+      // console.log("adminorderpendingdata", adminorderpendingdata)
+      if (GetAdminOrderPendingData?.status !== 200) {
+        setLoadSpiner(true);
+        // setIsLoading(true);
+      } else {
+        // setLoadSpiner(false);
+        // setIsLoading(false);
+        let currentItem = adminorderpendingdata?.slice(
+          currentPage * pagesize,
+          pagesize * (currentPage + 1)
+        );
+        setCurrentItems(currentItem);
+        setLoadSpiner(false);
+      }
     } else if (param.hash === "#transit") {
-      setAdminOrderIntransitDate(GetAdminOrderIntransitDate);
-      setItems(adminorderintransitDate);
-      setIntransitCurrentItems(items?.slice(0, pagesize));
-      setPageCount(
-        Math?.ceil(items == undefined ? "0" : items?.length / pagesize)
-      );
+      if (GetAdminOrderIntransitDate?.status !== 200) {
+        setLoadSpiner(true);
+      } else {
+        setLoadSpiner(false);
+        let currentItem = adminorderintransitDate?.slice(
+          currentPage * pagesize,
+          pagesize * (currentPage + 1)
+        );
+        setCurrentItems(currentItem);
+      }
+    } else if (param.hash === "#booked") {
+      if (GetAdminOrderBookedData?.status !== 200) {
+        setLoadSpiner(true);
+      } else {
+        setLoadSpiner(false);
+        let currentItem = adminorderbookeddata?.slice(
+          currentPage * pagesize,
+          pagesize * (currentPage + 1)
+        );
+        setCurrentItems(currentItem);
+      }
     } else if (param.hash === "#delivered") {
-      setAdminOrderDeliveredData(GetAdminOrderDeliveredData);
-      setItems(adminorderdeliveredData);
-      setDeliveredCurrentItems(items?.slice(0, pagesize));
-      setPageCount(
-        Math?.ceil(items == undefined ? "0" : items?.length / pagesize)
-      );
+      if (GetAdminOrderDeliveredData?.status !== 200) {
+        setLoadSpiner(true);
+      } else {
+        setLoadSpiner(false);
+        let currentItem = adminorderdeliveredData?.slice(
+          currentPage * pagesize,
+          pagesize * (currentPage + 1)
+        );
+        setCurrentItems(currentItem);
+      }
     } else if (param.hash === "#OUT_FOR_DELIVERY") {
-      setAdminOutForDeliveryData(GetAdminOutForDeliveryData);
-      setItems(adminoutfordeliveryData);
-      setOutForDeliveredCurrentItems(items?.slice(0, pagesize));
-      setPageCount(
-        Math?.ceil(items == undefined ? "0" : items?.length / pagesize)
-      );
+      if (GetAdminOutForDeliveryData?.status !== 200) {
+        setLoadSpiner(true);
+      } else {
+        setLoadSpiner(false);
+        let currentItem = adminoutfordeliveryData?.slice(
+          currentPage * pagesize,
+          pagesize * (currentPage + 1)
+        );
+        setCurrentItems(currentItem);
+      }
     } else if (param.hash === "#return") {
-      setAdminOrderReturnData(GetAdminOrderReturnData);
-      setItems(adminorderreturnData);
-      setReturnCurrentItems(items?.slice(0, pagesize));
-      setPageCount(
-        Math?.ceil(items == undefined ? "0" : items?.length / pagesize)
-      );
+      if (GetAdminOrderReturnData?.status !== 200) {
+        setLoadSpiner(true);
+      } else {
+        setLoadSpiner(false);
+        let currentItem = adminorderreturnData?.slice(
+          currentPage * pagesize,
+          pagesize * (currentPage + 1)
+        );
+        setCurrentItems(currentItem);
+      }
     } else if (param.hash === "#cancel") {
-      setAdminOrderCancelData(GetCancelOrderDetailData);
-      setItems(adminordercancelData);
-      setCancelCurrentItems(items?.slice(0, pagesize));
-      setPageCount(
-        Math?.ceil(items == undefined ? "0" : items?.length / pagesize)
-      );
+      if (GetCancelOrderDetailData?.status !== 200) {
+        setLoadSpiner(true);
+      } else {
+        setLoadSpiner(false);
+        let currentItem = adminordercancelData?.slice(
+          currentPage * pagesize,
+          pagesize * (currentPage + 1)
+        );
+        setCurrentItems(currentItem);
+      }
     }
   }, [
-    GetAdminOrderPendingData,
+    currentPage,
+    param.hash,
     adminorderpendingdata,
-    GetAdminOrderBookedData,
-    adminorderpendingdata,
-    GetAdminOrderIntransitDate,
+    adminorderbookeddata,
     adminorderintransitDate,
-    GetAdminOrderDeliveredData,
     adminorderdeliveredData,
-    GetAdminOutForDeliveryData,
     adminoutfordeliveryData,
-    GetAdminOrderReturnData,
     adminorderreturnData,
-    GetCancelOrderDetailData,
-    adminordercancelData
+    adminordercancelData,
   ]);
 
   const onPageChange = (index) => {
-    if (param.hash === "#pending") {
-      setCurrentPage(index);
-      let currentItem = items?.slice(index * pagesize, pagesize * (index + 1));
-      // console.log("hgsah",currentItem)
-      setPendingCurrentItems(currentItem);
-    } else if (param.hash === "#booked") {
-      setCurrentPage(index);
-      const currentItem = items?.slice(
-        index * pagesize,
-        pagesize * (index + 1)
-      );
-      // console.log("hgsah",currentItem)
-      setBookedCurrentItems(currentItem);
-    } else if (param.hash === "#transit") {
-      setCurrentPage(index);
-      const currentItem = items?.slice(
-        index * pagesize,
-        pagesize * (index + 1)
-      );
-      // console.log("hgsah",currentItem)
-      setIntransitCurrentItems(currentItem);
-    } else if (param.hash === "#delivered") {
-      setCurrentPage(index);
-      const currentItem = items?.slice(
-        index * pagesize,
-        pagesize * (index + 1)
-      );
-      setDeliveredCurrentItems(currentItem);
-    } else if (param.hash === "#OUT_FOR_DELIVERY") {
-      setCurrentPage(index);
-      const currentItem = items?.slice(
-        index * pagesize,
-        pagesize * (index + 1)
-      );
-      setOutForDeliveredCurrentItems(currentItem);
-    } else if (param.hash === "#return") {
-      setCurrentPage(index);
-      const currentItem = items?.slice(
-        index * pagesize,
-        pagesize * (index + 1)
-      );
-      setReturnCurrentItems(currentItem);
-    } else if (param.hash === "#cancel") {
-      setCurrentPage(index);
-      const currentItem = items?.slice(
-        index * pagesize,
-        pagesize * (index + 1)
-      );
-      setCancelCurrentItems(currentItem);
-    }
+    setCurrentPage(index);
   };
-  // console.log("hdsja", GetWalletBalanceData)
 
   const IntransitFun = (e, id) => {
     reactLocalStorage.set("order_id", id);
     let objectData = {
-      product_order_id: id
+      product_order_id: id,
     };
     // this "tabfilteravailable" is important for back routhing of "/admin/Orderinner/id" page.
     dispatch(GetAdminOrderSummary(objectData));
@@ -431,25 +380,22 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     }
   };
   // PatchTrackDetailsData
-  console.log("mndvhsj", OrderPageBookNavigateFunData);
 
   useEffect(() => {
-    // navigate("#pending");
-    console.log("OrderPageBookNavigateFunData", OrderPageBookNavigateFunData);
     if (OrderPageBookNavigateFunData) {
       if (OrderPageBookNavigateFunData === "#pending") {
         navigate("#pending");
         setPandingTab({
           activeValue: "active",
           booleanValue: true,
-          tabindex: "-1"
+          tabindex: "-1",
         });
       } else if (OrderPageBookNavigateFunData === "#transit") {
         navigate("#transit");
         setTransitTab({
           activeValue: "active",
           booleanValue: true,
-          tabindex: "-1"
+          tabindex: "-1",
         });
         setBookTab("");
         setDeliveredTab("");
@@ -461,7 +407,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
         setBookTab({
           activeValue: "active",
           booleanValue: true,
-          tabindex: "-1"
+          tabindex: "-1",
         });
         setTransitTab("");
         setDeliveredTab("");
@@ -473,7 +419,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
         setDeliveredTab({
           activeValue: "active",
           booleanValue: true,
-          tabindex: "-1"
+          tabindex: "-1",
         });
         setBookTab("");
         setTransitTab("");
@@ -485,7 +431,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
         setOutForDeliveryTab({
           activeValue: "active",
           booleanValue: true,
-          tabindex: "-1"
+          tabindex: "-1",
         });
         setBookTab("");
         setTransitTab("");
@@ -497,7 +443,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
         setReturnTab({
           activeValue: "active",
           booleanValue: true,
-          tabindex: "-1"
+          tabindex: "-1",
         });
         setDeliveredTab("");
         setOutForDeliveryTab("");
@@ -505,23 +451,24 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
         setTransitTab("");
         setCancelTab("");
       } else if (OrderPageBookNavigateFunData === "#cancel") {
-        navigate("#return");
-        setReturnTab({
+        navigate("#cancel");
+        setCancelTab({
           activeValue: "active",
           booleanValue: true,
-          tabindex: "-1"
+          tabindex: "-1",
         });
         setDeliveredTab("");
         setOutForDeliveryTab("");
         setBookTab("");
         setTransitTab("");
-        setCancelTab("");
+        setReturnTab("");
       }
     } else {
+      navigate("#pending");
       setPandingTab({
         activeValue: "active",
         booleanValue: true,
-        tabindex: "-1"
+        tabindex: "-1",
       });
       setReturnTab("");
       setDeliveredTab("");
@@ -606,7 +553,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
       shipping_partner: shippingpartnervalue,
       cod_status: statusData,
       nationality: nationality,
-      data_type: CustomerType
+      data_type: CustomerType,
     };
 
     dispatch(PostAdminOrderFilteration(dataObject));
@@ -630,27 +577,56 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
       setFilterDataHideAfterTabChange(true);
       setFilterActive(false);
     }
-
     if (param.hash === "#pending") {
-      setAdminOrderPendingData(GetAdminOrderPendingData);
+      // navigate("#pending");
+      // setLoadSpiner(false);
+      setAdminOrderPendingData(GetAdminOrderPendingData?.data);
       setFilterDataHideAfterTabChange(false);
+      onPageChange(0);
+      let data = Math?.ceil(
+        parseInt(GetAdminOrderPendingData?.data?.length) / parseInt(pagesize)
+      );
+      setPageCountTab(data);
     } else if (param.hash === "#booked") {
-      setFilterDataHideAfterTabChange(false); //this will false the if condition, so when the tab is changed the if condition will false and then the tab is changed then the all data will show
+      setFilterDataHideAfterTabChange(false); //this will false the if condition so when the tab is changed the if condition will false and then the tab is changed then the all data will show
       if (PostAdminOrderFilterationData && filterdatahideaftertabchange) {
         setAdminOrderBookedData(PostAdminOrderFilterationData?.data);
         setFilterActive(true);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(PostAdminOrderFilterationData?.data?.length) /
+            parseInt(pagesize)
+        );
+        setPageCountTab(data);
       } else {
-        setAdminOrderBookedData(GetAdminOrderBookedData);
+        setAdminOrderBookedData(GetAdminOrderBookedData?.data);
         setFilterActive(false);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(GetAdminOrderBookedData?.data?.length) / parseInt(pagesize)
+        );
+        setPageCountTab(data);
       }
     } else if (param.hash === "#transit") {
       setFilterDataHideAfterTabChange(false); //this will false the if condition so when the tab is changed the if condition will false and then the tab is changed then the all data will show
       if (PostAdminOrderFilterationData && filterdatahideaftertabchange) {
         setAdminOrderIntransitDate(PostAdminOrderFilterationData?.data);
         setFilterActive(true);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(PostAdminOrderFilterationData?.data?.length) /
+            parseInt(pagesize)
+        );
+        setPageCountTab(data);
       } else {
-        setAdminOrderIntransitDate(GetAdminOrderIntransitDate);
+        setAdminOrderIntransitDate(GetAdminOrderIntransitDate?.data);
         setFilterActive(false);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(GetAdminOrderIntransitDate?.data?.length) /
+            parseInt(pagesize)
+        );
+        setPageCountTab(data);
       }
       // setAdminOrderIntransitDate(GetAdminOrderIntransitDate);
     } else if (param.hash === "#delivered") {
@@ -658,18 +634,42 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
       if (PostAdminOrderFilterationData && filterdatahideaftertabchange) {
         setAdminOrderDeliveredData(PostAdminOrderFilterationData?.data);
         setFilterActive(true);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(PostAdminOrderFilterationData?.data?.length) /
+            parseInt(pagesize)
+        );
+        setPageCountTab(data);
       } else {
-        setAdminOrderDeliveredData(GetAdminOrderDeliveredData);
+        setAdminOrderDeliveredData(GetAdminOrderDeliveredData?.data);
         setFilterActive(false);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(GetAdminOrderDeliveredData?.data?.length) /
+            parseInt(pagesize)
+        );
+        setPageCountTab(data);
       }
     } else if (param.hash === "#OUT_FOR_DELIVERY") {
       setFilterDataHideAfterTabChange(false); //this will false the if condition so when the tab is changed the if condition will false and then the tab is changed then the all data will show
       if (PostAdminOrderFilterationData && filterdatahideaftertabchange) {
         setAdminOutForDeliveryData(PostAdminOrderFilterationData?.data);
         setFilterActive(true);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(PostAdminOrderFilterationData?.data?.length) /
+            parseInt(pagesize)
+        );
+        setPageCountTab(data);
       } else {
-        setAdminOutForDeliveryData(GetAdminOutForDeliveryData);
+        setAdminOutForDeliveryData(GetAdminOutForDeliveryData?.data);
         setFilterActive(false);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(GetAdminOutForDeliveryData?.data?.length) /
+            parseInt(pagesize)
+        );
+        setPageCountTab(data);
       }
 
       // setAdminOrderDeliveredData(GetAdminOrderDeliveredData);
@@ -678,9 +678,20 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
       if (PostAdminOrderFilterationData && filterdatahideaftertabchange) {
         setAdminOrderReturnData(PostAdminOrderFilterationData?.data);
         setFilterActive(true);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(PostAdminOrderFilterationData?.data?.length) /
+            parseInt(pagesize)
+        );
+        setPageCountTab(data);
       } else {
-        setAdminOrderReturnData(GetAdminOrderReturnData);
+        setAdminOrderReturnData(GetAdminOrderReturnData?.data);
         setFilterActive(false);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(GetAdminOrderReturnData?.data?.length) / parseInt(pagesize)
+        );
+        setPageCountTab(data);
       }
       // setAdminOrderReturnData(GetAdminOrderReturnData);
     } else if (param.hash === "#cancel") {
@@ -688,23 +699,34 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
       if (PostAdminOrderFilterationData && filterdatahideaftertabchange) {
         setAdminOrderCancelData(PostAdminOrderFilterationData?.data);
         setFilterActive(true);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(PostAdminOrderFilterationData?.data?.length) /
+            parseInt(pagesize)
+        );
+        setPageCountTab(data);
       } else {
-        setAdminOrderCancelData(GetCancelOrderDetailData);
+        setAdminOrderCancelData(GetCancelOrderDetailData?.data);
         setFilterActive(false);
+        onPageChange(0);
+        let data = Math?.ceil(
+          parseInt(GetCancelOrderDetailData?.data?.length) / parseInt(pagesize)
+        );
+        setPageCountTab(data);
       }
       // setAdminOrderReturnData(GetAdminOrderReturnData);
     }
   }, [
     PostAdminOrderFilterationData,
     param.hash,
-    GetAdminOrderPendingData,
-    GetAdminOrderBookedData,
-    GetAdminOrderIntransitDate,
-    GetAdminOrderDeliveredData,
-    GetAdminOutForDeliveryData,
-    GetAdminOrderReturnData,
-    GetCancelOrderDetailData,
-    adminorderfilterationdata
+    GetAdminOrderPendingData?.data,
+    GetAdminOrderBookedData?.data,
+    GetAdminOrderIntransitDate?.data,
+    GetAdminOrderDeliveredData?.data,
+    GetAdminOutForDeliveryData?.data,
+    GetAdminOrderReturnData?.data,
+    GetCancelOrderDetailData?.data,
+    adminorderfilterationdata,
   ]);
 
   // adminoutfordeliveryData
@@ -713,90 +735,90 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     let value = e?.target?.value?.toUpperCase();
     let result = [];
     if (param.hash === "#pending") {
-      result = GetAdminOrderPendingData?.filter((data) => {
+      result = GetAdminOrderPendingData?.data?.filter((data) => {
         if (value) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
       if (value === "") {
-        setAdminOrderPendingData(GetAdminOrderPendingData);
+        setAdminOrderPendingData(GetAdminOrderPendingData?.data);
       } else {
         setAdminOrderPendingData(result);
       }
     }
     if (param.hash === "#booked") {
-      result = GetAdminOrderBookedData?.filter((data) => {
+      result = GetAdminOrderBookedData?.data?.filter((data) => {
         if (value) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
       if (value === "") {
-        setAdminOrderBookedData(GetAdminOrderBookedData);
+        setAdminOrderBookedData(GetAdminOrderBookedData?.data);
       } else {
         setAdminOrderBookedData(result);
       }
     }
 
     if (param.hash === "#transit") {
-      result = GetAdminOrderIntransitDate?.filter((data) => {
+      result = GetAdminOrderIntransitDate?.data?.filter((data) => {
         if (value) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
       if (value === "") {
-        setAdminOrderIntransitDate(GetAdminOrderIntransitDate);
+        setAdminOrderIntransitDate(GetAdminOrderIntransitDate?.data);
       } else {
         setAdminOrderIntransitDate(result);
       }
     }
 
     if (param.hash === "#delivered") {
-      result = GetAdminOrderDeliveredData?.filter((data) => {
+      result = GetAdminOrderDeliveredData?.data?.filter((data) => {
         if (value) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
       if (value === "") {
-        setAdminOrderDeliveredData(GetAdminOrderDeliveredData);
+        setAdminOrderDeliveredData(GetAdminOrderDeliveredData?.data);
       } else {
         setAdminOrderDeliveredData(result);
       }
     }
 
     if (param.hash === "#OUT_FOR_DELIVERY") {
-      result = GetAdminOutForDeliveryData?.filter((data) => {
+      result = GetAdminOutForDeliveryData?.data?.filter((data) => {
         if (value) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
       if (value === "") {
-        setAdminOutForDeliveryData(GetAdminOutForDeliveryData);
+        setAdminOutForDeliveryData(GetAdminOutForDeliveryData?.data);
       } else {
         setAdminOutForDeliveryData(result);
       }
     }
 
     if (param.hash === "#return") {
-      result = GetAdminOrderReturnData?.filter((data) => {
+      result = GetAdminOrderReturnData?.data?.filter((data) => {
         if (value) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
       if (value === "") {
-        setAdminOrderReturnData(GetAdminOrderReturnData);
+        setAdminOrderReturnData(GetAdminOrderReturnData?.data);
       } else {
         setAdminOrderReturnData(result);
       }
     }
 
     if (param.hash === "#cancel") {
-      result = GetCancelOrderDetailData?.filter((data) => {
+      result = GetCancelOrderDetailData?.data?.filter((data) => {
         if (value) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
       if (value === "") {
-        setAdminOrderCancelData(GetCancelOrderDetailData);
+        setAdminOrderCancelData(GetCancelOrderDetailData?.data);
       } else {
         setAdminOrderCancelData(result);
       }
@@ -813,7 +835,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
       product_order_id: pendingeditobjectdata.product_order_id,
       delivery_partner: partner,
       awb_number: awbcode,
-      expected_date: expecteddeliverydate
+      expected_date: expecteddeliverydate,
     };
     if (
       awbactive == false &&
@@ -843,11 +865,21 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
   const DeletePending = (e, orderid) => {
     let payload = {
-      product_order_id: orderid
+      product_order_id: orderid,
     };
     setLoadSpiner(true);
     dispatch(DeleteAdminPendingOrderAction(payload));
   };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setIsLoading(true);
+  //     // Fetch data here
+  //     // Update state with fetched data
+  //     setIsLoading(false);
+  //   };
+  //   fetchData();
+  // }, []);
+
   useEffect(() => {
     // console.log("DeleteAdminPendingOrderActionData",DeleteAdminPendingOrderActionData)
     if (DeleteAdminPendingOrderActionData?.status == 200) {
@@ -888,8 +920,8 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     let BlankArrayData = [];
     if (param.hash === "#pending") {
       //  GetAdminOrderPendingData?.map((item, id) => {
-      pendingcurrentItems &&
-        pendingcurrentItems?.map((item, id) => {
+      adminorderpendingdata &&
+        adminorderpendingdata?.map((item, id) => {
           BlankArrayData.push(item?.product_order_id); //adding add product id in blanck array of that perticular tab
         });
 
@@ -905,8 +937,8 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
     if (param.hash === "#booked") {
       // GetAdminOrderBookedData?.map((item, id) => {
-      bookedcurrentItems &&
-        bookedcurrentItems?.map((item, id) => {
+      adminorderbookeddata &&
+        adminorderbookeddata?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
 
@@ -918,8 +950,8 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     }
     if (param.hash === "#transit") {
       // GetAdminOrderIntransitDate?.map((item, id) => {
-      intransitcurrentItems &&
-        intransitcurrentItems?.map((item, id) => {
+      adminorderintransitDate &&
+        adminorderintransitDate?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
       if (
@@ -932,8 +964,8 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     }
     if (param.hash === "#delivered") {
       // GetAdminOrderDeliveredData?.map((item, id) => {
-      deliveredcurrentItems &&
-        deliveredcurrentItems?.map((item, id) => {
+      adminorderdeliveredData &&
+        adminorderdeliveredData?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
       if (
@@ -947,8 +979,8 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
     if (param.hash === "#OUT_FOR_DELIVERY") {
       // GetAdminOrderDeliveredData?.map((item, id) => {
-      outfordeliveredcurrentItems &&
-        outfordeliveredcurrentItems?.map((item, id) => {
+      adminoutfordeliveryData &&
+        adminoutfordeliveryData?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
       if (
@@ -963,8 +995,8 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     if (param.hash === "#return") {
       // GetAdminOrderReturnData?.map((item, id) => {
 
-      returncurrentItems &&
-        returncurrentItems?.map((item, id) => {
+      adminorderreturnData &&
+        adminorderreturnData?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
       if (PermissionData()?.DOWNLOAD_RETURNS_CSV == "DOWNLOAD_RETURNS_CSV") {
@@ -977,8 +1009,8 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     if (param.hash === "#cancel") {
       // GetAdminOrderReturnData?.map((item, id) => {
 
-      cancelcurrentItems &&
-        cancelcurrentItems?.map((item, id) => {
+      adminordercancelData &&
+        adminordercancelData?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
       if (PermissionData()?.DOWNLOAD_RETURNS_CSV == "DOWNLOAD_RETURNS_CSV") {
@@ -992,7 +1024,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
     let PayloadData = {
       order_ids: BlankArrayData,
-      page: splitdata[1]
+      page: splitdata[1],
     };
 
     dispatch(PostAdminOrderCsvFile(PayloadData));
@@ -1000,7 +1032,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
   const CancelOrder = (e, orderid) => {
     let payload = {
-      product_order_id: orderid
+      product_order_id: orderid,
     };
     dispatch(DeleteAdminOrder(payload));
     setEditCancelObjectData((o) => !o);
@@ -1010,20 +1042,20 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     CsvDownload();
   }, [
     param,
-    GetAdminOrderPendingData,
-    GetAdminOrderBookedData,
-    GetAdminOrderIntransitDate,
-    GetAdminOrderDeliveredData,
-    GetAdminOutForDeliveryData,
-    GetAdminOrderReturnData,
-    GetCancelOrderDetailData,
+    GetAdminOrderPendingData?.data,
+    GetAdminOrderBookedData?.data,
+    GetAdminOrderIntransitDate?.data,
+    GetAdminOrderDeliveredData?.data,
+    GetAdminOutForDeliveryData?.data,
+    GetAdminOrderReturnData?.data,
+    GetCancelOrderDetailData?.data,
     adminorderpendingdata,
     adminorderbookeddata,
     adminorderintransitDate,
     adminorderdeliveredData,
     adminoutfordeliveryData,
     adminorderreturnData,
-    adminordercancelData
+    adminordercancelData,
   ]);
 
   const CloseOtp = () => {
@@ -1052,7 +1084,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     }
   };
 
-  const FilterShowHideBtnFun = () => {
+  const FilterShowHideBtnFun = (e) => {
     setFilterShowHideBtn((o) => !o);
 
     if (
@@ -1086,7 +1118,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
   const TransitTrack = (e, orderid) => {
     let payload = {
       track_update_type: "IN_TRANSIT",
-      product_order_id: orderid
+      product_order_id: orderid,
     };
 
     dispatch(PatchTrackDetails(payload));
@@ -1095,7 +1127,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
   const DeliveredTrack = (e, orderid) => {
     let payload = {
       track_update_type: "OUT_FOR_DELIVERY",
-      product_order_id: orderid
+      product_order_id: orderid,
     };
 
     dispatch(PatchTrackDetails(payload));
@@ -1104,7 +1136,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
   const ReturnTrack = (e, orderid) => {
     let payload = {
       track_update_type: "RTO",
-      product_order_id: orderid
+      product_order_id: orderid,
     };
 
     dispatch(PatchTrackDetails(payload));
@@ -1125,7 +1157,6 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
   const OutForDevliveryActionFun = (e, item) => {
     // e.target.value = e
-    console.log("jxnkmzf", e.target.value);
     // console.log("jxnkmzf", e)
 
     setReasonActionValue(e.target.value);
@@ -1145,7 +1176,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
         // toast.success("OTP send Successfully.. Please Check Your Mail.")
 
         let otpPayload = {
-          product_order_id: item.product_order_id
+          product_order_id: item.product_order_id,
         };
         dispatch(PostTrackingOtp(otpPayload));
       }
@@ -1156,7 +1187,6 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     e,
     data //this data is comming from the OutForDevliveryActionFun Function
   ) => {
-    console.log("hfgvjhb", data);
     if (reasonActionInputFieldData.length < 2) {
       setReasonActionInputFieldError(true);
     } else {
@@ -1166,7 +1196,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
         let payload = {
           track_update_type: reasonActionValue,
           product_order_id: reasonActionRowData.product_order_id,
-          reason: reasonActionInputFieldData
+          reason: reasonActionInputFieldData,
         };
         dispatch(PatchTrackDetails(payload));
         setReasonActionValue("null");
@@ -1182,9 +1212,8 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     let payload = {
       track_update_type: "DELIVERED",
       product_order_id: reasonActionRowData.product_order_id,
-      otp_delivered: otpvalue
+      otp_delivered: otpvalue,
     };
-    console.log("dsakjdkasjsa", payload);
     if (otpvalue.length == 4) {
       dispatch(PatchTrackDetails(payload));
       setOtpActionPopup(false);
@@ -1207,7 +1236,6 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     }
 
     setReasonActionValue("null");
-    console.log("asghfgjsgjv");
     setSelectedReasonTrue(true);
   }, [PatchTrackDetailsData]);
 
@@ -1218,7 +1246,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
     let RebookPayload = {
       product_order_id: ReebookObjectDetails?.product_order_id,
-      is_successful: true
+      is_successful: true,
     };
 
     if (PostDebitBalanceData) {
@@ -1231,12 +1259,11 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
   }, [PostTrackingOtpData, PostDebitBalanceData]);
 
   const RebookFun = (e, data) => {
-    console.log(data, "sndgfjhgsdfjhsg");
     setReebookObjectDetails(data);
     setPaymentMethodPopup(true);
 
     let WalletBalancePayload = {
-      company_name: data?.name
+      company_name: data?.name,
     };
     dispatch(GetWalletBalance(WalletBalancePayload));
     // navigate("#pending");
@@ -1254,7 +1281,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     setWalletTab({
       activeValue: "active",
       booleanValue: true,
-      tabindex: "-1"
+      tabindex: "-1",
     });
     setPaymentMethodPopup(false);
   };
@@ -1263,13 +1290,17 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
     let payLoad = {
       amount: Number(ReebookObjectDetails?.amount),
       order_id: ReebookObjectDetails?.product_order_id,
-      company_name: ReebookObjectDetails?.name
+      company_name: ReebookObjectDetails?.name,
     };
-
-    console.log("mxchvjhbk", payLoad);
 
     dispatch(PostDebitBalance(payLoad));
   };
+
+  // useEffect(() => {
+  //   if (currentItems) {
+  //
+  //   }
+  // }, [currentItems])
 
   return (
     <>
@@ -1421,7 +1452,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
                 </li>
               </ul>
             </div>
-
+            {/* {isLoading?<p>Loading....</p>: */}
             <div className="ordertab-sec">
               {/* {filter} */}
 
@@ -1485,10 +1516,10 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
                 >
                   <button
                     type="button"
-                    className={`  close-btn ${
+                    className={`close-btn ${
                       filtershowhidebtn ? "" : "d-none"
                     } `}
-                    onClick={(e) => FilterShowHideBtnFun()}
+                    onClick={(e) => FilterShowHideBtnFun(e)}
                   >
                     <svg
                       viewBox="0 0 10 9"
@@ -1672,7 +1703,7 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
                         <button
                           type="button"
                           className="btn btn-cancel"
-                          onClick={(e) => FilterShowHideBtnFun()}
+                          onClick={(e) => FilterShowHideBtnFun(e)}
                         >
                           Cancel
                         </button>
@@ -1832,9 +1863,9 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
                 </li>
               </ul>
 
-              <div className="tab-content" id="myTabContent">
-                {/* {pending} */}
+              {/* {pending} */}
 
+              <div className="tab-content" id="myTabContent">
                 <div
                   className={`tab-pane pending-tabpane fade   ${
                     pandingtab ? "show active" : "-1"
@@ -1856,8 +1887,10 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
                     {PermissionData()?.VIEW_ORDER_PENDING ==
                     "VIEW_ORDER_PENDING"
-                      ? pendingcurrentItems &&
-                        pendingcurrentItems?.map((item, id) => {
+                      ? // adminorderpendingdata &&
+                        // adminorderpendingdata?.map((item, id) => {
+                        currentItems &&
+                        currentItems?.map((item, id) => {
                           return (
                             <tr>
                               <td>{item.date}</td>
@@ -2018,8 +2051,10 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
                       <th>Action</th>
                     </tr>
                     {PermissionData()?.VIEW_ORDER_BOOKED == "VIEW_ORDER_BOOKED"
-                      ? bookedcurrentItems &&
-                        bookedcurrentItems?.map((item, id) => {
+                      ? // adminorderbookeddata &&
+                        // adminorderbookeddata?.map((item, id) => {
+                        currentItems &&
+                        currentItems?.map((item, id) => {
                           return (
                             <tr>
                               <td
@@ -2106,8 +2141,10 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
                     {PermissionData()?.VIEW_ORDER_IN_TRANSIT ==
                     "VIEW_ORDER_IN_TRANSIT"
-                      ? intransitcurrentItems &&
-                        intransitcurrentItems.map((item, id) => {
+                      ? // adminorderintransitDate &&
+                        // adminorderintransitDate.map((item, id) => {
+                        currentItems &&
+                        currentItems?.map((item, id) => {
                           return (
                             <tr>
                               <td
@@ -2201,8 +2238,10 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
                     {PermissionData()?.VIEW_ORDER_DELIVERED ==
                     "VIEW_ORDER_DELIVERED"
-                      ? deliveredcurrentItems &&
-                        deliveredcurrentItems.map((item, id) => {
+                      ? // adminorderdeliveredData &&
+                        // adminorderdeliveredData.map((item, id) => {
+                        currentItems &&
+                        currentItems?.map((item, id) => {
                           return (
                             <tr>
                               <td
@@ -2310,8 +2349,10 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
                     {PermissionData()?.VIEW_ORDER_DELIVERED ==
                     "VIEW_ORDER_DELIVERED"
-                      ? outfordeliveredcurrentItems &&
-                        outfordeliveredcurrentItems.map((item, id) => {
+                      ? // adminoutfordeliveryData &&
+                        // adminoutfordeliveryData.map((item, id) => {
+                        currentItems &&
+                        currentItems?.map((item, id) => {
                           return (
                             <tr>
                               <td
@@ -2405,8 +2446,10 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
                     {PermissionData()?.VIEW_ORDER_RETURNS ==
                     "VIEW_ORDER_RETURNS"
-                      ? returncurrentItems &&
-                        returncurrentItems.map((item, id) => {
+                      ? // adminorderreturnData &&
+                        // adminorderreturnData.map((item, id) => {
+                        currentItems &&
+                        currentItems?.map((item, id) => {
                           return (
                             <tr>
                               <td
@@ -2482,10 +2525,10 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
 
                     {PermissionData()?.VIEW_ORDER_PENDING ==
                     "VIEW_ORDER_PENDING"
-                      ? cancelcurrentItems &&
-                        cancelcurrentItems?.map((item, id) => {
-                          console.log("ahhjdasj", item);
-
+                      ? // adminordercancelData &&
+                        // adminordercancelData?.map((item, id) => {
+                        currentItems &&
+                        currentItems?.map((item, id) => {
                           return (
                             <tr>
                               <td>{item.date}</td>
@@ -2532,58 +2575,57 @@ console.log("GetAdminOrderBookedData",GetAdminOrderBookedData)
                   </table>
                 </div>
               </div>
-              <div className="pagination d-flex justify-content-end">
-                {/* <a className="paginationn">&laquo;</a> */}
-                <a className="paginationn" onClick={() => onPageChange(0)}>
+
+              <div className="paginationn">
+                <button
+                  onClick={() => onPageChange(0)}
+                  className="paginationbutton"
+                >
                   First
-                </a>
-                {/* <a className="paginationn"
+                </button>
+                <button
+                  className="paginationbutton"
                   onClick={() => onPageChange(currentPage - 1)}
                   disabled={currentPage === 0}
                 >
                   Prev
-                </a> */}
-                <button
-                  className="paginationn"
-                  onClick={() => onPageChange(currentPage - 1)}
-                  disabled={currentPage === 0}
-                >
-                  &laquo;
                 </button>
-                {Array(PageCount)
-                  ?.fill(null)
-                  ?.map((page, index) => (
-                    <button
-                      className={currentPage === index ? "active-btn" : ""}
-                      key={index}
-                      onClick={() => onPageChange(index)}
-                    >
-                      <div className="paginationn">{index + 1}</div>
-                    </button>
-                  ))}
-                {/* <a
+                {pageCountTab == "0"
+                  ? ""
+                  : pageCountTab &&
+                    Array(pageCountTab)
+                      .fill(null)
+                      ?.map((page, index) => {
+                        return (
+                          <button
+                            className={
+                              currentPage === index
+                                ? "active-btn paginationbutton"
+                                : "paginationbutton"
+                            }
+                            key={index}
+                            onClick={() => onPageChange(index)}
+                          >
+                            {index + 1}
+                          </button>
+                        );
+                      })}
+                <button
                   onClick={() => onPageChange(currentPage + 1)}
-                  disabled={currentPage === PageCount - 1}
-                  className="paginationn"
+                  disabled={currentPage === pageCountTab - 1}
+                  className="paginationbutton"
                 >
                   Next
-                </a> */}
-                <button
-                  className="paginationn"
-                  onClick={() => onPageChange(currentPage + 1)}
-                  disabled={currentPage === PageCount - 1}
-                >
-                  &raquo;
                 </button>
-                <a
-                  className="paginationn"
-                  onClick={() => onPageChange(PageCount - 1)}
+                <button
+                  onClick={() => onPageChange(pageCountTab - 1)}
+                  className="paginationbutton"
                 >
                   last
-                </a>
-                {/* <a className="paginationn" >&raquo;</a> */}
+                </button>
               </div>
             </div>
+            {/* } */}
           </div>
         </div>
       </div>
