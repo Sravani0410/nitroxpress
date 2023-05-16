@@ -22,26 +22,26 @@ function Ordertracking() {
                         <div className='row'>
                             <div className='col-xl-8'>
                                 <div className='trackingtable-tab'>
-                                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link active" id="pills-all-tab" data-bs-toggle="pill" data-bs-target="#pills-all" type="button" role="tab" aria-controls="pills-all" aria-selected="true">All (146)</button>
+                                    <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                        <li className="nav-item" role="presentation">
+                                            <button className="nav-link active" id="pills-all-tab" data-bs-toggle="pill" data-bs-target="#pills-all" type="button" role="tab" aria-controls="pills-all" aria-selected="true">All (146)</button>
                                         </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="pills-booked-tab" data-bs-toggle="pill" data-bs-target="#pills-booked" type="button" role="tab" aria-controls="pills-booked" aria-selected="false">Booked (14)</button>
+                                        <li className="nav-item" role="presentation">
+                                            <button className="nav-link" id="pills-booked-tab" data-bs-toggle="pill" data-bs-target="#pills-booked" type="button" role="tab" aria-controls="pills-booked" aria-selected="false">Booked (14)</button>
                                         </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="pills-ready-tab" data-bs-toggle="pill" data-bs-target="#pills-ready" type="button" role="tab" aria-controls="pills-ready" aria-selected="false">Ready for shipping (12)</button>
+                                        <li className="nav-item" role="presentation">
+                                            <button className="nav-link" id="pills-ready-tab" data-bs-toggle="pill" data-bs-target="#pills-ready" type="button" role="tab" aria-controls="pills-ready" aria-selected="false">Ready for shipping (12)</button>
                                         </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="pills-delivered-tab" data-bs-toggle="pill" data-bs-target="#pills-delivered" type="button" role="tab" aria-controls="pills-delivered" aria-selected="false">Delivered (248)</button>
+                                        <li className="nav-item" role="presentation">
+                                            <button className="nav-link" id="pills-delivered-tab" data-bs-toggle="pill" data-bs-target="#pills-delivered" type="button" role="tab" aria-controls="pills-delivered" aria-selected="false">Delivered (248)</button>
                                         </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="pills-transit-tab" data-bs-toggle="pill" data-bs-target="#pills-transit" type="button" role="tab" aria-controls="pills-transit" aria-selected="false">In Transit (88)</button>
+                                        <li className="nav-item" role="presentation">
+                                            <button className="nav-link" id="pills-transit-tab" data-bs-toggle="pill" data-bs-target="#pills-transit" type="button" role="tab" aria-controls="pills-transit" aria-selected="false">In Transit (88)</button>
                                         </li>
 
                                     </ul>
-                                    <div class="tab-content" id="pills-tabContent">
-                                        <div class="tab-pane fade show active trackingall-tab" id="pills-all" role="tabpanel" aria-labelledby="pills-all-tab" tabindex="0">
+                                    <div className="tab-content" id="pills-tabContent">
+                                        <div className="tab-pane fade show active trackingall-tab" id="pills-all" role="tabpanel" aria-labelledby="pills-all-tab" tabindex="0">
                                             <ul>
                                                 <li className='box adddpack-box'>
                                                     <img src="/images/img18.png" alt='img' />
@@ -341,13 +341,13 @@ function Ordertracking() {
                                                 </li>
                                             </ul>
                                         </div>
-                                        <div class="tab-pane fade " id="pills-booked" role="tabpanel" aria-labelledby="pills-booked-tab" tabindex="0">....</div>
+                                        <div className="tab-pane fade " id="pills-booked" role="tabpanel" aria-labelledby="pills-booked-tab" tabindex="0">....</div>
 
-                                        <div class="tab-pane fade " id="pills-ready" role="tabpanel" aria-labelledby="pills-ready-tab" tabindex="0">....</div>
+                                        <div className="tab-pane fade " id="pills-ready" role="tabpanel" aria-labelledby="pills-ready-tab" tabindex="0">....</div>
 
-                                        <div class="tab-pane fade " id="pills-delivered" role="tabpanel" aria-labelledby="pills-delivered-tab" tabindex="0">....</div>
+                                        <div className="tab-pane fade " id="pills-delivered" role="tabpanel" aria-labelledby="pills-delivered-tab" tabindex="0">....</div>
 
-                                        <div class="tab-pane fade " id="pills-transit" role="tabpanel" aria-labelledby="pills-transit-tab" tabindex="0">....</div>
+                                        <div className="tab-pane fade " id="pills-transit" role="tabpanel" aria-labelledby="pills-transit-tab" tabindex="0">....</div>
 
                                     </div>
                                 </div>

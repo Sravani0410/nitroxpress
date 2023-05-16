@@ -991,7 +991,46 @@ ol {
   cursor: pointer;
   width: 100%;
 }
+.upload-form-control {
+  position: relative;
+  margin-left: 15px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0px 0px 1px 1px rgb(0 0 0 / 5%), 0px 1px 2px -2px rgb(0 0 0 / 6%), 0px 1px 3px rgb(0 0 0 / 7%);
+  padding: 6px 14px;
+  margin-left: 17px;
+  width: auto;
+  z-index: 1;
+}
 
+.upload-form-control input{
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 99;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  display: block;
+  cursor: pointer;
+  width: 100%;
+}
+.upload-form-control:after{
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  background: url(../Images/upload.svg) center center no-repeat;
+  background-size: 90%;
+  display: block;
+  pointer-events: none;
+  z-index: 20;
+  height: 22px;
+  width: 22px;
+}
 .ordertittle-part>ul li.form-control:after,
 .invoice-sec>.title .form-control:after {
   content: '';
@@ -1401,7 +1440,7 @@ ol {
 .tab-content table td:nth-child(3) {
   /* width: 16%; */
   /* width: 222px; */
-  text-align: center;
+  /* text-align: center; */
 }
 
 .tab-content table th:nth-child(4),
@@ -1641,6 +1680,10 @@ ol {
   width: 222px;
 }
 
+.tab-content #rto-delivered-tab-pane table th,
+.tab-content #rto-delivered-tab-pane table td {
+  width: 222px;
+}
 
 
 
@@ -1801,6 +1844,7 @@ hover:bg-black
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 11111111;
   transition: all .3s;
+  overflow: scroll;
   /* display: none;  */
 }
 
@@ -2002,6 +2046,13 @@ hover:bg-black
   width: 100%;
 }
 
+
+.paginationbutton {
+  border: 1px solid lightgray;
+  border-radius: 0px;
+  padding: 10px;
+  cursor: pointer;
+}
 /* =========================== editb2b-box popup==================================================== */
 
 .editb2b-box {
@@ -2011,14 +2062,14 @@ hover:bg-black
   transform: translate(-50%, -50%);
   width: 90%;
   height: 90%;
-  max-width: 435px;
+  max-width: 70%;
   overflow: initial;
   display: block;
   background-color: #FFF;
   border-radius: 8px;
   padding: 20px;
-  max-height: 560px;
-
+  max-height: 620px;
+  overflow: scroll
 }
 
 .editb2b-box .popup-body {
@@ -2035,8 +2086,8 @@ hover:bg-black
 .editb2b-box .close-btn,
 .addordertag-popup .close-btn {
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top:8px;
+  right:8px;
   background-color: #fff;
   border-radius: 50%;
   box-shadow: 0 0 10px rgb(0 0 0 / 20%);
@@ -3735,6 +3786,11 @@ css-1hb7zxy-IndicatorsContainer
   vertical-align: middle;
   line-height: 1;
 }
+.support-list>li>.right-part .date-text {
+  position: absolute;
+  right: 50px;
+  top: 14px;
+}
 
 .support-list>li>.right-part button {
   border: none;
@@ -3768,12 +3824,13 @@ css-1hb7zxy-IndicatorsContainer
 
 .support-list>li>.right-part .dismiss-btn {
   border-radius: 30px;
-  color: #929292;
+  color: #000000;
   font-size: 14px;
   padding: 5px 20px;
-  background: rgba(186, 186, 186, 0.3);
+  /* background: rgba(186, 186, 186, 0.3); */
+  background-color: #FFC900;
 }
-
+ 
 .support-list>li>.right-part .chat-btn,
 .b2cbtn-box .dismiss-btn+.dismiss-btn {
   margin-left: 10px;
@@ -3782,6 +3839,14 @@ css-1hb7zxy-IndicatorsContainer
 .b2cbtn-box {
   display: flex;
   justify-content: space-between;
+}
+ 
+
+
+.add_tag_ex{
+  font-size: 12px;
+  color: rgb(197, 192, 192);
+  /* text-shadow: 0 0 0 #fff; */
 }
 
 /*  ---------------------- invoice page --------------------------- */
@@ -4483,6 +4548,16 @@ css-1hb7zxy-IndicatorsContainer
   margin-top: 50px;
 }
 
+
+.track-btn{
+  border: 1px solid #FFC900;
+  background-color: #FFC900;
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: bold;
+  border-radius: 3px;
+  margin-left: 10px;
+  padding: 2px 10px 2px 10px;
+}
 
 /* ------------------------------ Responsive css --------------------- */
 

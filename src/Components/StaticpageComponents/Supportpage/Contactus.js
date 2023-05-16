@@ -36,23 +36,17 @@ function Contactus() {
   }, [PostRaiseContactUSData]);
 
   const SendContact = (e) => {
-    e.preventDefault();
-
-  
+    e.preventDefault(); 
       let payload = {
         name: name,
         email: email,
         number: number,
         message: massage,
       };
-
       name && email && number && message
         ? dispatch(PostRaiseContactUS(payload))
         : toast.warn("Please Fill all the input Fields !");
-
   };
-
-  console.log("aaapaaa", PostRaiseContactUSData);
 
   return (
     <section className="contactus-sec">

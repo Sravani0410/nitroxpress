@@ -12,7 +12,9 @@ const Ordertrack = () => {
   let param = useParams();
   let paramHash = useLocation();
   const [reasonValue, setReasonValue] = useState("")
+  const [intransitData, setintransitData] = useState([])
   const [returnreasonvalue, setReturnReasonValue] = useState("")
+  const [returndeliveredreasonvalue, setReturnDeliveredReasonValue] = useState("")
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
@@ -32,20 +34,29 @@ const Ordertrack = () => {
   useEffect(() => { 
     let arr = []
     let returnarr = []
+    let returndeliveredarr = []
     PostOrderTrackData?.track_details
       ?.map((item, index) => {
+        console.log("dhsaga",item)
         if (item["IN_TRANSIT"]) {
-          arr.push(item)
+  
+          // if(item?.reason?.length!==0){
+            arr.push(item)
+          // }
         }
         else if (item["RTO"]) {
           returnarr.push(item)
         }
+        else if (item["RTO_DELIVERED"]) {
+          returndeliveredarr.push(item)
+        }
         setReasonValue(arr)
         setReturnReasonValue(returnarr)
-
+        setReturnDeliveredReasonValue(returndeliveredarr)
       })
+      setintransitData(arr)
+  
   }, [PostOrderTrackData])
-
 
   useEffect(() => {
     let payload = {
@@ -86,11 +97,12 @@ const Ordertrack = () => {
                 type="button"
                 className="btn back-btn"
                 onClick={(e) => {
-                  navigate(`/admin/Orderinner/${param.id}${paramHash.hash}`);
+                  paramHash.hash == "#dashboard" ? navigate(`/admin/dashboard#/`) : navigate(`/admin/Orderinner/${param.id}${paramHash.hash}`);
                   // dispatch(OrderPageBookNavigate(paramHash?.hash));
                 }}
               >
-                Back
+                 
+                {paramHash.hash == "#dashboard" ? "Go to DashBoard" : "Back"}
               </button>
             </div>
           </div>
@@ -98,6 +110,7 @@ const Ordertrack = () => {
           <div className="ordertrack-part  ">
             <div className="left-part">
               <ul className="left-part track-list">
+                {/* pending */}
                 <li className={`active`}>
                   <span>
                     <svg
@@ -115,6 +128,7 @@ const Ordertrack = () => {
                   <p>{PostOrderTrackData?.track_details[0].PENDING}</p>
                   <h4>Your Order has been placed </h4>
                 </li>
+                {/* booked */}
                 <li
                   className={`${PostOrderTrackData?.current_status === "BOOKED" ||
                     PostOrderTrackData?.current_status === "IN_TRANSIT" ||
@@ -161,7 +175,10 @@ const Ordertrack = () => {
                       : ""}
                   </h4>
                 </li>
-                <li
+                {/* in-transit */}
+                 {intransitData?.map((item,id)=>{
+
+             return  <li
                   className={`${PostOrderTrackData?.current_status === "IN_TRANSIT" ||
                     PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
                     PostOrderTrackData?.current_status === "DELIVERED" ||
@@ -184,10 +201,14 @@ const Ordertrack = () => {
                     </svg>
                   </span>
 
-                  <p>{reasonValue && reasonValue[reasonValue?.length - 1]?.IN_TRANSIT}</p>
-                  {reasonValue && reasonValue[reasonValue?.length - 1]?.reason ? <label>Reason</label> : ""}
+                  {/* <p>{reasonValue && reasonValue[reasonValue?.length - 1]?.IN_TRANSIT}</p> */}
+                  <p>{item.IN_TRANSIT}</p> 
 
-                  <p>{reasonValue && reasonValue[reasonValue?.length - 1]?.reason}</p>
+                  {item?.reason ? <label>Reason</label> : ""}
+
+                  <p>{item.reason}</p>  
+                  {/* <p>{reasonValue && reasonValue[reasonValue?.length - 1]?.reason}</p> */}
+
 
                   <h4>
                     {PostOrderTrackData?.current_status === "IN_TRANSIT" ||
@@ -200,7 +221,8 @@ const Ordertrack = () => {
 
 
                 </li>
-
+                 })}
+                {/* out for delivery */}
                 <li
                   className={`${PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
                     PostOrderTrackData?.current_status === "DELIVERED" ||
@@ -233,6 +255,7 @@ const Ordertrack = () => {
                       : ""}
                   </h4>
                 </li>
+                {/* delivered */}
                 <li
                   className={`${PostOrderTrackData?.current_status === "DELIVERED" ||
                     PostOrderTrackData?.current_status === "RTO" ||
@@ -263,6 +286,7 @@ const Ordertrack = () => {
                       : ""}
                   </h4>
                 </li>
+                {/* RTO */}
                 <li
                   className={`${PostOrderTrackData?.current_status === "RTO" ||
                     PostOrderTrackData?.current_status === "RTO_DELIVERED"
@@ -297,6 +321,7 @@ const Ordertrack = () => {
                       : ""}
                   </h4>
                 </li>
+                {/* RTO_Delivered */}
                 <li
                   className={`${PostOrderTrackData?.current_status === "RTO_DELIVERED"
                     ? "active"
@@ -317,10 +342,12 @@ const Ordertrack = () => {
                     </svg>
                   </span>
 
-                  <p>{PostOrderTrackData?.track_details[5]?.RTO_DELIVERED}</p>
+                  <p>{returndeliveredreasonvalue && returndeliveredreasonvalue[returndeliveredreasonvalue?.length - 1]?.RTO_DELIVERED}</p>
+                  {returndeliveredreasonvalue && returndeliveredreasonvalue[returndeliveredreasonvalue?.length - 1]?.reason ? <label>Reason</label>:""}
                   <h4>
+                    {" "}
                     {PostOrderTrackData?.current_status === "RTO_DELIVERED"
-                      ? "Your item has been returned"
+                      ? "Your item has been RTO-Delivered"
                       : ""}
                   </h4>
                 </li>

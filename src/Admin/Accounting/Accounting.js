@@ -5,20 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { reactLocalStorage } from "reactjs-localstorage";
 
-
 const Accounting = () => {
   const navigate = useNavigate();
-
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
-
   const HeaderToggleClassAddData = useSelector(
     (state) =>
       state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
   );
-
- 
 
   return (
     <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>

@@ -7,27 +7,15 @@ import { useDispatch, useSelector } from 'react-redux';
 
 
 const LodingSpiner = ({ loadspiner }) => {
-
     const dispatch = useDispatch()
-
     const [SpinnerTrueFalse, setSpinnerTrueFalse] = useState()
-
     const ShipmentLoaderTrueFalseData = useSelector(state => state.ShipmentLoaderTrueFalseReducer.ShipmentLoaderTrueFalseData)
-
     let paramHash = useLocation();
-    console.log("SpinnerTrueFalse", paramHash)
     // dispatch(HeaderToggleClassAdd("menu_sm_show"))
-
     const CloseSpinnerFun = () => {
-
-        console.log("jhdkbkbm,bkf")
         dispatch(ShipmentLoaderTrueFalse(false))
         // setSpinnerTrueFalse(o=>!o) 
     }
-
-
-    console.log(ShipmentLoaderTrueFalseData, "ShipmentLoaderTrueFalseData")
-
     return (
         <div className=" ">
             <Popup open={loadspiner} position="" model className="sign_up_loader">

@@ -2,74 +2,56 @@ import React, { useEffect, useState } from 'react'
 import { toast } from "react-toastify";
 import { PostTrackingOrderDetails, PostOrderTrack } from '../../../Redux/action/ApiCollection';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TrackOrder from '../../../ProfilePage/TrackOrder';
 import { reactLocalStorage } from "reactjs-localstorage";
 
-
-
-
 function Homebanner() {
-
-
     const navigate = useNavigate();
-
+    let param = useLocation();
     const [orderid, setOrderId] = useState("")
     const [orderiderror, setOrderIdError] = useState(false)
+    const [OrderId1, setOrderId1] = useState(false)
     const dispatch = useDispatch()
-
-    const PostTrackingOrderDetailsData= useSelector(state => state.PostTrackingOrderDetailsReducer.PostTrackingOrderDetailsData?.data)
- 
-    
-  const PostOrderTrackData = useSelector(
-    (state) => state.PostOrderTrackReducer.PostOrderTrackData?.data
-  );
-
-
-   
-  
-  
-    const OrderIDFun =(e)=>{
-
+    const PostTrackingOrderDetailsData = useSelector(state => state.PostTrackingOrderDetailsReducer.PostTrackingOrderDetailsData?.data)
+    const PostOrderTrackData = useSelector(
+        (state) => state.PostOrderTrackReducer.PostOrderTrackData
+    );
+    const OrderIDFun = (e) => {
         var newStr = e.target.value.replace(/  +/g, ' ');
-
-         
-
         setOrderId(newStr)
-
     }
-
-
-    const ConfirmDeleverFun = (e) => {
-         
+    const ConfirmDeleverFun = (e) => {         
         let data = reactLocalStorage.set("order_id", orderid);
-          let Token = reactLocalStorage.get("token", false)
-
-         
-        let payload={ 
-                "oid":orderid
+        let Token = reactLocalStorage.get("token", false)
+        let payload = {
+            "oid": orderid
         }
         e.preventDefault()
-        if (orderid.length < 2) {
+        if (orderid?.length < 2) {
             setOrderIdError(true)
         }
-         
-         else {
+        else {
             setOrderIdError(false)
+            // if(param?.pathname=="/"){
+            // }
+            // else{
+            //  dispatch(PostOrderTrack(payload))
+            // }
             dispatch(PostOrderTrack(payload))
-             
+            setOrderId1(true)
         }
-
     }
-
-    useEffect(()=>{
-
-        if(PostOrderTrackData?.order_id.length > 2){
-            navigate(`/profile/trackorder/${orderid}`)
+    useEffect(() => {
+        setOrderId1(false)
+        if (PostOrderTrackData.status == 200 && param?.pathname == "/" && OrderId1 == true) {
+            if (PostOrderTrackData?.data?.current_status !== "PENDING") {
+                navigate(`/profile/trackorder/${orderid}`)
+            }
         }
-    },[PostOrderTrackData])
+    }, [PostOrderTrackData])
 
-     
+
 
 
 
@@ -79,7 +61,7 @@ function Homebanner() {
             <section className='banner-part'>
                 <div className='container '>
                     <div className='row align-items-center'>
-    
+
                         <div className='col-xxl-6 col-lg-6 col-12 '>
                             <h3>Welcome to <span>Nitro Xpress</span> </h3>
                             <h1>Get The Right Logistic for Your Business </h1>
@@ -91,15 +73,15 @@ function Homebanner() {
 
                                     onChange={(e) => OrderIDFun(e)} />
 
-                                <input type="submit" value="TRACK"  
-                                onClick={(e) => ConfirmDeleverFun(e)}
-                               
+                                <input type="submit" value="TRACK"
+                                    onClick={(e) => ConfirmDeleverFun(e)}
+
                                 />
 
                                 {orderiderror && <span className='text-danger' >
                                     <small>  Enter your Enter your Tracking Id  </small></span>}
                             </form>
-                            
+
 
                             <div>
 
@@ -111,7 +93,7 @@ function Homebanner() {
                             <img src='images/img2.png' alt="img" />
                         </div>
                     </div>
-                            
+
                 </div>
             </section>
 

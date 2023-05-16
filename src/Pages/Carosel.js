@@ -26,24 +26,24 @@ const Carosel = () => {
 
     return (
         <>
-            <div id="carouselExampleIndicators" class="carousel slide account-slider" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <div id="carouselExampleIndicators" className="carousel slide account-slider" data-bs-ride="carousel">
+                <div className="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
                     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
                     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
                 </div>
-                <div class="carousel-inner" >
-                    <div class="carousel-item active"  data-bs-interval="2000">
+                <div className="carousel-inner" >
+                    <div className="carousel-item active"  data-bs-interval="2000">
                         <img src="/images/img10.png" alt="img" />
                         <h3>Welcome aboard my friend</h3>
                         <p>just a couple of clicks and we start</p>
                     </div>
-                    <div class="carousel-item" data-bs-interval="2000">
+                    <div className="carousel-item" data-bs-interval="2000">
                         <img src="/images/img15.png" alt="img" />
                         <h3>Welcome aboard my friend</h3>
                         <p>just a couple of clicks and we start</p>
                     </div>
-                    <div class="carousel-item" data-bs-interval="2000">
+                    <div className="carousel-item" data-bs-interval="2000">
                         <img src="/images/img16.png" alt="img" />
                         <h3>Welcome aboard my friend</h3>
                         <p>just a couple of clicks and we start</p>

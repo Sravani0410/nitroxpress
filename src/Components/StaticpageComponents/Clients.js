@@ -8,7 +8,7 @@ function Clients() {
           <div className='col-12'>
             <h2 className='text-center'> Our Clients </h2> 
           </div>
-          <div class="owl-carousel owl-theme client-slider">
+          <div className="owl-carousel owl-theme client-slider">
             <div className="item">
               <img src="images/logo1.png" alt="clint-logo" />
             </div>

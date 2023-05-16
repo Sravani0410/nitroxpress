@@ -39,7 +39,7 @@ const UserSetting = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  let IsAdminRole=reactLocalStorage.get("Admin_Role",false)
 
 
   const ToggleFunData = useSelector(
@@ -92,9 +92,6 @@ const UserSetting = () => {
     }
 
   }, [PatchEditCategoryDetailsData])
-
-  console.log("aw", GetSettingViewPermissionData)
-
   const AddCategory = (e) => {
     let payload = {
       category_name: categoryname,
@@ -104,7 +101,6 @@ const UserSetting = () => {
     // dispatch(PatchEditCategoryDetails(payload))
     setAddCategory((o) => !o)
     // setEditCategory((o) => !o)
-    console.log("payloadgfh", payload)
   }
 
   const DeleteCategory = (e, data) => {
@@ -113,23 +109,16 @@ const UserSetting = () => {
     }
     dispatch(DeleteCategoryDetails(deleted))
   }
-
-
   const EditCategory = (e, data) => {
-    console.log(data)
-
     setCategoryId(data?.id)
     setCategoryName(data?.category_name);
     setPermissionData(data?.permission);
     setUserAccess(data?.user_access);
     setFromDate(data?.from_date);
     setToDate(data?.to_date);
-
     setEditCategory((o) => !o)
   }
-
   const EditSaveBtn = (e) => {
-
     let edit = {
       "category_name": categoryname,
       "permission": oneditfixedpermissiondata,
@@ -139,30 +128,19 @@ const UserSetting = () => {
       // "to_date": todate,
       // "category_id": categoryid
     }
-
-    console.log("editedit", edit)
-
     dispatch(PatchEditCategoryDetails(edit))
-
   }
-
   const onSelect = (selectedList, selectedItem) => {
     let array = [];
     selectedList.map((item, id) => {
       array.push(item);
     });
-
-
     let pyloadData = array.map((item, id) => {
-
       return item.permission
     })
-
     setPermissionData(pyloadData);
   };
-
   const onRemove = (selectedList, removedItem) => {
-
     let array = [];
     selectedList.map((item, id) => {
       array.push(item);
@@ -172,67 +150,40 @@ const UserSetting = () => {
 
       return item.permission
     })
-
     setPermissionData(pyloadData);
-
-
   };
-
-
   const onSelectEdit = (selectedList, selectedItem) => {
-
-    console.log("selectedList", selectedItem)
     setSelectedEditPermission([...selectededitpermission, selectedItem])
-
     let array = [];
     selectedList.map((item, id) => {
       array.push(item?.permission);
     });
-
     setEditPermissionData(array);
   };
-
-  console.log("permissiondatapermissiondata", permissiondata)
-
   const onRemoveEdit = (selectedList, removedItem) => {
-
     setEditRemovedPermissionData([...editremovedpermissiondata, removedItem])
-
     let array = [];
     selectedList.map((item, id) => {
       array.push(item?.permission);
     });
-
     setEditPermissionData(array);
   };
-
   useEffect(() => {
-
     if (permissiondata) {
       let arrayData = []
       let filteredData = permissiondata.map((item) => {
         return item.permission
       })
       arrayData.push(filteredData)
-      console.log("arrayData", arrayData)
-
       if (editpermissiondata !== false) {
         setOnEditFixedPermissionData(editpermissiondata)
       }
       else {
         setOnEditFixedPermissionData(permissiondata)
       }
-
     }
-
-
   }, [permissiondata, editpermissiondata])
-
-
-  console.log("oneditfixedpermissiondataoneditfixedpermissiondata", oneditfixedpermissiondata)
-
   const ShowPermissionDataFun = (e, data) => {
-
     setShowPermissionObjectData(data);
     setShowPermissionDataTrueFalse((o) => !o);
   };
@@ -245,20 +196,20 @@ const UserSetting = () => {
         <Sidebar />
         <div className="content-sec usersetting-sec">
           <div className="title-bar ">
-            <button type="button"
+            {IsAdminRole==="true"?<button type="button"
 
               className={`btn add-btn ${PermissionData()?.CREATE_CATEGORY == "CREATE_CATEGORY" ? " " : "permission_blur"}`}
 
               onClick={(e) =>
                 PermissionData()?.CREATE_CATEGORY == "CREATE_CATEGORY" ?
                   setAddCategory((o) => !o) : ""}>
-              + Add Category </button>
+              + Add Category </button>:""}
             <button className="backbtn" type="button" onClick={(e) => {
               navigate("/admin/setting");
             }}> Back </button>
           </div>
 
-          <div className="usersetting-table">
+          {IsAdminRole==="true"?<div className="usersetting-table">
             <table>
               <tr>
                 <th>Category</th>
@@ -270,7 +221,6 @@ const UserSetting = () => {
               {PermissionData()?.VIEW_CATEGORY == "VIEW_CATEGORY" ?
                 GetCategoryDetailsData &&
                 GetCategoryDetailsData?.category_details_list.map((item, id) => {
-                  console.log("itemitem12", item)
                   return (
                     <tr >
                       <td>{item.category_name}</td>
@@ -323,7 +273,7 @@ const UserSetting = () => {
                 }) : ""}
 
             </table>
-          </div>
+          </div>:<h3>Only Admin Can Access This Page</h3>}
 
           {/* =============================Add Category========================================= */}
           {addcategory && (

@@ -39,14 +39,14 @@ const Setting = () => {
               <img src={warehouse} alt='img' className="w-100"  />
               <h3>Warehouse</h3>
             </li>
-            <li onClick={(e) => {
+            {Admin_Role == "true" ? <li onClick={(e) => {
                   navigate("/admin/setting/employee");
                 }}> 
                 <img src={Employees} alt='img' className="w-100"   />
 
               
               <h3>Employees</h3>
-            </li>
+            </li>:""}
             <li onClick={(e) => {
                   navigate("/admin/setting/userprofile");
                 }}>
@@ -67,12 +67,12 @@ const Setting = () => {
               <h3>Setting</h3>
             </li>}
 
-            <li onClick={(e) => { 
+           { Admin_Role == "true" ? <li onClick={(e) => { 
                   navigate("/admin/setting/usersetting");
                 }}>
               <img src={Setting_img} alt='img' className="w-100"   />
               <h3>Categories</h3>
-            </li>
+            </li>:""}
 
             <li 
             onClick={(e) => {

@@ -1,30 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
-
 import { reactLocalStorage } from "reactjs-localstorage";
-
 const Header = () => {
   const [toggleopenclose, setToggleOpenClose] = useState(false);
-  let param = useLocation();
   const [profiledropdownshow, setProfileDropDownShow] = useState(false)
-
-
   const navigate = useNavigate();
-
+  let param = useLocation();
 
   const ToggleOpenHideFun = () => {
     setToggleOpenClose((o) => !o);
   };
-
   let Token = reactLocalStorage.get("token", false)
-
-  console.log("tokeen", Token)
-
-
   let Role = reactLocalStorage.get("Admin_Role", false)
-
-
+  let B2bRole = reactLocalStorage.get("Is_Business", false)
+  let as_individual = reactLocalStorage.get("as_individual", false)
 
   const Logoutfun = () => {
     reactLocalStorage.remove('token')
@@ -34,21 +24,18 @@ const Header = () => {
     navigate("/")
   }
 
+  console.log("mnsbsf", as_individual)
 
   const profilefun = () => {
     reactLocalStorage.get('token')
     let Role = reactLocalStorage.get("Admin_Role", false)
-    console.log("mnhsdfjsnbsdvmf", JSON.parse(Role))
-
-    if (JSON.parse(Role) == true) {
-
+    if (JSON.parse(as_individual) !== true) {
       navigate("/admin/setting/adminsetting#pending")
       // window.location.reload(true);
     } else {
       navigate("/profile")
     }
   }
-
 
   return (
     <header
@@ -83,8 +70,7 @@ const Header = () => {
                 >
                   Home
                 </a>
-                {/* <NavLink to='/' className={` ${param.pathname === "/" ? "active" : ""} `}>Home</NavLink> */}
-              </li>
+               </li>
               <li>
                 <a
                   href="/Servicepage"
@@ -93,12 +79,8 @@ const Header = () => {
                 >
                   Services
                 </a>
-                {/* <NavLink to='/Servicepage'>Services</NavLink> */}
-              </li>
-              {/* <li> 
-                                <a href='#contact_page'>Contact Us</a> 
-                            </li> */}
-              <li>
+               </li>
+               <li>
                 <a
                   href="/support"
                   className={` ${param.pathname === "/support" ? "active" : ""
@@ -109,48 +91,53 @@ const Header = () => {
                 {/* <NavLink to='/support' className={` ${param.pathname === "/support" ? "active" : ""} `}>Support</NavLink>  */}
               </li>
               {/* <li><NavLink to='/signup' className={` ${param.pathname === "/signup" ? "active" : ""} `}> Login / Sign up</NavLink> </li> */}
-              
-        { JSON.parse(Role) !== true? <>
-           {Token !== false ? <li>
-                <NavLink to="/shipping" className="btn">
-                  Ship with us
-                </NavLink>
+              {/* JSON.parse(B2bRole) */}
 
-              </li> : <li>
-                <NavLink to="/login" className="btn">
-                  Ship with us
-                </NavLink>
+              {JSON.parse(as_individual) ? <>
+                {Token !== false ? <li>
+                  <NavLink to="/shipping" className="btn">
+                    Ship with us
+                  </NavLink>
 
-              </li>
-              } </>
-               : 
-               <li>
-                <NavLink to="/admin/dashboard" className="btn">
-                 {JSON.parse(Role)== true || Token? " Go to Dashboard":"Ship with us"}  
-                </NavLink>
+                </li> : <li>
+                  <NavLink to="/login" className="btn">
+                    Ship with us
+                  </NavLink>
 
-              </li>}
+                </li>
+                } </>
+                :
+                <li>
+                  {JSON.parse(Role) == true || Token ? <NavLink to="/admin/dashboard" className="btn">
+                     Go to Dashboard 
+                  </NavLink>
+                    :
+                    <NavLink to="/login" className="btn">
+                      Ship with us
+                    </NavLink>
+                    
+                    }
+
+                </li>}
 
 
-              {/* <li><NavLink to='javascript:void'>Ship with us</NavLink> </li> */}
-              {Token == false ? <li>
+               {Token == false ? <li>
                 <NavLink
                   to="/login"
-                  className={`btn ${
-                    param.pathname === "/signup" ? "active" : ""
-                  } `}
+                  className={`btn ${param.pathname === "/signup" ? "active" : ""
+                    } `}
                 >
                   {" "}
                   Login
                 </NavLink>{" "}
               </li> :
                 <li>
-                  < div className='user-box' onClick={() => setProfileDropDownShow(o => !o)} >
+                  <div className='user-box' onClick={() => setProfileDropDownShow(o => !o)} >
                     <img src="/images/icon30.png" alt="img" />
                     {profiledropdownshow && <ul className="dropdown-menubar">
                       {/* <li><a href='javascript:void' onClick={() => setProfileDetailsShow(o => !o)}>My Profile</a> </li> */}
-                      <li><a href='javascript:void' onClick={() => profilefun()}>My Profile</a> </li>
-                      <li><a href='javascript:void' onClick={() => Logoutfun()}>Log out</a> </li>
+                      <li><a href='#' onClick={() => profilefun()}>My Profile</a> </li>
+                      <li><a href='#' onClick={() => Logoutfun()}>Log out</a> </li>
                     </ul>}
                   </div>
                 </li>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Profileheader from "../Components/DashboardLayout/Profileheader";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -13,14 +13,15 @@ const TrackOrder = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   let param = useParams();
-  let paramHash = useLocation();
-
-  const PostOrderTrackData = useSelector(
+  let paramHash = useLocation(); 
+const [reasonValue, setReasonValue] = useState("")
+const [returnreasonvalue, setReturnReasonValue] = useState("")
+ const [intransitData, setintransitData] = useState([])  
+const PostOrderTrackData = useSelector(
     (state) => state.PostOrderTrackReducer.PostOrderTrackData?.data
   );
 
 
-  console.log("ppppppppp", param)
 
   useEffect(() => {
     let payload = {
@@ -31,7 +32,25 @@ const TrackOrder = () => {
 
   
 
-  console.log("PostOrderTrackData", PostOrderTrackData);
+   useEffect(() => {
+    let arr = []
+    let returnarr = []
+    PostOrderTrackData?.track_details
+      ?.map((item, index) => {
+        if (item["IN_TRANSIT"]) {
+        //  if(item?.reason?.length!==0){
+            arr.push(item)
+          // }
+        }
+        else if (item["RTO"]) {
+          returnarr.push(item)
+        }
+        setReasonValue(arr)
+        setReturnReasonValue(returnarr)
+
+      })
+      setintransitData(arr)
+  }, [PostOrderTrackData])
 
   return (
     <Layout
@@ -68,6 +87,7 @@ const TrackOrder = () => {
                 className={`${
                   PostOrderTrackData?.current_status === "BOOKED" ||
                   PostOrderTrackData?.current_status === "IN_TRANSIT" ||
+                  PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
                   PostOrderTrackData?.current_status === "DELIVERED" ||
                   PostOrderTrackData?.current_status === "RTO" ||
                   PostOrderTrackData?.current_status === "RTO_DELIVERED"
@@ -102,6 +122,7 @@ const TrackOrder = () => {
                 <h4>
                   {PostOrderTrackData?.current_status === "BOOKED" ||
                   PostOrderTrackData?.current_status === "IN_TRANSIT" ||
+                  PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
                   PostOrderTrackData?.current_status === "DELIVERED" ||
                   PostOrderTrackData?.current_status === "RTO" ||
                   PostOrderTrackData?.current_status === "RTO_DELIVERED"
@@ -109,9 +130,11 @@ const TrackOrder = () => {
                     : ""}
                 </h4>
               </li>
-              <li
+              {intransitData?.map((item,id)=>{
+              return <li
                 className={`${
                   PostOrderTrackData?.current_status === "IN_TRANSIT" ||
+                  PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
                   PostOrderTrackData?.current_status === "DELIVERED" ||
                   PostOrderTrackData?.current_status === "RTO" ||
                   PostOrderTrackData?.current_status === "RTO_DELIVERED"
@@ -132,18 +155,23 @@ const TrackOrder = () => {
                   </svg>
                 </span>
 
-                <p>{PostOrderTrackData?.track_details[2]?.IN_TRANSIT}</p>
+                {/* <p>{PostOrderTrackData?.track_details[2]?.IN_TRANSIT}</p> */}
+                <p>{item?.IN_TRANSIT}</p>
+                {item?.reason ? <label>Reason</label> : ""}
+
+                <p>{item?.reason}</p>
                 <h4>
                   {PostOrderTrackData?.current_status === "IN_TRANSIT" ||
                   PostOrderTrackData?.current_status === "DELIVERED" ||
                   PostOrderTrackData?.current_status === "RTO" ||
                   PostOrderTrackData?.current_status === "RTO_DELIVERED"
-                    ? "Your item is out for delivery"
+                    ? "Your item is In-Transit"
                     : ""}
                 </h4>
               </li>
+            })}
               <li
-                className={`${
+                className={`${PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
                   PostOrderTrackData?.current_status === "DELIVERED" ||
                   PostOrderTrackData?.current_status === "RTO" ||
                   PostOrderTrackData?.current_status === "RTO_DELIVERED"
@@ -164,7 +192,39 @@ const TrackOrder = () => {
                     <path d="M17.7806 5.43867C17.6912 5.52805 17.6865 5.59392 17.6865 6.85002C17.6865 8.10613 17.6912 8.17199 17.7806 8.26138C17.87 8.35076 17.9359 8.35547 19.7565 8.35547C21.5772 8.35547 21.643 8.35076 21.7324 8.26138C21.7936 8.20022 21.8265 8.10613 21.8265 7.97911C21.8265 7.80504 21.7606 7.71565 20.8809 6.65243C20.3587 6.02203 19.8929 5.4716 19.8412 5.42455C19.7565 5.35399 19.6342 5.34458 18.8109 5.34458C17.9359 5.34458 17.87 5.34928 17.7806 5.43867ZM19.8506 6.69477C20.1235 7.01939 20.4057 7.35811 20.4763 7.44279L20.608 7.60275H19.526H18.4392V6.85002V6.0973H18.9003H19.3566L19.8506 6.69477Z" />
                   </svg>
                 </span>
-                <p>{PostOrderTrackData?.track_details[3]?.DELIVERED}</p>
+                
+                <p>{PostOrderTrackData?.track_details[2]?.OUT_FOR_DELIVERY}</p>
+                  <h4>
+                    {PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
+                      PostOrderTrackData?.current_status === "DELIVERED" ||
+                      PostOrderTrackData?.current_status === "RTO" ||
+                      PostOrderTrackData?.current_status === "RTO_DELIVERED"
+                      ? "Your item is Out For Delivery"
+                      : ""}
+                  </h4>
+              </li>
+               <li 
+                 className={`${PostOrderTrackData?.current_status === "DELIVERED" ||
+                 PostOrderTrackData?.current_status === "RTO" ||
+                 PostOrderTrackData?.current_status === "RTO_DELIVERED"
+                 ? "active"
+                 : ""
+                 }`}
+             >
+               <span>
+                    <svg
+                      width="24"
+                      height="14"
+                      viewBox="0 0 24 14"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M2.03425 0.521558C1.5638 0.667398 1.14039 1.04846 0.900459 1.53303L0.773438 1.79178V6.28459V10.7774L0.909869 11.0597C1.21096 11.6713 1.79432 12.0711 2.44354 12.1088C2.76815 12.1276 2.8199 12.1182 2.90929 12.0288C3.04101 11.8971 3.04572 11.5913 2.9187 11.4643C2.86695 11.4125 2.72581 11.3561 2.59879 11.3419C2.12363 11.2714 1.80373 11.0503 1.62496 10.6598C1.54498 10.4763 1.52616 10.3305 1.51205 9.58716L1.49323 8.73094H8.83698H16.1807V10.0482V11.3655H12.4218H8.66762L8.56412 11.0597C8.24421 10.0764 7.43974 9.48837 6.40945 9.48366C5.70848 9.48366 5.19098 9.70007 4.73935 10.1799C4.32064 10.6269 4.12776 11.1161 4.12776 11.7418C4.12776 12.3675 4.32064 12.8568 4.73935 13.3037C5.19098 13.7836 5.70848 14 6.40945 14C7.43974 13.9953 8.24421 13.4072 8.56412 12.424L8.66762 12.1182H12.9864H17.3051L17.3616 12.3158C17.5074 12.8756 17.9732 13.4637 18.4671 13.7271C19.1399 14.0894 19.9961 14.0894 20.6688 13.7271C21.1628 13.4637 21.6286 12.8756 21.7744 12.3158L21.8309 12.1182H22.4848C23.0823 12.1182 23.1528 12.1088 23.2375 12.0241C23.3269 11.9347 23.3316 11.8689 23.3316 9.67655V7.42308L21.9861 5.69182C21.2475 4.73681 20.6077 3.92763 20.5653 3.8947C20.5089 3.85236 20.0667 3.83824 18.7165 3.83824H16.9382L16.924 2.81266L16.9099 1.79178L16.7735 1.50951C16.5947 1.14726 16.2372 0.789715 15.8749 0.610944L15.5927 0.474513L8.91225 0.465104C3.45501 0.460399 2.1942 0.469808 2.03425 0.521558ZM15.4986 1.32603C15.7573 1.46717 15.9408 1.65535 16.0584 1.90939C16.1572 2.11639 16.1572 2.18696 16.1713 5.0473L16.1854 7.97822H8.84168H1.49793L1.51205 5.0473C1.52616 2.18696 1.52616 2.11639 1.62496 1.90939C1.79432 1.54714 2.0907 1.31192 2.46706 1.24605C2.57056 1.22724 5.50148 1.21783 8.98282 1.22253L15.3104 1.22724L15.4986 1.32603ZM21.3463 6.1858L22.5789 7.78063V9.57305V11.3655H22.2025H21.8309L21.7744 11.1679C21.6286 10.608 21.1628 10.02 20.6688 9.75653C19.9961 9.39428 19.1399 9.39428 18.4671 9.75653C17.9732 10.02 17.5074 10.608 17.3616 11.1679C17.3098 11.3561 17.3004 11.3655 17.1216 11.3655H16.9335V7.97822V4.59097H18.5236L20.109 4.59567L21.3463 6.1858ZM6.9834 10.401C7.30331 10.5422 7.52442 10.7445 7.69378 11.0456C7.8161 11.2714 7.83021 11.3372 7.83021 11.7418C7.83021 12.1511 7.8161 12.2123 7.68908 12.4428C7.43033 12.9133 7.02104 13.1579 6.4612 13.1908C6.12247 13.2096 6.0425 13.1955 5.82138 13.0967C5.46855 12.9321 5.24743 12.7251 5.07807 12.3911C4.95575 12.1464 4.93694 12.0523 4.93694 11.7418C4.93694 11.4313 4.95575 11.3372 5.07807 11.0926C5.44032 10.3681 6.2542 10.0764 6.9834 10.401ZM20.156 10.401C20.476 10.5422 20.6971 10.7445 20.8664 11.0456C20.9887 11.2714 21.0029 11.3372 21.0029 11.7418C21.0029 12.1511 20.9887 12.2123 20.8617 12.4428C20.603 12.9133 20.1937 13.1579 19.6338 13.1908C19.2951 13.2096 19.2151 13.1955 18.994 13.0967C18.6412 12.9321 18.4201 12.7251 18.2507 12.3911C18.1284 12.1464 18.1096 12.0523 18.1096 11.7418C18.1096 11.4313 18.1284 11.3372 18.2507 11.0926C18.613 10.3681 19.4268 10.0764 20.156 10.401Z" />
+                      <path d="M11.5601 1.80542C11.5178 1.82424 10.3369 2.831 8.93029 4.04947C7.52834 5.26324 6.3334 6.29353 6.27694 6.34057C6.17815 6.41585 6.15933 6.39703 4.9879 5.06094C4.32927 4.31293 3.76473 3.69193 3.72709 3.67782C3.44482 3.56961 3.14844 3.75779 3.14844 4.04477C3.14844 4.19061 3.28487 4.35997 4.49393 5.7431C5.23254 6.58521 5.88647 7.3097 5.95233 7.34734C6.0276 7.39909 6.11699 7.4132 6.21108 7.39439C6.30987 7.37557 7.14728 6.6793 8.99615 5.07976C12.247 2.26646 12.087 2.4123 12.087 2.16296C12.087 2.03594 12.0588 1.94185 12.0023 1.8948C11.9035 1.80071 11.673 1.75837 11.5601 1.80542Z" />
+                      <path d="M17.7806 5.43867C17.6912 5.52805 17.6865 5.59392 17.6865 6.85002C17.6865 8.10613 17.6912 8.17199 17.7806 8.26138C17.87 8.35076 17.9359 8.35547 19.7565 8.35547C21.5772 8.35547 21.643 8.35076 21.7324 8.26138C21.7936 8.20022 21.8265 8.10613 21.8265 7.97911C21.8265 7.80504 21.7606 7.71565 20.8809 6.65243C20.3587 6.02203 19.8929 5.4716 19.8412 5.42455C19.7565 5.35399 19.6342 5.34458 18.8109 5.34458C17.9359 5.34458 17.87 5.34928 17.7806 5.43867ZM19.8506 6.69477C20.1235 7.01939 20.4057 7.35811 20.4763 7.44279L20.608 7.60275H19.526H18.4392V6.85002V6.0973H18.9003H19.3566L19.8506 6.69477Z" />
+                    </svg>
+                  </span>
+              <p>{PostOrderTrackData?.track_details[3]?.DELIVERED}</p>
                 <h4>
                   {PostOrderTrackData?.current_status === "DELIVERED" ||
                   PostOrderTrackData?.current_status === "RTO" ||
@@ -172,7 +232,8 @@ const TrackOrder = () => {
                     ? "Your item has been delivered"
                     : ""}
                 </h4>
-              </li>
+              </li> 
+            
               <li
                 className={`${
                   PostOrderTrackData?.current_status === "RTO" ||
@@ -196,7 +257,11 @@ const TrackOrder = () => {
                   </svg>
                 </span>
 
-                <p>{PostOrderTrackData?.track_details[4]?.RTO}</p>
+                {/* <p>{PostOrderTrackData?.track_details[4]?.RTO}</p> */}
+                <p>{returnreasonvalue && returnreasonvalue[returnreasonvalue?.length - 1]?.RTO}</p>
+                  {returnreasonvalue && returnreasonvalue[returnreasonvalue?.length - 1]?.reason ? <label>Reason</label> : ""}
+
+                  <p>{returnreasonvalue && returnreasonvalue[returnreasonvalue?.length - 1]?.reason}</p>
                 <h4>
                   {" "}
                   {PostOrderTrackData?.current_status === "RTO" ||

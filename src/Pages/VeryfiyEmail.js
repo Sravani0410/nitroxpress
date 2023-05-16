@@ -4,8 +4,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import LodingSpiner from "../Components/LodingSpiner";
-
-import { useToasts } from "react-toast-notifications";
 import Carosel from "./Carosel";
 import { getViewProfile } from "../Redux/action/ApiCollection";
 
@@ -18,7 +16,6 @@ const VeryfiyCode = () => {
 
   const products = useSelector((state) => state.productReducer.products);
   let navigate = useNavigate();
-  const { addToast } = useToasts();
   const dispatch = useDispatch();
 
   let emaildata = reactLocalStorage.get("userDetails", true);
@@ -26,22 +23,18 @@ const VeryfiyCode = () => {
 
   let mail = reactLocalStorage.get("User_Mail");
   let user_right = reactLocalStorage.get("user_right");
-  console.log("user_rightuser_right", user_right);
 
   // as_business
 
   const VerifyOtp = () => {
     setLoadSpiner((o) => !o);
-
     axios
       .post(`${process.env.REACT_APP_BASE_URL}/verifyemailphoneotp`, {
         email: mail,
         email_otp: otpvalue,
       })
       .then((response) => {
-        console.log(response);
         setLoadSpiner((o) => !o);
-
         reactLocalStorage.set("token", response.data.Token);
         if (user_right == "as_business") {
           navigate("/login");
@@ -58,36 +51,30 @@ const VeryfiyCode = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
         setLoadSpiner((o) => !o);
-        addToast(err.response.data.message, {
-          appearance: "error",
-          autoDismiss: true,
-        });
+        toast.warn(err.response.data.message);
+
+
       });
   };
 
   const handleChange = (otpvalue) => setOtpValue(otpvalue);
-
   const SendOtpFun = () => {
     setLoadSpiner((o) => !o);
-
     axios
       .post(`${process.env.REACT_APP_BASE_URL}/resendotp`, {
         email: mail,
       })
       .then((response) => {
-        console.log(response);
         setLoadSpiner((o) => !o);
         setOtpValue("")
         toast.success("Please check your email");
-         
+
       })
       .catch((err) => {
-        console.log(err);
         setLoadSpiner((o) => !o);
         toast.warn(err.response.data.message);
-         
+
       });
   };
   return (
@@ -109,8 +96,9 @@ const VeryfiyCode = () => {
               <OtpInput
                 value={otpvalue}
                 onChange={handleChange}
-                numInputs={4}
-                focusStyle={false}
+                numInputs={4} 
+                // renderSeparator={<span>-</span>}
+      renderInput={(props) => <input className="otp_container" {...props} />}
               />
             </div>
             <div className="send_otp">

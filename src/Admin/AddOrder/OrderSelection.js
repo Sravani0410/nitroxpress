@@ -59,23 +59,23 @@ const OrderSelection = () => {
               <div className="userinfo-body">
                 <div className="row align-items-center">
                   <div className="col-md-6 ">
-                    <label class="b2b-box ">
+                    <label className="b2b-box ">
                       B2B
                       <input type="checkbox" checked="checked" />
-                      <span class="checkmark"></span>
+                      <span className="checkmark"></span>
                       <div className="">For business shipment above 20kg</div>
                     </label>
 
-                    <label class="b2b-box mt-4">
+                    <label className="b2b-box mt-4">
                       B2C
                       <input type="checkbox" />
-                      <span class="checkmark"></span>
+                      <span className="checkmark"></span>
                       <div className="">For Small shipment 10-20kg</div>
                     </label>
-                    <label class="b2b-box mt-4">
+                    <label className="b2b-box mt-4">
                       C2C
                       <input type="checkbox" />
-                      <span class="checkmark"></span>
+                      <span className="checkmark"></span>
                       <div className="">Shipment less than 10Kg</div>
                     </label>
                   </div>

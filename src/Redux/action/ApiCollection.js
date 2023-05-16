@@ -8,30 +8,20 @@ import { TokenDataValidCheck1 } from "../../Authanticate";
 import { useEffect } from "react";
 var fs = require("fs");
 
-
-
-
-let BearerToken = reactLocalStorage.get("token", false); 
- 
-
+let BearerToken = reactLocalStorage.get("token", false);
 
 axios.interceptors.response.use(
-  (response) => { 
-    return response
-
+  (response) => {
+    return response;
   },
-  (error) => { 
-    if (error?.response?.status == 401) { 
-      reactLocalStorage.clear(); 
+  (error) => {
+    if (error?.response?.status == 401) {
+      reactLocalStorage.clear();
       reactLocalStorage.set("Autherization", "unAutherized");
-      
-     }
+    }
     return Promise.reject(error);
   }
 );
-
- 
-
 
 export const getViewProfile = () => {
   return async (dispatch, getState) => {
@@ -42,11 +32,9 @@ export const getViewProfile = () => {
         },
       })
       .then((res) => {
-        console.log(res);
         return res;
       })
       .catch((err) => {
-        console.log(err);
         return err;
       });
 
@@ -73,18 +61,19 @@ export const getViewProfile = () => {
 export const getOrderAddress = (payload) => {
   return async (dispatch, getState) => {
     const response = await axios
-      .post(`${process.env.REACT_APP_BASE_URL}/address/saved_address`,
-      payload, {
-        headers: {
-          Authorization: `Bearer ${BearerToken}`,
-        },
-      })
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/address/saved_address`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
       .then((res) => {
-        console.log(res);
         return res;
       })
       .catch((err) => {
-        console.log(err);
         return err;
       });
 
@@ -122,14 +111,12 @@ export const PatchUserDetails = (payload) => {
         },
       })
       .then((res) => {
-        console.log(res);
         toast.success("Profile updated successfully");
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(userPatchadata());
@@ -151,17 +138,14 @@ export const DeleteUserAddress = (payload) => {
         },
       })
       .then((res) => {
-        console.log(res);
         // dispatch(GetSettingUserInfo());
         toast.success("Address Deleted successfully");
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
-    console.log(response);
     dispatch(DeleteAddressData(response));
   };
 };
@@ -172,7 +156,6 @@ const ResetPasswordPatch = (data) => ({
 });
 
 export const ResetPatchPassword = (payload) => {
-  console.log(payload);
   return async (dispatch, getState) => {
     const responce = await axios
       .patch(
@@ -185,14 +168,12 @@ export const ResetPatchPassword = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         toast.success("password changed successfully");
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(ResetPasswordPatch(responce));
@@ -204,8 +185,6 @@ const PostPincodesAvailabilityDispatch = (data) => ({
   payload: data,
 });
 export const PostPincodesAvailability = (payload) => {
-  console.log(payload);
-
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -218,7 +197,6 @@ export const PostPincodesAvailability = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         // if(res.data.message !=='Pin code not available'){
         //     toast.success(res.data.message);
         // }
@@ -230,7 +208,6 @@ export const PostPincodesAvailability = (payload) => {
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err.response;
       });
     dispatch(PostPincodesAvailabilityDispatch(responce));
@@ -242,8 +219,6 @@ const PostPincodesDeliveredDispatch = (data) => ({
   payload: data,
 });
 export const PostPincodesDelivered = (payload) => {
-  console.log(payload);
-
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -272,8 +247,6 @@ const PostPickupAddressDispatch = (data) => ({
   payload: data,
 });
 export const PostPickupAddress = (payload) => {
-  console.log(payload);
-
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -286,14 +259,11 @@ export const PostPickupAddress = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         // toast.success(res.data.message);
-
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostPickupAddressDispatch(responce));
@@ -306,7 +276,6 @@ const PatchPickupAddressDispatch = (data) => ({
 });
 
 export const PatchPickupAddress = (payload) => {
-  console.log("payloadsss");
   return async (dispatch, getState) => {
     const responce = await axios
       .patch(
@@ -319,14 +288,11 @@ export const PatchPickupAddress = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         // toast.success(res.data.message);
-
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PatchPickupAddressDispatch(responce));
@@ -337,8 +303,6 @@ const PostDeliveryAddressDispatch = (data) => ({
   payload: data,
 });
 export const PostDeliveryAddress = (payload) => {
-  console.log(payload);
-
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -351,14 +315,12 @@ export const PostDeliveryAddress = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         toast.success("address added successfully");
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostDeliveryAddressDispatch(responce));
@@ -375,6 +337,7 @@ export const PostShipmentDetails = (
   payloadPickupAddress,
   pickupPatchObjectId
 ) => {
+  console.log("PostShipmentDetails===>", PostShipmentDetails);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -387,22 +350,17 @@ export const PostShipmentDetails = (
         }
       )
       .then((res) => {
-        console.log(res);
-        console.log("pickupPatchObjectId", pickupPatchObjectId);
-
         dispatch(PostDeliveryAddress(payloadDeliveredAddress));
-        // pickupPatchObjectId === null 
+        // pickupPatchObjectId === null
         //  dispatch(PostPickupAddress(payloadPickupAddress))
-        // ? 
-        dispatch(PostPickupAddress(payloadPickupAddress))
+        // ?
+        dispatch(PostPickupAddress(payloadPickupAddress));
         // :  dispatch(PatchPickupAddress(payloadPickupAddress));
-
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostShipmentDetailsDispatch(responce));
@@ -423,13 +381,11 @@ export const GetShipmentDetails = (payload) => {
         }
       )
       .then((res) => {
-        console.log("resresres122", res);
         toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch({
@@ -447,7 +403,6 @@ const GetAdminDashboardViewOrderDispatch = (data) => ({
 });
 export const GetAdminDashboardViewOrder = (payload) => {
   let data = JSON.stringify(payload);
-  console.log("1121221122", data);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -460,13 +415,11 @@ export const GetAdminDashboardViewOrder = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetAdminDashboardViewOrderDispatch(responce));
@@ -479,7 +432,6 @@ const PostAdminDashboardTransactionDispatch = (data) => ({
 });
 export const PostAdminDashboardTransaction = (payload) => {
   let data = JSON.stringify(payload);
-  console.log("11212212", payload);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -492,14 +444,12 @@ export const PostAdminDashboardTransaction = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         // toast.success(res.data.message);
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostAdminDashboardTransactionDispatch(responce));
@@ -524,14 +474,12 @@ export const PostAdminDashboardShippingMatrix = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         // toast.success(res.data.message);
 
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostAdminDashboardShippingMatrixDispatch(responce));
@@ -552,7 +500,6 @@ export const GetAdminOrderIntransit = (payload) => {
         },
       })
       .then((res) => {
-        console.log(res);
         // toast.success(res.data.message);
         dispatch(GetAdminOrderDelivered());
 
@@ -560,7 +507,6 @@ export const GetAdminOrderIntransit = (payload) => {
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -597,12 +543,10 @@ export const GetAdminOrderDelivered = (payload) => {
       .then((res) => {
         // toast.success(res.data.message);
         dispatch(GetAdminOrderReturn());
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -617,20 +561,21 @@ const GetAdminOutForDeliveryDispatch = (data) => ({
 export const GetAdminOutForDelivery = (payload) => {
   return async (dispatch, getState) => {
     const response = await axios
-      .get(`${process.env.REACT_APP_BASE_URL}/admin_panel/orders/outfor_delivery_details`, {
-        headers: {
-          Authorization: `Bearer ${BearerToken}`,
-        },
-      })
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/outfor_delivery_details`,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
       .then((res) => {
         // toast.success(res.data.message);
         dispatch(GetAdminOrderReturn());
-        console.log("reshsdghhfd", res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -655,13 +600,10 @@ export const GetAdminOrderPending = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
-        // dispatch(PostAdminOrderRebook())
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -698,34 +640,55 @@ export const GetAdminOrderReturn = (payload) => {
         }
       )
       .then((res) => {
+        dispatch(GetAdminOrderRTODelivered());
         // toast.success(res.data.message);
-        console.log("jgzdjfvZX", res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
-      }); 
-    
+      });
 
     dispatch(GetAdminOrderReturnDispatch(response));
   };
 };
 
+const GetAdminOrderRTODeliveredDispatch = (data) => ({
+  type: actionType.GetAdminOrderRTODeliveredDispatch_Type,
+  payload: data,
+});
+export const GetAdminOrderRTODelivered = (payload) => {
+  // console.log("hsgjahj",payload)
+  return async (dispatch, getState) => {
+    const response = await axios
+      .get(`${process.env.REACT_APP_BASE_URL}/admin_panel/orders/rto_details`, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
+      .then((res) => {
+        // toast.success(res.data.message);
+        return res;
+      })
+      .catch((err) => {
+        toast.warn(err.response.data.message);
+        return err;
+      });
+
+    dispatch(GetAdminOrderRTODeliveredDispatch(response));
+  };
+};
 
 const PostAdminOrderRebookDispatch = (data) => ({
   type: actionType.GetAdminOrderRebookDispatch_Type,
   payload: data,
 });
 export const PostAdminOrderRebook = (payload) => {
-
-  console.log("nbvnbdn",payload)
   return async (dispatch, getState) => {
     const response = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/rebook_orders`,
-          payload ,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${BearerToken}`,
@@ -734,24 +697,19 @@ export const PostAdminOrderRebook = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log("jgzdjfvZX", res);
-        
+
         dispatch(GetAdminOrderBooked());
         dispatch(GetAdminOrderPending());
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
-      }); 
-    
+      });
 
     dispatch(PostAdminOrderRebookDispatch(response));
   };
 };
-
-
 
 const GetAdminOrderSummaryDispatch = (data) => ({
   type: actionType.GetAdminOrderSummaryDispatch_Type,
@@ -771,13 +729,11 @@ export const GetAdminOrderSummary = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetAdminOrderSummaryDispatch(responce));
@@ -801,13 +757,11 @@ export const GetAdminOrderBooked = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log("gdvjhvj", res);
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -838,7 +792,7 @@ export const ToggleSideBar = (data) => ({
 export const PaymentPopupValue = (data) => ({
   type: actionType.PostAdminOrderAddShipmentDispatch_Type,
   payload: data,
-})
+});
 
 export const OrderPageBookNavigate = (data) => ({
   type: actionType.OrderPageBookNavigate_Type,
@@ -865,7 +819,6 @@ export const ToggleSideBarTrueFalse = (data) => ({
   payload: data,
 });
 
-
 const PostAdminOrderFilterationDispatch = (data) => ({
   type: actionType.PostAdminOrderFilterationDispatch_Type,
   payload: data,
@@ -884,12 +837,10 @@ export const PostAdminOrderFilteration = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log("gdvjhvj", res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostAdminOrderFilterationDispatch(responce));
@@ -920,7 +871,6 @@ export const GetAdminOrderCustomer = (payload) => {
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetAdminOrderCustomerDispatch(responce));
@@ -952,12 +902,10 @@ export const PatchAdminOrderEdit = (payload) => {
         }
         toast.success("Order Edited successfully");
 
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PatchAdminOrderEditDispatch(responce));
@@ -983,12 +931,10 @@ export const GetAdminOrderCallBuyer = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetAdminOrderCallBuyerDispatch(responce));
@@ -1013,12 +959,10 @@ export const GetAdminOrderGenerateOrderId = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetAdminOrderGenerateOrderIdDispatch(responce));
@@ -1049,12 +993,10 @@ export const GetAdminOrderPaymentOrder = (payload) => {
           product_order_id: res?.data?.order_id,
         });
         reactLocalStorage.set("OrderDetailsId", data);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetAdminOrderPaymentOrderDispatch(responce));
@@ -1066,29 +1008,20 @@ const PostAdminOrderPaymentOrderDispatch = (data) => ({
   payload: data,
 });
 export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
-
   return async (dispatch, getState) => {
-
     let OrderDetailsIdData = reactLocalStorage.get("OrderDetailsId", false);
-    let OrderDetailsIdDataObject = JSON.parse(OrderDetailsIdData) 
-   
-    
-    let newPayload=[]
-   
+    let OrderDetailsIdDataObject = JSON.parse(OrderDetailsIdData);
 
+    let newPayload = [];
 
     if (OrderDetailsIdDataObject?.product_order_id) {
-      console.log("jhjhbddf")
-      newPayload.push({ ...payload, "order_id": OrderDetailsIdDataObject?.product_order_id })
+      newPayload.push({
+        ...payload,
+        order_id: OrderDetailsIdDataObject?.product_order_id,
+      });
+    } else {
+      newPayload.push(payload);
     }
-    else {
-      newPayload.push(payload)
-    }
-
-
-     
-    console.log("nbgdfhjgdvj", newPayload)
-
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/add_payment_order`,
@@ -1101,7 +1034,7 @@ export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
       )
       .then((res) => {
         toast.success(res.data.message);
-        
+
         let data = JSON.stringify({
           deliverd_id: res?.data?.deliverd_id,
           pickup_id: res?.data?.pickup_id,
@@ -1109,74 +1042,73 @@ export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
         });
         reactLocalStorage.set("OrderDetailsId", data);
         let totalPriceValue = reactLocalStorage.get("totalPriceValue", false);
-        console.log("jhsdgjgdkjh", res)
         if (res?.data?.order_id) {
-          let ItemDetailPayload = { ...ItemDetailPayloadData, "product_order_id": res?.data?.order_id, "total_price": totalPriceValue }
-          dispatch(PostAdminOrderAddShipment(ItemDetailPayload))
+          let ItemDetailPayload = {
+            ...ItemDetailPayloadData,
+            product_order_id: res?.data?.order_id,
+            total_price: totalPriceValue,
+          };
+          dispatch(PostAdminOrderAddShipment(ItemDetailPayload));
         }
 
-        console.log(res);
+        const TagOrderData = reactLocalStorage.get("add_order_tag", false);
+        const PayloadTagOrderData = JSON.parse(TagOrderData);
+        if (PayloadTagOrderData?.add_order.length != 0) {
+          dispatch(
+            PostAddOrderTag({
+              product_order_id: res?.data?.order_id,
+              order_tag: PayloadTagOrderData?.add_order,
+            })
+          );
+        }
+
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostAdminOrderPaymentOrderDispatch(responce));
   };
 };
 
-
 const PostAdminOrderEwayBillDispatch = (data) => ({
   type: actionType.PostAdminOrderEwayBillDispatch_Type,
   payload: data,
 });
 export const PostAdminOrderEwayBill = (payload) => {
-  console.log("EwaybillPayload===>", payload)
   return async (dispatch, getState) => {
-    var fs = require("fs")
+    var fs = require("fs");
     let formdata = new FormData();
     if (payload.eway_bill) {
-
-      formdata.append("eway_bill", payload.eway_bill)
-      formdata.append("type", payload.type)
-    }
-
-    else {
-      formdata.append("type", payload.type)
-      formdata.append("id", payload.id)
+      formdata.append("eway_bill", payload.eway_bill);
+      formdata.append("type", payload.type);
+    } else {
+      formdata.append("type", payload.type);
+      formdata.append("id", payload.id);
     }
 
     let bodyContent = formdata;
-    console.log("bodyContent", bodyContent)
     const responce = await axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}/bill/eway_bill`,
-        bodyContent,
-        {
-          headers: {
-            Authorization: `Bearer ${BearerToken}`
-          }
-        }
-      )
+      .post(`${process.env.REACT_APP_BASE_URL}/bill/eway_bill`, bodyContent, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
       .then((res) => {
-        console.log("ewayres", res.data);
-        reactLocalStorage.set("Eway_bill_id", res?.data?.id)
+        reactLocalStorage.set("Eway_bill_id", res?.data?.id);
 
-        reactLocalStorage.set("Eway_bill_URL", String(res?.data?.name))
+        reactLocalStorage.set("Eway_bill_URL", String(res?.data?.name));
 
-        return res
+        return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log("errrrrr", err);
         return err;
       });
-    console.log("ewaybillresponce", responce)
-    dispatch(PostAdminOrderEwayBillDispatch(responce))
-  }
-}
+    dispatch(PostAdminOrderEwayBillDispatch(responce));
+  };
+};
 
 const PostAdminOrderPaymentCalDispatch = (data) => ({
   type: actionType.PostAdminOrderPaymentCalDispatch_Type,
@@ -1196,12 +1128,10 @@ export const PostAdminOrderPaymentCal = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostAdminOrderPaymentCalDispatch(responce));
@@ -1227,17 +1157,13 @@ export const PostAdminOrderAddShipment = (payload) => {
       .then((res) => {
         reactLocalStorage.set("ShipmentId", res?.data?.shipment_id);
 
+        // toast.success(res.dat.message);
 
-
-       
-        // toast.success(res.dat.message); 
-
-        dispatch(PaymentPopupValue(false))
+        dispatch(PaymentPopupValue(false));
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostAdminOrderAddShipmentDispatch(responce));
@@ -1262,12 +1188,10 @@ export const PostViewAdminOrder = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log("nhgshgsad", res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostViewAdminOrderDispatch(responce));
@@ -1292,12 +1216,10 @@ export const GetDeliveryPriceDetail = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetDeliveryPriceDetailDispatch(responce));
@@ -1323,12 +1245,10 @@ export const GetAdminOrderCloneOrder = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetAdminOrderCloneOrderDispatch(responce));
@@ -1341,7 +1261,6 @@ const PostAdminPendingOrderActionDispatch = (data) => ({
 });
 export const PostAdminPendingOrderAction = (payload) => {
   let data = JSON.stringify(payload);
-  console.log("aa", data);
   return async (dispatch, getState) => {
     const response = await axios
       .patch(
@@ -1360,7 +1279,6 @@ export const PostAdminPendingOrderAction = (payload) => {
         //   request_type:"create"
         // }
 
-        // console.log("hjsdfdjhsf", payloadd)
         // // if(res.data.message=="Updated"){
         //   dispatch(PostOrderDownloadLabelGenerationFile(payloadd))
 
@@ -1370,12 +1288,10 @@ export const PostAdminPendingOrderAction = (payload) => {
         toast.success(response.data.message);
 
         toast.success("Order Added successfully");
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -1386,7 +1302,6 @@ export const PostAdminPendingOrderAction = (payload) => {
     // };
 
     // let bodyContent = JSON.stringify(payload);
-    // console.log("gh", payload);
     // let reqOptions = {
     //   url: `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/pending_action`,
     //   method: "PATCH",
@@ -1406,7 +1321,6 @@ const DeleteAdminPendingOrderActionDispatch = (data) => ({
 });
 export const DeleteAdminPendingOrderAction = (payload) => {
   // let data = JSON.stringify(payload);
-  console.log("aa", payload);
   return async (dispatch, getState) => {
     const responce = await axios
       .delete(
@@ -1428,12 +1342,10 @@ export const DeleteAdminPendingOrderAction = (payload) => {
         dispatch(GetAdminOrderReturn());
         dispatch(GetCancelOrderDetail());
         toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(DeleteAdminPendingOrderActionDispatch(responce));
@@ -1446,7 +1358,6 @@ const PostAdminSettingAddEmployeeDispatch = (data) => ({
 });
 export const PostAdminSettingAddEmployee = (payload) => {
   let data = JSON.stringify(payload);
-  console.log("aa", data);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -1460,12 +1371,10 @@ export const PostAdminSettingAddEmployee = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostAdminSettingAddEmployeeDispatch(responce));
@@ -1491,13 +1400,11 @@ export const GetCategoryDetails = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -1537,12 +1444,10 @@ export const GetSettingViewPermission = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -1582,12 +1487,10 @@ export const GetSettingEmployeeInfo = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -1614,7 +1517,6 @@ const PostAdminSettingAddCategoryDispatch = (data) => ({
 });
 export const PostAdminSettingAddCategory = (payload) => {
   let data = JSON.stringify(payload);
-  console.log("aa", data);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -1630,12 +1532,10 @@ export const PostAdminSettingAddCategory = (payload) => {
         // toast.success(res.data.message);
         dispatch(GetCategoryDetails());
         toast.success("Category Added successfully");
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostAdminSettingAddCategoryDispatch(responce));
@@ -1662,12 +1562,10 @@ export const GetSettingUserInfo = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -1694,7 +1592,6 @@ const DeleteAdminSettingDeleteUserDispatch = (data) => ({
 });
 export const DeleteAdminSettingDeleteUser = (payload) => {
   // let data = JSON.stringify(payload);
-  console.log("aa", payload);
   return async (dispatch, getState) => {
     const responce = await axios
       .delete(
@@ -1712,13 +1609,11 @@ export const DeleteAdminSettingDeleteUser = (payload) => {
         dispatch(getOrderAddress());
         dispatch(GetSettingEmployeeInfo());
         toast.success("User Deleted successfully");
-        dispatch(GetSettingEmployeeInfo())
-        console.log(res);
+        dispatch(GetSettingEmployeeInfo());
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(DeleteAdminSettingDeleteUserDispatch(responce));
@@ -1743,14 +1638,12 @@ export const PatchEditUserPermission = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         toast.success("Profile updated successfully");
-
+        // window.location.reload(false)
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PatchEditUserPermissionDispatch(responce));
@@ -1776,12 +1669,10 @@ export const GetSettingViewB2bFeedback = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetSettingViewB2bFeedbackDispatch(responce));
@@ -1807,12 +1698,10 @@ export const GetSettingViewB2bCloseFeedback = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetSettingViewB2bCloseFeedbackDispatch(responce));
@@ -1838,12 +1727,10 @@ export const GetSettingViewB2cFeedback = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetSettingViewB2cFeedbackDispatch(responce));
@@ -1869,12 +1756,10 @@ export const GetSettingViewB2cCloseFeedback = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetSettingViewB2cCloseFeedbackDispatch(responce));
@@ -1887,7 +1772,6 @@ const DeleteSettingDismissTicketDispatch = (data) => ({
 });
 export const DeleteSettingDismissTicket = (payload) => {
   // let data = JSON.stringify(payload);
-  console.log("aa", payload);
   return async (dispatch, getState) => {
     const responce = await axios
       .delete(
@@ -1905,12 +1789,10 @@ export const DeleteSettingDismissTicket = (payload) => {
         dispatch(GetSettingViewB2bFeedback());
         dispatch(GetSettingViewB2cFeedback());
         toast.success("Ticket Dismissed successfully");
-        console.log(res);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(DeleteSettingDismissTicketDispatch(responce));
@@ -1935,7 +1817,6 @@ export const PatchEditCategoryDetails = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         dispatch(GetCategoryDetails());
         toast.success("Profile updated successfully");
 
@@ -1943,7 +1824,6 @@ export const PatchEditCategoryDetails = (payload) => {
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PatchEditCategoryDetailsDispatch(responce));
@@ -1956,7 +1836,6 @@ const DeleteCategoryDetailsDispatch = (data) => ({
 });
 export const DeleteCategoryDetails = (payload) => {
   // let data = JSON.stringify(payload);
-  console.log("aa", payload);
   return async (dispatch, getState) => {
     const responce = await axios
       .delete(
@@ -1973,12 +1852,10 @@ export const DeleteCategoryDetails = (payload) => {
         // toast.success(res.data.message);
         dispatch(GetCategoryDetails());
         toast.success("Category deleted successfully");
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(DeleteCategoryDetailsDispatch(responce));
@@ -2004,12 +1881,10 @@ export const GetAdminProfile = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -2048,14 +1923,12 @@ export const PatchEditProfile = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         toast.success("Profile updated successfully");
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PatchEditProfileDispatch(responce));
@@ -2068,7 +1941,6 @@ const PostAdminOrderCsvFileDispatch = (data) => ({
 });
 export const PostAdminOrderCsvFile = (payload) => {
   let data = JSON.stringify(payload);
-  console.log("aaaa", data);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(`${process.env.REACT_APP_BASE_URL}/bill/pending.csv`, payload, {
@@ -2078,12 +1950,10 @@ export const PostAdminOrderCsvFile = (payload) => {
       })
       .then((res) => {
         // toast.success(res.data.message);
-        console.log("csvapidata", res);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostAdminOrderCsvFileDispatch(responce));
@@ -2096,7 +1966,6 @@ const GetAdminCloneOrderDispatch = (data) => ({
 });
 export const GetAdminCloneOrder = (payload) => {
   let data = JSON.stringify(payload);
-  console.log(data);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -2111,12 +1980,10 @@ export const GetAdminCloneOrder = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetAdminCloneOrderDispatch(responce));
@@ -2129,7 +1996,6 @@ const PostOrderDownloadInvoiceFileDispatch = (data) => ({
 });
 export const PostOrderDownloadInvoiceFile = (payload) => {
   let data = JSON.stringify(payload);
-  console.log("aambmbvkj", data);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -2137,7 +2003,6 @@ export const PostOrderDownloadInvoiceFile = (payload) => {
         payload,
 
         {
-
           // responseType: "arraybuffer",
           // responseEncoding: "binary",
 
@@ -2147,24 +2012,14 @@ export const PostOrderDownloadInvoiceFile = (payload) => {
         }
       )
       .then((res) => {
-        console.log("hgdjcvjfbskjdb", res);
-
-
-        // toast.success(res.data.message); 
-
-        if (res.status == 200) {
-          if (payload.request_type !== "create") {
-            // fileDownload(res?.data?.name, `https`);
-          }
-        }
+        window.open(`${res?.data?.name}`);
+        // window.location.reload(false)
 
         // toast.success("Invoice Generated successfully");
-        console.log(res, "Invoice Generated successfully");
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err, "err.response.data.message");
         return err;
       });
     dispatch(PostOrderDownloadInvoiceFileDispatch(responce));
@@ -2190,12 +2045,10 @@ export const GetOrderDownloadInvoice = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetOrderDownloadInvoiceDispatch(responce));
@@ -2206,11 +2059,10 @@ export const GetOrderDownloadInvoice = (payload) => {
 const PostOrderDownloadLabelGenerationFileDispatch = (data) => ({
   type: actionType.PostOrderDownloadLabelGenerationFileDispatch_Type,
   payload: data,
-})
+});
 export const PostOrderDownloadLabelGenerationFile = (payload) => {
   let data = JSON.stringify(payload);
 
-  console.log("data===============>", data)
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -2218,7 +2070,6 @@ export const PostOrderDownloadLabelGenerationFile = (payload) => {
         payload,
 
         {
-
           // responseType: "arraybuffer",
           // responseEncoding: "binary",
 
@@ -2228,28 +2079,27 @@ export const PostOrderDownloadLabelGenerationFile = (payload) => {
         }
       )
       .then((res) => {
-        console.log("hgdjcvjfbskjdb=====>", res);
-        // toast.success(res.data.message); 
-
+        // toast.success(res.data.message);
+        // window.open(`${res?.data?.name}`)
         if (res.status == 200) {
           if (payload.request_type !== "create") {
+            window.open(`${res?.data?.name}`);
+            // window.location.reload(false)
             // fileDownload(res?.data?.name, `https`);
           }
         }
 
         // toast.success("Invoice Generated successfully");
-        console.log(res, "Label Generated successfully");
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err, "err.response.data.message");
-        toast.error(err.response.data.message)
+        // toast.error(err.response.data.message)
         return err;
       });
     dispatch(PostOrderDownloadLabelGenerationFileDispatch(responce));
-  }
-}
+  };
+};
 
 const GetOrderDownloadLabelGenerationDispatch = (data) => ({
   type: actionType.GetOrderDownloadLabelGenerationDispatch_Type,
@@ -2270,18 +2120,15 @@ export const GetOrderDownloadLabelGeneration = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetOrderDownloadLabelGenerationDispatch(responce));
   };
 };
-
 
 const DeleteAdminOrderDispatch = (data) => ({
   type: actionType.DeleteAdminOrderDispatch_Type,
@@ -2289,7 +2136,6 @@ const DeleteAdminOrderDispatch = (data) => ({
 });
 export const DeleteAdminOrder = (payload) => {
   // let data = JSON.stringify(payload);
-  console.log("aa", payload);
   return async (dispatch, getState) => {
     const responce = await axios
       .delete(
@@ -2309,14 +2155,14 @@ export const DeleteAdminOrder = (payload) => {
         dispatch(GetAdminOrderPending());
         dispatch(GetAdminOrderReturn());
         dispatch(GetAdminOrderBooked());
-        dispatch(GetCancelOrderDetail())
-        toast.success("Order deleted successfully and refund will be initiated");
-        console.log(res);
+        dispatch(GetCancelOrderDetail());
+        toast.success(
+          "Order deleted successfully and refund will be initiated"
+        );
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(DeleteAdminOrderDispatch(responce));
@@ -2341,14 +2187,12 @@ export const PatchEditEmployee = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         toast.success("Profile updated successfully");
         dispatch(GetSettingEmployeeInfo());
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PatchEditEmployeeDispatch(responce));
@@ -2374,12 +2218,10 @@ export const GetBillingInvoiceDetail = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetBillingInvoiceDetailDispatch(responce));
@@ -2405,12 +2247,10 @@ export const GetBillingAmountCount = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetBillingAmountCountDispatch(responce));
@@ -2436,12 +2276,10 @@ export const GetDashboardNotification = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -2468,7 +2306,6 @@ const PostAddOrderTagDispatch = (data) => ({
 });
 export const PostAddOrderTag = (payload) => {
   let data = JSON.stringify(payload);
-  console.log("aa", data);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -2481,17 +2318,16 @@ export const PostAddOrderTag = (payload) => {
         }
       )
       .then((res) => {
+        // dispatch(PostTicketDetail(payload))
         // toast.success(res.data.message);
         // if (res.status == 200) {
         //   dispatch(GetOrderDownloadInvoice(payload));
         // }
-        toast.success("Add Tag successfully");
-        console.log(res);
+        // toast.success("Add Tag successfully");
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostAddOrderTagDispatch(responce));
@@ -2504,19 +2340,21 @@ const PostUploadFileDispatch = (data) => ({
 });
 export const PostUploadFile = (payload) => {
   // let data = JSON.stringify(payload);
-  console.log("payload2212", payload);
   const formData = new FormData();
   formData.append("file", payload);
   // bill/UploadPincodeFile
-  // console.log("formData",formData)
 
   return async (dispatch, getState) => {
     const responce = await axios
-      .post(`${process.env.REACT_APP_BASE_URL}/bill/UploadOrderFile`, formData, {
-        headers: {
-          Authorization: `Bearer ${BearerToken}`,
-        },
-      })
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/bill/UploadOrderFile`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
       .then((res) => {
         toast.success(res.data.message);
         dispatch(GetAdminOrderPending());
@@ -2531,12 +2369,7 @@ export const PostUploadFile = (payload) => {
         toast.warn(errorData);
         toast.warn(err.response.data.message);
 
-        console.log("errordata", err.response);
-        console.log("assssss", errorData);
-        console.log("aaaaaaa", err);
-
         // toast.success(err.data.message);
-        // console.log(err);
         return err;
       });
     dispatch(PostUploadFileDispatch(responce));
@@ -2551,7 +2384,6 @@ export const PostCompanyFile = (payload) => {
   // let data = JSON.stringify(payload);
 
   // bill/UploadPincodeFile
-  console.log("payloaaaaaaad", payload);
 
   return async (dispatch, getState) => {
     var fs = require("fs");
@@ -2574,7 +2406,6 @@ export const PostCompanyFile = (payload) => {
     };
 
     let response = await axios.request(reqOptions);
-    console.log(response.data);
     toast.success("Documents Uploaded Successfuly");
     dispatch(PostCompanyFileDispatch(response));
   };
@@ -2586,14 +2417,11 @@ export const PostPincodeUploadFileDispatch = (data) => ({
 });
 
 export const PostPincodeUploadFile = (payload) => {
-
   // let data = JSON.stringify(payload);
-  var fs = require("fs")
-  console.log("payload2212", payload);
+  var fs = require("fs");
   const formData = new FormData();
   formData.append("file", payload);
   // bill/PincodeUploadPincodeFile
-  // console.log("formData",formData)
 
   return async (dispatch, getState) => {
     const responce = await axios
@@ -2610,14 +2438,11 @@ export const PostPincodeUploadFile = (payload) => {
         toast.success("Pincode Uploaded Successfully");
         // toast.success(res.data.message);
 
-        console.log("ssssssssss", res.data.message);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.error[0].error_msg);
-        // console.log("errordata", err.response.data.error[0].error_msg);
         toast.warn(err?.response?.data?.error[0]?.error_msg);
-        // console.log(err);
 
         return err;
       });
@@ -2631,7 +2456,6 @@ const PostDashboardRevenueDispatch = (data) => ({
 });
 export const PostDashboardRevenue = (payload) => {
   let data = JSON.stringify(payload);
-  console.log("aab", payload);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -2645,12 +2469,10 @@ export const PostDashboardRevenue = (payload) => {
       )
       .then((res) => {
         // toast.success("Upload successfully");
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostDashboardRevenueDispatch(responce));
@@ -2663,7 +2485,6 @@ const PostDashboardViewOrderDispatch = (data) => ({
 });
 export const PostDashboardViewOrder = (payload) => {
   let data = JSON.stringify(payload);
-  console.log("aa", data);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(`${process.env.REACT_APP_BASE_URL}/dashboard/view_order`, payload, {
@@ -2673,12 +2494,10 @@ export const PostDashboardViewOrder = (payload) => {
       })
       .then((res) => {
         // toast.success("Upload successfully");
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostDashboardViewOrderDispatch(responce));
@@ -2703,12 +2522,10 @@ export const GetCodRemittance = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetCodRemittanceDispatch(responce));
@@ -2733,12 +2550,10 @@ export const GetCodRemittanceBillingAmount = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        console.log(res);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetCodRemittanceBillingAmountDispatch(responce));
@@ -2750,7 +2565,6 @@ const GetB2bCompanyInfoDispatch = (data) => ({
   payload: data,
 });
 export const GetB2bCompanyInfo = (payload) => {
-  // console.log("hello");
   return async (dispatch, getState) => {
     const response = await axios
       .get(
@@ -2764,12 +2578,10 @@ export const GetB2bCompanyInfo = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        // console.log("jhdhdsjkds", res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
 
@@ -2795,8 +2607,6 @@ const PostUploadBillRemittanceFileDispatch = (data) => ({
   payload: data,
 });
 export const PostUploadBillRemittanceFile = (payload) => {
-  console.log("payload12", payload);
-
   return async (dispatch, getState) => {
     const formData = new FormData();
     formData.append("file", payload);
@@ -2813,13 +2623,10 @@ export const PostUploadBillRemittanceFile = (payload) => {
       .then((res) => {
         toast.success("Upload successfully");
 
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostUploadBillRemittanceFileDispatch(responce));
@@ -2845,7 +2652,6 @@ export const GetWalletHistory = (payload) => {
 
     const responce = await axios.request(reqOptions);
 
-    console.log("responceresponceresponce122", responce);
     //  await axios
     //   .get(
     //     `${process.env.REACT_APP_BASE_URL}/wallet/history`,
@@ -2856,13 +2662,11 @@ export const GetWalletHistory = (payload) => {
 
     //   )
     //   .then((res) => {
-    //     console.log("gdvjhvj", res);
 
     //     return res;
     //   })
     //   .catch((err) => {
 
-    //     console.log(err);
     //     return err;
     //   });
     dispatch(GetWalletHistoryDispatch(responce));
@@ -2887,25 +2691,18 @@ export const GetWalletBalance = (payload) => {
     //     };
 
     //     const response = await axios.request(reqOptions);
-    // console.log("hmbdsd",response)
     //     if (response.status == 200) {
     //       dispatch(GetWalletHistory());
     //     }
-    console.log("ghaddhvajd",payload)
     const response = await axios
-   
-      .post(
-        `${process.env.REACT_APP_BASE_URL}/wallet/balance`,payload,
-        {
-          headers: {
-            Authorization: `Bearer ${BearerToken}`,
 
-          },
-        }
-      )
+      .post(`${process.env.REACT_APP_BASE_URL}/wallet/balance`, payload, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
       .then((res) => {
         toast.success(res.data.message);
-        console.log("gdvjhvj", res);
         if (res.status == 200) {
           dispatch(GetWalletHistory());
           dispatch(GetAdminOrderPending());
@@ -2915,7 +2712,6 @@ export const GetWalletBalance = (payload) => {
       })
       .catch((err) => {
         toast.warn(err?.response?.data?.message);
-        console.log(err);
         return err;
       });
     dispatch(GetWalletBalanceDispatch(response));
@@ -2928,7 +2724,6 @@ const PostWalletAddMoneyDispatch = (data) => ({
 });
 export const PostWalletAddMoney = (payload) => {
   let data = JSON.stringify(payload);
-  console.log("aa", data);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(`${process.env.REACT_APP_BASE_URL}/wallet/add_money`, data, {
@@ -2941,12 +2736,10 @@ export const PostWalletAddMoney = (payload) => {
         // toast.success(res.data.message);
         dispatch(GetAdminOrderPending());
         // toast.success("Order Added successfully");
-        console.log(res);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostWalletAddMoneyDispatch(responce));
@@ -2959,7 +2752,6 @@ const PostDebitBalanceDispatch = (data) => ({
 });
 export const PostDebitBalance = (payload) => {
   return async (dispatch, getState) => {
-    console.log("dsds",payload)
     let orderIdData = payload?.order_id.toString();
     let InvoicePayLoad = {
       product_order_id: orderIdData,
@@ -2968,7 +2760,7 @@ export const PostDebitBalance = (payload) => {
     let Labelpayload = {
       product_order_id: orderIdData,
       request_type: "create",
-    }
+    };
     const responce = await axios
       .post(`${process.env.REACT_APP_BASE_URL}/wallet/debit_balance`, payload, {
         headers: {
@@ -2977,23 +2769,22 @@ export const PostDebitBalance = (payload) => {
       })
       .then((res) => {
         toast.success("Order Placed Successfully");
-        reactLocalStorage.remove('UserDetailsPayload');
+        reactLocalStorage.remove("UserDetailsPayload");
         reactLocalStorage.remove("Eway_bill_URL");
         reactLocalStorage.remove("PayloadOrderData");
         reactLocalStorage.remove("Eway_bill_id");
         reactLocalStorage.remove("OrderDetailsId");
+        reactLocalStorage.remove("add_order_tag");
         dispatch(GetWalletBalance());
-        console.log(res);
         dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
-        dispatch(PostOrderDownloadLabelGenerationFile(Labelpayload))
-        dispatch(GetCancelOrderDetail())
-        dispatch(GetCancelOrderDetail())
+        dispatch(PostOrderDownloadLabelGenerationFile(Labelpayload));
+        dispatch(GetCancelOrderDetail());
+        dispatch(GetCancelOrderDetail());
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostDebitBalanceDispatch(responce));
@@ -3017,14 +2808,12 @@ export const PostTrackingOrderDetails = (payload) => {
         // }
       )
       .then((res) => {
-        console.log(res);
         toast.warn(res.data.message);
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostTrackingOrderDetailsDispatch(responce));
@@ -3049,7 +2838,6 @@ export const PostBillingCodRemittanceCount = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         // toast.success(res.data.message);
         toast.warn(res.data.message);
 
@@ -3057,7 +2845,6 @@ export const PostBillingCodRemittanceCount = (payload) => {
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostBillingCodRemittanceCountDispatch(responce));
@@ -3082,7 +2869,6 @@ export const PostBillingCodRemittanceDetails = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         // toast.success(res.data.message);
         toast.warn(res.data.message);
 
@@ -3090,7 +2876,6 @@ export const PostBillingCodRemittanceDetails = (payload) => {
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostBillingCodRemittanceDetailsDispatch(responce));
@@ -3115,13 +2900,15 @@ export const PostCreateTicket = (payload) => {
       )
       .then((res) => {
         toast.success("Issue Raised Successfully");
-        console.log(res);
-
+        let payload = {
+          user_type: res.data.user_type,
+          ticket_type: res.data.ticket_type,
+        };
+        dispatch(PostTicketDetail(payload));
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostCreateTicketDispatch(responce));
@@ -3145,14 +2932,11 @@ export const PostTicketDetail = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         toast.warn(res.data.message);
-
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostTicketDetailDispatch(responce));
@@ -3177,17 +2961,13 @@ export const DeleteSupportTicket = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
-
         toast.success("Ticket Deleted successfully");
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
-    console.log(response);
     dispatch(DeleteSupportTicketData(response));
   };
 };
@@ -3205,13 +2985,11 @@ export const PostCreateFeedback = (payload) => {
         },
       })
       .then((res) => {
-        console.log(res);
         toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
         toast.error(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostCreateFeedbackDispatch(responce));
@@ -3236,18 +3014,17 @@ export const PatchTrackDetails = (payload) => {
         }
       )
       .then((res) => {
-        console.log("jhgjhdgjsd", res);
         toast.success("Updated Status Successfully");
         dispatch(GetAdminOrderBooked());
         dispatch(GetAdminOrderIntransit());
         dispatch(GetAdminOrderDelivered());
         dispatch(GetAdminOrderReturn());
+        dispatch(GetAdminOrderRTODelivered());
         dispatch(GetAdminOutForDelivery());
         return res;
       })
       .catch((err) => {
         toast.error(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PatchTrackData(responce));
@@ -3271,13 +3048,10 @@ export const GetCustomerOrderDetail = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
-
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetCustomerOrderDetailDispatch(response));
@@ -3297,13 +3071,11 @@ export const PostRaiseContactUS = (payload) => {
         },
       })
       .then((res) => {
-        console.log(res);
         toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostRaiseContactUSDispatch(responce));
@@ -3323,14 +3095,16 @@ export const PostOrderTrack = (payload) => {
         // },
       })
       .then((res) => {
-        console.log(res);
-        toast.warn(res.data.message);
+        if (res?.data?.current_status == "PENDING") {
+          toast.warn("This Order Id Can't Track Because It Is In Pending");
+        } else {
+          toast.warn(res.data.message);
+        }
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostOrderTrackDispatch(responce));
@@ -3354,14 +3128,12 @@ export const PostGetFeedback = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         toast.warn(res.data.message);
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostGetFeedbackDispatch(responce));
@@ -3385,7 +3157,6 @@ export const PostClearNotification = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         // toast.warn(res.data.message);
         dispatch(GetUserNotification());
         dispatch(GetDashboardNotification());
@@ -3393,7 +3164,6 @@ export const PostClearNotification = (payload) => {
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostClearNotificationDispatch(responce));
@@ -3417,14 +3187,12 @@ export const PostKYCdetail = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         toast.warn(res.data.message);
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostKYCdetailDispatch(responce));
@@ -3447,54 +3215,42 @@ export const GetUserNotification = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         toast.warn(res.data.message);
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetUserNotificationDispatch(responce));
   };
 };
 
-
-
 const GetAuthDetailsDispatch = (data) => ({
   type: actionType.GetAuthDetailsDispatch_Type,
   payload: data,
 });
 
-
 export const GetAuthDetails = (payload) => {
   return async (dispatch, getState) => {
     const responce = await axios
-      .get(
-        `${process.env.REACT_APP_BASE_URL}/getAuthDetails`,
-        {
-          headers: {
-            Authorization: `Bearer ${BearerToken}`,
-          },
-        }
-      )
+      .get(`${process.env.REACT_APP_BASE_URL}/getAuthDetails`, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
       .then((res) => {
-        console.log(res);
         toast.warn(res.data.message);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetAuthDetailsDispatch(responce));
   };
 };
-
-
 
 const GetPermissionDispatch = (data) => ({
   type: actionType.GetPermissionDispatch_Type,
@@ -3512,48 +3268,37 @@ export const GetPermission = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         toast.warn(res.data.message);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetPermissionDispatch(responce));
   };
 };
 
-
-
-
 const GetGoogleCityStateDispatch = (data) => ({
   type: actionType.GetGoogleCityStateDispatch_Type,
   payload: data,
 });
 export const GetGoogleCityState = (payload) => {
-  console.log("jhcg")
   return async (dispatch, getState) => {
-    console.log("payloadsjkdgh", process.env.REACT_APP_BASE_GOOGLE_API_KEY)
-
-
     const response = await axios
-      .get(` https://maps.googleapis.com/maps/api/geocode/json?address=${payload}&key=${process.env.REACT_APP_BASE_GOOGLE_API_KEY}`,)
+      .get(
+        ` https://maps.googleapis.com/maps/api/geocode/json?address=${payload}&key=${process.env.REACT_APP_BASE_GOOGLE_API_KEY}`
+      )
       .then((res) => {
-        console.log("jhxhgjhsgjkh", res)
         return res?.data?.results;
-
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        // console.log(err);
         return err;
       });
     dispatch(GetGoogleCityStateDispatch(response));
   };
 };
-
 
 const PostTransactionHistoryDispatch = (data) => ({
   type: actionType.PostTransactionHistoryDispatch_Type,
@@ -3572,21 +3317,17 @@ export const PostTransactionHistory = (payload) => {
         }
       )
       .then((res) => {
-        console.log("dvjhsfjhsdjf", res);
         toast.warn(res.data.message);
 
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostTransactionHistoryDispatch(responce));
   };
 };
-
-
 
 const GetCancelOrderDetailDispatch = (data) => ({
   type: actionType.GetCancelOrderDetailDispatch_Type,
@@ -3604,20 +3345,16 @@ export const GetCancelOrderDetail = (payload) => {
         }
       )
       .then((res) => {
-        console.log(res);
         toast.warn(res.data.message);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(GetCancelOrderDetailDispatch(responce));
   };
 };
-
-
 
 const PostTrackingOtpDispatch = (data) => ({
   type: actionType.PostTrackingOtpDispatch_Type,
@@ -3636,29 +3373,17 @@ export const PostTrackingOtp = (payload) => {
         }
       )
       .then((res) => {
-        console.log("dvjhsfjhsdjf", res);
         toast.success(res.data.message);
 
         return res;
       })
       .catch((err) => {
         toast.error(err.response.data.message);
-        console.log(err);
         return err;
       });
     dispatch(PostTrackingOtpDispatch(responce));
   };
 };
-
-
-
-
-
-
-
-
-
-
 
 // export  const FunctionVariableNameCanBeAnyThing=(products)=>{
 //     return{
@@ -3681,11 +3406,8 @@ export const PostTrackingOtp = (payload) => {
 // };
 // const responce = await axios(config)
 //     .then((res) => {
-//         console.log(JSON.stringify(res.data));
 //         return res.data
 
-//         // console.log(JSON.stringify(response.data));
 //     })
 //     .catch((err) => {
-//         console.log(err);
 //         return

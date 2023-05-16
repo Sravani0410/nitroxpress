@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import { reactLocalStorage } from 'reactjs-localstorage';
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useToasts } from "react-toast-notifications";
+import { useNavigate } from "react-router-dom"; 
 import Carosel from "./Carosel";
 import OtpInput from 'react-otp-input';
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 
 const VeryfiyPhone = () => {
 
     const [otpvalue, setOtpValue] = useState('')
     const products = useSelector(state => state.productReducer.products)
-    let navigate = useNavigate();
-    const { addToast } = useToasts();
+    let navigate = useNavigate(); 
 
     let phoneNumber = reactLocalStorage.get('userDetails', true);
     let localStorageDetails = JSON.parse(phoneNumber)
@@ -29,19 +28,15 @@ const VeryfiyPhone = () => {
             )
             .then((response) => {
                 console.log(response);
-
-                addToast("Verified Phone successfully", {
-                    appearance: "success",
-                    autoDismiss: true,
-                });
+                toast.success("Verified Phone successfully");
+                
                 navigate('/login')
             })
             .catch((err) => {
                 console.log(err);
-                addToast(err.response.data.message, {
-                    appearance: "error",
-                    autoDismiss: true,
-                });
+                toast.warn(err.response.data.message);
+
+                
 
             });
     };
@@ -55,21 +50,16 @@ const VeryfiyPhone = () => {
                 {
                     number: localStorageDetails.phoneNumber,
                 }
-
             )
             .then((response) => {
-                console.log(response);
-                addToast("Please check your sms", {
-                    appearance: "success",
-                    autoDismiss: true,
-                });
+                toast.success("Please check your sms");
+
+                
             })
             .catch((err) => {
-                console.log(err);
-                addToast(err.response.data.message, {
-                    appearance: "error",
-                    autoDismiss: true,
-                });
+                toast.warn(err.response.data.message);
+
+                 
 
             });
     }
@@ -93,8 +83,9 @@ const VeryfiyPhone = () => {
                             <OtpInput
                                 value={otpvalue}
                                 onChange={handleChange}
-                                numInputs={4}
-                                focusStyle={false}
+                                numInputs={4} 
+                                renderSeparator={<span>-</span>}
+      renderInput={(props) => <input {...props} />}
                             />
                         </div>
                         <div className="send_otp"> <a href="#" onClick={() => SendOtpFun()}> Resend OTP </a> </div>                       

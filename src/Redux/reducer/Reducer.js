@@ -23,6 +23,7 @@ const stateData = {
   GetAdminOrderCustomerData: [],
   GetAdminOrderEditData: [],
   GetAdminOrderReturnData: [],
+  GetAdminOrderRTODeliveredData:[],
   GetAdminOrderRebookData:[],
   GetAdminOrderSummaryData: [],
   GetAdminOrderBookedData: [],
@@ -352,6 +353,17 @@ export const GetAdminOrderReturnReducer = (state = stateData, action) => {
       return {
         ...state,
         GetAdminOrderReturnData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+export const GetAdminOrderRTODeliveredReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.GetAdminOrderRTODeliveredDispatch_Type:
+      return {
+        ...state,
+        GetAdminOrderRTODeliveredData: action.payload,
       };
     default:
       return state;

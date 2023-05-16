@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from "react";
 import { actionType } from "../../Redux/type/types";
 import { reactLocalStorage } from "reactjs-localstorage";
@@ -22,7 +23,8 @@ import {
   PatchTrackDetails,
   ToggleSideBarTrueFalse,
   PostTransactionHistory,
-  GetSettingUserInfo,
+  GetSettingUserInfo
+
 } from "../../Redux/action/ApiCollection";
 import tokenData from "../../Authanticate";
 import { PostAdminOrderFilterationReducer } from "../../Redux/reducer/Reducer";
@@ -47,27 +49,15 @@ const Transactions = () => {
   const [deliveredtab, setDeliveredTab] = useState("");
   const [returntab, setReturnTab] = useState("");
   const [tabfilteravailable, setTabFilterAvailable] = useState("");
-  const [adminorderfilterationdata, setAdminOrderFilterationData] =
-    useState(false);
+  const [adminorderfilterationdata, setAdminOrderFilterationData] = useState(false);
   const [tabfiltersearchdata, setTabFilterSearchData] = useState("");
   const [adminorderpendingdata, setAdminOrderPendingData] = useState("");
-  const [filterdatahideaftertabchange, setFilterDataHideAfterTabChange] =
-    useState(false);
+  const [filterdatahideaftertabchange, setFilterDataHideAfterTabChange] = useState(false);
   const [filteractive, setFilterActive] = useState(false);
   const [userType, setUsertype] = useState("b2c");
-  // pagination
-  const [items, setItems] = useState([]);
-  console.log("hgbdjsh", items);
-  const [pagesize, setPageSize] = useState(5);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [PageCount, setPageCount] = useState([]);
-  // console.log("hgbdjshhfj",items?.slice(0, pagesize))
-  const [currentItems, setCurrentItems] = useState([]);
-  console.log("currentItems", currentItems);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log(userType, "userType");
-
+  let selectdata = reactLocalStorage.get("Is_Business");  
   let param = useLocation();
   const GetAdminOrderIntransitDate = useSelector(
     (state) =>
@@ -110,48 +100,36 @@ const Transactions = () => {
     (state) =>
       state.PostAdminOrderCsvFileReducer.PostAdminOrderCsvFileData?.data
   );
-
   const DeleteAdminOrderData = useSelector(
     (state) => state.DeleteAdminOrderReducer.DeleteAdminOrderData?.data
   );
-
   const PatchTrackDetailsData = useSelector(
     (state) => state.PatchTrackDetailsReducer.PatchTrackDetailsData?.data
-  );
-
+  )
   const HeaderToggleClassAddData = useSelector(
-    (state) => state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
+    (state) =>
+      state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
   );
-
   const TransactionHistorytData = useSelector(
     (state) =>
-      state.PostTransactionHistoryReducer.PostTransactionHistoryData?.data
+      state.PostTransactionHistoryReducer.PostTransactionHistoryData
   );
-
-  const ToggleSideBarTrueFalseData = useSelector(
-    (state) => state.ToggleSideBarTrueFalseReducer.ToggleSideBarTrueFalseData
-  );
-
+  const ToggleSideBarTrueFalseData = useSelector((state) => state.ToggleSideBarTrueFalseReducer.ToggleSideBarTrueFalseData)
   const GetSettingUserInfoData = useSelector(
     (state) => state.GetSettingUserInfoReducer.GetSettingUserInfoData?.data
   );
-  // console.log("TransactionHistorytData",TransactionHistorytData)
-
   useEffect(() => {
-    if (TransactionHistorytData) {
-      console.log(TransactionHistorytData?.data, "TransactionHistorytData");
-      setPopup(true);
+    if (TransactionHistorytData?.data) {
+      setPopup(true)
     }
-  }, [TransactionHistorytData]);
-
-  useEffect(() => {
+  }, [TransactionHistorytData])
+  useEffect(() => {  
     dispatch(GetAdminOrderIntransit());
     dispatch(GetAdminOrderDelivered());
     dispatch(GetAdminOrderPending());
     dispatch(GetAdminOrderReturn());
     dispatch(GetAdminOrderBooked());
   }, []);
-
   const IntransitFun = (e, id) => {
     reactLocalStorage.set("order_id", id);
     let objectData = {
@@ -161,7 +139,6 @@ const Transactions = () => {
     dispatch(GetAdminOrderSummary(objectData));
     navigate(`/admin/Orderinner/${id}${tabfilteravailable}`);
   };
-
   useEffect(() => {
     setPandingTab({
       activeValue: "active",
@@ -173,24 +150,17 @@ const Transactions = () => {
     setBookTab("");
     setTransitTab("");
   }, [OrderPageBookNavigateFunData]);
-
   useEffect(() => {
-    dispatch(
-      GetSettingUserInfo({
-        user_type: `${userType}`,
-      })
-    );
-  }, [userType]);
-
-  // console.log(PermissionData());
-
+    dispatch(GetSettingUserInfo({
+      user_type: `${userType}`
+    }))
+  }, [userType])
   useEffect(() => {
     setTabFilterSearchData(""); // when the tab changes the search box will blank
     if (adminorderfilterationdata === true) {
       setFilterDataHideAfterTabChange(true);
       setFilterActive(false);
     }
-
     if (param.hash === "#pending") {
       setAdminOrderPendingData(GetAdminOrderPendingData);
       setFilterDataHideAfterTabChange(false);
@@ -205,9 +175,6 @@ const Transactions = () => {
     GetAdminOrderReturnData,
     adminorderfilterationdata,
   ]);
-
-  // console.log("PostAdminOrderFilterationData", PostAdminOrderFilterationData);
-
   const SaveAwbFun = (e) => {
     let payload = {
       product_order_id: pendingeditobjectdata.product_order_id,
@@ -231,20 +198,17 @@ const Transactions = () => {
       setPartnerNameActive(true);
     }
   };
-
   const DeletePending = (e, orderid) => {
     let payload = {
       product_order_id: orderid,
     };
     dispatch(DeleteAdminPendingOrderAction(payload));
   };
-
   const ActionCorrectFun = (e, allData) => {
     setPending((o) => !o);
     setPendingConfirm(true);
     setPendingEditObjectData(allData);
   };
-
   const AwbFun = (e) => {
     setAwbCode(e.target.value);
     // if (e.target.value.length !== 12 && e.target.value.length !== 0) {
@@ -254,10 +218,8 @@ const Transactions = () => {
     // }
   };
   const expect = (e) => {
-    console.log(e.target.value);
     setExpectedDelliveryDate(e.target.value);
   };
-
   const PartnerNameFun = (e) => {
     setPartner(e.target.value);
     if (e.target.value.length !== 0) {
@@ -266,39 +228,15 @@ const Transactions = () => {
       setPartnerNameActive(true);
     }
   };
-
   const CustomerChangeFun = (e) => {
-    setUsertype(e.target.value);
+    setUsertype(e.target.value)
   };
-
   const showTransactionHistory = (userId) => {
-    console.log("qwerty", userId);
-    dispatch(
-      PostTransactionHistory({
-        user_id: `${userId}`,
-      })
-    );
-  };
-  // pagination
-  useEffect(() => {
-    // setAdminOrderPendingData(TransactionHistorytData);
-    // setAdminOrderPendingData(TransactionHistorytData?.data);
-    setItems(TransactionHistorytData);
-    console.log("itemsjhdjs", items);
-    setCurrentItems(items?.data?.slice(0, pagesize));
-    console.log("currentItems123", currentItems);
-    setPageCount(
-      Math?.ceil(items == undefined ? "0" : items?.length / pagesize)
-    );
-  }, [TransactionHistorytData, adminorderpendingdata]);
-
-  const onPageChange = (index) => {
-    setCurrentPage(index);
-    let currentItem = items?.slice(index * pagesize, pagesize * (index + 1));
-    console.log("hgsah", currentItem);
-    setCurrentItems(currentItem);
-  };
-
+    dispatch(PostTransactionHistory(
+      {
+        "user_id": `${userId}`
+      }))
+  }
   return (
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -309,21 +247,20 @@ const Transactions = () => {
           <div className="content-sec ">
             <div className="ordertittle-part ">
               <h2>Transactions</h2>
-              <select
+              {selectdata=="false"?<select
                 className="form-select"
                 onChange={(e) => CustomerChangeFun(e)}
               >
                 <option value="b2c">B2C</option>
                 <option value="b2b">B2B</option>
-              </select>
+              </select>:""}
             </div>
 
             <div className="ordertab-sec">
               <div className="tab-content" id="myTabContent">
                 <div
-                  className={`tab-pane pending-tabpane fade   ${
-                    pandingtab ? "show active" : "-1"
-                  }`}
+                  className={`tab-pane pending-tabpane fade   ${pandingtab ? "show active" : "-1"
+                    }`}
                   id="pending-tab-pane"
                   role="tabpanel"
                   aria-labelledby="pending-tab"
@@ -335,34 +272,34 @@ const Transactions = () => {
                       <th>User Id</th>
                       <th>Email</th>
                       <th>Phone Number</th>
+                       
                     </tr>
 
-                    {PermissionData()?.VIEW_ORDER_PENDING ==
-                    "VIEW_ORDER_PENDING"
-                      ? GetSettingUserInfoData &&
-                        GetSettingUserInfoData?.User_info?.map((item, id) => {
-                          return (
-                            <tr>
-                              <td
-                                style={{ cursor: "pointer" }}
-                                onClick={() =>
-                                  showTransactionHistory(item.user_id)
-                                }
-                              >
-                                {item.name || item.company_name}
-                              </td>
+                    {PermissionData()?.VIEW_ORDER_PENDING == "VIEW_ORDER_PENDING" ?
+                      GetSettingUserInfoData &&
+                      GetSettingUserInfoData?.User_info?.map((item, id) => {
 
-                              <td>
-                                <b> {item.user_id}</b>
-                              </td>
+                        return (
+                          <tr>
 
-                              {/* <td>{item.product_order_id}</td> */}
-                              <td>{item.email}</td>
+                            <td
+                              style={{ cursor: "pointer" }}
+                              onClick={() => showTransactionHistory(item.user_id)}
 
-                              <td>{item.phone_number}</td>
-                            </tr>
-                          );
-                        })
+                            >{item.name || item.company_name}</td>
+
+                            <td>
+                              <b> {item.user_id}</b>
+                            </td>
+
+                            {/* <td>{item.product_order_id}</td> */}
+                            <td>{item.email}</td>
+
+                            <td>{item.phone_number}</td>
+                            
+                          </tr>
+                        );
+                      })
                       : ""}
                   </table>
                 </div>
@@ -392,38 +329,28 @@ const Transactions = () => {
                 />
               </svg>
             </div>
-            {/* {console.log("TransactionHistorytData?.data !==[]",TransactionHistorytData?.data ==[])} */}
-            <div className="tab-content mt-5">
+            <div  className="tab-content mt-5">
               <table>
                 <tr>
-                  <th>Order Id</th>
-                  <th>Amount</th>
+                <th>Order Id</th>
+                  <th >Amount</th>
                   <th>Source</th>
                   <th>Status</th>
+                  <th>Method</th>
                 </tr>
-                {/* {console.log("currentItems12345", currentItems)} */}
-                {!currentItems?.length == 0 ? (
-                  currentItems?.map((item) => {
-                    return (
-                      <tr>
-                        <td>{item.order_id}</td>
-                        <td>{item.amount}</td>
-                        <td>{item.source}</td>
-                        <td>{item.status}</td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    {" "}
-                    <td colSpan="4">
-                      {" "}
-                      <p className="text-center text-muted mt-5">
-                        No Transaction are there !
-                      </p>{" "}
-                    </td>
-                  </tr>
-                )}
+                {!TransactionHistorytData?.data?.length==0?TransactionHistorytData?.data.map((item) => {
+                  return (
+                    <tr>
+                      <td>{item.order_id}</td>
+                      <td>{item.amount}</td>
+                      <td>{item.source}</td>
+                      <td>{item.status}</td>
+                      <td>{item.method}</td>
+                       
+
+                    </tr>
+                  )
+                }):<tr> <td colSpan='5' > <p className="text-center text-muted mt-5">No Transaction are there !</p> </td></tr> }
                 {/* {TransactionHistorytData?.data.map((item) => {
                   return (
                     <tr>
@@ -434,50 +361,10 @@ const Transactions = () => {
                     </tr>
                   )
                 })} */}
+
               </table>
             </div>
-            <div className="pagination d-flex justify-content-end">
-              <a className="paginationn" onClick={() => onPageChange(0)}>
-                First
-              </a>
-
-              <button
-                className="paginationn"
-                onClick={() => onPageChange(currentPage - 1)}
-                disabled={currentPage === 0}
-              >
-                &laquo;
-              </button>
-              {Array(PageCount)
-                ?.fill(null)
-                ?.map((page, index) => {
-                  console.log("page", page);
-                  return (
-                    <button
-                      className={currentPage === index ? "active-btn" : ""}
-                      key={index}
-                      onClick={() => onPageChange(index)}
-                    >
-                      <div className="paginationn">{index + 1}</div>
-                    </button>
-                  );
-                })}
-
-              <button
-                className="paginationn"
-                onClick={() => onPageChange(currentPage + 1)}
-                disabled={currentPage === PageCount - 1}
-              >
-                &raquo;
-              </button>
-              <a
-                className="paginationn"
-                onClick={() => onPageChange(PageCount - 1)}
-              >
-                last
-              </a>
-            </div>
-            <div className="popup-body row ">
+            {/* <div className="popup-body row ">
               <div className="btngroups">
                 <button
                   type="button"
@@ -494,7 +381,7 @@ const Transactions = () => {
                   Cancel
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       )}

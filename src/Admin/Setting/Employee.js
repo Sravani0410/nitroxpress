@@ -67,8 +67,6 @@ const Employee = () => {
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
-
-  console.log("editcategoryvalue12", editcategoryvalue); 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -99,12 +97,13 @@ const Employee = () => {
     (state) =>
       state.DeleteAdminSettingDeleteUserReducer.DeleteAdminSettingDeleteUserData
   ); 
+  let IsAdminRole=reactLocalStorage.get("Admin_Role",false)
+
   useEffect(() => {
     dispatch(GetCategoryDetails());
     dispatch(GetSettingViewPermission());
 
     if (PatchEditEmployeeData.status == 200) {
-      console.log("bvhdbvhjvjvh")
     //    setEditRemovedPermissionData([])
     //  setOnEditFixedPermissionData([])
     //  setCancelPermissionData([])
@@ -154,6 +153,8 @@ const Employee = () => {
       email: email,
       password: password,
       confirm_pass: confirmpassword,
+      from_date: fromdate,
+      to_date: todate,
       user_permision: permissiondata,
       category_id: category,
     };
@@ -184,7 +185,6 @@ const Employee = () => {
     let CountryCode = eventTargetValue.split(" ");
     setCountryCodeDelivery(CountryCode[0]);
     CountryCode.slice(1).map((items, id) => {
-      console.log(items);
       data.push(items);
     });
     let myString = data.join("").replace(/\D/g, "");
@@ -203,8 +203,6 @@ const Employee = () => {
     let array = [];
 
     data?.user_permission.map((item, id) => {
-      console.log("1212122", item);
-
       array.push(item.permission);
     });
 
@@ -218,6 +216,8 @@ const Employee = () => {
       user_name: name,
       user_permission: selectededitpermissiondata,
       delete_permission: editcategoryvaluefilterdata,
+      from_date: fromdate,
+      to_date: todate,
       user_id: userid,
       category_id: editcategoryvalue,
     };
@@ -241,7 +241,6 @@ const Employee = () => {
     setRemovedPermissionData([...removedpermissiondata, removedItem]);
 
     // const withoutDuplicates = [...new Set(removedpermissiondata)];
-    // console.log("withoutDuplicates", withoutDuplicates)
 
     let array = [];
     selectedList.map((item, id) => {
@@ -250,19 +249,13 @@ const Employee = () => {
 
     setPermissionData(array);
   };
-
-  console.log("aaaaarr", permissiondata);
-
   const onSelectAccess = (selectedList, selectedItem) => {
-    console.log("sdsd", selectedList);
     // ...
 
     setUserAccess(selectedList);
   };
 
   const onRemoveAccess = (selectedList, removedItem) => {
-    console.log(selectedList);
-
     setUserAccess(selectedList);
     // ...
   };
@@ -305,7 +298,6 @@ const Employee = () => {
   ];
 
   // useEffect(() => {
-  //   console.log(permissiondata,"permissiondata")
   //   let array1 =[]
   //   if(permissiondata){
   //     permissiondata.map((item,id)=>{
@@ -314,9 +306,7 @@ const Employee = () => {
 
   //     })
   //     // setPermissionData(array1)
-  //     console.log("aaaaa", array1);
   //   }
-  //   console.log("aaaaa11", array1);
   // }, [permissiondata]);
 
   const ShowPermissionDataFun = (e, data) => {
@@ -325,7 +315,6 @@ const Employee = () => {
   };
 
   const onSelectEdit = (selectedList, selectedItem) => {
-    console.log("selectedList", selectedItem);
     setSelectedEditPermission([...selectededitpermission, selectedItem]);
 
     let array = [];
@@ -337,8 +326,6 @@ const Employee = () => {
   };
 
   useEffect(() => {}, [removedpermissiondata]);
-
-  console.log("editpermissiondata", editremovedpermissiondata);
 
   const onRemoveEdit = (selectedList, removedItem) => {
     setEditRemovedPermissionData([...editremovedpermissiondata, removedItem]); 
@@ -354,13 +341,6 @@ const Employee = () => {
   };
 
   useEffect(() => {
-
-    console.log(
-      "jmgvvdcb",
-      oneditfixedpermissiondata,
-      editremovedpermissiondata
-    );
-
     let arrayData = [];
     oneditfixedpermissiondata?.map((item, id) => {
       editremovedpermissiondata?.map((items, ids) => {
@@ -372,37 +352,25 @@ const Employee = () => {
   }, [oneditfixedpermissiondata, editremovedpermissiondata]);
 
   useEffect(() => {
-
     if (cancelpermissiondata) {
       let filterData = cancelpermissiondata?.filter((item, index) => cancelpermissiondata.indexOf(item) === index)
       setEditCategoryValueFilterData(filterData)
-      console.log("filterDatafilterData12", )
     }
-    
-
   }, [cancelpermissiondata])
-
-  console.log("cancelpermissiondatacancelpermissiondata", cancelpermissiondata)
-
   useEffect(() => {
     if (selectededitpermission) {
       let arrayData = [];
-
       const uniqueAddresses = Array.from(
         new Set(selectededitpermission.map((a) => a.permission))
       ).map((id) => {
         return selectededitpermission.find((a) => a.permission === id);
       });
-
       uniqueAddresses.map((item, id) => {
         arrayData.push(item.permission);
       });
       setSelectedEditPermissionData(arrayData);
     }
   }, [selectededitpermission]);
-
-  
-
   const DeleteEmployee = (e, item) => {
     let payload = {
       user_id: item?.employee_id,
@@ -430,18 +398,18 @@ const Employee = () => {
                 {" "}
                 Back{" "}
               </button>
-              <button
+             { IsAdminRole==="true"?<button
                 type="button"
                 className={`btn  ${PermissionData()?.CREATE_EMPLOYEE == "CREATE_EMPLOYEE" ? " " : "permission_blur"}`}
                 onClick={(e) => PermissionData()?.CREATE_EMPLOYEE == "CREATE_EMPLOYEE" ? setAddUser((o) => !o) : ""}
               >
                 {" "}
                 + Add Employee{" "}
-              </button>
+              </button>:""}
             </div>
           </div>
 
-          <div className="employe-table">
+         { IsAdminRole==="true"?<div className="employe-table">
             <table>
               <tr>
                 <th>Name</th>
@@ -452,20 +420,16 @@ const Employee = () => {
               </tr>
               {
                 PermissionData()?.VIEW_EMPLOYEE == "VIEW_EMPLOYEE" ?
-
-                  GetSettingEmployeeInfoData &&
+                 GetSettingEmployeeInfoData &&
                   GetSettingEmployeeInfoData?.employee_info.map((item, id) => {
-                    console.log("itemitem", item);
                     return (
                       <tr>
                         <td>{item.name}</td>
                         <td>{item.email}</td>
                         <td>{item?.user_permission[0]?.permission}
-
                           <span onClick={(e) => ShowPermissionDataFun(e, item)}
                             className="order-btn text-primary" role="button" >
                             ....
-
                             {item?.employee_id == showpermissionobjectdata?.employee_id && showpermissiondatatruefalse == true 
                             && <div className="dropdown"> 
                             <ul className=" permission_all ">
@@ -477,8 +441,6 @@ const Employee = () => {
                             </div>}
                           </span>
                         </td>
-
-
                         <td>
                           <div className="action-btngroup">
                             <button
@@ -494,8 +456,8 @@ const Employee = () => {
                                 xmlns="http://www.w3.org/2000/svg"
                               >
                                 <path
-                                  fill-rule="evenodd"
-                                  clip-rule="evenodd"
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
                                   d="M5.83818 0.0363069C5.55698 0.0957951 5.32379 0.212267 5.10436 0.402842C4.73822 0.720902 4.61087 1.06757 4.61087 1.74637V2.18409L2.50821 2.19373C0.46106 2.20313 0.402221 2.20523 0.279238 2.27391C0.0921099 2.37837 -0.0160374 2.57595 0.00193905 2.78056C0.0181106 2.96513 0.0999792 3.09117 0.278841 3.20685C0.390237 3.2789 0.436369 3.28404 0.971511 3.28404C1.39811 3.28404 1.54874 3.29502 1.55997 3.32693C1.56823 3.35053 1.72168 5.52343 1.90094 8.15563C2.10496 11.1516 2.24827 13.0441 2.28412 13.2159C2.45702 14.0447 3.10619 14.6966 3.99783 14.9368C4.2172 14.9959 4.4375 14.9999 7.5167 14.9999C11.2083 14.9999 10.9864 15.0142 11.5441 14.739C12.1985 14.416 12.6579 13.803 12.7688 13.1045C12.7891 12.9771 12.9446 10.7347 13.1144 8.12133C13.2843 5.50799 13.4298 3.35053 13.4378 3.32693C13.4487 3.29499 13.5989 3.28404 14.0258 3.28404C14.5609 3.28404 14.6071 3.2789 14.7185 3.20685C14.8912 3.09512 14.9762 2.96976 14.9968 2.79654C15.0203 2.59777 14.9132 2.39333 14.7282 2.28403L14.5918 2.20337L12.4929 2.19373L10.3941 2.18413L10.3785 1.66198C10.3653 1.22305 10.3497 1.10792 10.2805 0.939369C10.1256 0.561889 9.76805 0.232749 9.3504 0.0830672C9.14822 0.0106109 9.08812 0.00783214 7.58889 0.00121089C6.47316 -0.00372931 5.98091 0.00615105 5.83818 0.0363069ZM9.12602 1.25191C9.22995 1.36248 9.23132 1.36934 9.23132 1.77509V2.18622H7.49865H5.76598V1.77718C5.76598 1.38944 5.77075 1.36275 5.85745 1.2648C5.90777 1.20796 5.98491 1.15454 6.02892 1.14603C6.07292 1.13756 6.76407 1.13269 7.56482 1.13523L9.02073 1.13986L9.12602 1.25191ZM12.2639 3.39554C12.2641 3.43801 12.1253 5.59548 11.9554 8.18994C11.7459 11.3904 11.6298 12.9638 11.5943 13.0832C11.49 13.4341 11.1637 13.7558 10.8074 13.8586C10.6911 13.8922 9.93518 13.902 7.46255 13.902H4.26795L4.06775 13.8128C3.95766 13.7637 3.80998 13.6755 3.73956 13.6168C3.58531 13.488 3.39443 13.1597 3.36577 12.9737C3.344 12.8324 2.76991 3.64447 2.76991 3.43716V3.31835H7.5167H12.2635L12.2639 3.39554ZM4.89929 5.21381C4.83366 5.25628 4.74598 5.33457 4.70444 5.38785C4.6291 5.48446 4.62892 5.4928 4.62892 8.60162C4.62892 11.7105 4.6291 11.7188 4.70444 11.8154C4.96704 12.1522 5.40981 12.1522 5.67242 11.8154C5.74775 11.7188 5.74793 11.7105 5.74793 8.60162C5.74793 5.4928 5.74775 5.48446 5.67242 5.38785C5.54438 5.22366 5.37675 5.13662 5.18843 5.13662C5.07176 5.13662 4.98127 5.16077 4.89929 5.21381ZM7.20951 5.21381C7.14389 5.25628 7.05621 5.33457 7.01466 5.38785C6.93932 5.48446 6.93914 5.4928 6.93914 8.60162C6.93914 11.7105 6.93932 11.7188 7.01466 11.8154C7.27727 12.1522 7.72004 12.1522 7.98264 11.8154C8.05798 11.7188 8.05816 11.7105 8.05816 8.60162C8.05816 5.4928 8.05798 5.48446 7.98264 5.38785C7.85461 5.22366 7.68697 5.13662 7.49865 5.13662C7.38198 5.13662 7.29149 5.16077 7.20951 5.21381ZM9.51974 5.21381C9.45411 5.25628 9.36643 5.33457 9.32488 5.38785C9.24955 5.48446 9.24937 5.4928 9.24937 8.60162C9.24937 11.7105 9.24955 11.7188 9.32488 11.8154C9.58749 12.1522 10.0303 12.1522 10.2929 11.8154C10.3682 11.7188 10.3684 11.7105 10.3684 8.60162C10.3684 5.4928 10.3682 5.48446 10.2929 5.38785C10.1648 5.22366 9.99719 5.13662 9.80888 5.13662C9.69221 5.13662 9.60171 5.16077 9.51974 5.21381Z"
                                   fill="#DB2C2C"
                                 />
@@ -546,9 +508,9 @@ const Employee = () => {
                       </tr>
                     );
                   })
-                : ""}
+                : "" }
             </table>
-          </div>
+          </div>:<h3 className="content-sec settings-sec">Only Admin Can Access This Page</h3>}
         </div>
       </div>
       {/* ===================== Add user poup========================== */}
@@ -628,8 +590,8 @@ const Employee = () => {
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
+                            fillRule="evenodd"
+                            clipRule="evenodd"
                             d="M1.11775 8.467C0.96075 8.176 0.96075 7.823 1.11775 7.532C3.00975 4.033 6.50475 1 9.99975 1C13.4948 1 16.9898 4.033 18.8818 7.533C19.0388 7.824 19.0388 8.177 18.8818 8.468C16.9898 11.967 13.4948 15 9.99975 15C6.50475 15 3.00975 11.967 1.11775 8.467Z"
                             stroke="#828282"
                             stroke-width="1.5"
@@ -658,8 +620,8 @@ const Employee = () => {
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
+                            fillRule="evenodd"
+                            clipRule="evenodd"
                             d="M1.11775 9.80538C0.96075 9.51438 0.96075 9.16138 1.11775 8.87038C3.00975 5.37138 6.50475 2.33838 9.99975 2.33838C13.4948 2.33838 16.9898 5.37138 18.8818 8.87138C19.0388 9.16238 19.0388 9.51538 18.8818 9.80638C16.9898 13.3054 13.4948 16.3384 9.99975 16.3384C6.50475 16.3384 3.00975 13.3054 1.11775 9.80538Z"
                             stroke="#828282"
                             stroke-width="1.5"
@@ -714,8 +676,8 @@ const Employee = () => {
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
+                            fillRule="evenodd"
+                            clipRule="evenodd"
                             d="M1.11775 8.467C0.96075 8.176 0.96075 7.823 1.11775 7.532C3.00975 4.033 6.50475 1 9.99975 1C13.4948 1 16.9898 4.033 18.8818 7.533C19.0388 7.824 19.0388 8.177 18.8818 8.468C16.9898 11.967 13.4948 15 9.99975 15C6.50475 15 3.00975 11.967 1.11775 8.467Z"
                             stroke="#828282"
                             stroke-width="1.5"
@@ -744,8 +706,8 @@ const Employee = () => {
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
+                            fillRule="evenodd"
+                            clipRule="evenodd"
                             d="M1.11775 9.80538C0.96075 9.51438 0.96075 9.16138 1.11775 8.87038C3.00975 5.37138 6.50475 2.33838 9.99975 2.33838C13.4948 2.33838 16.9898 5.37138 18.8818 8.87138C19.0388 9.16238 19.0388 9.51538 18.8818 9.80638C16.9898 13.3054 13.4948 16.3384 9.99975 16.3384C6.50475 16.3384 3.00975 13.3054 1.11775 9.80538Z"
                             stroke="#828282"
                             stroke-width="1.5"
@@ -782,7 +744,27 @@ const Employee = () => {
                     ""
                   )}
                 </div>
-
+                <div className="col-12">
+                      <label>Duration</label>
+                    </div>
+                    <div className="col-md-6">
+                      <input
+                        type="date"
+                        className={`form-control  ${fromdate ? "" : ""} `}
+                        placeholder="From date"
+                        value={fromdate}
+                        onChange={(e) => setFromDate(e.target.value)}
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <input
+                        type="date"
+                        className={`form-control  ${todate ? "" : ""} `}
+                        placeholder="To date"
+                        value={todate}
+                        onChange={(e) => setToDate(e.target.value)}
+                      />
+                    </div>
                 <div className="col-md-6">
                   <label>Permissions</label>
                 </div>
@@ -878,7 +860,27 @@ const Employee = () => {
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
-
+                <div className="col-12">
+                      <label>Duration</label>
+                    </div>
+                    <div className="col-md-6">
+                      <input
+                        type="date"
+                        className={`form-control  ${fromdate ? "" : ""} `}
+                        placeholder="From date"
+                        value={fromdate}
+                        onChange={(e) => setFromDate(e.target.value)}
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <input
+                        type="date"
+                        className={`form-control  ${todate ? "" : ""} `}
+                        placeholder="To date"
+                        value={todate}
+                        onChange={(e) => setToDate(e.target.value)}
+                      />
+                    </div>
                 <div className="col-md-6 ">
                   <label>Permissions</label>
                 </div>
@@ -908,7 +910,6 @@ const Employee = () => {
                     </option> */}
                     {GetCategoryDetailsData?.category_details_list.map(
                       (item, id) => {
-                        console.log(item);
                         return (
                           <option value={item.id}>{item.category_name}</option>
                         );

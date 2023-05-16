@@ -14,7 +14,7 @@ const BlogsIshita = () => {
     return ( 
         <> 
         
-        <div class="business-box">
+        <div className="business-box">
             
 
             <figure>
@@ -27,7 +27,7 @@ const BlogsIshita = () => {
 
             <p>Social Media Influencer <br/> NitroXpress India</p>
 
-            <ul class="list1">
+            <ul className="list1">
 
                 <li><a href="https://www.linkedin.com/in/ishita-ui-ux-designer">
                     <img src={linkedin} alt="img" /> </a> </li>
@@ -38,7 +38,7 @@ const BlogsIshita = () => {
 
             </ul>
 
-            <ul class="list2">
+            <ul className="list2">
 
                 <li> <a href="tel:8003202581"> +91 8003202581</a> </li>
 

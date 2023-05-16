@@ -19,11 +19,9 @@ const Shippingpayment = () => {
     const QrCodeScanerFun = async () => {
         try {
             const response = await QRCode.toDataURL('Just Test QR-Code')
-            console.log(response)
             setQrcodeImage(response)
 
         } catch (error) {
-            console.log(error)
 
         }
 
@@ -42,7 +40,7 @@ const Shippingpayment = () => {
                                 <div className='col-6'>
                                     <label className='creditcard-box'> Credit Card
                                         <input type="radio" />
-                                        <span class="checkmark"></span>
+                                        <span className="checkmark"></span>
                                     </label>
                                 </div>
                                 <div className='col-6 text-end'>

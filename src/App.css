@@ -1,417 +1,439 @@
-a {
-  text-decoration: none !important;
-}
+ a {
+   text-decoration: none !important
+ }
 
-.App {
-  text-align: center;
-}
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+ .App {
+   text-align: center;
+ }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
+ .App-logo {
+   height: 40vmin;
+   pointer-events: none;
+ }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
+ @media (prefers-reduced-motion: no-preference) {
+   .App-logo {
+     animation: App-logo-spin infinite 20s linear;
+   }
+ }
 
-.App-link {
-  color: #61dafb;
-}
+ .App-header {
+   background-color: #282c34;
+   min-height: 100vh;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   font-size: calc(10px + 2vmin);
+   color: white;
+ }
+
+ .App-link {
+   color: #61dafb;
+ }
 
 /* .pagination{
- background-color: #61dafb;
+  background-color: #61dafb;
 } */
 .pagination {
   display: inline-block;
 }
-.pagination button {
-  border: none;
-  outline: none;
+.pagination button{
+  border:none; 
+  outline:none;
 }
-.paginationn {
+.paginationn{
   color: black;
   float: left;
   padding: 8px 16px;
   text-decoration: none;
-  transition: background-color 0.3s;
+  transition: background-color .3s;
 }
 
 .active-btn {
-  background-color: #ffc900;
+  background-color:#FFC900;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+ @keyframes App-logo-spin {
+   from {
+     transform: rotate(0deg);
+   }
 
-  to {
-    transform: rotate(360deg);
-  }
-}
+   to {
+     transform: rotate(360deg);
+   }
+ }
 
-.login_container {
-  margin-top: 10%;
-}
+ .login_container {
+   margin-top: 10%;
+ }
 
-.pwd-part h5 {
-  cursor: pointer;
-}
+ .pwd-part h5 {
+   cursor: pointer;
+ }
 
-.carousel-status,
-.thumbs-wrapper {
-  display: none;
-}
+ .carousel-status,
+ .thumbs-wrapper {
+   display: none;
+ }
 
-.verifyphone-part .sign_up_ {
-  color: #707070;
-  font-weight: 400;
-}
 
-.label_ {
-  font-weight: 300;
-  font-size: 12px;
-  line-height: 16px;
-  color: #707070;
-  margin-left: -200px !important;
-}
+ .verifyphone-part .sign_up_ {
+   color: #707070;
+   font-weight: 400;
+ }
 
-.button_otp_div {
-  margin-top: 35px;
-  text-align: center;
-}
 
-.button_login_div {
-  text-align: center;
-}
 
-.button_login_div > button {
-  background: #ffc900;
-  box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.08);
-  border-radius: 41px;
-  width: 358px;
-  height: 40px;
-  border: none;
-  font-weight: 600;
-  font-size: 14px;
-  text-align: center;
-  margin-top: 10px;
-  color: #000000;
-}
+ .label_ {
+   font-weight: 300;
+   font-size: 12px;
+   line-height: 16px;
+   color: #707070;
+   margin-left: -200px !important;
+ }
 
-.sign_up_with {
-  margin: 10px 0;
-  text-align: center;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 16px;
-  color: #000000;
-}
+ .button_otp_div {
+   margin-top: 35px;
+   text-align: center;
+ }
 
-.choose_business {
-  display: flex;
-  justify-content: center;
-}
+ .button_login_div {
+   text-align: center;
 
-.choose_business button:hover {
-  border: 1px solid #ffc900;
-  color: #ffc900;
-  font-weight: 600;
-}
+ }
 
-.choose_business_active {
-  border: 1px solid #ffc900 !important;
-  color: #ffffff !important;
-  font-weight: 600;
-  background-color: #ffc900 !important;
-}
+ .button_login_div>button {
+   background: #FFC900;
+   box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.08);
+   border-radius: 41px;
+   width: 358px;
+   height: 40px;
+   border: none;
+   font-weight: 600;
+   font-size: 14px;
+   text-align: center;
+   margin-top: 10px;
+   color: #000000;
+ }
 
-.forget_password {
-  margin-top: 15px;
-  text-align: right;
-  color: #ffc900 !important;
-}
+ .sign_up_with {
+   margin: 10px 0;
+   text-align: center;
+   font-style: normal;
+   font-weight: 400;
+   font-size: 12px;
+   line-height: 16px;
+   color: #000000;
+ }
 
-.send_otp {
-  font-size: 10px;
-  text-align: right;
-  max-width: 280px;
-  margin: 15px auto 30px;
-}
+ .choose_business {
+   display: flex;
+   justify-content: center;
 
-.send_otp a {
-  color: #ffc900 !important;
-  font-size: 12px;
-  font-weight: 600;
-}
+ }
 
-.forget_password a {
-  font-size: 14px;
-  color: #ffc900 !important;
-}
+ .choose_business button:hover {
+   border: 1px solid #FFC900;
+   color: #FFC900;
+   font-weight: 600;
+ }
 
-.verify_logo {
-  display: flex;
-  justify-content: center;
-}
 
-.verify_logo div button span {
-  padding-right: 10px;
-}
+ .choose_business_active {
+   border: 1px solid #FFC900 !important;
+   color: #FFFFFF !important;
+   font-weight: 600;
+   background-color: #FFC900 !important;
+ }
 
-.verify_logo button {
-  background-color: white;
-  color: #6f6f6f;
-  font-size: 12px;
-  text-align: center;
-  background: #fbfbf9;
-  border: 1px solid #dbdbdb;
-  border-radius: 40px;
-  width: 358px;
-  height: 40px;
-  font-weight: 600;
-}
+ .forget_password {
+   margin-top: 15px;
+   text-align: right;
+   color: #FFC900 !important;
+ }
 
-.otp_ {
-  padding-bottom: 3px;
-  border-bottom: 1px solid black;
-}
+ .send_otp {
+   font-size: 10px;
+   text-align: right;
+   max-width: 280px;
+   margin: 15px auto 30px;
+ }
 
-.otp_container > div {
-  justify-content: center;
-}
+ .send_otp a {
+   color: #FFC900 !important;
+   font-size: 12px;
+   font-weight: 600;
+ }
 
-.otp_container > div > div + div {
-  margin-left: 20px;
-}
+ .forget_password a {
+   font-size: 14px;
+   color: #FFC900 !important;
+ }
 
-.otp_container > div > div > input {
-  background: #ffffff;
-  border: 1px solid rgba(225, 225, 225, 0.7);
-  border-radius: 12px;
-  width: 56px !important;
-  height: 56px;
-  outline-color: #ffc900;
-}
+ .verify_logo {
+   display: flex;
+   justify-content: center;
+ }
 
-.otp_container > div .veryfy_code {
-  display: flex;
-  justify-content: center;
-}
+ .verify_logo div button span {
+   padding-right: 10px;
+ }
 
-.veryfy_code input {
-  margin: 20px;
-  width: 56px;
-  height: 56px;
-  border: 1px solid rgba(225, 225, 225, 0.7);
-  border-radius: 12px;
-  padding-left: 22px;
-  outline-color: #ffc900;
-}
+ .verify_logo button {
+   background-color: white;
+   color: #6F6F6F;
+   font-size: 12px;
+   text-align: center;
+   background: #FBFBF9;
+   border: 1px solid #DBDBDB;
+   border-radius: 40px;
+   width: 358px;
+   height: 40px;
+   font-weight: 600;
+ }
 
-.popup_cross {
-  cursor: pointer;
-  position: absolute;
-  right: 25px;
-  top: 25px;
-  background-color: #fff;
-}
+ .otp_ {
+   padding-bottom: 3px;
+   border-bottom: 1px solid black;
+ }
 
-.detail_class div {
-  font-size: 16px;
-}
+ .otp_container>div input {
+   justify-content: center;
+   margin-left: 20px;
+ }
 
-.tab_button {
-  display: flex;
-}
+ .otp_container>div>div+div {
+   margin-left: 20px;
+ }
 
-.very_email {
-  color: #707070;
-  font-size: 12px;
-}
+ .otp_container>div>input {
+   background: #FFFFFF !important;
+   border: 1px solid rgba(225, 225, 225, 0.7);
+   border-radius: 12px;
+   width: 56px !important;
+   height: 56px !important;
+   outline-color: #FFC900;
+ }
 
-.popup-content {
-  width: 90% !important;
-  max-width: 502px;
-  padding: 50px !important;
-  border-radius: 20px !important;
-}
+ .otp_container>div .veryfy_code {
+   display: flex;
+   justify-content: center;
 
-.popup-content h4 {
-  font-size: 24px;
-  color: #000;
-  font-weight: 600;
-}
+ }
 
-.popup-content p {
-  font-size: 12px;
-  color: #707070;
-  font-weight: 400;
-}
+ .veryfy_code input {
+   margin: 20px;
+   width: 56px;
+   height: 56px;
+   border: 1px solid rgba(225, 225, 225, 0.7);
+   border-radius: 12px;
+   padding-left: 22px;
+   outline-color: #FFC900;
 
-.very_email_input {
-  margin: 30px 0;
-}
+ }
 
-.very_email_input input {
-  outline: none;
-  border: none;
-  width: 100%;
-  background: #eee;
-  display: block;
-  font-size: 16px;
-  color: #000;
-  border-radius: 5px;
-  padding: 10px;
-}
+ .popup_cross {
+   cursor: pointer;
+   position: absolute;
+   right: 25px;
+   top: 25px;
+   background-color: #fff;
+ }
 
-.very_email_input input:placeholder {
-  color: #c7c7c7;
-}
+ .detail_class div {
+   font-size: 16px;
+ }
 
-.email_next_button {
-  background: #ffc900;
-  box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.08);
-  border-radius: 41px;
-  width: 100%;
-  height: 40px;
-  border: none;
-  font-weight: 400;
-  font-size: 14px;
-  text-align: center;
-  margin-top: 10px;
-  color: #000000;
-}
+ .tab_button {
+   display: flex;
+ }
 
-.tab_button button {
-  margin: 10px;
-  border-radius: 3px;
-  font-size: 14px;
-  background-color: #ffc900;
-  width: 144px;
-  height: 31px;
-  border: #ffc900;
-  font-weight: 600;
-}
+ .very_email {
+   color: #707070;
+   font-size: 12px;
+ }
 
-@media (min-width: 767px) and (max-width: 936px) {
-  .input_filed input {
-    width: 290px;
-  }
+ .popup-content {
+   width: 90% !important;
+   max-width: 502px;
+   padding: 50px !important;
+   border-radius: 20px !important;
+ }
 
-  .button_otp {
-    width: 290px !important;
-  }
+ .popup-content h4 {
+   font-size: 24px;
+   color: #000;
+   font-weight: 600;
+ }
 
-  .verify_logo div button {
-    width: 290px !important;
-  }
 
-  .forget_password {
-    margin-left: 150px;
-  }
-}
+ .popup-content p {
+   font-size: 12px;
+   color: #707070;
+   font-weight: 400;
+ }
 
-@media (min-width: 320px) and (max-width: 392px) {
-  .input_filed input {
-    width: 275px;
-  }
+ .very_email_input {
+   margin: 30px 0;
+ }
 
-  .button_otp {
-    width: 275px !important;
-  }
+ .very_email_input input {
+   outline: none;
+   border: none;
+   width: 100%;
+   background: #eee;
+   display: block;
+   font-size: 16px;
+   color: #000;
+   border-radius: 5px;
+   padding: 10px;
+ }
 
-  .verify_logo div button {
-    width: 275px !important;
-  }
+ .very_email_input input:placeholder {
+   color: #C7C7C7;
+ }
 
-  .forget_password {
-    margin-left: 130px;
-  }
-}
 
-.tab_button button {
-  margin: 10px;
-  border-radius: 3px;
-  font-size: 14px;
-  background-color: #ffc900;
-  width: 144px;
-  height: 31px;
-  border: #ffc900;
-  font-weight: 600;
-}
+ .email_next_button {
+   background: #FFC900;
+   box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.08);
+   border-radius: 41px;
+   width: 100%;
+   height: 40px;
+   border: none;
+   font-weight: 400;
+   font-size: 14px;
+   text-align: center;
+   margin-top: 10px;
+   color: #000000;
+ }
 
-@media (max-width: 576.5px) {
-  .popup-content {
-    padding: 30px !important;
-  }
-}
+ .tab_button button {
+   margin: 10px;
+   border-radius: 3px;
+   font-size: 14px;
+   background-color: #FFC900;
+   width: 144px;
+   height: 31px;
+   border: #FFC900;
+   font-weight: 600;
+ }
 
-.sign_up_loader-content {
-  background-color: transparent !important;
-  border: none !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  padding: 0px !important;
-  height: 100% !important;
-}
+ @media (min-width: 767px) and (max-width: 936px) {
+   .input_filed input {
+     width: 290px;
+   }
 
-.profile_popup {
-  float: right;
-  margin-right: 62px;
-  margin-top: -20px;
-}
+   .button_otp {
+     width: 290px !important;
+   }
 
-.profile_popup ul li {
-}
+   .verify_logo div button {
+     width: 290px !important;
+   }
 
-.add_money {
-  background-color: #fffcf2;
-  padding: 30px;
-}
+   .forget_password {
+     margin-left: 150px;
+   }
 
-.price_btn {
-  cursor: pointer;
-  background-color: #fcfeff;
-  border-radius: 100px;
-  border: 1px solid #dadada;
-  width: 82px;
-  height: 29px;
-  padding-top: 4px;
-  text-align: center;
-  margin-right: 10px;
-}
+ }
 
-.procced_btn {
+
+
+ @media (min-width: 320px) and (max-width: 392px) {
+   .input_filed input {
+     width: 275px;
+   }
+
+
+   .button_otp {
+     width: 275px !important;
+   }
+
+   .verify_logo div button {
+     width: 275px !important;
+   }
+
+   .forget_password {
+     margin-left: 130px;
+   }
+
+
+ }
+
+ .tab_button button {
+   margin: 10px;
+   border-radius: 3px;
+   font-size: 14px;
+   background-color: #FFC900;
+   width: 144px;
+   height: 31px;
+   border: #FFC900;
+   font-weight: 600;
+ }
+
+
+ @media(max-width:576.50px) {
+
+
+   .popup-content {
+     padding: 30px !important;
+   }
+ }
+
+ .sign_up_loader-content {
+   background-color: transparent !important;
+   border: none !important;
+   width: 100% !important;
+   max-width: 100% !important;
+   padding: 0px !important;
+   height: 100% !important;
+
+ }
+
+ .profile_popup {
+   float: right;
+   margin-right: 62px;
+   margin-top: -20px;
+ }
+
+ .profile_popup ul li {}
+
+ .add_money {
+   background-color: #FFFCF2;
+   padding: 30px;
+ }
+
+ .price_btn {
+
+   cursor: pointer;
+   background-color: #FCFEFF;
+   border-radius: 100px;
+   border: 1px solid #DADADA;
+   width: 82px;
+   height: 29px;
+   padding-top: 4px;
+   text-align: center;
+   margin-right: 10px;
+ }
+
+ .procced_btn{
   margin-top: 130px;
   width: 100%;
-  height: 37px;
-  background: #ffc900;
-  border-radius: 29px;
-  border: none;
-  color: white;
-  margin-bottom: 100px;
-}
+height: 37px;
+background: #FFC900;
+border-radius: 29px;
+border: none;
+color: white;
+margin-bottom: 100px;
+ }
 
-.transactions_history {
+ .transactions_history{
   padding: 60px;
-}
-.card_payment {
+ }
+ .card_payment{
   box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.05), 0px 4px 4px rgba(0, 0, 0, 0.05);
   padding: 30px;
-}
+ }

@@ -57,7 +57,10 @@ function Footer() {
                         </li> */}
                         <li>
                             <a href='/support'> Support</a>
-                    </li>
+                       </li>
+                       <li>
+                        <a href='https://blog.nitroxpress.in/'>Blog</a>
+                       </li>
                     </ul>
                 </div>
                 <div className='col-xl-2 col-lg-2 col-md-3 ft-list'>    
@@ -89,7 +92,7 @@ function Footer() {
                 </div>
             </div>
         </div>
-        <p className='text-center copy-text'>Copyright &copy; 2022 Nitro Xpress. All Rights Reserved.</p>
+        <p className='text-center copy-text'>Copyright &copy; 2023 Nitro Xpress. All Rights Reserved.</p>
     </footer>
   )
 }

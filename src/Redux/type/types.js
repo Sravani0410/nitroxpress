@@ -19,6 +19,7 @@ export const actionType = {
     GetAdminOutForDeliveryDispatch_Type:"GetAdminOutForDeliveryDispatch_Type",
     GetAdminOrderPendingDispatch_Type: "GetAdminOrderPendingDispatch_Type",
     GetAdminOrderReturnDispatch_Type: "GetAdminOrderReturnDispatch_Type",
+    GetAdminOrderRTODeliveredDispatch_Type:"GetAdminOrderRTODeliveredDispatch_Type",
     GetAdminOrderSummaryDispatch_Type:"GetAdminOrderSummaryDispatch_Type",
     GetAdminOrderBookedDispatch_Type:"GetAdminOrderBookedDispatch_Type",
     PostAdminOrderFilterationDispatch_Type:"PostAdminOrderFilterationDispatch_Type",

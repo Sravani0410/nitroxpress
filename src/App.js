@@ -80,12 +80,11 @@ function App({auth}) {
   const [isOnline, setNetwork] = useState(window.navigator.onLine);
 
 
-console.log("dhvjdsfsfsbj",auth)
+
 
   useEffect(() => {
     let BearerToken1 = reactLocalStorage.get("token", false);
     let Autherization = reactLocalStorage.get("Autherization", false);
-    console.log("jhaghdgjd", BearerToken1)
     if (BearerToken1 == false && location.pathname !== "/login") {
       if(Autherization=="unAutherized"){
       toast.warn("Login Session is Expired Please Login-again");
@@ -108,6 +107,16 @@ console.log("dhvjdsfsfsbj",auth)
     );
 
   }, []);
+
+  useEffect(() => {
+    let SessionTokenData = sessionStorage.getItem("token");
+    if (!SessionTokenData) {
+      navigate("/login")
+      reactLocalStorage.remove()
+
+    } 
+
+  }, [])
 
 
   useEffect(() => {
@@ -133,7 +142,7 @@ console.log("dhvjdsfsfsbj",auth)
       reactLocalStorage.remove("PayloadOrderData");
       reactLocalStorage.remove("Eway_bill_id");
       reactLocalStorage.remove("OrderDetailsId");
-
+      reactLocalStorage.remove("add_order_tag")
     }
 
   }, [location?.pathname])

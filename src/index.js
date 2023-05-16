@@ -6,8 +6,7 @@ import { BrowserRouter} from "react-router-dom";
 import './index.css';
 import App from './App';
 import "reactjs-popup/dist/index.css";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { ToastProvider } from "react-toast-notifications";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 import 'react-date-range/dist/styles.css';  
 import 'react-date-range/dist/theme/default.css';
 import { Provider } from "react-redux";
@@ -27,14 +26,12 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 
 root.render(
-  <Provider store={store}>
-    <ToastProvider>
+  <Provider store={store}> 
       <React.StrictMode>
         <BrowserRouter>
         <App />
         </BrowserRouter>
         
-      </React.StrictMode>
-    </ToastProvider>
+      </React.StrictMode> 
   </Provider> 
 );

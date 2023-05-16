@@ -26,7 +26,6 @@ import {
 } from "../Redux/action/ApiCollection";
 import { PermissionData } from "../Permission";
 
-
 import { Document, Page } from "react-pdf";
 
 const Orderinner = () => {
@@ -60,18 +59,15 @@ const Orderinner = () => {
   const [ordertag, setOrderTag] = useState("");
 
   const [downloadinvoiceshow, setDownloadInvoiceShow] = useState(false);
-
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
-  const [deliverylogo, setDeliveryLogo]= useState("");
-
+  const [deliverylogo, setDeliveryLogo] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   let param = useParams();
+
   let paramHash = useLocation();
-
-  console.log("paramHashparamHash", paramHash.hash)
-
+  console.log("param", paramHash?.hash);
   const GetAdminOrderReturnData = useSelector(
     (state) => state.GetAdminOrderSummaryReducer.GetAdminOrderSummaryData?.data
   );
@@ -84,21 +80,19 @@ const Orderinner = () => {
   const PostOrderDownloadInvoiceFileData = useSelector(
     (state) =>
       state.PostOrderDownloadInvoiceFileReducer.PostOrderDownloadInvoiceFileData
-        ?.data
   );
   const GetOrderDownloadInvoiceData = useSelector(
-    
     (state) =>
       state.GetOrderDownloadInvoiceReducer.GetOrderDownloadInvoiceData?.data
   );
 
-  // label generation 
+  // label generation
   const PostOrderDownloadLabelGenerationFileData = useSelector(
     (state) =>
-      state.PostOrderDownloadLabelGenerationFileReducer.PostOrderDownloadLabelGenerationFileData
-        ?.data
+      state.PostOrderDownloadLabelGenerationFileReducer
+        .PostOrderDownloadLabelGenerationFileData?.data
   );
-  
+
   const DeleteAdminOrderData = useSelector(
     (state) => state.DeleteAdminOrderReducer.DeleteAdminOrderData?.data
   );
@@ -114,15 +108,14 @@ const Orderinner = () => {
     (state) => state.PostAddOrderTagReducer.PostAddOrderTagData?.data
   );
 
-
   const PostPincodesAvailabilityData = useSelector(
-    (state) => state.PostPincodesAvailabilityReducer.PostPincodesAvailabilityData
+    (state) =>
+      state.PostPincodesAvailabilityReducer.PostPincodesAvailabilityData
   );
   const HeaderToggleClassAddData = useSelector(
-    (state) =>
-      state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
+    (state) => state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
   );
-
+  let deliverypartnerdata = reactLocalStorage.get("Is_Business");
   // const ToggleSideBarTrueFalse =useSelector((state)=>state.ToggleSideBarTrueFalseReducer.ToggleSideBarTrueFalseData)
 
   //  let Pending_Set = {
@@ -132,7 +125,6 @@ const Orderinner = () => {
   //           };
 
   useEffect(() => {
-
     let objectData = {
       product_order_id: param.id,
     };
@@ -151,7 +143,6 @@ const Orderinner = () => {
       dispatch(GetAdminOrderSummary(objectData));
     }
   }, [PatchAdminOrderEditData]);
-  console.log("PatchAdminOrderEditData", PatchAdminOrderEditData);
 
   useEffect(() => {
     setPineCode(GetAdminOrderReturnData?.customer_details?.address?.pincode);
@@ -168,12 +159,12 @@ const Orderinner = () => {
     setCountryPinCode(GetAdminOrderReturnData?.delivered_address?.country_code);
     setPickUpAddress(
       GetAdminOrderReturnData?.delivered_address?.address +
-      "," +
-      GetAdminOrderReturnData?.delivered_address?.city +
-      "," +
-      GetAdminOrderReturnData?.delivered_address?.state +
-      "," +
-      GetAdminOrderReturnData?.delivered_address?.country
+        "," +
+        GetAdminOrderReturnData?.delivered_address?.city +
+        "," +
+        GetAdminOrderReturnData?.delivered_address?.state +
+        "," +
+        GetAdminOrderReturnData?.delivered_address?.country
     );
     setPaymentMethod(GetAdminOrderReturnData?.method);
   }, [GetAdminOrderReturnData]);
@@ -196,8 +187,6 @@ const Orderinner = () => {
         landmark: landmark,
         contry_code: countrypincode,
       };
-
-      console.log(deliverypincodeactive);
 
       !deliverypincodeactive && pincode && !pickupaddressactive && !weighterror
         ? dispatch(PatchAdminOrderEdit(payloadData))
@@ -236,7 +225,6 @@ const Orderinner = () => {
   ) => {
     // we are not using all the parameters in this function , but all parameters are important becouse of this library
 
-    console.log(eventTargetValue);
     let data = [];
     let CountryCode = eventTargetValue.split(" ");
     setCountryPinCode(CountryCode[0]);
@@ -253,7 +241,6 @@ const Orderinner = () => {
     eventData,
     eventTargetValue
   ) => {
-    console.log(eventTargetValue);
     let data = [];
     let CountryCode = eventTargetValue.split(" ");
     setAltCountryPinCode(CountryCode[0]);
@@ -294,8 +281,8 @@ const Orderinner = () => {
     setPineCode(e.target.value);
 
     let payload = {
-      "pincode": e.target.value,
-      "check_type": "DELIVERED"
+      pincode: e.target.value,
+      check_type: "DELIVERED",
     };
 
     if (e.target.value.length === 6) {
@@ -317,25 +304,23 @@ const Orderinner = () => {
       //PostPincodesDeliveredReducer && PostPincodesDeliveredReducer == "Pincode Available" ? setDeliveryPinCodeActive(false) : setDeliveryPinCodeActive(true)
     }
   }, [PostPincodesAvailabilityData]);
-
-useEffect(()=>{
-  if(GetAdminOrderReturnData?.delivery_partner === "SKYKING"){
-    setDeliveryLogo("/images/SKYYKING.png")
-  }else if(GetAdminOrderReturnData?.delivery_partner === "DTDC"){
-    setDeliveryLogo("/images/DTDC.png")
-  }else if(GetAdminOrderReturnData?.delivery_partner === "ANJANI"){
-    setDeliveryLogo("/images/ANJANI.png")
-  }else if(GetAdminOrderReturnData?.delivery_partner === "DHL"){
-    setDeliveryLogo("/images/DHL.png")
-  }else if(GetAdminOrderReturnData?.delivery_partner === "XPRESSBEES"){
-    setDeliveryLogo("/images/XPRESS.png")
-  }else if(GetAdminOrderReturnData?.delivery_partner === "DELHIVERY"){
-    setDeliveryLogo("/images/DELHIVERY.png")
-  }else if(GetAdminOrderReturnData?.delivery_partner === "NITRO"){
-    setDeliveryLogo("/images/NITRO.png")
-  }
-  
-},[GetAdminOrderReturnData]) 
+  useEffect(() => {
+    if (GetAdminOrderReturnData?.delivery_partner === "SKYKING") {
+      setDeliveryLogo("/images/SKYYKING.png");
+    } else if (GetAdminOrderReturnData?.delivery_partner === "DTDC") {
+      setDeliveryLogo("/images/DTDC.png");
+    } else if (GetAdminOrderReturnData?.delivery_partner === "ANJANI") {
+      setDeliveryLogo("/images/ANJANI.png");
+    } else if (GetAdminOrderReturnData?.delivery_partner === "DHL") {
+      setDeliveryLogo("/images/DHL.png");
+    } else if (GetAdminOrderReturnData?.delivery_partner === "XPRESSBEES") {
+      setDeliveryLogo("/images/XPRESS.png");
+    } else if (GetAdminOrderReturnData?.delivery_partner === "DELHIVERY") {
+      setDeliveryLogo("/images/DELHIVERY.png");
+    } else if (GetAdminOrderReturnData?.delivery_partner === "NITRO") {
+      setDeliveryLogo("/images/NITRO.png");
+    }
+  }, [GetAdminOrderReturnData]);
 
   const WeightFun = (e) => {
     if (e.target.value > 0) {
@@ -347,7 +332,33 @@ useEffect(()=>{
     }
   };
 
-  const Invoice = (e) => {
+  // const Invoice = (e) => {
+  //   if(PostOrderDownloadInvoiceFileData?.status !==200){
+
+  //   setDownloadInvoiceShow(true);
+
+  //   let payload = {
+  //     product_order_id: param.id,
+  //     request_type: "get",
+  //   };
+
+  //   dispatch(PostOrderDownloadInvoiceFile(payload));
+  //   }
+  //   else{
+  //     setDownloadInvoiceShow(false)
+  //   }
+
+  //   // setDownloadInvoiceShow(true);
+
+  //   // let payload = {
+  //   //   product_order_id: param.id,
+  //   //   request_type: "get",
+  //   // };
+
+  //   // dispatch(PostOrderDownloadInvoiceFile(payload));
+  // };
+
+  const Invoice = async (e) => {
     setDownloadInvoiceShow(true);
 
     let payload = {
@@ -384,37 +395,43 @@ useEffect(()=>{
     };
     dispatch(PostAddOrderTag(payload));
     setAddOrderTag((o) => !o);
-    console.log("az", payload);
   };
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
-    console.log("numPages", numPages);
   }
 
-  const date = new Date(GetAdminOrderReturnData?.order_summary?.order_created)
-  const callDate = new Date(GetAdminOrderCallBuyerData?.order_date)
+  const date = new Date(GetAdminOrderReturnData?.order_summary?.order_created);
+  const callDate = new Date(GetAdminOrderCallBuyerData?.order_date);
 
-  console.log("PostOrderDownloadLabelGenerationFileData", PostOrderDownloadInvoiceFileData)
+  // useEffect(() => {
 
-  
- 
-  useEffect(() => {
-    if (PostOrderDownloadInvoiceFileData?.name) { 
-      window.open(`${PostOrderDownloadInvoiceFileData?.name}`); 
-    }
+  //   if (PostOrderDownloadInvoiceFileData?.data?.name) {
+  //     setDownloadInvoiceShow(false)
+  //     window.open(`${PostOrderDownloadInvoiceFileData?.data?.name}`);
+  //     // setDownloadInvoiceShow(false)
+  //   };
+  //   let payload = {
+  //     product_order_id:"param.id",
+  //     request_type: "get",
+  //   };
+  //   dispatch(PostOrderDownloadInvoiceFile(payload));
 
-  }, [PostOrderDownloadInvoiceFileData])
-  useEffect(() => {
-    if (PostOrderDownloadLabelGenerationFileData?.name) { 
-      window.open(`${PostOrderDownloadLabelGenerationFileData.name}`); 
-    }
+  // }, [PostOrderDownloadInvoiceFileData?.data?.name])
 
-  }, [PostOrderDownloadLabelGenerationFileData])
+  // useEffect(() => {
+  //   if (PostOrderDownloadLabelGenerationFileData?.name) {
+  //     window.open(`${PostOrderDownloadLabelGenerationFileData.name}`);
+  //   }
+  //   let payload = {
+  //     product_order_id: "param.id",
+  //     request_type: "get",
+  //   };
+  //   dispatch(PostOrderDownloadLabelGenerationFile(payload));
+  // },[PostOrderDownloadLabelGenerationFileData])
 
   return (
     <>
-       
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
         <Header />
         <div className={`dashboard-part ${HeaderToggleClassAddData}`}>
@@ -441,10 +458,19 @@ useEffect(()=>{
                     Action
                   </button>
                   <ul className="dropdown">
-                    <li onClick={(e) =>
-                      PermissionData()?.GET_ORDER_INVOICE == "GET_ORDER_INVOICE" ?
-                        Invoice(e) : ""}
-                      className={`${PermissionData()?.GET_ORDER_INVOICE == "GET_ORDER_INVOICE" ? " " : "permission_blur"}`}
+                    <li
+                      onClick={(e) =>
+                        PermissionData()?.GET_ORDER_INVOICE ==
+                        "GET_ORDER_INVOICE"
+                          ? Invoice(e)
+                          : ""
+                      }
+                      className={`${
+                        PermissionData()?.GET_ORDER_INVOICE ==
+                        "GET_ORDER_INVOICE"
+                          ? " "
+                          : "permission_blur"
+                      }`}
                     >
                       Download Invoice
                       {/* <a href='#' target="_blank"> */}
@@ -456,10 +482,19 @@ useEffect(()=>{
                       {/* </a> */}
                     </li>
 
-                    <li onClick={(e) =>
-                      PermissionData()?.GET_ORDER_INVOICE == "GET_ORDER_INVOICE" ?
-                        GetLabel(e) : ""}
-                      className={`${PermissionData()?.GET_ORDER_INVOICE == "GET_ORDER_INVOICE" ? " " : "permission_blur"} `}
+                    <li
+                      onClick={(e) =>
+                        PermissionData()?.GET_ORDER_INVOICE ==
+                        "GET_ORDER_INVOICE"
+                          ? GetLabel(e)
+                          : ""
+                      }
+                      className={`${
+                        PermissionData()?.GET_ORDER_INVOICE ==
+                        "GET_ORDER_INVOICE"
+                          ? " "
+                          : "permission_blur"
+                      } `}
                     >
                       Download Label
                       {/* <a href='#' target="_blank"> */}
@@ -471,20 +506,38 @@ useEffect(()=>{
                       {/* </a> */}
                     </li>
 
-                    <li onClick={(e) =>
-                      PermissionData()?.EDIT_ORDER == "EDIT_ORDER" ? setEditSlideBar((o) => !o) : ""}
-                      className={`${PermissionData()?.EDIT_ORDER == "EDIT_ORDER" ? " " : "permission_blur"}`}
+                    <li
+                      onClick={(e) =>
+                        PermissionData()?.EDIT_ORDER == "EDIT_ORDER"
+                          ? setEditSlideBar((o) => !o)
+                          : ""
+                      }
+                      className={`${
+                        PermissionData()?.EDIT_ORDER == "EDIT_ORDER"
+                          ? " "
+                          : "permission_blur"
+                      }`}
                     >
                       Edit Order
                     </li>
-                    <li onClick={(e) =>
-                      PermissionData()?.VIEW_CALL_BUYER == "VIEW_CALL_BUYER" ? setCallBuyer((o) => !o) : ""}
-                      className={`${PermissionData()?.VIEW_CALL_BUYER == "VIEW_CALL_BUYER" ? " " : "permission_blur"}`}
-                    >Call Buyer</li>
-
-                    <li onClick={(e) => setAddOrderTag((o) => !o)}>
-                      Add Order Tag
+                    <li
+                      onClick={(e) =>
+                        PermissionData()?.VIEW_CALL_BUYER == "VIEW_CALL_BUYER"
+                          ? setCallBuyer((o) => !o)
+                          : ""
+                      }
+                      className={`${
+                        PermissionData()?.VIEW_CALL_BUYER == "VIEW_CALL_BUYER"
+                          ? " "
+                          : "permission_blur"
+                      }`}
+                    >
+                      Call Buyer
                     </li>
+
+                    {/* <li onClick={(e) => setAddOrderTag((o) => !o)}>
+                      Add Order Tag
+                    </li> */}
                     {/* <li
                       onClick={(e) => {
                         navigate("/admin/order/User");
@@ -493,10 +546,10 @@ useEffect(()=>{
                     >
                       Clone Order
                     </li> */}
-                   {paramHash?.hash !=="#pending" &&<li onClick={(e) =>
+                    {/* {paramHash?.hash !=="#pending" &&<li onClick={(e) =>
                       PermissionData()?.DELETE_ORDER == "DELETE_ORDER" ? CancelOrder(e) : ""}
                       className={`${PermissionData()?.DELETE_ORDER == "DELETE_ORDER" ? " " : "permission_blur"}`}
-                    >Cancel Order</li>}
+                    >Cancel Order</li>} */}
                   </ul>
                 </div>
               </div>
@@ -533,7 +586,7 @@ useEffect(()=>{
                     <h3>Payment Mode</h3>
                     <div className="row mt-3">
                       <div className="col-6">
-                        <label class="prepad-box">
+                        <label className="prepad-box">
                           Prepaid
                           <input
                             type="radio"
@@ -542,11 +595,11 @@ useEffect(()=>{
                             onChange={(e) => PaymentMethodFun(e, "PREPAID")}
                             checked={paymentmethod !== "COD" ? "checked" : ""}
                           />
-                          <span class="checkmark"></span>
+                          <span className="checkmark"></span>
                         </label>
                       </div>
                       <div className="col-6">
-                        <label class="prepad-box">
+                        <label className="prepad-box">
                           COD
                           <input
                             type="radio"
@@ -555,7 +608,7 @@ useEffect(()=>{
                             checked={paymentmethod == "COD" ? "PREPAID" : ""}
                             onChange={(e) => PaymentMethodFun(e, "COD")}
                           />
-                          <span class="checkmark"></span>
+                          <span className="checkmark"></span>
                         </label>
                       </div>
                     </div>
@@ -564,15 +617,17 @@ useEffect(()=>{
                     <div>
                       <hr className="add-border" />
                       <h3>Package Details</h3>
-                      <div class="row mt-2">
+                      <div className="row mt-2">
                         <div className="col-6">
                           <label>Weight</label>
                           <div className="pacform-box mt-1">
-                            <input w
-                              type="number"
+                            <input
+                              w
+                              type="text"
                               value={weight}
-                              className={`form-control ${weighterror ? "alert_border" : ""
-                                }`}
+                              className={`form-control ${
+                                weighterror ? "alert_border" : ""
+                              }`}
                               onChange={(e) => WeightFun(e)}
                             />
                             <span> KG</span>
@@ -591,7 +646,7 @@ useEffect(()=>{
                         <div className="col-4">
                           <div className="pacform-box mt-1">
                             <input
-                              type="number"
+                              type="text"
                               className="form-control"
                               onChange={(e) => setLength(e.target.value)}
                               value={length}
@@ -602,7 +657,7 @@ useEffect(()=>{
                         <div className="col-4">
                           <div className="pacform-box">
                             <input
-                              type="number"
+                              type="text"
                               className="form-control"
                               onChange={(e) => setWidth(e.target.value)}
                               value={width}
@@ -613,7 +668,7 @@ useEffect(()=>{
                         <div className="col-4">
                           <div className="pacform-box">
                             <input
-                              type="number"
+                              type="text"
                               className="form-control"
                               onChange={(e) => setHeight(e.target.value)}
                               value={height}
@@ -719,10 +774,11 @@ useEffect(()=>{
 
                         <input
                           type="text"
-                          className={`form-control check-box ${deliverypincodeactive || pincode == "Available"
-                            ? "alert_border"
-                            : ""
-                            }`}
+                          className={`form-control check-box ${
+                            deliverypincodeactive || pincode == "Available"
+                              ? "alert_border"
+                              : ""
+                          }`}
                           placeholder="Delivered Pincode"
                           value={pincode}
                           onChange={(e) => DeliveredPincodeFun(e)}
@@ -758,8 +814,9 @@ useEffect(()=>{
                                   placeholder: "Search Places ...",
                                   className: "location-search-input",
                                 })}
-                                className={`form-control ${pickupaddressactive ? "alert_border" : ""
-                                  }`}
+                                className={`form-control ${
+                                  pickupaddressactive ? "alert_border" : ""
+                                }`}
                               />
                               <div className="autocomplete-dropdown-container">
                                 {suggestions.map((suggestion) => {
@@ -769,13 +826,13 @@ useEffect(()=>{
                                   // inline style for demonstration purpose
                                   const style = suggestion.active
                                     ? {
-                                      backgroundColor: "#fafafa",
-                                      cursor: "pointer",
-                                    }
+                                        backgroundColor: "#fafafa",
+                                        cursor: "pointer",
+                                      }
                                     : {
-                                      backgroundColor: "#ffffff",
-                                      cursor: "pointer",
-                                    };
+                                        backgroundColor: "#ffffff",
+                                        cursor: "pointer",
+                                      };
                                   return (
                                     <div
                                       {...getSuggestionItemProps(suggestion, {
@@ -789,9 +846,12 @@ useEffect(()=>{
                                 })}
 
                                 {!suggestions[0]?.description &&
-                                  pickupaddressactive ? (
+                                pickupaddressactive ? (
                                   <span className="text-danger mb-4 ">
-                                    <small> This address is not available </small>
+                                    <small>
+                                      {" "}
+                                      This address is not available{" "}
+                                    </small>
                                   </span>
                                 ) : (
                                   setPickupAddressActive(false)
@@ -830,12 +890,12 @@ useEffect(()=>{
                         />
                       </div>
                       <div className="col-md-6 mt-3">
-                        <label className="mb-1">Contry</label>
+                        <label className="mb-1">Country</label>
                         <input
                           type="text"
                           className="form-control"
                           value={country}
-                        // onChange={(e) => setCountry(e.target.value)}
+                          // onChange={(e) => setCountry(e.target.value)}
                         />
                       </div>
                       <div className="col-12"></div>
@@ -850,7 +910,11 @@ useEffect(()=>{
                         </button>
                       </div>
                       <div className="col-sm-6 mt-4">
-                        <button type="button" className="btn btn-cancel" onClick={(e) => setEditSlideBar((o) => !o)}>
+                        <button
+                          type="button"
+                          className="btn btn-cancel"
+                          onClick={(e) => setEditSlideBar((o) => !o)}
+                        >
                           Cancel
                         </button>
                       </div>
@@ -876,8 +940,8 @@ useEffect(()=>{
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
                         d="M28.8468 0.557017C20.1183 2.48032 12.3738 7.48163 6.94451 14.7015C3.82271 18.8528 1.04352 25.7631 0.312867 31.1904C-0.944031 40.5273 1.62946 50.441 7.25209 57.9207C9.09525 60.3726 13.2537 64.3503 15.7318 66.0319C20.1234 69.0116 25.747 71.2226 30.8411 71.9721C35.0099 72.5856 41.5011 72.2378 45.4557 71.1892C59.1901 67.548 69.535 56.2758 71.9998 42.2666C72.263 40.7722 72.3473 38.1361 72.2441 34.6422C72.0592 28.3885 71.3915 25.598 68.7921 20.2171C64.1989 10.7095 55.7513 3.7807 45.2312 0.891844C41.4907 -0.135347 32.7946 -0.313143 28.8468 0.557017ZM30.9333 24.2512L36.1468 29.4212L41.4099 24.2512C45.0684 20.6576 46.8963 19.0815 47.405 19.0815C48.4614 19.0815 53.1801 23.8281 53.1801 24.891C53.1801 25.4838 51.8969 26.9791 48.1512 30.7514C45.3853 33.5368 43.1223 35.9578 43.1223 36.1314C43.1223 36.305 45.3853 38.7065 48.1512 41.4682C52.052 45.3628 53.1801 46.6778 53.1801 47.3289C53.1801 47.9512 52.5166 48.8146 50.6219 50.6587C49.2148 52.0279 47.8352 53.1482 47.5565 53.1482C46.8512 53.1482 43.9224 50.6139 39.7248 46.3708L36.1646 42.7728L30.9424 47.9606C28.0701 50.8138 25.4956 53.1482 25.2211 53.1482C24.0985 53.1482 19.1134 48.3817 19.1134 47.3082C19.1134 46.7725 21.7369 43.8077 25.5605 40.0218L29.4788 36.1418L24.836 31.424C22.2826 28.8291 19.9362 26.3082 19.6219 25.8222C19.0687 24.9676 19.0732 24.9011 19.7526 23.8018C20.7204 22.2357 24.2721 19.0815 25.0677 19.0815C25.4758 19.0815 27.6713 21.0165 30.9333 24.2512Z"
                       />
                     </svg>
@@ -900,7 +964,9 @@ useEffect(()=>{
                       <p className="mb-0">
                         {" "}
                         <b>
-                          {`${callDate.toUTCString().slice(0, -13)}, ${GetAdminOrderCallBuyerData.order_time}`}{" "}
+                          {`${callDate.toUTCString().slice(0, -13)}, ${
+                            GetAdminOrderCallBuyerData.order_time
+                          }`}{" "}
                         </b>{" "}
                       </p>
                     </div>
@@ -955,7 +1021,7 @@ useEffect(()=>{
                 </div>
               </div>
             )}
-            {addordertag && (
+            {/* {addordertag && (
               <div className="callbuyerpopup_outer addordertag-popup ">
                 <div className="callbuyerpopup">
                   <h2>Add Order Tag</h2>
@@ -1010,7 +1076,7 @@ useEffect(()=>{
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
             <div className="ordernumber-part">
               <div className="left-part">
@@ -1055,8 +1121,8 @@ useEffect(()=>{
                       <h4> Phone Number </h4>
                       <p>
                         {
-                          GetAdminOrderReturnData?.customer_details
-                            ?.phone_number
+                          GetAdminOrderReturnData?.customer_details?.address
+                            ?.phone
                         }
                       </p>
                     </li>
@@ -1077,18 +1143,46 @@ useEffect(()=>{
                 </div>
               </div>
               <div className="right-part">
-                <div className={`box delivery-box ${paramHash.hash=="#pending"?"d-none":""}`}>
+                <div
+                  className={`box delivery-box ${
+                    paramHash.hash == "#pending" ? "d-none" : ""
+                  }`}
+                >
                   <h2>Delivery Partner</h2>
                   <div className=" d-flex align-items-center justify-content-sm-between flex-sm-nowrap flex-wrap justify-content-center ">
-                    <img src={deliverylogo} alt="img"  height={100} width={100}/>
-                      
-                    <h5 className="px-1">
+                    {paramHash?.hash !== "#cancel" &&
+                    deliverypartnerdata == "false" ? (
+                      <img
+                        src={deliverylogo}
+                        alt="img"
+                        height={100}
+                        width={100}
+                      />
+                    ) : (
+                      ""
+                    )}
+
+                    {/* <img src={deliverylogo} alt="img"  height={100} width={100}/> */}
+                    {deliverypartnerdata == "false" ? (
+                      <h5 className="px-1">
+                        {GetAdminOrderReturnData?.delivery_partner}
+                      </h5>
+                    ) : (
+                      ""
+                    )}
+                    {/* <h5 className="px-1">
                       {GetAdminOrderReturnData?.delivery_partner}
-                    </h5>
-                    <button type="button" className="btn" onClick={(e) => {
-                      navigate(`/admin/ordertrack/${param?.id}${paramHash.hash}`);
-                      dispatch(OrderPageBookNavigate(paramHash?.hash));
-                    }}>
+                    </h5> */}
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={(e) => {
+                        navigate(
+                          `/admin/ordertrack/${param?.id}${paramHash.hash}`
+                        );
+                        dispatch(OrderPageBookNavigate(paramHash?.hash));
+                      }}
+                    >
                       Track
                     </button>
                   </div>
@@ -1101,9 +1195,7 @@ useEffect(()=>{
                     </li>
                     <li className="mt-4 pt-1">
                       <h5>Order Created</h5>
-                      <p>
-                        {date.toUTCString().slice(0, -13)}
-                      </p>
+                      <p>{date.toUTCString().slice(0, -13)}</p>
                     </li>
                     <li>
                       <h5>Order Time</h5>
@@ -1147,6 +1239,10 @@ useEffect(()=>{
                       <p>
                         {GetAdminOrderReturnData?.delivered_address?.pincode}
                       </p>
+                    </li>
+                    <li>
+                      <h5>Phone Number</h5>
+                      <p>{GetAdminOrderReturnData?.delivered_address?.phone}</p>
                     </li>
                   </ul>
                 </div>

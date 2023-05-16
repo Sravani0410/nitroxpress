@@ -67,9 +67,9 @@ const WalletHistory = () => {
         let d = new Date(item?.created_at);
 
         // let t = new Date(item?.created_at);
-        // console.log("sd", t.toTimeString())
+
         // let spliteDataa = DateParse&&DateParse?.split(" ")
-        // console.log("spliteDataaspliteDataa", spliteDataa)
+    
         // let spliteData = item.created_at.split("T")
         // let splitTime = spliteData[1]?.split("+")
 
@@ -107,8 +107,8 @@ const WalletHistory = () => {
   }
 
   const handlePaymentSuccess = async (response, PaymentFunResData) => {
-    console.log("response3", response);
-    console.log("datadata111", PaymentFunResData)
+  
+
     // setLoadSpiner((o) => !o);
     let BearerToken = reactLocalStorage.get("token", false);
     const ProductOrderId = reactLocalStorage.get("product_order_id", false);
@@ -133,7 +133,7 @@ const WalletHistory = () => {
       // we will send the response we've got from razorpay to the backend to validate the payment
       bodyData.append("response", JSON.stringify(objectResponse));
 
-      //  console.log("bodyDatabodyDatabodyData",response) it gives me razorpay_order_id,razorpay_payment_id,razorpay_signature
+     
 
       await Axios({
         url: `${process.env.REACT_APP_BASE_URL}/wallet/complete_add_money`,
@@ -146,7 +146,7 @@ const WalletHistory = () => {
         },
       })
         .then((res) => {
-          console.log(res);
+     
           // setLoadSpiner((o) => !o);
           // toast.success(res.data.message);
           // reactLocalStorage.remove('PaymentMethod');
@@ -157,10 +157,10 @@ const WalletHistory = () => {
           // dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
         })
         .catch((err) => {
-          console.log(err);
+     
         });
     } catch (error) {
-      console.log(console.error());
+     
     }
   };
 
@@ -206,11 +206,11 @@ const WalletHistory = () => {
       },
       data: bodyContent,
     }).then((res) => {
-      console.log("resresres", res);
+  
       return res;
     });
 
-    console.log("datadatadata", data)
+
     // in data we will receive an object from the backend with the information about the payment
     //that has been made by the user
 
@@ -225,16 +225,16 @@ const WalletHistory = () => {
       handler: function (response) {
         // we will handle success by calling handlePaymentSuccess method and
         // will pass the response that we've got from razorpay
-        console.log("somjbjw", response);
+
         handlePaymentSuccess(response, data);
       },
     };
 
     dispatch(GetWalletHistory())
-    console.log("optionsoptionsoptions1", options)
+ 
     let rzp1 = new window.Razorpay(options);
     rzp1.open();
-    console.log("optionsoptionsoptions", options);
+  
   };
 
 
@@ -272,12 +272,12 @@ const WalletHistory = () => {
               </h4>
 
               <div className="addmoney-part">
-                <div class="amout">
+                <div className="amout">
                   <h2>Add Money</h2>
-                  <p>Enter Amount in multiples of 100 below</p><div class=""><p>Rs.</p>
+                  <p>Enter Amount in multiples of 100 below</p><div className=""><p>Rs.</p>
 
 
-                    <input type="number" class="form-control" placeholder="500"
+                    <input type="number" className="form-control" placeholder="500"
                       value={amount}
                       onChange={(e) => payment(e)}
                     />
@@ -301,7 +301,7 @@ const WalletHistory = () => {
                     <li onClick={(e) => { setAmount("2500"); setPaymentActive(false) }} >Rs.2500</li>
                     <li onClick={(e) => { setAmount("5000"); setPaymentActive(false) }}>Rs.5000</li>
                   </ul>
-                  <button type="button" class="btn pr-pay mt-5"
+                  <button type="button" className="btn pr-pay mt-5"
                     onClick={(e) => ProceedToPay(e)}>Proceed To Add {amount} /-</button>
                 </div>
 

@@ -26,9 +26,9 @@ const Sidebar = () => {
   const [pagepathdata, setPagePathData] = useState("");
   const [notificationIcon, setNotificationIcon] = useState(false);
   const [raiseissue, setRaiseIssue] = useState(false);
-  const [orderid, setOrderId] = useState();
-  const [title, setTilte] = useState();
-  const [description, setDescription] = useState();
+  const [orderid, setOrderId] = useState("");
+  const [title, setTilte] = useState("");
+  const [description, setDescription] = useState("");
   const [allsearchbar, setAllSearchBar] = useState(false);
   const [OpenPathSearch, setOpenPathSearch] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
@@ -96,7 +96,7 @@ const Sidebar = () => {
       time[5] = +time[0] < 12 ? "AM" : "PM"; // Set AM/PM
       time[0] = +time[0] % 12 || 12; // Adjust hours
     }
-    console.log("time", time);
+  
     let hour = time[0];
     let coln = time[1];
     let mint = time[2];
@@ -115,7 +115,7 @@ const Sidebar = () => {
     { label: "Setting", path: "/admin/setting" },
     { label: "Support B2B", path: "/admin/support/b2b" },
     { label: "Support B2C", path: "/admin/support/b2b/b2c" },
-    { label: "Accounting", path: "/admin/accounting" },
+    { label: "Accounting", path: "/admin/support/accounting" },
     { label: "Add order", path: "/admin/order/User#pending" },
     { label: "COD Remittance", path: "/admin/invoices/cod#pending" },
     { label: "Invoices", path: "/admin/invoices/cod#hd" },
@@ -131,6 +131,9 @@ const Sidebar = () => {
     { label: "Categories", path: "/admin/setting/usersetting#pending" },
   ];
 
+  let as_individual = reactLocalStorage.get("as_individual", false);
+
+
   const SearchPage = (e) => {
     let value = e.target.value.toUpperCase();
     let result = [];
@@ -144,7 +147,7 @@ const Sidebar = () => {
     setPagePathData(result);
   };
 
-  // console.log("ddddddd",pagepathdata)
+
   // [0].value
 
   useEffect(() => {
@@ -152,13 +155,19 @@ const Sidebar = () => {
 
       navigate(selectedOption?.path)
     }
+
+    if (as_individual.toString() == "true") {
+      navigate("/");
+      window.location.reload(false) 
+  }  
+
     
-  }, [selectedOption])
+  }, [selectedOption,as_individual])
 
 
 
   const Logoutfun = () => {
-    console.log("hgjvvdjsv");
+
     reactLocalStorage.remove("token");
     reactLocalStorage.remove("Admin_Role");
     toast.success(" Logout successfully");
@@ -226,12 +235,12 @@ const Sidebar = () => {
 
   const requestRegion = (event, item) => {
     let Data = (event.target.value);
-    console.log("aaaaaaaaa", Data)
+
 
   };
 
   const SearchFilterPathFun = (e) => {
-    console.log("jhagjsdkdghs", e.length)
+  
     if (e.length == 0) {
       setOpenPathSearch(false)
     }
@@ -266,12 +275,7 @@ const Sidebar = () => {
           <div className={`form-group 
             ${selectedOptionclass}
             `}>
-            {/* <input
-            list="brow"
-              type="search"
-              placeholder="Search"
-              onChange={(e) => SearchPage(e)}
-            /> */}
+             
             <Select
               value={selectedOption}
               onChange={setSelectedOption}
@@ -292,19 +296,7 @@ const Sidebar = () => {
 
 
 
-            {/* {pagepathdata && (
-              <datalist id="brow">
-                {pagepathdata &&
-                  pagepathdata?.map((item, id) => {
-                    return (
-                      <option
-                      >
-                        {item.value}
-                      </option>
-                    );
-                  })}
-              </datalist>
-            )} */}
+             
 
             <span className="search-icon pt-1">
               <svg
@@ -317,7 +309,7 @@ const Sidebar = () => {
                 <path
                   d="M5.86869 7.29932e-07C6.9988 -0.000563318 8.10501 0.325781 9.05429 0.939785C10.0036 1.55379 10.7555 2.42931 11.2196 3.46105C11.6837 4.49279 11.8403 5.63682 11.6705 6.75555C11.5007 7.87428 11.0118 8.92008 10.2625 9.76717L16 16.2881L15.2037 17L9.48042 10.5075C8.74423 11.0841 7.88111 11.4762 6.96294 11.6512C6.04478 11.8262 5.09815 11.7789 4.2019 11.5134C3.30566 11.2479 2.48575 10.7718 1.81047 10.1248C1.13519 9.47775 0.62409 8.67852 0.319736 7.79367C0.0153828 6.90882 -0.07341 5.96396 0.0607538 5.03779C0.194918 4.11162 0.548154 3.23095 1.09104 2.46915C1.63393 1.70735 2.35075 1.08646 3.18179 0.658205C4.01284 0.229949 4.93405 0.00672247 5.86869 0.00711966V7.29932e-07ZM5.86869 10.6784C7.14148 10.6784 8.36213 10.1721 9.26213 9.27096C10.1621 8.3698 10.6677 7.14755 10.6677 5.87312C10.6677 4.59868 10.1621 3.37644 9.26213 2.47527C8.36213 1.57411 7.14148 1.06784 5.86869 1.06784C4.59591 1.06784 3.37526 1.57411 2.47526 2.47527C1.57527 3.37644 1.06966 4.59868 1.06966 5.87312C1.06966 7.14755 1.57527 8.3698 2.47526 9.27096C3.37526 10.1721 4.59591 10.6784 5.86869 10.6784Z"
                   fill="black"
-                  fill-opacity="0.2"
+                  fillOpacity="0.2"
                 />
               </svg>
             </span>
@@ -404,21 +396,21 @@ const Sidebar = () => {
               </span>
             </li>
             <li className="user-part">
-              <div class="dropdown">
+              <div className="dropdown">
                 <img
                   src="/images/user.png"
                   alt="img"
-                  class="  dropdown-toggle"
+                  className="  dropdown-toggle"
                   type="button"
                   id="dropdownMenuButton1"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 />
 
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                   <li>
                     <a
-                      class="dropdown-item"
+                      className="dropdown-item"
                       onClick={(e) => {
                         navigate("/admin/setting/adminsetting");
                       }}
@@ -429,7 +421,7 @@ const Sidebar = () => {
                   </li>
                   {isEmployeData == "false" ? <li>
                     <a
-                      class="dropdown-item"
+                      className="dropdown-item"
                       onClick={(e) => {
                         navigate("/admin/wallethistory");
                       }}
@@ -440,23 +432,14 @@ const Sidebar = () => {
                   </li> : ""}
                   <li>
                     <a
-                      class="dropdown-item"
+                      className="dropdown-item"
                       onClick={(e) => setRaiseIssue((o) => !o)}
                     >
                       {" "}
                       Raise Issue
                     </a>
                   </li>
-                  {/* <li>
-                    <input
-                      class="dropdown-item"
-                      type="file"
-                      onChange={(e) => PincodeFile(e)}
-                    >
-                      {" "}
-                      Upload File
-                    </input>
-                  </li> */}
+                   
                   <li
                     className={`uploadLabel ${PermissionData()?.UPLOAD_PINCODE ==
                       "UPLOAD_PINCODE"
@@ -467,7 +450,7 @@ const Sidebar = () => {
                     <div className="permis">
                       <input
                         value={""}
-
+                        accept=".csv"
                         type={
                           PermissionData()?.UPLOAD_PINCODE ==
                             "UPLOAD_PINCODE"
@@ -485,13 +468,13 @@ const Sidebar = () => {
                     </div>
                   </li>
                   <li>
-                    <a class="dropdown-item" onClick={(e) => Logoutfun(e)}>
+                    <a className="dropdown-item" onClick={(e) => Logoutfun(e)}>
                       Log out
                     </a>
                   </li>
                 </ul>
               </div>
-              <div class="user-info">
+              <div className="user-info">
                 <h6>
                   {GetAdminProfileData && GetAdminProfileData[0]?.username}
                 </h6>
@@ -537,17 +520,17 @@ const Sidebar = () => {
                   />
                 </div>
                 <div className="col-6">
-                  <label>Title</label>
+                  <label>Issue</label>
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Title"
+                    placeholder="Issue"
                     value={title}
                     onChange={(e) => setTilte(e.target.value)}
                   />
                 </div>
                 <div className="col-12">
-                  <label>Description</label>
+                  <label>Remark</label>
                   <textarea
                     type="text"
                     className="form-control"
@@ -604,7 +587,7 @@ const Sidebar = () => {
           <ul>
             {GetDashboardNotificationData &&
               GetDashboardNotificationData?.map((item, id) => {
-                console.log("nnnnnnnn", item);
+
                 return (
                   <li onClick={(e) => ClearNotification(e, item)}>
                     <p

@@ -16,6 +16,7 @@ import { reactLocalStorage } from "reactjs-localstorage";
 function B2bfeedback() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  let IsAdminRole=reactLocalStorage.get("Admin_Role",false)
   const[date, setDate]= useState("")
 
   const [oldnewdata, setOldNewData] = useState(true);
@@ -47,14 +48,10 @@ function B2bfeedback() {
   }, []);
 
   const DeleteTicket = (e, data) => {
-    console.log(data);
     let payload = {
       id: data.feedback_id,
     };
     dispatch(DeleteSettingDismissTicket(payload));
-
-    console.log("p", payload);
-    console.log(DeleteSettingDismissTicketData);
   };
 
   const TicketChangeFun = (e) => {
@@ -86,7 +83,6 @@ function B2bfeedback() {
         });
       setGetSettingViewAllData(AllData);
     } else {
-      console.log(getsettingviewalldata);
       setOldNewData(true);
       setGetSettingViewAllData(GetSettingViewB2bFeedbackData?.info);
     }
@@ -154,7 +150,6 @@ function B2bfeedback() {
   }
   dispatch(PostGetFeedback(payload))
   },[])
- console.log("ppppp", PostGetFeedbackData)
   return (
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -169,7 +164,7 @@ function B2bfeedback() {
                 onChange={(e) => CustomerChangeFun(e)}
               >
                 <option value="b2bb">B2B</option>
-                <option value="b2cc">B2C</option>
+               {IsAdminRole==="true"?<option value="b2cc">B2C</option>:""}
               </select>
             </div>
 
@@ -220,8 +215,8 @@ function B2bfeedback() {
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
+                              fillRule="evenodd"
+                              clipRule="evenodd"
                               d="M1.18121 3.53495C0.891647 3.4721 0.697355 3.36821 0.472144 3.15574C0.15145 2.8532 0 2.50494 0 2.07003C0 1.63224 0.151238 1.28708 0.4783 0.978543C1.07359 0.416918 1.97143 0.433186 2.55721 1.0162C3.15041 1.60662 3.15041 2.53345 2.55721 3.12387C2.32722 3.35279 2.06444 3.49172 1.75351 3.54889C1.499 3.59565 1.45623 3.59463 1.18121 3.53495ZM7.27762 3.55196C6.49246 3.41472 5.9225 2.62795 6.04748 1.85385C6.1798 1.0343 6.9548 0.457782 7.75206 0.585882C8.7503 0.746235 9.31538 1.78673 8.89804 2.69606C8.61633 3.30984 7.93907 3.66757 7.27762 3.55196ZM13.2665 3.5394C13.1594 3.51618 12.9923 3.45883 12.895 3.41197C12.6534 3.29552 12.3298 2.96585 12.2181 2.72246C11.9437 2.12466 12.0569 1.47058 12.5135 1.0162C13.0992 0.433221 13.9971 0.416954 14.5924 0.978543C14.9195 1.28708 15.0707 1.63224 15.0707 2.07003C15.0707 2.50494 14.9192 2.8532 14.5985 3.15574C14.3688 3.37252 14.1799 3.47164 13.873 3.53654C13.596 3.59512 13.5251 3.59544 13.2665 3.5394Z"
                               fill="#C8C8C8"
                             />
@@ -234,8 +229,8 @@ function B2bfeedback() {
 
                               xmlns="http://www.w3.org/2000/svg">
                               <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
+                                fillRule="evenodd"
+                                clipRule="evenodd"
                                 d="M4.29114 2.12099C3.69512 3.62238 3.67239 3.67567 3.62821 3.6754C3.52252 3.67472 0.529479 3.87303 0.466926 3.88485L0.398438 3.89778L1.64944 4.96274C2.33747 5.54846 2.90042 6.03818 2.90042 6.05102C2.90042 6.06387 2.71715 6.79537 2.49314 7.67661C2.26914 8.55784 2.08811 9.2811 2.09084 9.28386C2.09358 9.28659 2.73081 8.88626 3.50691 8.3942L4.91799 7.49957L6.33036 8.39493C7.10715 8.88738 7.74455 9.2883 7.74679 9.28586C7.74992 9.28245 7.24799 7.29621 6.96757 6.20242L6.92525 6.03732L8.18305 4.96755L9.44085 3.89778L9.37272 3.88485C9.31025 3.87298 6.31863 3.6749 6.21011 3.67545C6.16374 3.67568 6.14922 3.64168 5.54577 2.1211C5.20647 1.26609 4.92422 0.566477 4.91859 0.566406C4.91294 0.566353 4.63059 1.26591 4.29114 2.12099Z"
                                 fill="#FFC900"
                               />
@@ -248,8 +243,8 @@ function B2bfeedback() {
 
                               xmlns="http://www.w3.org/2000/svg">
                               <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
+                                fillRule="evenodd"
+                                clipRule="evenodd"
                                 d="M54.5255 2.12099C53.9295 3.62238 53.9068 3.67567 53.8626 3.6754C53.7569 3.67472 50.7639 3.87303 50.7013 3.88485L50.6328 3.89778L51.8838 4.96274C52.5718 5.54846 53.1348 6.03818 53.1348 6.05102C53.1348 6.06387 52.9515 6.79537 52.7275 7.67661C52.5035 8.55784 52.3225 9.2811 52.3252 9.28386C52.328 9.28659 52.9652 8.88626 53.7413 8.3942L55.1524 7.49957L56.5647 8.39493C57.3415 8.88738 57.9789 9.2883 57.9812 9.28586C57.9843 9.28245 57.4824 7.29621 57.2019 6.20242L57.1596 6.03732L58.4174 4.96755L59.6752 3.89778L59.6071 3.88485C59.5446 3.87298 56.553 3.6749 56.4445 3.67545C56.3981 3.67568 56.3836 3.64168 55.7801 2.1211C55.4408 1.26609 55.1586 0.566477 55.153 0.566406C55.1473 0.566353 54.865 1.26591 54.5255 2.12099Z"
                                 fill="#DFDFDF"
                               />
