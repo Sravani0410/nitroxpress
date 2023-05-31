@@ -8,31 +8,23 @@ import { TokenDataValidCheck1 } from "../../Authanticate";
 import { useEffect } from "react";
 var fs = require("fs");
 
-
-
-
-let BearerToken = reactLocalStorage.get("token", false); 
- 
-
+let BearerToken = reactLocalStorage.get("token", false);
 
 axios.interceptors.response.use(
-  (response) => { 
+  (response) => {
     reactLocalStorage.set("Authorized", "Authorized");
-    return response 
+    return response;
   },
-  (error) => { 
-    if (error?.response?.status == 401) { 
+  (error) => {
+    if (error?.response?.status == 401) {
       reactLocalStorage.clear();
-      sessionStorage.clear() 
-      reactLocalStorage.set("Authorized", "unAuthorized"); 
-     }
-      
+      sessionStorage.clear();
+      reactLocalStorage.set("Authorized", "unAuthorized");
+    }
+
     return Promise.reject(error);
   }
 );
-
- 
-
 
 export const getViewProfile = () => {
   return async (dispatch, getState) => {
@@ -72,12 +64,15 @@ export const getViewProfile = () => {
 export const getOrderAddress = (payload) => {
   return async (dispatch, getState) => {
     const response = await axios
-      .post(`${process.env.REACT_APP_BASE_URL}/address/saved_address`,
-      payload, {
-        headers: {
-          Authorization: `Bearer ${BearerToken}`,
-        },
-      })
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/address/saved_address`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
       .then((res) => {
         return res;
       })
@@ -193,7 +188,6 @@ const PostPincodesAvailabilityDispatch = (data) => ({
   payload: data,
 });
 export const PostPincodesAvailability = (payload) => {
-
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -358,14 +352,12 @@ export const PostShipmentDetails = (
         }
       )
       .then((res) => {
-
         dispatch(PostDeliveryAddress(payloadDeliveredAddress));
-        // pickupPatchObjectId === null 
+        // pickupPatchObjectId === null
         //  dispatch(PostPickupAddress(payloadPickupAddress))
-        // ? 
-        dispatch(PostPickupAddress(payloadPickupAddress))
+        // ?
+        dispatch(PostPickupAddress(payloadPickupAddress));
         // :  dispatch(PatchPickupAddress(payloadPickupAddress));
-
 
         return res;
       })
@@ -571,11 +563,14 @@ const GetAdminOutForDeliveryDispatch = (data) => ({
 export const GetAdminOutForDelivery = (payload) => {
   return async (dispatch, getState) => {
     const response = await axios
-      .get(`${process.env.REACT_APP_BASE_URL}/admin_panel/orders/outfor_delivery_details`, {
-        headers: {
-          Authorization: `Bearer ${BearerToken}`,
-        },
-      })
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/outfor_delivery_details`,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
       .then((res) => {
         // toast.success(res.data.message);
         dispatch(GetAdminOrderReturn());
@@ -648,14 +643,13 @@ export const GetAdminOrderReturn = (payload) => {
       )
       .then((res) => {
         dispatch(GetAdminOrderRTODelivered());
-        // toast.success(res.data.message); 
+        // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
         return err;
-      }); 
-    
+      });
 
     dispatch(GetAdminOrderReturnDispatch(response));
   };
@@ -668,23 +662,19 @@ const GetAdminOrderRTODeliveredDispatch = (data) => ({
 export const GetAdminOrderRTODelivered = (payload) => {
   return async (dispatch, getState) => {
     const response = await axios
-      .get(
-        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/rto_details`,
-        {
-          headers: {
-            Authorization: `Bearer ${BearerToken}`,
-          },
-        }
-      )
+      .get(`${process.env.REACT_APP_BASE_URL}/admin_panel/orders/rto_details`, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
       .then((res) => {
-        // toast.success(res.data.message); 
+        // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
         return err;
-      }); 
-    
+      });
 
     dispatch(GetAdminOrderRTODeliveredDispatch(response));
   };
@@ -695,12 +685,11 @@ const PostAdminOrderRebookDispatch = (data) => ({
   payload: data,
 });
 export const PostAdminOrderRebook = (payload) => {
-
   return async (dispatch, getState) => {
     const response = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/rebook_orders`,
-          payload ,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${BearerToken}`,
@@ -717,14 +706,11 @@ export const PostAdminOrderRebook = (payload) => {
       .catch((err) => {
         toast.warn(err.response.data.message);
         return err;
-      }); 
-    
+      });
 
     dispatch(PostAdminOrderRebookDispatch(response));
   };
 };
-
-
 
 const GetAdminOrderSummaryDispatch = (data) => ({
   type: actionType.GetAdminOrderSummaryDispatch_Type,
@@ -807,7 +793,7 @@ export const ToggleSideBar = (data) => ({
 export const PaymentPopupValue = (data) => ({
   type: actionType.PostAdminOrderAddShipmentDispatch_Type,
   payload: data,
-})
+});
 
 export const OrderPageBookNavigate = (data) => ({
   type: actionType.OrderPageBookNavigate_Type,
@@ -833,7 +819,6 @@ export const ToggleSideBarTrueFalse = (data) => ({
   type: actionType.ToggleSideBarTrueFalse_Type,
   payload: data,
 });
-
 
 const PostAdminOrderFilterationDispatch = (data) => ({
   type: actionType.PostAdminOrderFilterationDispatch_Type,
@@ -1024,22 +1009,19 @@ const PostAdminOrderPaymentOrderDispatch = (data) => ({
   payload: data,
 });
 export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
-
   return async (dispatch, getState) => {
-
     let OrderDetailsIdData = reactLocalStorage.get("OrderDetailsId", false);
-    let OrderDetailsIdDataObject = JSON.parse(OrderDetailsIdData) 
-   
-    
-    let newPayload=[]
-   
+    let OrderDetailsIdDataObject = JSON.parse(OrderDetailsIdData);
 
+    let newPayload = [];
 
     if (OrderDetailsIdDataObject?.product_order_id) {
-      newPayload.push({ ...payload, "order_id": OrderDetailsIdDataObject?.product_order_id })
-    }
-    else {
-      newPayload.push(payload)
+      newPayload.push({
+        ...payload,
+        order_id: OrderDetailsIdDataObject?.product_order_id,
+      });
+    } else {
+      newPayload.push(payload);
     }
     const responce = await axios
       .post(
@@ -1053,7 +1035,7 @@ export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
       )
       .then((res) => {
         toast.success(res.data.message);
-        
+
         let data = JSON.stringify({
           deliverd_id: res?.data?.deliverd_id,
           pickup_id: res?.data?.pickup_id,
@@ -1062,20 +1044,24 @@ export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
         reactLocalStorage.set("OrderDetailsId", data);
         let totalPriceValue = reactLocalStorage.get("totalPriceValue", false);
         if (res?.data?.order_id) {
-          let ItemDetailPayload = { ...ItemDetailPayloadData, "product_order_id": res?.data?.order_id, "total_price": totalPriceValue }
-          dispatch(PostAdminOrderAddShipment(ItemDetailPayload))
+          let ItemDetailPayload = {
+            ...ItemDetailPayloadData,
+            product_order_id: res?.data?.order_id,
+            total_price: totalPriceValue,
+          };
+          dispatch(PostAdminOrderAddShipment(ItemDetailPayload));
         }
 
-        const TagOrderData = reactLocalStorage.get("add_order_tag", false)
-        const PayloadTagOrderData = JSON.parse(TagOrderData)
-        if (PayloadTagOrderData?.add_order.length != 0) {    
-          dispatch(PostAddOrderTag({
-            product_order_id: res?.data?.order_id,
-            order_tag: PayloadTagOrderData?.add_order,
-          }))
-    
+        const TagOrderData = reactLocalStorage.get("add_order_tag", false);
+        const PayloadTagOrderData = JSON.parse(TagOrderData);
+        if (PayloadTagOrderData?.add_order.length != 0) {
+          dispatch(
+            PostAddOrderTag({
+              product_order_id: res?.data?.order_id,
+              order_tag: PayloadTagOrderData?.add_order,
+            })
+          );
         }
-    
 
         return res;
       })
@@ -1087,51 +1073,43 @@ export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
   };
 };
 
-
 const PostAdminOrderEwayBillDispatch = (data) => ({
   type: actionType.PostAdminOrderEwayBillDispatch_Type,
   payload: data,
 });
 export const PostAdminOrderEwayBill = (payload) => {
   return async (dispatch, getState) => {
-    var fs = require("fs")
+    var fs = require("fs");
     let formdata = new FormData();
     if (payload.eway_bill) {
-
-      formdata.append("eway_bill", payload.eway_bill)
-      formdata.append("type", payload.type)
-    }
-
-    else {
-      formdata.append("type", payload.type)
-      formdata.append("id", payload.id)
+      formdata.append("eway_bill", payload.eway_bill);
+      formdata.append("type", payload.type);
+    } else {
+      formdata.append("type", payload.type);
+      formdata.append("id", payload.id);
     }
 
     let bodyContent = formdata;
     const responce = await axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}/bill/eway_bill`,
-        bodyContent,
-        {
-          headers: {
-            Authorization: `Bearer ${BearerToken}`
-          }
-        }
-      )
+      .post(`${process.env.REACT_APP_BASE_URL}/bill/eway_bill`, bodyContent, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
       .then((res) => {
-        reactLocalStorage.set("Eway_bill_id", res?.data?.id)
+        reactLocalStorage.set("Eway_bill_id", res?.data?.id);
 
-        reactLocalStorage.set("Eway_bill_URL", String(res?.data?.name))
+        reactLocalStorage.set("Eway_bill_URL", String(res?.data?.name));
 
-        return res
+        return res;
       })
       .catch((err) => {
         toast.warn(err.response.data.message);
         return err;
       });
-    dispatch(PostAdminOrderEwayBillDispatch(responce))
-  }
-}
+    dispatch(PostAdminOrderEwayBillDispatch(responce));
+  };
+};
 
 const PostAdminOrderPaymentCalDispatch = (data) => ({
   type: actionType.PostAdminOrderPaymentCalDispatch_Type,
@@ -1180,12 +1158,9 @@ export const PostAdminOrderAddShipment = (payload) => {
       .then((res) => {
         reactLocalStorage.set("ShipmentId", res?.data?.shipment_id);
 
+        // toast.success(res.dat.message);
 
-
-       
-        // toast.success(res.dat.message); 
-
-        dispatch(PaymentPopupValue(false))
+        dispatch(PaymentPopupValue(false));
         return res;
       })
       .catch((err) => {
@@ -1635,7 +1610,7 @@ export const DeleteAdminSettingDeleteUser = (payload) => {
         dispatch(getOrderAddress());
         dispatch(GetSettingEmployeeInfo());
         toast.success("User Deleted successfully");
-        dispatch(GetSettingEmployeeInfo())
+        dispatch(GetSettingEmployeeInfo());
         return res;
       })
       .catch((err) => {
@@ -2029,7 +2004,6 @@ export const PostOrderDownloadInvoiceFile = (payload) => {
         payload,
 
         {
-
           // responseType: "arraybuffer",
           // responseEncoding: "binary",
 
@@ -2039,15 +2013,14 @@ export const PostOrderDownloadInvoiceFile = (payload) => {
         }
       )
       .then((res) => {
-        window.open(`${res?.data?.name}`)
+        window.open(`${res?.data?.name}`);
         // window.location.reload(false)
-        
 
         // toast.success("Invoice Generated successfully");
         return res;
       })
       .catch((err) => {
-        // toast.warn(err.response.data.message);
+        toast.error(err.response.data.message);
         return err;
       });
     dispatch(PostOrderDownloadInvoiceFileDispatch(responce));
@@ -2087,7 +2060,7 @@ export const GetOrderDownloadInvoice = (payload) => {
 const PostOrderDownloadLabelGenerationFileDispatch = (data) => ({
   type: actionType.PostOrderDownloadLabelGenerationFileDispatch_Type,
   payload: data,
-})
+});
 export const PostOrderDownloadLabelGenerationFile = (payload) => {
   let data = JSON.stringify(payload);
 
@@ -2098,7 +2071,6 @@ export const PostOrderDownloadLabelGenerationFile = (payload) => {
         payload,
 
         {
-
           // responseType: "arraybuffer",
           // responseEncoding: "binary",
 
@@ -2108,11 +2080,11 @@ export const PostOrderDownloadLabelGenerationFile = (payload) => {
         }
       )
       .then((res) => {
-        // toast.success(res.data.message); 
+        // toast.success(res.data.message);
         // window.open(`${res?.data?.name}`)
         if (res.status == 200) {
           if (payload.request_type !== "create") {
-            window.open(`${res?.data?.name}`)
+            window.open(`${res?.data?.name}`);
             // window.location.reload(false)
             // fileDownload(res?.data?.name, `https`);
           }
@@ -2123,12 +2095,12 @@ export const PostOrderDownloadLabelGenerationFile = (payload) => {
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
-        // toast.error(err.response.data.message)
+        toast.error(err.response.data.message);
         return err;
       });
     dispatch(PostOrderDownloadLabelGenerationFileDispatch(responce));
-  }
-}
+  };
+};
 
 const GetOrderDownloadLabelGenerationDispatch = (data) => ({
   type: actionType.GetOrderDownloadLabelGenerationDispatch_Type,
@@ -2159,7 +2131,6 @@ export const GetOrderDownloadLabelGeneration = (payload) => {
   };
 };
 
-
 const DeleteAdminOrderDispatch = (data) => ({
   type: actionType.DeleteAdminOrderDispatch_Type,
   payload: data,
@@ -2185,8 +2156,10 @@ export const DeleteAdminOrder = (payload) => {
         dispatch(GetAdminOrderPending());
         dispatch(GetAdminOrderReturn());
         dispatch(GetAdminOrderBooked());
-        dispatch(GetCancelOrderDetail())
-        toast.success("Order deleted successfully and refund will be initiated");
+        dispatch(GetCancelOrderDetail());
+        toast.success(
+          "Order deleted successfully and refund will be initiated"
+        );
         return res;
       })
       .catch((err) => {
@@ -2374,11 +2347,15 @@ export const PostUploadFile = (payload) => {
 
   return async (dispatch, getState) => {
     const responce = await axios
-      .post(`${process.env.REACT_APP_BASE_URL}/bill/UploadOrderFile`, formData, {
-        headers: {
-          Authorization: `Bearer ${BearerToken}`,
-        },
-      })
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/bill/UploadOrderFile`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
       .then((res) => {
         toast.success(res.data.message);
         dispatch(GetAdminOrderPending());
@@ -2392,7 +2369,6 @@ export const PostUploadFile = (payload) => {
         let errorData = `${err.response.data.errors[0].order_id} ${err.response.data.errors[0].error_msg}`;
         toast.warn(errorData);
         toast.warn(err.response.data.message);
-
 
         // toast.success(err.data.message);
         return err;
@@ -2442,9 +2418,8 @@ export const PostPincodeUploadFileDispatch = (data) => ({
 });
 
 export const PostPincodeUploadFile = (payload) => {
-
   // let data = JSON.stringify(payload);
-  var fs = require("fs")
+  var fs = require("fs");
   const formData = new FormData();
   formData.append("file", payload);
   // bill/PincodeUploadPincodeFile
@@ -2633,7 +2608,6 @@ const PostUploadBillRemittanceFileDispatch = (data) => ({
   payload: data,
 });
 export const PostUploadBillRemittanceFile = (payload) => {
-
   return async (dispatch, getState) => {
     const formData = new FormData();
     formData.append("file", payload);
@@ -2722,16 +2696,12 @@ export const GetWalletBalance = (payload) => {
     //       dispatch(GetWalletHistory());
     //     }
     const response = await axios
-   
-      .post(
-        `${process.env.REACT_APP_BASE_URL}/wallet/balance`,payload,
-        {
-          headers: {
-            Authorization: `Bearer ${BearerToken}`,
 
-          },
-        }
-      )
+      .post(`${process.env.REACT_APP_BASE_URL}/wallet/balance`, payload, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
       .then((res) => {
         toast.success(res.data.message);
         if (res.status == 200) {
@@ -2791,7 +2761,7 @@ export const PostDebitBalance = (payload) => {
     let Labelpayload = {
       product_order_id: orderIdData,
       request_type: "create",
-    }
+    };
     const responce = await axios
       .post(`${process.env.REACT_APP_BASE_URL}/wallet/debit_balance`, payload, {
         headers: {
@@ -2800,17 +2770,17 @@ export const PostDebitBalance = (payload) => {
       })
       .then((res) => {
         toast.success("Order Placed Successfully");
-        reactLocalStorage.remove('UserDetailsPayload');
+        reactLocalStorage.remove("UserDetailsPayload");
         reactLocalStorage.remove("Eway_bill_URL");
         reactLocalStorage.remove("PayloadOrderData");
         reactLocalStorage.remove("Eway_bill_id");
         reactLocalStorage.remove("OrderDetailsId");
-        reactLocalStorage.remove("add_order_tag")
+        reactLocalStorage.remove("add_order_tag");
         dispatch(GetWalletBalance());
         dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
-        dispatch(PostOrderDownloadLabelGenerationFile(Labelpayload))
-        dispatch(GetCancelOrderDetail())
-        dispatch(GetCancelOrderDetail())
+        dispatch(PostOrderDownloadLabelGenerationFile(Labelpayload));
+        dispatch(GetCancelOrderDetail());
+        dispatch(GetCancelOrderDetail());
 
         return res;
       })
@@ -2992,7 +2962,6 @@ export const DeleteSupportTicket = (payload) => {
         }
       )
       .then((res) => {
-
         toast.success("Ticket Deleted successfully");
         return res;
       })
@@ -3080,7 +3049,6 @@ export const GetCustomerOrderDetail = (payload) => {
         }
       )
       .then((res) => {
-
         return res;
       })
       .catch((err) => {
@@ -3128,13 +3096,11 @@ export const PostOrderTrack = (payload) => {
         // },
       })
       .then((res) => {
-        if(res?.data?.current_status == "PENDING"){
+        if (res?.data?.current_status == "PENDING") {
           toast.warn("This Order Id Can't Track Because It Is In Pending");
-        }
-        else{
+        } else {
           toast.warn(res.data.message);
         }
-       
 
         return res;
       })
@@ -3262,25 +3228,19 @@ export const GetUserNotification = (payload) => {
   };
 };
 
-
-
 const GetAuthDetailsDispatch = (data) => ({
   type: actionType.GetAuthDetailsDispatch_Type,
   payload: data,
 });
 
-
 export const GetAuthDetails = (payload) => {
   return async (dispatch, getState) => {
     const responce = await axios
-      .get(
-        `${process.env.REACT_APP_BASE_URL}/getAuthDetails`,
-        {
-          headers: {
-            Authorization: `Bearer ${BearerToken}`,
-          },
-        }
-      )
+      .get(`${process.env.REACT_APP_BASE_URL}/getAuthDetails`, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
       .then((res) => {
         toast.warn(res.data.message);
         return res;
@@ -3292,8 +3252,6 @@ export const GetAuthDetails = (payload) => {
     dispatch(GetAuthDetailsDispatch(responce));
   };
 };
-
-
 
 const GetPermissionDispatch = (data) => ({
   type: actionType.GetPermissionDispatch_Type,
@@ -3322,22 +3280,18 @@ export const GetPermission = (payload) => {
   };
 };
 
-
-
-
 const GetGoogleCityStateDispatch = (data) => ({
   type: actionType.GetGoogleCityStateDispatch_Type,
   payload: data,
 });
 export const GetGoogleCityState = (payload) => {
   return async (dispatch, getState) => {
-
-
     const response = await axios
-      .get(` https://maps.googleapis.com/maps/api/geocode/json?address=${payload}&key=${process.env.REACT_APP_BASE_GOOGLE_API_KEY}`,)
+      .get(
+        ` https://maps.googleapis.com/maps/api/geocode/json?address=${payload}&key=${process.env.REACT_APP_BASE_GOOGLE_API_KEY}`
+      )
       .then((res) => {
         return res?.data?.results;
-
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
@@ -3346,7 +3300,6 @@ export const GetGoogleCityState = (payload) => {
     dispatch(GetGoogleCityStateDispatch(response));
   };
 };
-
 
 const PostTransactionHistoryDispatch = (data) => ({
   type: actionType.PostTransactionHistoryDispatch_Type,
@@ -3377,8 +3330,6 @@ export const PostTransactionHistory = (payload) => {
   };
 };
 
-
-
 const GetCancelOrderDetailDispatch = (data) => ({
   type: actionType.GetCancelOrderDetailDispatch_Type,
   payload: data,
@@ -3405,8 +3356,6 @@ export const GetCancelOrderDetail = (payload) => {
     dispatch(GetCancelOrderDetailDispatch(responce));
   };
 };
-
-
 
 const PostTrackingOtpDispatch = (data) => ({
   type: actionType.PostTrackingOtpDispatch_Type,
@@ -3436,16 +3385,6 @@ export const PostTrackingOtp = (payload) => {
     dispatch(PostTrackingOtpDispatch(responce));
   };
 };
-
-
-
-
-
-
-
-
-
-
 
 // export  const FunctionVariableNameCanBeAnyThing=(products)=>{
 //     return{
