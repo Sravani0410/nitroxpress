@@ -8,11 +8,17 @@ import { GetSettingViewB2cFeedback , DeleteSettingDismissTicket , PostTicketDeta
 import { isTomorrow } from "date-fns";
 import { PermissionData } from "../../Permission";
 import { reactLocalStorage } from "reactjs-localstorage";
+import Popup from "reactjs-popup";
+
 const  B2B=()=> {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [oldnewdata, setOldNewData] = useState(true)
   const [getsettingviewalldata, setGetSettingViewAllData] = useState("")
+  const [moredata, setMoreData] = useState(false);
+  const [morepopupid, setMorePopupId] = useState(false);
+  const [moredataid, setMoreDataId] = useState("");
+  const [pickuppopup, setPickUpPopup] = useState(false);
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
@@ -34,6 +40,8 @@ const  B2B=()=> {
       state.DeleteSupportTicketReducer.DeleteSupportTicketData
         ?.data
   );
+  let isAdmin_Role = reactLocalStorage.get("Admin_Role", false);
+
   useEffect(() => {
     let payload= {
       "user_type":"b2c",
@@ -46,12 +54,23 @@ const DeleteTicket = (e, data) => {
     id: data.feedback_id,
   };
   dispatch(DeleteSupportTicket(payload));
-  let payloadd = {
-    user_type: "b2c",
-    ticket_type: "active_ticket",
-  };
-  dispatch(PostTicketDetail(payloadd));
+  // let payloadd = {
+  //   user_type: "b2c",
+  //   ticket_type: "active_ticket",
+  // };
+  // dispatch(PostTicketDetail(payloadd));
 };
+
+useEffect(() => {
+  if (DeleteSupportTicketData?.message == "ticket closed") {
+    let payloadd = {
+      user_type: "b2c",
+      ticket_type: "active_ticket",
+    };
+    dispatch(PostTicketDetail(payloadd));
+  }
+}, [DeleteSupportTicketData])
+
 const TicketChangeFunn =(e)=>{
   if(e.target.value=="close"){
     navigate("/admin/support/b2b/b2cclose")
@@ -84,6 +103,24 @@ const NewOldFun = (e) => {
 useEffect(() => {
   GetSettingViewB2cFeedbackData && setGetSettingViewAllData(GetSettingViewB2cFeedbackData?.info)
 }, [GetSettingViewB2cFeedbackData])
+  const ShowFeedbackDataFun = (e, value) => {
+    if (value == "more") {
+      setMoreData(true);
+    } else {
+      setMoreData(false);
+    }
+  };
+  const Readmore = (id) => {
+    setPickUpPopup(true);
+    setMoreDataId(id);
+    setMoreData(false);
+  };
+  const ReadmoreFun = (id) => {
+    setPickUpPopup(true);
+    setMoreDataId(id);
+    setMorePopupId(id);
+    setMoreData(false);
+  };
   return (
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -100,7 +137,10 @@ useEffect(() => {
             </div>
 
             <div className="sptitle">
+
               <div className="select-box">
+              <span>SORT BY : </span>
+
                 <select className=" form-select" onChange={(e)=>TicketChangeFunn(e)}>
                   <option value="new" className="px-3">New Tickets</option>
                   <option value="close"  className="px-3">Close Tickets</option>
@@ -117,7 +157,7 @@ useEffect(() => {
               </div>
             </div>
 
-            <ul className="support-list">
+            {isAdmin_Role =="true"?<ul className="support-list">
               {PermissionData()?.VIEW_B2C_TICKETS == "VIEW_B2C_TICKETS" ?
               PostTicketDetailData &&
                 PostTicketDetailData?.info?.map((item, id) => {
@@ -132,7 +172,7 @@ useEffect(() => {
                         </div>
                       </div>
                       <div className="right-part">
-                        <button className="btn dot-btn" type="button">
+                        {/* <button className="btn dot-btn" type="button">
                           <svg
                             viewBox="0 0 16 4"
                             fill="none"
@@ -145,8 +185,8 @@ useEffect(() => {
                               fill="#C8C8C8"
                             />
                           </svg>
-                        </button>
-                        <span className=" star-svg me-2"> 
+                        </button> */}
+                        {/* <span className=" star-svg me-2"> 
                           {rate(item?.rating).map((item, id) => { 
                             return <svg
                               viewBox="0 0 10 10"
@@ -174,13 +214,40 @@ useEffect(() => {
                               />
                             </svg>
                           })}
-                        </span>
-                        <span>{item.date}</span>
-                        <p className="mt-2">
+                        </span> */}
+                        <p className="mt-2 mb-0">{item.title}</p>
+                        <span className="date-text">{item.date}</span>
+                        {/* <p className="mt-2">
                          {item.description}
-                        </p>
-
-                        <div className="d-lg-flex flex-lg-wrap justify-content-lg-between">
+                        </p> */}
+                        {item.description.length <= 30 ||
+                          (moredata == true &&
+                            morepopupid == item?.feedback_id) ? (
+                          <p className="ticket-description">
+                            {item.description}
+                          </p>
+                        ) : (
+                          <p className="ticket-description">
+                            {item?.description?.substring(0, 150)}
+                            <span
+                              onClick={(e) => ShowFeedbackDataFun(e, "more")}
+                            >
+                              {" "}
+                              ....
+                              <span
+                                className="text-primary"
+                                role="button"
+                                onClick={(e) => Readmore(item?.feedback_id)}
+                              >
+                                Read More
+                              </span>
+                            </span>
+                          </p>
+                        )}
+                        <div className="d-flex flex-wrap justify-content-between">
+                          <div className="">
+                            
+                          </div>
                           {/* <div className="">
                             <button className="btn mail-btn" type="button">
                               <svg
@@ -214,16 +281,64 @@ useEffect(() => {
                               Chat
                             </button>
                           </div> */}
-                          <button className="btn dismiss-btn" type="button"
-                           onClick={(e) => DeleteTicket(e, item)}>
-                            Dismiss
+                          <button className={`${PermissionData()?.DISMISS_B2B_TICKETS == "DISMISS_B2B_TICKETS" ? "btn dismiss-btn" : "permission_blur"} `}type="button"
+                           onClick={(e) => PermissionData()?.DISMISS_B2C_TICKETS == "DISMISS_B2C_TICKETS" ?DeleteTicket(e, item):""}>
+                            Resolve
                           </button>
                         </div>
                       </div>
+                       {moredataid == item?.feedback_id ? (
+                        <Popup
+                          open={pickuppopup}
+                          position=""
+                          model
+                          className="sign_up_loader"
+                        >
+                          <div className="container">
+                            <div className="loader-sec">
+                              <div className=" data_picker rounded bg-white">
+                                <div className="py-1 text-warning">
+                                  <h4
+                                    className="text-danger calender_popup_cancel"
+                                    onClick={(e) => {
+                                      ReadmoreFun(item?.id);
+                                      setPickUpPopup(false);
+                                    }}
+                                  >
+                                    {" "}
+                                    X{" "}
+                                  </h4>
+                                </div>
+                                <div className="data_picker_btn">
+                                  <span
+                                    className="readmore-popup"
+                                    onClick={(e) =>
+                                      ShowFeedbackDataFun(e, "less")
+                                    }
+                                  >
+                                    <p className="ticket-description">
+                                      {item.description}
+                                    </p>
+                                    <span
+                                      className="text-primary"
+                                      role="button"
+                                      onClick={(e) => ReadmoreFun(item?.id)}
+                                    >
+                                      Read Less
+                                    </span>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </Popup>
+                      ) : (
+                        ""
+                      )}
                     </li>
                   );
                 }):""}
-            </ul>
+            </ul>:""}
           </div>
         </div>
       </div>

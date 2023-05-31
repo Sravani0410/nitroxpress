@@ -328,7 +328,7 @@ const OrderPayment = () => {
   // orderpayment
 
   const ContinuePaymentFun = () => {
-
+    setLoadSpiner((o) => !o);
     let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
     let OrderDetailsIdData = JSON.parse(OrderDetailsId);
     let CompanyDetails = reactLocalStorage.get("UserDetailsPayload", false);
@@ -367,6 +367,9 @@ const OrderPayment = () => {
       if (PostDebitBalanceData.status == 200) {
         setPaymentMethodPopup(false);
         setWalletPayPopup(false)
+        setLoadSpiner((o) => !o);
+      }else{
+        setLoadSpiner(false);
       }
     }
 
@@ -610,7 +613,7 @@ const OrderPayment = () => {
 
               {paymentmethod !== "online" && (
                 <div className="payment-text">
-                  <p>  {responcedetails?.status == 200 || PostDebitBalanceData.status == 200 ? "order placed SuccesFully" : "Processing..."}</p>
+                  <p>  {responcedetails?.status == 200 || PostDebitBalanceData.status == 200 ? "Order Placed SuccesFully" : "Processing..."}</p>
                   {/* <p>order placed SuccesFully </p> */}
 
                   <button
@@ -744,8 +747,8 @@ const OrderPayment = () => {
         model
         className="sign_up_loader"
       >
-        <div className="wallet-popup" >
-          <div className={`popupinner ${wallettab ? "active" : ""}`}>
+        <div className="wallet-popup " >
+          <div className={`popupinner walletpaymement_inner ${wallettab ? "active" : ""}`}>
             <h4
               className="text-danger calender_popup_cancel"
               aria-selected={`${wallettab ? "true" : "false"}`}
@@ -758,9 +761,9 @@ const OrderPayment = () => {
               {" "}
               X{" "}
             </h4>
-            <h2>Select your payment Mode</h2>
+            <h2>Select Your Payment Mode</h2>
             <p>
-              Total Amount to pay Rs.{" "}
+              Total Amount To Pay Rs.{" "}
               {totalPriceValue}
             </p>
             <div className="popup-body">

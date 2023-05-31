@@ -8,14 +8,18 @@ import {
   PostTicketDetail,
 } from "../../Redux/action/ApiCollection";
 import { reactLocalStorage } from "reactjs-localstorage";
-
+import Popup from "reactjs-popup";
 
 function B2BClose() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [oldnewdata, setOldNewData] = useState(true);
   const [getsettingviewalldata, setGetSettingViewAllData] = useState("");
-
+   const [moredata, setMoreData] = useState(false);
+  const [morepopupid, setMorePopupId] = useState(false);
+  const [moredataid, setMoreDataId] = useState("");
+  const [pickuppopup, setPickUpPopup] = useState(false);
+  let isAdmin_Role = reactLocalStorage.get("Admin_Role", false);
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
@@ -74,6 +78,24 @@ function B2BClose() {
     PostTicketDetailData &&
       setGetSettingViewAllData(PostTicketDetailData?.info);
   }, [PostTicketDetailData]);
+   const ShowFeedbackDataFun = (e, value) => {
+    if (value == "more") {
+      setMoreData(true);
+    } else {
+      setMoreData(false);
+    }
+  };
+  const Readmore = (id) => {
+    setPickUpPopup(true);
+    setMoreDataId(id);
+    setMoreData(false);
+  };
+  const ReadmoreFun = (id) => {
+    setPickUpPopup(true);
+    setMoreDataId(id);
+    setMorePopupId(id);
+    setMoreData(false);
+  };
   return (
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -88,12 +110,14 @@ function B2BClose() {
                 onChange={(e) => CustomerChangeFun(e)}
               >
                 <option value="b2b">B2B</option>
-                <option value="b2c">B2C</option>
+                {isAdmin_Role=="true"?<option value="b2c">B2C</option>:""}
               </select>
             </div>
 
             <div className="sptitle">
               <div className="select-box">
+              <span>SORT BY : </span>
+
                 <select
                   className=" form-select"
                   onChange={(e) => TicketChangeFun(e)}
@@ -115,7 +139,7 @@ function B2BClose() {
               </div>
             </div>
 
-            <ul className="support-list">
+           <ul className="support-list">
               {getsettingviewalldata &&
                 getsettingviewalldata?.map((item, id) => {
                   return (
@@ -129,7 +153,7 @@ function B2BClose() {
                         </div>
                       </div>
                       <div className="right-part">
-                        <button className="btn dot-btn" type="button">
+                        {/* <button className="btn dot-btn" type="button">
                           <svg
                             viewBox="0 0 16 4"
                             fill="none"
@@ -142,7 +166,7 @@ function B2BClose() {
                               fill="#C8C8C8"
                             />
                           </svg>
-                        </button>
+                        </button> */}
                         {/* <span className=" star-svg me-2">
                           {rate(item?.rating).map((item, id) => {
                             return (
@@ -178,8 +202,31 @@ function B2BClose() {
                         </span>  */}
                         <p className="mt-2">{item.title}</p>
                         <span className="date-text">{item.date}</span>
-                        <p className="mt-2">{item.description}</p>
-
+                        {/* <p className="mt-2">{item.description}</p> */}
+                         {item.description.length <= 30 ||
+                          (moredata == true &&
+                            morepopupid == item?.feedback_id) ? (
+                          <p className="ticket-description">
+                            {item.description}
+                          </p>
+                        ) : (
+                          <p className="ticket-description">
+                            {item?.description?.substring(0, 150)}
+                            <span
+                              onClick={(e) => ShowFeedbackDataFun(e, "more")}
+                            >
+                              {" "}
+                              ....
+                              <span
+                                className="text-primary"
+                                role="button"
+                                onClick={(e) => Readmore(item?.feedback_id)}
+                              >
+                                Read More
+                              </span>
+                            </span>
+                          </p>
+                        )}
                         <div className="b2cbtn-box">
                           {" "}
                       
@@ -233,6 +280,54 @@ function B2BClose() {
                           </button> */}
                         </div>
                       </div>
+                       {moredataid == item?.feedback_id ? (
+                        <Popup
+                          open={pickuppopup}
+                          position=""
+                          model
+                          className="sign_up_loader"
+                        >
+                          <div className="container">
+                            <div className="loader-sec">
+                              <div className=" data_picker rounded bg-white">
+                                <div className="py-1 text-warning">
+                                  <h4
+                                    className="text-danger calender_popup_cancel"
+                                    onClick={(e) => {
+                                      ReadmoreFun(item?.id);
+                                      setPickUpPopup(false);
+                                    }}
+                                  >
+                                    {" "}
+                                    X{" "}
+                                  </h4>
+                                </div>
+                                <div className="data_picker_btn">
+                                  <span
+                                    className="readmore-popup"
+                                    onClick={(e) =>
+                                      ShowFeedbackDataFun(e, "less")
+                                    }
+                                  >
+                                    <p className="ticket-description">
+                                      {item.description}
+                                    </p>
+                                    <span
+                                      className="text-primary"
+                                      role="button"
+                                      onClick={(e) => ReadmoreFun(item?.id)}
+                                    >
+                                      Read Less
+                                    </span>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </Popup>
+                      ) : (
+                        ""
+                      )}
                     </li>
                   );
                 })}

@@ -72,7 +72,7 @@ import { TokenDataValidCheck1 } from "./Authanticate";
 // import BlogsIshita from "./BlogsPage/BlogsIshita";
 
 
-function App({auth}) {
+function App({ auth }) {
 
   let location = useLocation();
   let navigate = useNavigate()
@@ -84,13 +84,13 @@ function App({auth}) {
 
   useEffect(() => {
     let BearerToken1 = reactLocalStorage.get("token", false);
-    let Autherization = reactLocalStorage.get("Autherization", false);
+    let Autherization = reactLocalStorage.get("Authorized", false);
     if (BearerToken1 == false && location.pathname !== "/login") {
-      if(Autherization=="unAutherized"){
-      toast.warn("Login Session is Expired Please Login-again");
-      navigate("/login")
-    }  
-      
+      if (Autherization == "unAuthorized") {
+        toast.warn("Login Session is Expired Please Login-again");
+        navigate("/login")
+      }
+
     }
    })
  
@@ -111,11 +111,11 @@ function App({auth}) {
   useEffect(() => {
     let SessionTokenData = sessionStorage.getItem("token");
     if (!SessionTokenData) {
-      navigate("/login")
-      reactLocalStorage.remove()
-
-    } 
-
+      reactLocalStorage.clear()
+      sessionStorage.clear()
+      // window.location.reload()
+      navigate("/")
+    }
   }, [])
 
 
@@ -126,14 +126,12 @@ function App({auth}) {
 
   }, [isOnline])
 
-  
+
   useEffect(() => {
 
     let value = location.pathname.split("/")
 
     if (value[3] == "User" || value[3] == "orderdetails" || value[3] == "ordersummary" || value[3] == "orderpayment") {
-
-
     }
     else {
 

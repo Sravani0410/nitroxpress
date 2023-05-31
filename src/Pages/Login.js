@@ -167,7 +167,7 @@ const Login = () => {
                       </svg>
                     </span>}
                   <div className="forget_password">
-                    <a href="#" onClick={() => setPopupTure(o => !o)}>   Forgot password? </a>
+                    <a href="#" onClick={() => setPopupTure(o => !o)}> Forget Password? </a>
                   </div>
                   <div className="button_login_div ">
                     <button className="button_otp" onClick={(e) => SendOtp(e)}>

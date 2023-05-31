@@ -58,7 +58,7 @@ const OrderDatails = () => {
       "product_type": selectedproduct,
       "delivery_type": deliveryproduct,
       "weight": Number(weight),
-      "pickup_date": date,
+      // "pickup_date": date,
       "pack_shipment": yesnoactivebutton,
       "length": Number(length),
       "breadth": Number(breadth),
@@ -67,7 +67,11 @@ const OrderDatails = () => {
       "packaging": shippingprice,
       "insurance": yesnoactivebuttonInsurance,
     }
-    if (deliveryproduct && selectedproduct && quentity && weight && date && breadth && length && height) {
+
+
+
+    if (deliveryproduct && selectedproduct && quentity && weight &&
+      breadth && length && height) {
       if (selectedproduct !== null && selectedproduct !== "none" &&
         deliveryproduct !== null && deliveryproduct !== "none") {
         setProductTypeErorr(false)
@@ -81,18 +85,24 @@ const OrderDatails = () => {
     // deliveryproduct && selectedproduct == null || "none" ? setProductTypeErorr(true) : selectedproduct && quentity && weight && date && yesnoactivebutton && breadth && length && height &&
     //   dispatch(PostAdminOrderPaymentCal(PayloadData))
   }, [deliveryproduct, breadth, length, height, selectedproduct, quentity, weight, date, yesnoactivebutton, shippingprice, yesnoactivebuttonInsurance])
+
+
   const CurrentDateFun = (e) => {
     const selected = new Date(e.target.value);
+    console.log("bvcchsgdvhd", e.target.value)
     const maxDate = new Date();
     maxDate.setHours(0, 0, 0, 0);
-    if (selected >= maxDate) {
-      let spliteData = selected.toISOString().split("T")
-      setDate(spliteData[0])
-    }
-    else {
-      toast.warn("please select validDate ");
-      setDate("")
-    }
+    console.log("sdchgcdhvd", selected)
+    // if (selected >= maxDate) {
+    // let spliteData = selected?.toISOString()?.split("T")
+    // console.log("bvsdhv",spliteData)
+    // setDate(spliteData[0])
+    setDate(e.target.value)
+    // }
+    // else {
+    //   toast.warn("please select validDate ");
+    //   setDate("")
+    // }
   }
   useEffect(() => {
     PostAdminOrderPaymentCalReducerData &&
@@ -119,6 +129,8 @@ const OrderDatails = () => {
       setDefaultValue('')
     }
   }, [])
+
+
   const ItemDetailsNextBtnFun = () => {
     // let ProductOrderId = reactLocalStorage.get("product_order_id", false); 
     let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
@@ -146,9 +158,20 @@ const OrderDatails = () => {
     let AddOrderTag = {
       "add_order": addtagvalue
     }
+
+    const selected = new Date(date);
+    const maxDate = new Date();
+    maxDate.setHours(0, 0, 0, 0);
+    // console.log("jdhvjsv",selected,"dfefsfsf",maxDate)
+    // selected == "Invalid Date"?toast.warn("please select validDate")
+    // :selected <= maxDate?toast.warn("please select validDate"): date
+
     let AddOrder = reactLocalStorage.set("add_order_tag", JSON.stringify(AddOrderTag))
-    let EwayBill = reactLocalStorage.get("Eway_bill_URL", false)  
-    if (deliveryproduct && breadth && length && height && selectedproduct && quentity && weight && date) {
+    let EwayBill = reactLocalStorage.get("Eway_bill_URL", false)
+    if (deliveryproduct && breadth && length && height && selectedproduct && quentity && weight
+
+
+    ) {
       if (selectedproduct !== null && selectedproduct !== "none"
         && deliveryproduct !== null && deliveryproduct !== "none") {
         setProductTypeErorr(false)
@@ -157,7 +180,9 @@ const OrderDatails = () => {
             if (productpricevalue >= 50000) {
               if (EwayBill !== false && EwayBill !== "Upload E-way Bill") {
                 reactLocalStorage.set("PayloadOrderData", JSON.stringify(PayloadData))
-                navigate("/admin/order/ordersummary")
+                selected == "Invalid Date" ? toast.warn("please select validDate")
+                  : selected <= maxDate ? toast.warn("please select validDate") : date
+                    && navigate("/admin/order/ordersummary")
               }
               else {
                 toast.warn("please Upload E-way Bill");
@@ -167,18 +192,22 @@ const OrderDatails = () => {
               reactLocalStorage.set("Eway_bill_URL", "Upload E-way Bill")
               reactLocalStorage.set("Eway_bill_id", "")
               reactLocalStorage.set("PayloadOrderData", JSON.stringify(PayloadData))
-              navigate("/admin/order/ordersummary")
+              selected == "Invalid Date" ? toast.warn("please select validDate")
+                : selected <= maxDate ? toast.warn("please select validDate") : date
+                  && navigate("/admin/order/ordersummary")
             }
           }
           else {
-            toast.warn("please select Package shipping");
+            toast.warn("please select Package Shipping");
           }
         }
         else {
-          if (productpricevalue >= 50000) {     
+          if (productpricevalue >= 50000) {
             if (EwayBill !== false && EwayBill !== "Upload E-way Bill") {
               reactLocalStorage.set("PayloadOrderData", JSON.stringify(PayloadData))
-              navigate("/admin/order/ordersummary")
+              selected == "Invalid Date" ? toast.warn("please select validDate")
+                : selected <= maxDate ? toast.warn("please select validDate") : date
+                  && navigate("/admin/order/ordersummary")
             }
             else {
               toast.warn("please Upload E-way Bill");
@@ -189,7 +218,9 @@ const OrderDatails = () => {
               reactLocalStorage.set("Eway_bill_URL", "Upload E-way Bill")
               reactLocalStorage.set("Eway_bill_id", "")
               reactLocalStorage.set("PayloadOrderData", JSON.stringify(PayloadData))
-              navigate("/admin/order/ordersummary")
+              selected == "Invalid Date" ? toast.warn("please select validDate")
+                : selected <= maxDate ? toast.warn("please select validDate") : date
+                  && navigate("/admin/order/ordersummary")
             }
             else {
               toast.warn("please Add  Product Price");
@@ -199,16 +230,16 @@ const OrderDatails = () => {
       }
       else {
         toast.warn("please select all fields ");
-        // setProductTypeErorr(true)
+
       }
-      // reactLocalStorage.set("PayloadOrderData", JSON.stringify(PayloadData))
-      // dispatch(PostAdminOrderAddShipment(PayloadData))
-      // navigate("/admin/order/ordersummary");
+
     }
     else {
       toast.warn("please select all fields ");
     }
   }
+
+
   // Don't delete this comment 
   //  this is for edit order
   // useEffect(() => {
@@ -257,7 +288,6 @@ const OrderDatails = () => {
   // display
   useEffect(() => {
     const storedData = reactLocalStorage.get('PayloadOrderData', false)
-    console.log("storedData",storedData)
     const PayloadOrderData = JSON.parse(storedData)
     const TagOrderData = reactLocalStorage.get("add_order_tag", false)
     const PayloadTagOrderData = JSON.parse(TagOrderData)
@@ -315,26 +345,30 @@ const OrderDatails = () => {
     setWeight(e.target.value > 0 ? e.target.value : "")
   }
 
-   
 
-  const   WeightonWheelFun  = (e) => { 
+
+  const WeightonWheelFun = (e) => {
     WeightRef.current.blur();
     setTimeout(() => WeightRef.current.focus(), 100);
   };
-  const   LengthonWheelFun  = (e) => { 
+  const LengthonWheelFun = (e) => {
     LengthRef.current.blur();
     setTimeout(() => LengthRef.current.focus(), 100);
   };
 
-   
+
 
   useEffect(() => {
-    const ignoreScroll = (e) => { 
-     };
+    const ignoreScroll = (e) => {
+    };
     WeightRef.current && WeightRef.current.addEventListener("wheel", ignoreScroll);
   }, [WeightRef]);
- 
 
+
+
+  useEffect(() => {
+    document.getElementsByTagName('div')[0].focus();
+  })
   return (
     <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
       <Header />
@@ -381,15 +415,16 @@ const OrderDatails = () => {
                 <div className="row">
                   <div className="col-sm-6">
                     <label>Weight</label>
-                    <div className="form-box mt-1">
+                    <div className="form-box mt-1" tabindex="1">
                       <input
+                        tabindex="1"
                         type="text"
                         className="form-control "
-                        placeholder="Quantity"
+                        placeholder="Weight"
                         value={weight}
                         // onChange={(e) => weightFun(e)}
                         ref={WeightRef}
-                        onWheel={(e)=>WeightonWheelFun(e)}
+                        onWheel={(e) => WeightonWheelFun(e)}
                         onChange={(e) => setWeight(e.target.value > 0 ? e.target.value : "")}
                       />
                       <span>g</span>
@@ -397,14 +432,15 @@ const OrderDatails = () => {
                   </div>
                   <div className="col-sm-2">
                     <label>Length</label>
-                    <div className="form-box mt-1">
+                    <div className="form-box mt-1"  >
                       <input
+                        tabindex="2"
                         type="text"
                         className="form-control "
                         placeholder="L"
                         value={length}
                         ref={LengthRef}
-                        onWheel={(e)=>LengthonWheelFun(e)}
+                        onWheel={(e) => LengthonWheelFun(e)}
                         onChange={(e) => setLength(e.target.value > 0 ? e.target.value : "")}
                       />
                       <span >CM</span>
@@ -412,8 +448,9 @@ const OrderDatails = () => {
                   </div>
                   <div className="col-sm-2">
                     <label>Breadth</label>
-                    <div className="form-box mt-1">
+                    <div className="form-box mt-1"  >
                       <input
+                        tabindex="3"
                         type="text"
                         className="form-control "
                         placeholder="B"
@@ -427,6 +464,7 @@ const OrderDatails = () => {
                     <label>Height</label>
                     <div className="form-box mt-1">
                       <input
+                        tabindex="4"
                         type="text"
                         className="form-control "
                         placeholder="H"
@@ -440,8 +478,9 @@ const OrderDatails = () => {
                     <label >Delivery Type</label>
                     <select className='form-control mt-1' placeholder="Select"
                       onChange={(e) => SelectDeliveryType(e)}
+                      tabindex="5"
                       value={deliveryproduct}>
-                      <option value="none" selected >Select Delivery Type...</option>
+                      <option value="none" selected >Select Delivery Type</option>
                       <option value="SAME_DAY_DELIVERY">Same day delivery</option>
                       <option value="EXPRESS_DELIERY">Express delivery</option>
                       <option value="AIR_DELIVERY">Air delivery</option>
@@ -455,23 +494,29 @@ const OrderDatails = () => {
                       <option value="SPECIAL_DELIVERY">Special delivery</option>
                     </select>
                   </div>
-                  <div className="col-sm-6 pt-3">
+                  <div className="col-sm-6 pt-3 mt-1">
                     <label className='form-label'>Pick-up Date</label>
-                    <input type="date" className='form-control date-form' placeholder="Choose From Calendar"
-                      value={date} onChange={(e) => CurrentDateFun(e)} />
+                    <input
+                      type="date"
+                      className='form-control date-form'
+                      placeholder="Choose From Calendar"
+                      tabindex="6"
+                      value={date}
+                      onChange={(e) => CurrentDateFun(e)} />
                     <span className='date-img'>
                     </span>
                   </div>
                   <div className='shipment-box pt-3'>
                     <p>Want us to pack your shipment?</p>
                     <div className='shipment-btn'>
-                      <button type='button' className={yesnoactivebutton ? 'active yes-btn' : "yes-btn"} onClick={(e) => setYesNoActiveButton(true)}>Yes</button>
-                      <button type='button' className={!yesnoactivebutton ? 'active no-btn' : "no-btn"} onClick={(e) => setYesNoActiveButton(false)}>No</button>
+                      <button type='button' tabindex="9" className={yesnoactivebutton ? 'active yes-btn' : "yes-btn"} onClick={(e) => setYesNoActiveButton(true)}>Yes</button>
+                      <button type='button' tabindex="10" className={!yesnoactivebutton ? 'active no-btn' : "no-btn"} onClick={(e) => setYesNoActiveButton(false)}>No</button>
                     </div>
                   </div>
                   {yesnoactivebutton && <div className='form-box select-arrow col-12 mb-3'>
-                    <label className='form-label'>Package shipping</label>
+                    <label className='form-label'>Package Shipping</label>
                     <select className={`' ' ${deliverytypeerror ? "alert_border form-control" : "form-control"}`} placeholder="Select"
+                      tabindex="11"
                       onChange={(e) => { setShippingPrice(e.target.value) }}
                     // onChange={(e) => { handleChange(e) }}
                     >
@@ -493,12 +538,13 @@ const OrderDatails = () => {
                     <label className='form-label'>Product Price</label>
                     {/* <input className={`form-control`} type="number" id="price-text" onChange={(e)=>Ewaybill(e.target.value)}></input> */}
                     <input
+                     tabindex="12"
                       className="form-control" placeholder="Product Price"
                       type="text" id="price-text"
                       value={productpricevalue}
                       // var newStr = e.target.value.replace(/  +/g, ' ');
                       onChange={(e) => setProductPriceValue(e.target.value)?.replace(/  +/g, ' ')} />
-                    {productpricevalue >= 50000 ? <div className="input_filed input_file  mb-3">
+                    {productpricevalue >= 50000 ? <div className="input_filed input_file  mt-3">
                       <label className="button" for="uploaddd">
                         {" "}
                         Upload{" "}
@@ -533,8 +579,10 @@ const OrderDatails = () => {
                         )
                       }
                       <input
+                       
                         id="uploaddd"
                         type="file"
+                        className="form-control"
                         placeholder="GSTIN PDF"
                         accept='Application/pdf'
                         // setEwayPdf(e?.target?.files[0])
@@ -548,9 +596,10 @@ const OrderDatails = () => {
                   <div className="col-sm-6">
                     <label >Product Type</label>
                     <select className='form-control' placeholder="Select"
-                      onChange={(e) => { setSelectedProduct(e.target.value); setOtherProductType(e.target.value) }}
+                     tabindex="13"
+                      onChange={(e) => { setSelectedProduct(e.target.value == "OTHERS" ? "" : e.target.value); setOtherProductType(e.target.value) }}
                       value={selectedproduct}>
-                      <option value="none" selected >Select Product Type...</option>
+                      <option value="none" selected >{otherProductType == "OTHERS" ? "Others" : 'Select Product Type'}</option>
                       <option value="Clothes">Clothes</option>
                       <option value="Glass">Glass</option>
                       <option value="OTHERS">Others</option>
@@ -573,6 +622,7 @@ const OrderDatails = () => {
                       <div className="col-sm-6">
                         <label>Quantity</label>
                         <input
+                        tabindex="14"
                           type="text"
                           className="form-control mt-1"
                           placeholder="Quantity "
@@ -583,6 +633,7 @@ const OrderDatails = () => {
                       <div className="col-sm-6">
                         <label>Tax (%)</label>
                         <input
+                        
                           type="text"
                           className="form-control mt-1"
                           placeholder="Tax"
@@ -653,7 +704,7 @@ const OrderDatails = () => {
                 Next{" "}
               </button> */}
               <div className="row">
-                <div className="col-sm-4">
+                <div className="col-sm-4 col-6">
                   <button
                     onClick={(e) => ItemDetailsPrevousBtnFun(e)}
                     type="button"
@@ -663,8 +714,8 @@ const OrderDatails = () => {
                     Previous{" "}
                   </button>
                 </div>
-                <div className="col-sm-4"></div>
-                <div className="col-sm-4">
+                <div className="col-sm-4 d-none d-sm-block"></div>
+                <div className="col-sm-4 col-6">
                   <button
                     onClick={(e) => ItemDetailsNextBtnFun(e)}
                     type="button"

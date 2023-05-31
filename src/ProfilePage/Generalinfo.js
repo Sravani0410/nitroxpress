@@ -95,7 +95,6 @@ function Generalinfo() {
             })
             .then((Response) => {
                 setpatchDataRefresh(true)
-                console.log(Response)
                 toast.success("Changes done")
 
                  
@@ -118,14 +117,12 @@ function Generalinfo() {
             },
         })
             .then((Response) => {
-                console.log(Response)
                 toast.success("Yor Updated successfully")
 
                  
 
             })
             .catch((err) => {
-                console.log(err);
                 toast.warn(err.response.data.message)
                 
             })

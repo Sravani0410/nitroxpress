@@ -196,7 +196,7 @@ const UserSetting = () => {
         <Sidebar />
         <div className="content-sec usersetting-sec">
           <div className="title-bar ">
-            {IsAdminRole==="true"?<button type="button"
+            {IsAdminRole=="true"?<button type="button"
 
               className={`btn add-btn ${PermissionData()?.CREATE_CATEGORY == "CREATE_CATEGORY" ? " " : "permission_blur"}`}
 
@@ -209,14 +209,14 @@ const UserSetting = () => {
             }}> Back </button>
           </div>
 
-          {IsAdminRole==="true"?<div className="usersetting-table">
+          {IsAdminRole=="true"?<div className="usersetting-table">
             <table>
               <tr>
                 <th>Category</th>
                 {/* <th>Duration</th> */}
                 <th>Permission</th>
                 <th>Action</th>
-                <th></th>
+              
               </tr>
               {PermissionData()?.VIEW_CATEGORY == "VIEW_CATEGORY" ?
                 GetCategoryDetailsData &&
@@ -273,7 +273,7 @@ const UserSetting = () => {
                 }) : ""}
 
             </table>
-          </div>:<h3>Only Admin Can Access This Page</h3>}
+          </div>:<h3 className="text-center">Only Admin Can Access This Page</h3>}
 
           {/* =============================Add Category========================================= */}
           {addcategory && (

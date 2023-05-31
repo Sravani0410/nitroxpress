@@ -53,10 +53,15 @@ const User = () => {
 
 
   const [pickuppopup, setPickUpPopup] = useState(false)
-  const [pickuppatchobjectid, setPatchObjectId] = useState(null)//
-  const [pickupModalStatus, setPickUpModalStatus] = useState(false)//  
+  const [pickuppatchobjectid, setPatchObjectId] = useState(null)
+  const [pickupModalStatus, setPickUpModalStatus] = useState(false)
 
   const [filterpincodedata, setFilterPincodeData] = useState("");
+  const [CompanyFilterData, setCompanyFilterData] = useState([]);
+  const [EnteredValue, setEnteredValue] = useState("");
+  const [EnteredValueError, setEnteredValueError] = useState(false);
+
+
 
 
 
@@ -111,11 +116,11 @@ const User = () => {
 
 
     // if(e.target.value.length==1){
-      let payload1 ={ 
-        "page_type":"pickup" 
-        }
-        dispatch(getOrderAddress(payload1))
-        // dispatch(PostOrderAddress(payload))
+    let payload1 = {
+      "page_type": "pickup"
+    }
+    dispatch(getOrderAddress(payload1))
+    // dispatch(PostOrderAddress(payload))
 
     // }
 
@@ -161,10 +166,10 @@ const User = () => {
     setPickUpModalStatus(false)
 
     // if(e.target.value.length == 1){
-      let payload1={
-        "page_type":"delivered" 
-     }
-     dispatch(getOrderAddress(payload1))
+    let payload1 = {
+      "page_type": "delivered"
+    }
+    dispatch(getOrderAddress(payload1))
     //  dispatch(PostOrderAddress(payload))
     // }
 
@@ -191,8 +196,12 @@ const User = () => {
     }
   }
 
+
+
+
+
   useEffect(() => {
-    
+
 
     // dispatch(getOrderAddress())
 
@@ -362,23 +371,31 @@ const User = () => {
       "company_name": CompanyName
     }
     // addamountfieldopenclose == true && addamount == null ? toast.warn("fill amount") : addamount &&
-      CompanyName == null ? toast.warn("Please fill Company Name") : CompanyName && delivername && delivernumber?.length !== 10 ? toast.warn("deliver contact number is invalid") : delivernumber
-        && deliveraddress && deliverpincode
+    CompanyName == null ? toast.warn("Please fill Company Name") : CompanyName
+      && pickupname === "" ? toast.warn(" Please fill pickup name ") : pickupname &&
+        pickupnumber?.length !== 10 ? toast.warn("pickup contact number is invalid") : pickupnumber &&
+          pickuppincode && pickupaddress && pickupcity && pickupstate && pickupcountrycode &&
+          delivername === "" ? toast.warn(" Please fill deliver name ") : delivername && delivernumber?.length !== 10 ? toast.warn("deliver contact number is invalid") : delivernumber
+            && deliveraddress && deliverpincode
+           // && deliverpincode.length !== 6 ? toast.warn("Please select pincode") : deliverpincode
+             && delivercity && deliverstate && delivercountrycode&&
 
-        // && deliverpincode.length !== 6 ? toast.warn("Please select pincode") : deliverpincode 
-        && delivercity && deliverstate && delivercountrycode && pickupname &&
-        pickupnumber?.length !== 10 ? toast.warn("pickup contact number is invalid") : pickupnumber
-          && pickupaddress && pickuppincode && pickupcity && pickupstate && pickupcountrycode &&
-          // UserDetailOfLocalStorage?.method|| 
-          ordertype == null ? toast.warn("Please Select Correct Order type") : ordertype
-        ?
-        // dispatch(GetAdminOrderPaymentOrder(PayloadData))
-        reactLocalStorage.set("UserDetailsPayload", JSON.stringify(PayloadData)) &&
-        navigate("/admin/order/orderdetails")
+            // CompanyName == null ? toast.warn("Please fill Company Name") : CompanyName && delivername && delivernumber?.length !== 10 ? toast.warn("deliver contact number is invalid") : delivernumber
+            //   && deliveraddress && deliverpincode
 
-        :
-
-        toast.warn("please fill all the fields currectly")
+            //   // && deliverpincode.length !== 6 ? toast.warn("Please select pincode") : deliverpincode 
+            //   && delivercity && deliverstate && delivercountrycode && pickupname &&
+            //   pickupnumber?.length !== 10 ? toast.warn("pickup contact number is invalid") : pickupnumber
+            //     && pickupaddress && pickuppincode && pickupcity && pickupstate && pickupcountrycode &&
+            
+            // UserDetailOfLocalStorage?.method|| 
+            ordertype == null ? toast.warn("Please Select Correct Order type") : ordertype
+            ?
+            // dispatch(GetAdminOrderPaymentOrder(PayloadData))
+            reactLocalStorage.set("UserDetailsPayload", JSON.stringify(PayloadData)) &&
+            navigate("/admin/order/orderdetails")
+            :
+            toast.warn("please fill all the fields currectly")
 
   }
 
@@ -465,11 +482,11 @@ const User = () => {
   }
 
 
+  let UserDetailOfLocalStorage = JSON.parse(reactLocalStorage.get("UserDetailsPayload", false))
 
   useEffect(() => {
     // reactLocalStorage.set("UserDetailsPayload", JSON.stringify(PayloadData));
 
-    let UserDetailOfLocalStorage = JSON.parse(reactLocalStorage.get("UserDetailsPayload", false))
     let splitPickupCountryCode = UserDetailOfLocalStorage?.pickup_phone_number?.split("-")
     let splitDeliveredCountryCode = UserDetailOfLocalStorage?.delivered_phone_number?.split("-")
     if (UserDetailOfLocalStorage !== false) {
@@ -545,11 +562,90 @@ const User = () => {
   });
 
   const onChange = (e) => {
+    setEnteredValueError(false)
     setValue(e.target.value);
     setIsOpen(true);
     setCompanyName(null);
     setHighlightedIndex(-1);
+
+    let array = []
+
+    GetB2bCompanyInfoData
+      ?.filter((item) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const name = item.company_name.toLowerCase();
+        return searchTerm && name.includes(searchTerm);
+      }).map((items) => {
+        array.push(items)
+      }
+      )
+    setCompanyFilterData(array)
   };
+
+  useEffect(() => {
+    if (UserDetailOfLocalStorage?.company_name !== "") {
+
+      let array = []
+
+      GetB2bCompanyInfoData?.map((items) => {
+        array.push(items)
+      }
+      )
+      setCompanyFilterData(array)
+    }
+
+  }, [UserDetailOfLocalStorage?.company_name])
+
+  useEffect(() => {
+
+
+    // if(UserDetailOfLocalStorage?.company_name!=="")
+    // {
+
+    //   let array = []
+
+    //   GetB2bCompanyInfoData?.map((items) => {
+    //       array.push(items)
+    //     }
+    //     )
+    //   setCompanyFilterData(array)
+    // }
+
+
+    if (CompanyName) {
+
+
+      let EnteredValueFilterData = CompanyFilterData.filter(function (items) {
+        return items.company_name?.toString() == value?.toString() || items?.company_name?.toString() == CompanyName?.toString();
+      });
+
+
+      if (EnteredValueFilterData?.length != 0) {
+        setEnteredValueError(false)
+      }
+      else if (EnteredValueFilterData?.length == 0) {
+        if (UserDetailOfLocalStorage?.company_name == "") {
+          setEnteredValueError(true)
+        }
+        else {
+          setEnteredValueError(false)
+        }
+      }
+
+      else {
+        setEnteredValueError(true)
+      }
+
+    }
+
+  }, [EnteredValue, CompanyName])
+
+
+
+  // EnteredValue
+
+
+
 
   const onSearch = (searchTerm) => {
     setValue(searchTerm);
@@ -559,6 +655,23 @@ const User = () => {
   const onKeyDown = (e) => {
     if (e.key === "Enter") {
       onSearch(value);
+
+
+
+      let EnteredValueFilterData = CompanyFilterData.filter(function (items) {
+        return items.company_name?.toString() == value?.toString() || items?.company_name?.toString() == CompanyName?.toString();
+      });
+
+      if (EnteredValueFilterData.length != 0) {
+        setEnteredValueError(false)
+      }
+      else {
+        setEnteredValueError(true)
+      }
+
+
+
+      setEnteredValue(value)
     }
     else if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -591,6 +704,11 @@ const User = () => {
       // setCompanyName(filteredData[selectedIndex - 1]?.company_name || null);
     }
   };
+
+
+
+
+
   useEffect(() => {
     if (highlightedIndex !== -1 && dropdownRef.current) {
       const selectedItem = dropdownRef.current.children[highlightedIndex];
@@ -611,8 +729,9 @@ const User = () => {
 
 
   let orderType = [
-    { value: "PREPAID", data: "prepaid" },
-    { data: "cod", value: "COD" }]
+    { value: "PREPAID", data: "Prepaid" },
+    { data: "Cod", value: "COD" }]
+
 
   return (
     <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -746,39 +865,34 @@ const User = () => {
                       // onInputCapture={SearchFilterPathFun}
                       // onInputChange={SearchFilterPathFun}
                       />
-                      {isOpen && (
+                      {isOpen ?
                         <div className={`dropdown companyDropDown`} ref={dropdownRef}>
-                          {GetB2bCompanyInfoData
-                            ?.filter((item) => {
-                              const searchTerm = value.toLowerCase();
-                              const name = item.company_name.toLowerCase();
-                              return searchTerm && name.includes(searchTerm);
-                            })
-                            ?.map((item, index) => {
-                              return <div
-                                className={`dropdown-row   ${highlightedIndex === index ? " selected" : "",
-                                // highlightedIndex === index ? "bg-red" : ""
-                                  selectedIndex == -1 ? index == 0 ? "bg-red" : "" : selectedIndex == index ? "bg-red" : ""
-                                  // selectedIndex == -1? "bg-red": 
-                                  //  selectedIndex == index ? "bg-red" : ""
-                                  // selectedIndex == index ? "bg-red" : ""
-                                  }`}
-                                  // style={{
-                                  //   backgroundColor:
-                                  //     highlightedIndex === index ? "yellow" : "white"
-                                  // }}
-                                onMouseEnter={() => setHighlightedIndex(index)}
-                                onClick={() => {
-                                  setCompanyName(item.company_name);
-                                  onSearch(item.company_name);
-                                }}
-                                key={index}
-                              >
-                                {item.company_name}
-                              </div>
-                            })}
+
+                          {CompanyFilterData.length > 0 ? CompanyFilterData?.map((item, index) => {
+                            return <div
+                              className={`dropdown-row   ${highlightedIndex === index ? " selected" : "",
+                                selectedIndex == -1 ? index == 0 ? "bg-red" : "" : selectedIndex == index ? "bg-red" : ""
+                                }`}
+                              onMouseEnter={() => setHighlightedIndex(index)}
+                              onClick={() => {
+                                setCompanyName(item.company_name);
+                                onSearch(item.company_name);
+                              }}
+                              key={index}
+                            >
+
+                              {item.company_name}
+                            </div>
+                          })
+                            : <div className="text-danger">Company is not registered !</div>}
+
+                          <div className="text-danger"> {EnteredValueError == true ? "This Campany Name is not Available !" : ""}</div>
+
+
                         </div>
-                      )}
+                        :
+                        !isOpen && EnteredValueError && <div className="text-danger">No Campany Name is Available !</div>
+                      }
 
                       {/* {pagepathdata && (
               <datalist id="brow">
@@ -810,20 +924,21 @@ const User = () => {
                       </svg>
                     </span> */}
                     </div>
-                    <div className="col-md-4 mt-2">
-                      <label>Contact name</label>
-                      <input
-                        type="text"
-                        name="pickupname"
-                        className="form-control mt-1"
-                        placeholder="Name"
-                        value={pickupname}
-                        onChange={(e) => setPickupName(e.target.value)}
-                      />
-                    </div>
-                    <div className="col-md-4 mt-2">
-                      <label>Mobile Number</label>
-                      {/* <input
+                    <div className={`${CompanyName != null ? "" : "disable_opercityOrder1"} row pe-0`}>
+                      <div className="col-md-4 mt-2 pe-0">
+                        <label>Contact Name</label>
+                        <input
+                          type="text"
+                          name="pickupname"
+                          className="form-control mt-1"
+                          placeholder="Name"
+                          value={pickupname}
+                          onChange={(e) => setPickupName(e.target.value)}
+                        />
+                      </div>
+                      <div className="col-md-4 mt-2 pe-0">
+                        <label>Mobile Number</label>
+                        {/* <input
                         type="number"
                         name="pickupnumber"
                         className="form-control mt-1"
@@ -831,118 +946,118 @@ const User = () => {
                         value={pickupnumber}
                         onChange={(e) => setPickupNumber(e.target.value)}
                       /> */}
-                      <PhoneInput
-                        country={'in'}
-                        value={pickupcountrycode + pickupnumber}
-                        onChange={PickupCountryCodeFun}
-                        className="input_filed"
-                      />
-                    </div>
+                        <PhoneInput
+                          country={'in'}
+                          value={pickupcountrycode + pickupnumber}
+                          onChange={PickupCountryCodeFun}
+                          className="input_filed editor_sss"
+                        />
+                      </div>
 
-                    <div className="col-md-4 mt-2">
-                      <label>Pincode</label>
-                      <input type="text" className={`form-control check-box ${pickuppincodeactive && pickuppincode ? "alert_border" : ""}`} placeholder="Delivered Pincode"
-                        value={pickuppincode} onChange={(e) => PickUpPincodeFun(e)} />
-                      {pickuppincodeactive && pickuppincode ? <span className='text-danger '>
-                        <small> Pincode is not available </small></span> : ""}
-                    </div>
-                  </div>
+                      <div className="col-md-4 mt-2 pe-0">
+                        <label>Pincode</label>
+                        <input type="text" className={`form-control check-box ${pickuppincodeactive && pickuppincode ? "alert_border" : ""}`} placeholder="Delivered Pincode"
+                          value={pickuppincode} onChange={(e) => PickUpPincodeFun(e)} />
+                        {pickuppincodeactive && pickuppincode ? <span className='text-danger '>
+                          <small> Pincode is not available </small></span> : ""}
+                      </div>
 
-                  <div className="col-md-12 ">
-                    <div className="col-12 mt-3">
-                      <label>Address</label>
 
-                      <PlacesAutocomplete
-                        value={pickupaddress}
-                        onChange={(e) => PickupAddressFun(e)}
-                      >
-                        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                          <div
-                            className={pickupaddressactive ? "mb-4" : ""}
+                      <div className="col-md-12 pe-0">
+                        <div className="col-12 mt-3 ">
+                          <label>Address</label>
+
+                          <PlacesAutocomplete
+                            value={pickupaddress}
+                            onChange={(e) => PickupAddressFun(e)}
                           >
-                            <input
-                              {...getInputProps({
-                                placeholder: 'Search Places ...',
-                                className: 'location-search-input',
-                              })}
-                              className={`form-control `}
-                            // ${pickupaddressactive ? "alert_border" : ""} 
-                            />
-                            <div className="autocomplete-dropdown-container">
+                            {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                              <div
+                                className={pickupaddressactive ? "mb-4" : ""}
+                              >
+                                <input
+                                  {...getInputProps({
+                                    placeholder: 'Search Places',
+                                    className: 'location-search-input',
+                                  })}
+                                  className={`form-control `}
+                                // ${pickupaddressactive ? "alert_border" : ""} 
+                                />
+                                <div className="autocomplete-dropdown-container">
 
-                              {suggestions.map(suggestion => {
+                                  {suggestions.map(suggestion => {
 
-                                const className = suggestion.activesi
-                                  ? 'suggestion-item--active'
-                                  : 'suggestion-item';
-                                // inline style for demonstration purpose
-                                const style = suggestion.active
-                                  ? { backgroundColor: '#fafafa', cursor: 'pointer' }
-                                  : { backgroundColor: '#ffffff', cursor: 'pointer' };
-                                return (
-                                  <div
-                                    {...getSuggestionItemProps(suggestion, {
-                                      className,
-                                      style,
-                                    })}
-                                  >
-                                    <span>{suggestion.description}</span>
-                                  </div>
-                                );
-                              })}
+                                    const className = suggestion.activesi
+                                      ? 'suggestion-item--active'
+                                      : 'suggestion-item';
+                                    // inline style for demonstration purpose
+                                    const style = suggestion.active
+                                      ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                                      : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                                    return (
+                                      <div
+                                        {...getSuggestionItemProps(suggestion, {
+                                          className,
+                                          style,
+                                        })}
+                                      >
+                                        <span>{suggestion.description}</span>
+                                      </div>
+                                    );
+                                  })}
 
-                              {/* {!suggestions[0]?.description && pickupaddressactive ? <span className='text-danger mb-4 '>
+                                  {/* {!suggestions[0]?.description && pickupaddressactive ? <span className='text-danger mb-4 '>
                                 <small> This address is not available </small></span> : setPickupAddressActive(false)} */}
 
-                            </div>
-                          </div>
-                        )}
-                      </PlacesAutocomplete>
-                    </div>
+                                </div>
+                              </div>
+                            )}
+                          </PlacesAutocomplete>
+                        </div>
 
-                  </div>
-                  <div className="row mt-3 m-0 p-0">
-                    <div className="col-md-6 mt-1">
-                      <label>City</label>
-                      <input
-                        type="text"
-                        name="pickupcity"
-                        className="form-control mt-1"
-                        placeholder="City"
-                        value={pickupcity}
-                        onChange={(e) => setPickupCity(e.target.value)}
-                      />
-                    </div>
-                    <div className="col-md-6 mt-1">
-                      <label>State</label>
-                      <input
-                        type="text"
-                        name="pickupstate"
-                        className="form-control mt-1"
-                        placeholder="State"
-                        value={pickupstate}
-                        onChange={(e) => setPickupState(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <h3 className="col-12 mt-5">Consignee Information</h3>
+                      </div>
+                      <div className="row mt-3 m-0 p-0">
+                        <div className="col-md-6 mt-1 pe-0">
+                          <label>City</label>
+                          <input
+                            type="text"
+                            name="pickupcity"
+                            className="form-control mt-1"
+                            placeholder="City"
+                            value={pickupcity}
+                            onChange={(e) => setPickupCity(e.target.value)}
+                          />
+                        </div>
+                        <div className="col-md-6 mt-1 pe-0">
+                          <label>State</label>
+                          <input
+                            type="text"
+                            name="pickupstate"
+                            className="form-control mt-1"
+                            placeholder="State"
+                            value={pickupstate}
+                            onChange={(e) => setPickupState(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      <h3 className="col-12 mt-5">Consignee Information</h3>
 
-                  <div className="col-md-4 mt-2">
-                    <label>Contact name</label>
-                    <input
-                      type="text"
-                      name="delivername"
-                      className="form-control mt-1"
-                      placeholder="Name"
-                      value={delivername}
-                      onChange={(e) => setDeliverName(e.target.value)}
-                    />
+                      <div className="col-md-4 mt-2">
+                        <label>Contact Name</label>
+                        <input
+                          type="text"
+                          name="delivername"
+                          className="form-control mt-1"
+                          placeholder="Name"
+                          value={delivername}
+                          onChange={(e) => setDeliverName(e.target.value)}
+                        />
 
 
-                  </div>
-                  <div className="col-md-4 mt-2">
-                    <label>Mobile Number</label>
-                    {/* <input
+                      </div>
+                      <div className="col-md-4 mt-2">
+                        <label>Mobile Number</label>
+                        {/* <input
                       type="number"
                       name="delivernumber"
                       className="form-control mt-1"
@@ -950,105 +1065,105 @@ const User = () => {
                       value={delivernumber}
                       onChange={(e) => setDeliverNumber(e.target.value)}
                     /> */}
-                    <PhoneInput
-                      country={'in'}
-                      value={delivercountrycode + delivernumber}
-                      onChange={DeliverCountryCodeFun}
-                      className="input_filed"
-                    />
-                  </div>
-                  <div className="col-md-4 mt-2">
-                    <label>Pincode</label>
+                        <PhoneInput
+                          country={'in'}
+                          value={delivercountrycode + delivernumber}
+                          onChange={DeliverCountryCodeFun}
+                          className="input_filed"
+                        />
+                      </div>
+                      <div className="col-md-4 mt-2">
+                        <label>Pincode</label>
 
-                    <input type="text" className={`form-control check-box ${deliverpincodeactive && deliverpincode ? "alert_border" : ""}`} placeholder="Delivered Pincode"
-                      value={deliverpincode} onChange={(e) => DeliverpincodeFun(e)} />
-                    {deliverpincodeactive && deliverpincode ? <span className='text-danger '>
-                      <small> Pincode is not available </small></span> : ""}
+                        <input type="text" className={`form-control check-box ${deliverpincodeactive && deliverpincode ? "alert_border" : ""}`} placeholder="Delivered Pincode"
+                          value={deliverpincode} onChange={(e) => DeliverpincodeFun(e)} />
+                        {deliverpincodeactive && deliverpincode ? <span className='text-danger '>
+                          <small> Pincode is not available </small></span> : ""}
 
-                  </div>
-                  <div className="col-12 mt-3">
-                    <label>Address</label>
+                      </div>
+                      <div className="col-12 mt-3">
+                        <label>Address</label>
 
 
-                    <PlacesAutocomplete
-                      value={deliveraddress}
-                      onChange={(e) => DeliverAddressFun(e)}
-                    >
-                      {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                        <div
-                          className={deliveraddressactive ? "mb-4" : ""}
+                        <PlacesAutocomplete
+                          value={deliveraddress}
+                          onChange={(e) => DeliverAddressFun(e)}
                         >
-                          <input
-                            {...getInputProps({
-                              placeholder: 'Search Places ...',
-                              className: 'location-search-input',
-                            })}
-                            className={`form-control `}
-                          //  ${deliveraddressactive ? "alert_border" : ""}
+                          {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                            <div
+                              className={deliveraddressactive ? "mb-4" : ""}
+                            >
+                              <input
+                                {...getInputProps({
+                                  placeholder: 'Search Places',
+                                  className: 'location-search-input',
+                                })}
+                                className={`form-control `}
+                              //  ${deliveraddressactive ? "alert_border" : ""}
 
-                          />
-                          <div className="autocomplete-dropdown-container">
+                              />
+                              <div className="autocomplete-dropdown-container">
 
-                            {suggestions.map(suggestion => {
-                              const className = suggestion.activesi
-                                ? 'suggestion-item--active'
-                                : 'suggestion-item';
-                              // inline style for demonstration purpose
-                              const style = suggestion.active
-                                ? { backgroundColor: '#fafafa', cursor: 'pointer' }
-                                : { backgroundColor: '#ffffff', cursor: 'pointer' };
-                              return (
-                                <div
-                                  {...getSuggestionItemProps(suggestion, {
-                                    className,
-                                    style,
-                                  })}
-                                >
-                                  <span>{suggestion.description}</span>
-                                </div>
-                              );
-                            })}
+                                {suggestions.map(suggestion => {
+                                  const className = suggestion.activesi
+                                    ? 'suggestion-item--active'
+                                    : 'suggestion-item';
+                                  // inline style for demonstration purpose
+                                  const style = suggestion.active
+                                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                                  return (
+                                    <div
+                                      {...getSuggestionItemProps(suggestion, {
+                                        className,
+                                        style,
+                                      })}
+                                    >
+                                      <span>{suggestion.description}</span>
+                                    </div>
+                                  );
+                                })}
 
-                            {/* {!suggestions[0]?.description && deliveraddressactive ? <span className='text-danger mb-4 '>
+                                {/* {!suggestions[0]?.description && deliveraddressactive ? <span className='text-danger mb-4 '>
                               <small> This address is not available </small></span> : setDeliverAddressActive(false)} */}
 
+                              </div>
+                            </div>
+                          )}
+                        </PlacesAutocomplete>
+                      </div>
+                      <div className="col-md-12 mt-3">
+                        <div className="row">
+                          <div className="col-md-6 mt-1">
+                            <label>City</label>
+                            <input
+                              type="text"
+                              name="delivercity"
+                              className="form-control mt-1"
+                              placeholder="City"
+                              value={delivercity}
+                              onChange={(e) => setDeliverCity(e.target.value)}
+                            />
+                          </div>
+                          <div className="col-md-6 mt-1">
+                            <label>State</label>
+                            <input
+                              type="text"
+                              name="deliverstate"
+                              className="form-control mt-1"
+                              placeholder="State"
+                              value={deliverstate}
+                              onChange={(e) => setDeliverState(e.target.value)}
+                            />
                           </div>
                         </div>
-                      )}
-                    </PlacesAutocomplete>
-                  </div>
-                  <div className="col-md-12 mt-3">
-                    <div className="row">
-                      <div className="col-md-6 mt-1">
-                        <label>City</label>
-                        <input
-                          type="text"
-                          name="delivercity"
-                          className="form-control mt-1"
-                          placeholder="City"
-                          value={delivercity}
-                          onChange={(e) => setDeliverCity(e.target.value)}
-                        />
                       </div>
-                      <div className="col-md-6 mt-1">
-                        <label>State</label>
-                        <input
-                          type="text"
-                          name="deliverstate"
-                          className="form-control mt-1"
-                          placeholder="State"
-                          value={deliverstate}
-                          onChange={(e) => setDeliverState(e.target.value)}
-                        />
+
+                      <div className="pt-5 pb-2">
+                        <h3>Order Details</h3>
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="pt-5 pb-2">
-                    <h3>Order Details</h3>
-                  </div>
-
-                  {/* <div className="col-md-6 input_filed_block">
+                      {/* <div className="col-md-6 input_filed_block">
                     <label>Order Id</label>
                     <input
                       type="text"
@@ -1066,9 +1181,9 @@ const User = () => {
                       Generate
                     </button>
                   </div> */}
-                  <div className="col-md-6 mt-3">
-                    <label>Order type</label>
-                    {/* <select className='form-control mt-1'
+                      <div className="col-md-6 mt-3">
+                        <label>Order Type</label>
+                        {/* <select className='form-control mt-1'
                       onChange={(e) => OrderType(e)}
                       value={ordertype}>
                       <option value="none" Selected  >Select Order type...</option>
@@ -1076,18 +1191,20 @@ const User = () => {
                       <option value="COD">cod</option>
 
                     </select> */}
-                    <select className='form-control mt-1' onChange={(e) => OrderType(e)} value={ordertype}>
-                      <option value="none" selected={ordertype == undefined}  >Select Order type...</option>
-                      {orderType?.map((item, id) => { return <option value={item?.value}>{item?.data}</option> })}
-                    </select>
-                    {PostPincodesAvailabilityReducer && PostPincodesAvailabilityReducer.message !== "Available" ? <span className='text-danger mb-4 '>
-                      <small>
+                        <select className='form-control mt-1' onChange={(e) => OrderType(e)} value={ordertype}>
+                          <option value="none" selected={ordertype == undefined}  >Select Order Type</option>
+                          {orderType?.map((item, id) => { return <option value={item?.value}>{item?.data}</option> })}
+                        </select>
+                        {PostPincodesAvailabilityReducer && PostPincodesAvailabilityReducer.message !== "Available" ? <span className='text-danger mb-4 '>
+                          <small>
 
-                        {PostPincodesAvailabilityReducer && PostPincodesAvailabilityReducer?.message}
-                      </small></span> : ""}
+                            {PostPincodesAvailabilityReducer && PostPincodesAvailabilityReducer?.message}
+                          </small></span> : ""}
 
 
 
+                      </div>
+                    </div>
                   </div>
                   {/* <div className="col-md-6 mt-3">
                     <label>Pickup from</label>
@@ -1165,10 +1282,10 @@ const User = () => {
       <Popup open={pickuppopup} position="" model className="sign_up_loader">
         <div className="container">
           <div className='loader-sec adresloader-sec'>
-            <div className="justify-content-center w-50 rounded   bg-white">
+            <div className="justify-content-center  bg-white">
               <div className='d-flex justify-content-between px-3 pt-3'>
                 <h3>
-                  select Address
+                  Select Address 
                 </h3>
                 <h4 className='pe-3' role="button" onClick={(e) => setPickUpPopup(false)}> X </h4>
               </div>
@@ -1185,7 +1302,7 @@ const User = () => {
                 </span>
               </div>
               <hr className='my-2' />
-              <div className='px-3 pb-4' style={{ height: "500px", overflow: "overlay" }}>
+              <div className='px-3 pb-4 addressdetails-data'>
                 <b> Address Details </b>
                 {filterpincodedata && filterpincodedata?.map((item, id) => {
                   return <div className='d-flex justify-content-between'>

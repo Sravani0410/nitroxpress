@@ -276,7 +276,7 @@ const UserB2C = () => {
                         </div>
                       </div>
                       <p>
-                        <a href="mailto:work123@gmail.com">
+                        <a href="#">
                           <svg
                             width="10"
                             height="7"
@@ -296,7 +296,7 @@ const UserB2C = () => {
                         </a>
                       </p>
                       <p>
-                        <a href="tel:98756-33145">
+                        <a href="#">
                           <svg
                             width="10"
                             height="10"
@@ -344,7 +344,7 @@ const UserB2C = () => {
                 <div className="popup-body">
                   <div className="row">
                     <div className="col-md-6">
-                      <label>User name</label>
+                      <label>User Name</label>
                       <input
                         type="text"
                         className="form-control"

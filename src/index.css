@@ -2019,6 +2019,23 @@ top: 0;
       z-index: 55;
 }
 
+
+/* adresloader-sec */
+
+.adresloader-sec > div{
+  background-color: #ffff;
+  border-radius: 10px;
+  padding-bottom: 15px;
+  max-width: 880px;
+  width: 90%;
+}
+.adresloader-sec .addressdetails-data{
+  height: 100%;
+  overflow: auto;
+  max-height: 400px;
+}
+
+
 /****************************************  Loader page  end  ********************************************/
 
 
@@ -2183,6 +2200,10 @@ top: 0;
 .activeWalletPayment{
   background: #FFFCF2 !important;
   border: 1px solid #FFC900 !important;
+}
+
+.wallet-popup .walletpaymement_inner {
+  height: auto;
 }
 
 

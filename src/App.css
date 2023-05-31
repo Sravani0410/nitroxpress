@@ -208,7 +208,7 @@
    margin-left: 20px;
  }
 
- .otp_container>div>input {
+ .otp_container>div>div>input {
    background: #FFFFFF !important;
    border: 1px solid rgba(225, 225, 225, 0.7);
    border-radius: 12px;

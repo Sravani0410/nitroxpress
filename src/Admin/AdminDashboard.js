@@ -65,6 +65,7 @@ const AdminDashboard = () => {
   const [revenuealladata, setRevenueAllData] = useState("")
 
   const [filterActive, setFilterActive] = useState(false)
+  const [trackActive,setTrackActive]=useState(false)
 
   const [OrderId, setOrderId] = useState("")
   const [OrderId1, setOrderId1] = useState(false)
@@ -73,7 +74,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   let param = useLocation();
-
+  let isAdmin_Role = reactLocalStorage.get("Admin_Role", false);
   const GetAdminDashboardViewOrderData = useSelector(state => state.GetAdminDashboardViewOrderReducer.GetAdminDashboardViewOrderData?.data)
   const PostAdminDashboardTransactionData = useSelector(state => state.PostAdminDashboardTransactionReducer.PostAdminDashboardTransactionData?.data)
   const PostAdminDashboardShippingMatrixData = useSelector(state => state.PostAdminDashboardShippingMatrixReducer.PostAdminDashboardShippingMatrixData?.data)
@@ -540,14 +541,12 @@ const AdminDashboard = () => {
   //   alert('Complete Cache Cleared')
   // };
   const TrackFun = async () => {
-
-
-   
-    let payload = {
+   let payload = {
       oid: OrderId,
     };
     dispatch(PostOrderTrack(payload));
     setOrderId1(true)
+    setTrackActive(true)
     // await navigate(`/admin/ordertrack/${OrderId}`); 
   }
 
@@ -555,6 +554,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     setOrderId1(false)
+    setTrackActive(true)
     if (PostOrderTrackData.status == 200 && param?.pathname == "/admin/dashboard" && OrderId1 == true) {
       if (PostOrderTrackData?.data?.current_status !== "PENDING") {
         navigate(`/admin/ordertrack/${OrderId}#dashboard`)
@@ -581,15 +581,16 @@ const AdminDashboard = () => {
             <div className="dashboardcontent-title">
               <h2>My Dashboard </h2>
               <div className="d-flex">
-                <div className="ordertittle-part p-0 me-5">
+                <div className="ordertittle-part p-0">
 
                   <ul>
                     <div className="form-group">
                       <input
                         type="search"
                         placeholder="Order Id"
-                        onChange={(e) => setOrderId(e.target.value)}
-                      // value={tabfiltersearchdata}
+                        className= {`${trackActive ? "" : " btn"} ${PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD=="VIEW_TRACKSEARCH_DASHBOARD"?"":"permission_blur"}`}
+                        onChange={(e) =>  PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD=="VIEW_TRACKSEARCH_DASHBOARD" ?setOrderId(e.target.value):''}
+                        value={PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD=="VIEW_TRACKSEARCH_DASHBOARD"?OrderId :""}
                       />
                       <span className="search-icon pt-1">
                         <svg
@@ -608,8 +609,9 @@ const AdminDashboard = () => {
                       </span>
                     </div>
                   </ul>
-                  <button type="button" className="  track-btn"
-                    onClick={(e) => TrackFun() // dispatch(OrderPageBookNavigate(paramHash?.hash));
+                  {/* track-btn bg-warning btn  btn */}
+                  <button type="button" className= {`${trackActive ? "track-btn" : ""} ${PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD=="VIEW_TRACKSEARCH_DASHBOARD"?"":"permission_blur"}`}
+                    onClick={(e) => PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD=="VIEW_TRACKSEARCH_DASHBOARD" ? TrackFun():"" // dispatch(OrderPageBookNavigate(paramHash?.hash));
                     }
                   >
                     Track
@@ -718,7 +720,7 @@ const AdminDashboard = () => {
 
                       <div className="col-6">
                         <label className="checkbox domestic-box">
-                          Current month
+                          Current Month
                           <input
                             type="checkbox"
                             checked={currentmonthcheckbox}
@@ -744,14 +746,14 @@ const AdminDashboard = () => {
 
 
 
-                    <h5 className="mp-3">B2B Partner</h5>
-                    <div className="express-box">
+                   { isAdmin_Role=="true"?<h5 className="mp-3">B2B Partner</h5>:""}
+                   { isAdmin_Role=="true"? <div className="express-box">
                       <select
                         className="form-select"
                         onChange={(e) => setB2BPartnerSelectedValue(e.target.value)}
                       >
                         <option value="none" selected disabled hidden>
-                          Ecom Express...
+                          Ecom Express
                         </option>
 
                         {pagepathdata?.length !== 0 ? pagepathdata?.map((item, id) => {
@@ -783,7 +785,7 @@ const AdminDashboard = () => {
                       })}
                     </Select> */}
 
-                    </div>
+                    </div>:""}
                     <div className="filterbtn-group">
                       <div className="row">
                         <div className="col-6">
@@ -1353,8 +1355,8 @@ const AdminDashboard = () => {
         <div className="wallet-popup  d-none" >
           <div className="popupinner">
             <h4 className='text-danger calender_popup_cancel' onClick={(e) => { setPickUpPopup(false); setCustomCheckBox(false) }}> X </h4>
-            <h2>Select your payment Mode</h2>
-            <p>Total Amount to pay Rs. 500</p>
+            <h2>Select Your Payment Mode</h2>
+            <p>Total Amount To Pay Rs. 500</p>
             <div className="popup-body">
               <ul className="pay-list">
                 <li className="row mx-0">

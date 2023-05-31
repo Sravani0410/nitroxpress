@@ -33,7 +33,7 @@ const OrderSummary = () => {
   let OrderDetailsIdData = JSON.parse(OrderDetailsId)
 
   let totalPriceValue = reactLocalStorage.get('totalPriceValue',false)
-
+console.log("UpdateFromLocalStoragevalues",UpdateFromLocalStoragevalues)
 
   useEffect(() => {
 
@@ -169,11 +169,14 @@ const OrderSummary = () => {
                     <div className="right-part">
                       <h3 className="mb-0">Pickup Address</h3>
                       <p className="mb-0">
-                        {UpdateFromLocalStoragevalues?.pickup_address}
+                       Name - {UpdateFromLocalStoragevalues?.pickup_name}
+                      </p>
+                      <p className="mb-0">
+                       Address - {UpdateFromLocalStoragevalues?.pickup_address}
                       </p>
                       <p className="mb-0">
 
-                        <span> {UpdateFromLocalStoragevalues?.pickup_phone_number} </span >
+                        <span>Mob. - {UpdateFromLocalStoragevalues?.pickup_phone_number} </span >
                       </p>
                     </div>
                   </li>
@@ -197,11 +200,14 @@ const OrderSummary = () => {
                     <div className="right-part">
                       <h3 className="mb-0">Delivered Address</h3>
                       <p className="mb-0">
-                        {UpdateFromLocalStoragevalues?.delivered_address}
+                        Name - {UpdateFromLocalStoragevalues?.delivered_name}
+                      </p>
+                      <p className="mb-0">
+                        Address - {UpdateFromLocalStoragevalues?.delivered_address}
                       </p>
                       <p className="mb-0">
 
-                        <span>  {UpdateFromLocalStoragevalues?.delivered_phone_number} </span >
+                        <span>Mob. - {UpdateFromLocalStoragevalues?.delivered_phone_number} </span >
                       </p>
                     </div>
                   </li>
@@ -278,7 +284,7 @@ const OrderSummary = () => {
               <div className="row">
 
 
-                <div className="col-sm-4">
+                <div className="col-sm-4 col-6 pe-0">
                   <button
 
                     type="button"
@@ -292,10 +298,10 @@ const OrderSummary = () => {
                   </button>
                 </div>
 
-                <div className="col-sm-4"></div>
+                <div className="col-sm-4 d-none d-sm-block"></div>
 
 
-                <div className="col-sm-4">
+                <div className="col-sm-4 col-6 ps-0">
                   <button
 
                     type="button"

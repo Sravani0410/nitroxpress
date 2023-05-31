@@ -34,7 +34,6 @@ const ResetPassword = () => {
                 navigate("/login")
             })
             .catch((err) => {
-                console.log(err);
                 toast.warn(err.response.data.message);
 
             });

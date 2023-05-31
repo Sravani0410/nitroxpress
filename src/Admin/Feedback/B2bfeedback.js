@@ -164,12 +164,12 @@ function B2bfeedback() {
                 onChange={(e) => CustomerChangeFun(e)}
               >
                 <option value="b2bb">B2B</option>
-               {IsAdminRole==="true"?<option value="b2cc">B2C</option>:""}
+               {IsAdminRole=="true"?<option value="b2cc">B2C</option>:""}
               </select>
             </div>
 
             <div className="sptitle">
-              <div className="select-box">
+              {/* <div className="select-box">
                 <select
                   className=" form-select"
                   // onChange={(e) => TicketChangeFun(e)}
@@ -181,7 +181,7 @@ function B2bfeedback() {
                     Close Tickets
                   </option>
                 </select>
-              </div>
+              </div> */}
               <div className="select-box">
                 <span>SORT BY : </span>
                 <select

@@ -27,13 +27,11 @@ const VeryfiyPhone = () => {
                 }
             )
             .then((response) => {
-                console.log(response);
                 toast.success("Verified Phone successfully");
                 
                 navigate('/login')
             })
             .catch((err) => {
-                console.log(err);
                 toast.warn(err.response.data.message);
 
                 

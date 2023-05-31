@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 import Header from "../Header";
 import { useDispatch, useSelector } from "react-redux";
-import { GetBillingInvoiceDetail, GetBillingAmountCount, PostOrderDownloadInvoiceFile,PostOrderDownloadLabelGenerationFile, GetCodRemittance, GetCodRemittanceBillingAmount, PostUploadFile, PostUploadBillRemittanceFile, PostAdminDashboardTransaction, PostAdminDashboardShippingMatrix, PostDashboardRevenue, GetAdminDashboardViewOrder, PostBillingCodRemittanceDetails, PostBillingCodRemittanceCount } from "../../Redux/action/ApiCollection";
+import { GetBillingInvoiceDetail, GetBillingAmountCount, PostOrderDownloadInvoiceFile, PostOrderDownloadLabelGenerationFile, GetCodRemittance, GetCodRemittanceBillingAmount, PostUploadFile, PostUploadBillRemittanceFile, PostAdminDashboardTransaction, PostAdminDashboardShippingMatrix, PostDashboardRevenue, GetAdminDashboardViewOrder, PostBillingCodRemittanceDetails, PostBillingCodRemittanceCount } from "../../Redux/action/ApiCollection";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { PermissionData } from "../../Permission";
@@ -357,10 +357,20 @@ function Cod() {
 
                         <div className={`title `} >
                             <h2>Billing</h2>
-                            <div className={`form-control ${param.hash !== "#pending" ? "d-none" : ""}`}>
+                            <li className={`form-control ${param.hash !== "#pending" ? "d-none" : ""} ${PermissionData()?.UPLOAD_CSV_COD_REMITTANCE == "UPLOAD_CSV_COD_REMITTANCE" ? " " : "permission_blur"}`}>
+                                <input
+                                    value={""}
+                                    accept=".csv"
+                                    type={`${PermissionData()?.UPLOAD_CSV_COD_REMITTANCE == "UPLOAD_CSV_COD_REMITTANCE" ? "file" : "text"}`}
+                                    onChange={(e) => PermissionData()?.UPLOAD_CSV_COD_REMITTANCE == "UPLOAD_CSV_COD_REMITTANCE" ? SheetFile(e) : ""}
+                                    className={`custom-file-input  
+                                    ${PermissionData()?.UPLOAD_CSV_COD_REMITTANCE == "UPLOAD_CSV_COD_REMITTANCE" ? " " : "permission_blur"}  }`}
+                                />
+                            </li>
+                            {/* <div className={`form-control ${param.hash !== "#pending" ? "d-none" : ""}`}>
                                 <input
                                 value={""} accept=".csv" type="file" onChange={(e) => SheetFile(e)} className="custom-file-input" />
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className={` ${param.hash !== "#pending" ? "d-none" : ""}`}> 
@@ -459,7 +469,7 @@ function Cod() {
 
                                         <div className="col-6">
                                             <label className="checkbox domestic-box">
-                                                Current month
+                                                Current Month
                                                 <input
                                                     type="checkbox"
                                                     checked={currentmonthcheckbox}
@@ -485,7 +495,7 @@ function Cod() {
 
 
 
-                                    <h5 className="mp-3">B2B Partner</h5>
+                                    {/* <h5 className="mp-3">B2B Partner</h5>
                                     <div className="express-box">
                                         <select
                                             className="form-select"
@@ -495,18 +505,18 @@ function Cod() {
                                                 Ecom Express...
                                             </option>
 
-                                            {/* {pagepathdata.length !== 0 ? pagepathdata?.map((item, id) => {
+                                            {pagepathdata.length !== 0 ? pagepathdata?.map((item, id) => {
 
-                        return <option value={item.user_id}>{item.company_name}</option>
-                      }) : GetB2bCompanyInfoData?.map((item, id) => {
+                                                return <option value={item.user_id}>{item.company_name}</option>
+                                            }) : GetB2bCompanyInfoData?.map((item, id) => {
 
-                        return <option value={item.user_id}>{item.company_name}</option>
-                      })} */}
+                                                return <option value={item.user_id}>{item.company_name}</option>
+                                            })}
 
                                         </select>
 
 
-                                    </div>
+                                    </div> */}
                                     <div className="filterbtn-group">
                                         <div className="row">
                                             <div className="col-6">
@@ -651,7 +661,7 @@ function Cod() {
 
                                             <tr>
                                                 <th>Invoice ID</th>
-                                                <th>Item type</th>
+                                                <th>Item Type</th>
                                                 <th>Quantity</th>
                                                 <th>Delivery Type</th>
                                                 <th>Payment</th>

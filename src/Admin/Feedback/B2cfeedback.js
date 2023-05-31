@@ -73,7 +73,7 @@ const rate = (loop) => {
 
 const NewOldFun = (e) => { 
   if (e.target.value == "OLDEST") { 
-    let AllData = getsettingviewalldata.slice(Math.max(getsettingviewalldata.length - 5, 0)).map((item, id) => { 
+    let AllData = getsettingviewalldata?.slice(Math.max(getsettingviewalldata.length - 5, 0)).map((item, id) => { 
       return item
 
     })
@@ -126,18 +126,18 @@ const ShowFeedbackDataFun = (e, itemData) => {
             </div>
 
             <div className="sptitle">
-              <div className="select-box">
+              {/* <div className="select-box">
                 <select className=" form-select" 
-                // onChange={(e)=>TicketChangeFunn(e)}
+                onChange={(e)=>TicketChangeFunn(e)}
                 >
                   <option value="new" className="px-3">New Tickets</option>
                   <option value="close"  className="px-3">Close Tickets</option>
                  </select>
-              </div>
+              </div> */}
               <div className="select-box">
                 <span>SORT BY : </span>
                 <select className=" form-select"
-                //   onChange={(e) => NewOldFun(e)}
+                  // onChange={(e) => NewOldFun(e)}
                   >
                   <option className="px-3" >NEWEST </option>
                   <option className="px-3">OLDEST</option>
@@ -147,7 +147,7 @@ const ShowFeedbackDataFun = (e, itemData) => {
             </div>
 
             <ul className="support-list">
-              {IsAdminRole==="true"?
+              {IsAdminRole=="true"?
                 PermissionData()?.VIEW_B2B_FEEDBACK == "VIEW_B2B_FEEDBACK" ?
               PostGetFeedbackData &&
                 PostGetFeedbackData?.info?.map((item, id) => {
@@ -265,7 +265,7 @@ const ShowFeedbackDataFun = (e, itemData) => {
                       </div>
                     </li>
                   );
-                }):"":<h3>Only Admin Can Access This Page</h3>}
+                }):"":<h3 className="text-center">Only Admin Can Access This Page</h3>}
             </ul>
           </div>
         </div>

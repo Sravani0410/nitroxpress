@@ -73,3 +73,6 @@ local storage
 order_id is ,when you click on row then we save order id
 product_order_id is when we generate the id for clone order
 <!-- // saprate data adding globaly -->
+
+the amount is shwoing when we add money from wallet ,before process completed in history we can see the amount ,
+soo ,after add money  the add_mony api is hidted and we get  order_id from the responce soo,if we have any order_id the we will no show the history for showing the histroy data we are calling history api and at the  last index we see the add amount data 

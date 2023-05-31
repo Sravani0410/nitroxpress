@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { RotatingLines } from 'react-loader-spinner'
+import { RotatingLines, ColorRing, Watch, ThreeDots } from 'react-loader-spinner'
 import Popup from "reactjs-popup";
 import { useLocation } from "react-router-dom";
 import { HeaderToggleClassAdd, ShipmentLoaderTrueFalse } from '../Redux/action/ApiCollection';
@@ -26,7 +26,7 @@ const LodingSpiner = ({ loadspiner }) => {
                 <div className="container">
                     <div className='loader-sec'>
                         <div className="justify-content-center d-flex">
-                            <RotatingLines
+                            {/* <RotatingLines
                                 // height="80"
                                 // width="80"
                                 // radius="9"
@@ -39,8 +39,40 @@ const LodingSpiner = ({ loadspiner }) => {
                                 animationDuration="0.75"
                                 width="96"
                                 visible={true}
+                            /> */}
+                            <ColorRing
+                                visible={true}
+                                height="80"
+                                width="70"
+                                ariaLabel="blocks-loading"
+                                wrapperStyle={{}}
+                                wrapperClass="blocks-wrapper"
+                                colors={['#ffff00', '#ffff00', '#ffff00', '#ffff00', '#ffff00']}
                             />
+                            {/* <Watch
+                                height="60"
+                                width="60"
+                                radius="38"
+                                color="#ffff00"
+                                ariaLabel="watch-loading"
+                                wrapperStyle={{}}
+                                wrapperClassName=""
+                                visible={true}
+                            /> */}
+
+                            {/* <ThreeDots
+                                height="80"
+                                width="80"
+                                radius="9"
+                                color="#ffff00"
+                                ariaLabel="three-dots-loading"
+                                wrapperStyle={{}}
+                                wrapperClassName=""
+                                visible={true}
+                            /> */}
                         </div>
+
+
                     </div>
                 </div>
             </Popup>

@@ -26,8 +26,6 @@ const Shipping = () => {
     let as_individual = reactLocalStorage.get("as_individual", false);
 
 
-    console.log("dnvcsdsdhsv",Admin_Role)
-
 
     const [pickupaddress, setPickUpAddress] = useState('')//
     const [deliveryaddress, setDeliveryAddress] = useState('')
@@ -81,7 +79,6 @@ const Shipping = () => {
     const PostOrderDownloadInvoiceFileData = useSelector(
         (state) => state.PostOrderDownloadInvoiceFileReducer.PostOrderDownloadInvoiceFileData?.data
     );
-    console.log("PostShipmentDetailsData",PostShipmentDetailsData)
     useEffect(() => {
          
         if (Admin_Role.toString() != "false" ) {
@@ -91,7 +88,6 @@ const Shipping = () => {
         }
 
         if(as_individual.toString() != "true"){
-            // console.log("xnbbncsdf")
             navigate("/"); 
         }
 
@@ -704,12 +700,12 @@ const Shipping = () => {
                                             <label className='form-label'>Product Type</label>
                                             <select className='form-control' placeholder="Select"
                                                 onChange={(e) => { setSelectedProduct(e.target.value) }}>
-                                                <option value="none" selected disabled hidden>Select Product Type...</option>
+                                                <option value="none" selected disabled hidden>Select Product Type</option>
                                                 <option value="CLOTHES" >Clothes</option>
                                                 <option value="GLASS"   > Glass</option>
                                                 <option value="OTHERS"  > Others</option>
                                             </select>
-                                            {selectedproduct === "OTHERS" ? <input type="search" onChange={(e) => setOtherProductType(e.target.value)} className='form-control col-12 mb-3' id="text" placeholder='Write Product'>
+                                            {selectedproduct === "OTHERS" ? <input type="search" onChange={(e) => setOtherProductType(e.target.value)} className='form-control col-12 mt-3' id="text" placeholder='Write Product'>
 
                                             </input> : ""}
                                         </div>
@@ -723,7 +719,7 @@ const Shipping = () => {
                                                 className="form-control" placeholder="Product Price" type="text" id="price-text"
                                                 onChange={(e) => setPriceValue(e.target.value)}></input>
 
-                                            {priceValue >= 50000 ? <div className="input_filed input_file  mb-3">
+                                            {priceValue >= 50000 ? <div className="input_filed input_file  mt-3">
                                                 <label className="button" for="uploaddd">
                                                     {" "}
                                                     Upload{" "}
@@ -757,6 +753,7 @@ const Shipping = () => {
                                                 <input
                                                     id="uploaddd"
                                                     type="file"
+                                                    className="form-control"
                                                     placeholder="GSTIN PDF"
                                                     accept='Application/pdf'
                                                     onChange={(e) =>handleeway(e)
@@ -770,7 +767,7 @@ const Shipping = () => {
                                             <label className='form-label'>Delivery Type</label>
                                             <select className={`' ' ${deliverytypeerror ? "alert_border form-control" : "form-control"}`} placeholder="Select"
                                                 onChange={(e) => SelectDeliveryType(e)}>
-                                                <option value="none" selected disabled hidden>Select Delivery Type...</option>
+                                                <option value="none" selected disabled hidden>Select Delivery Type</option>
                                                 {
                                                     array?.map((item, id) => {
                                                         return <option value={item.value}>{item.key}</option>
@@ -807,12 +804,12 @@ const Shipping = () => {
 
                                         {/* insurance */}
                                         {yesnoactivebutton && <div className='form-box select-arrow col-12 mb-3'>
-                                            <label className='form-label'>Package shipping</label>
+                                            <label className='form-label'>Package Shipping</label>
                                             <select className={`' ' ${deliverytypeerror ? "alert_border form-control" : "form-control"}`} placeholder="Select"
                                                 onChange={(e) => { setShippingPrice(e.target.value) }}
                                             // onChange={(e) => { handleChange(e) }}
                                             >
-                                                <option value="DEFAULT" disable selected hidden>Select Package Type...</option>
+                                                <option value="DEFAULT" disable selected hidden>Select Package Type</option>
                                                 {
                                                     packageShipping?.map((item) => {
 
@@ -864,7 +861,7 @@ const Shipping = () => {
                                                     <div className={pickupaddressactive ? "mb-4" : ""}>
                                                         <input
                                                             {...getInputProps({
-                                                                placeholder: 'Search Places ...',
+                                                                placeholder: 'Search Places',
                                                                 className: 'location-search-input',
                                                             })}
                                                             className={`form-control`}
@@ -1076,10 +1073,10 @@ const Shipping = () => {
             <Popup open={pickuppopup} position="" model className="sign_up_loader">
                 <div className="container">
                     <div className='loader-sec adresloader-sec'>
-                        <div className="justify-content-center w-50 rounded   bg-white">
+                        <div className="justify-content-center  bg-white">
                             <div className='d-flex justify-content-between px-3 pt-3'>
                                 <h3>
-                                    select Address
+                                    Select Address
                                 </h3>
                                 <h4 className='pe-3' role="button" onClick={(e) => setPickUpPopup(false)}> X </h4>
                             </div>
@@ -1096,7 +1093,7 @@ const Shipping = () => {
                                 </span>
                             </div>
                             <hr className='my-2' />
-                            <div className='px-3 pb-4' style={{ height: "500px", overflow: "overlay" }}>
+                            <div className='px-3 pb-4 addressdetails-data' >
                                 <b> Address Details </b>
                                 {OrderDetails && OrderDetails?.data?.map((item, id) => {
                                     return <div className='d-flex justify-content-between'>

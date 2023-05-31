@@ -73,7 +73,6 @@ const UserProfile = () => {
   const PostKYCdetailData = useSelector(
     (state) => state.PostKYCdetailReducer.PostKYCdetailData?.data
   );
-
   useEffect(() => {
     dispatch(GetSettingViewPermission());
     if (PatchEditUserPermissionData.status == 200) {
@@ -318,10 +317,6 @@ const UserProfile = () => {
   const onSearchMultiSelectFun = () => {
     setShowPermissionDataTrueFalse(true)
   }
-  const SheetFile = (e) => {
-    console.log("gfhghgdh")
-    // dispatch(PostUploadFile(e?.target?.files[0]));
-  };
   return (
     <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
       <Header />
@@ -336,7 +331,7 @@ const UserProfile = () => {
                 onChange={(e) => CustomerChangeFun(e)}
               >
                 <option value="b2b">B2B</option>
-               {IsAdminRole==="true"? <option value="b2c">B2C</option>:""}
+               {IsAdminRole=="true"? <option value="b2c">B2C</option>:""}
               </select>
             </div>
             <div className="right-part mt-2 mt-sm-0">
@@ -372,7 +367,7 @@ const UserProfile = () => {
                         <h3>{item.name}</h3>
                         <h6>{item.company_name}</h6>
                       </div>
-                      {IsAdminRole==="true"?<div className="user-btn">
+                      {IsAdminRole=="true"?<div className="user-btn">
                         <button
                           type="button"
                           className={`me-2 
@@ -458,7 +453,7 @@ const UserProfile = () => {
           {/* ================================= Edit B2B popup ======================================== */}
           {useredit && (
             <div className="popupouter editb2b-popup">
-              <div className="popupinner">
+              <div className="popupinner userPermisssionPopup">
                 <h2>Edit B2B</h2>
                 <div
                   className="close-btn"
@@ -567,7 +562,10 @@ const UserProfile = () => {
                   <div className="col-md-6">
                     <label>Permission</label>
                   </div>
-                  <div className={`col-md-12 ${showpermissiondatatruefalse == true ? "multiselectblockclass" : ""}`}>
+                  {/* <div className={`col-md-12 
+                   ${showpermissiondatatruefalse == true ? "multiselectblockclass" : ""}`}> */}
+                  <div className={`col-md-12 
+                   ${  "multiselectblockclass"  }`}>
 
 
                     <Multiselect
@@ -603,7 +601,7 @@ const UserProfile = () => {
                 <div className="btngroups text-end my-3">
                   <button
                     type="button"
-                    className="btn save-btn"
+                    className="btn action-btn"
                     onClick={(e) => EditUserSavebtnFun(e)}
                   >
                     Save
@@ -623,7 +621,7 @@ const UserProfile = () => {
           {/* {**********************************download pdf*******************************************} */}
 
           {downloadpdf && (
-            <div className="popupouter">
+            <div className="popupouter profileview_popup">
               <div className="popupinner">
                 <h2>Profile View</h2>
                 <div
@@ -681,7 +679,7 @@ const UserProfile = () => {
                         <b>{PostKYCdetailData?.company_name}</b>
                       </h5>
                       <div className="row">
-                        <div className="col-sm-3">
+                        <div className="col-1 pe-0">
                           <svg
                             width="15"
                             height="12"
@@ -697,13 +695,13 @@ const UserProfile = () => {
                             />
                           </svg>
                         </div>
-                        <div className="col-sm-9">
+                        <div className="col-11">
                           {PostKYCdetailData?.email}
                         </div>
                       </div>
 
                       <div className="row">
-                        <div className="col-sm-3">
+                        <div className="col-1 pe-0">
                           <svg
                             width="15"
                             height="15"
@@ -719,7 +717,7 @@ const UserProfile = () => {
                             />
                           </svg>
                         </div>
-                        <div className="col-sm-9">
+                        <div className="col-11 ">
                           {PostKYCdetailData?.phone_number}{" "}
                         </div>
                       </div>

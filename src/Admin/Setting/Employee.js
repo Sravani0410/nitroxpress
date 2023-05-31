@@ -389,7 +389,7 @@ const Employee = () => {
             <h2>Employees</h2>
             <div className="btngroup">
               <button
-                className="btn me-3"
+                className="btn me-md-3 me-2"
                 type="button "
                 onClick={(e) => {
                   navigate("/admin/setting");
@@ -398,7 +398,7 @@ const Employee = () => {
                 {" "}
                 Back{" "}
               </button>
-             { IsAdminRole==="true"?<button
+             { IsAdminRole=="true"?<button
                 type="button"
                 className={`btn  ${PermissionData()?.CREATE_EMPLOYEE == "CREATE_EMPLOYEE" ? " " : "permission_blur"}`}
                 onClick={(e) => PermissionData()?.CREATE_EMPLOYEE == "CREATE_EMPLOYEE" ? setAddUser((o) => !o) : ""}
@@ -409,7 +409,7 @@ const Employee = () => {
             </div>
           </div>
 
-         { IsAdminRole==="true"?<div className="employe-table">
+         { IsAdminRole=="true"?<div className="employe-table">
             <table>
               <tr>
                 <th>Name</th>
@@ -510,7 +510,7 @@ const Employee = () => {
                   })
                 : "" }
             </table>
-          </div>:<h3 className="content-sec settings-sec">Only Admin Can Access This Page</h3>}
+          </div>:<h3 className="text-center">Only Admin Can Access This Page</h3>}
         </div>
       </div>
       {/* ===================== Add user poup========================== */}
@@ -538,7 +538,7 @@ const Employee = () => {
             <div className="popup-body">
               <div className="row">
                 <div className="col-sm-6">
-                  <label>User name</label>
+                  <label>User Name</label>
                   <input
                     type="text"
                     className={`form-control  ${name ? "" : ""} `}
@@ -793,7 +793,7 @@ const Employee = () => {
                     value={category}
                   >
                     <option value="" selected="selected">
-                      Select Category...
+                      Select Category
                     </option>
                     {GetCategoryDetailsData?.category_details_list.map(
                       (item, id) => {
@@ -851,7 +851,7 @@ const Employee = () => {
             <div className="popup-body">
               <div className="row mx-auto">
                 <div className="col-12 mb-2">
-                  <label>User name</label>
+                  <label>User Name</label>
                   <input
                     type="text"
                     className="form-control"

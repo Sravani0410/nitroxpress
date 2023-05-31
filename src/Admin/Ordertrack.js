@@ -15,6 +15,7 @@ const Ordertrack = () => {
   const [intransitData, setintransitData] = useState([])
   const [returnreasonvalue, setReturnReasonValue] = useState("")
   const [returndeliveredreasonvalue, setReturnDeliveredReasonValue] = useState("")
+  const [ArrInTrnasitOutDelverdValue, setArrInTrnasitOutDelverdValue] = useState([])
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
@@ -31,13 +32,12 @@ const Ordertrack = () => {
       state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
   );
 
-  useEffect(() => { 
+  useEffect(() => {
     let arr = []
     let returnarr = []
-    let returndeliveredarr = []
+    let arrInTrnasitOutDelverd = []
     PostOrderTrackData?.track_details
       ?.map((item, index) => {
-        console.log("dhsaga",item)
         if (item["IN_TRANSIT"]) {
   
           // if(item?.reason?.length!==0){
@@ -47,15 +47,24 @@ const Ordertrack = () => {
         else if (item["RTO"]) {
           returnarr.push(item)
         }
-        else if (item["RTO_DELIVERED"]) {
-          returndeliveredarr.push(item)
-        }
         setReasonValue(arr)
         setReturnReasonValue(returnarr)
-        setReturnDeliveredReasonValue(returndeliveredarr)
       })
-      setintransitData(arr)
-  
+    // setintransitData(arr)
+    // setReasonValue(PostOrderTrackData?.track_details)
+    setintransitData(PostOrderTrackData?.track_details)
+
+    PostOrderTrackData?.track_details
+      ?.map((item, index) => {
+        if (item["PENDING"]||item["BOOKED"] ||item["IN_TRANSIT"] || item["OUT_FOR_DELIVERY"] || item["CANCELLED"]) {
+          arrInTrnasitOutDelverd.push(item)
+        }
+      })
+
+    setArrInTrnasitOutDelverdValue(arrInTrnasitOutDelverd)
+
+
+
   }, [PostOrderTrackData])
 
   useEffect(() => {
@@ -90,7 +99,7 @@ const Ordertrack = () => {
         <div className="content-sec">
           <div className="orderinfo-header">
             <h2>
-              <span>#{param.id}</span>
+            Order Number <span>{param.id}</span>
             </h2>
             <div className="orderinfobtn-group">
               <button
@@ -111,7 +120,7 @@ const Ordertrack = () => {
             <div className="left-part">
               <ul className="left-part track-list">
                 {/* pending */}
-                <li className={`active`}>
+                {/* <li className={`active`}>
                   <span>
                     <svg
                       width="15"
@@ -127,9 +136,9 @@ const Ordertrack = () => {
 
                   <p>{PostOrderTrackData?.track_details[0].PENDING}</p>
                   <h4>Your Order has been placed </h4>
-                </li>
+                </li> */}
                 {/* booked */}
-                <li
+                {/* <li
                   className={`${PostOrderTrackData?.current_status === "BOOKED" ||
                     PostOrderTrackData?.current_status === "IN_TRANSIT" ||
                     PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
@@ -174,11 +183,9 @@ const Ordertrack = () => {
                       ? " Your Order has been Booked"
                       : ""}
                   </h4>
-                </li>
-                {/* in-transit */}
-                 {intransitData?.map((item,id)=>{
-
-             return  <li
+                </li> */}
+                {/* intransit ------------Don't Remove ----------------- */}
+                {/* <li
                   className={`${PostOrderTrackData?.current_status === "IN_TRANSIT" ||
                     PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
                     PostOrderTrackData?.current_status === "DELIVERED" ||
@@ -195,39 +202,101 @@ const Ordertrack = () => {
                       viewBox="0 0 21 11"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <path d="M3.77427 0.0548297C3.60603 0.129168 3.48082 0.281758 3.43779 0.457823C3.41822 0.539986 3.40257 0.829515 3.40257 1.10339V1.6042H2.67875C1.95884 1.6042 1.95102 1.6042 1.85712 1.70201C1.72409 1.83113 1.72409 2.04241 1.85712 2.17152L1.95102 2.26934H3.98554H6.02007L6.1218 2.17935C6.27048 2.05414 6.27048 1.81939 6.1218 1.69419C6.02007 1.6042 6.00442 1.6042 5.04193 1.6042H4.06771V1.13469V0.665188H9.23228H14.3968V4.73424V8.8033H12.1315H9.86611L9.81916 8.65462C9.66266 8.16947 9.334 7.78995 8.88015 7.57476C8.64148 7.46129 8.60236 7.45347 8.15633 7.45347C7.7103 7.45347 7.67508 7.46129 7.42859 7.57476C7.28383 7.64518 7.09211 7.76647 7.00212 7.84864C6.78693 8.04035 6.56 8.39248 6.49349 8.62332L6.44263 8.8033H5.25712H4.06771V7.94254V7.08178H4.56069C5.04976 7.08178 5.17105 7.05439 5.26886 6.92919C5.35103 6.82355 5.32755 6.62009 5.22191 6.51446L5.12801 6.41664H2.99958H0.871152L0.788988 6.50663C0.659874 6.64357 0.671611 6.89397 0.804638 6.99961C0.906365 7.07786 0.953315 7.08178 2.15447 7.08178H3.40257V8.11469C3.40257 9.17499 3.42605 9.35888 3.55908 9.42931C3.60211 9.45278 4.19682 9.46843 5.04193 9.46843H6.44654L6.47393 9.59364C6.51305 9.78144 6.67347 10.0905 6.83388 10.2822C7.31121 10.8652 8.23458 11.0491 8.9271 10.7009C9.34183 10.4935 9.67048 10.1101 9.80742 9.67971L9.87394 9.46843H12.6753H15.4767L15.5432 9.67971C15.7702 10.3879 16.4314 10.873 17.1787 10.877C17.9807 10.877 18.6302 10.3996 18.8572 9.63276L18.908 9.46843H19.2641C19.6592 9.46843 19.8079 9.40975 19.9409 9.20629C20.0035 9.10848 20.0114 8.99501 20.0075 7.9621C20.0075 6.89006 20.0035 6.81181 19.9214 6.58097C19.8275 6.31492 18.1764 3.3179 17.9964 3.09097C17.9377 3.01663 17.8242 2.91491 17.7382 2.86796C17.5895 2.78188 17.5582 2.77797 16.3257 2.77797H15.062V1.58855C15.062 0.42261 15.062 0.399134 14.972 0.27002C14.925 0.195682 14.8233 0.105693 14.749 0.0704799C14.6199 0.00396651 14.2795 5.3959e-05 9.25184 5.3959e-05C4.87369 0.00396651 3.87208 0.0117916 3.77427 0.0548297ZM18.3016 4.969C18.7633 5.79846 19.1897 6.58097 19.2445 6.71008C19.3384 6.93701 19.3423 6.98396 19.358 7.87211L19.3736 8.8033H19.1389H18.9041L18.8376 8.59593C18.6967 8.15382 18.3681 7.78604 17.926 7.57867C17.6756 7.46129 17.6404 7.45347 17.1943 7.45347C16.7483 7.45347 16.7092 7.46129 16.4705 7.57476C16.1184 7.743 15.8445 8.00123 15.6802 8.32206C15.6019 8.46682 15.5315 8.63506 15.5158 8.69375C15.4924 8.79547 15.4767 8.8033 15.2772 8.8033H15.062V6.1232V3.4431L16.2592 3.45093L17.4565 3.46266L18.3016 4.969ZM8.58671 8.19294C8.80581 8.29467 9.0523 8.54507 9.1462 8.76026C9.1775 8.83851 9.20489 9.01067 9.20489 9.15543C9.2088 9.4567 9.0836 9.7384 8.8645 9.93012C8.61409 10.1492 8.49672 10.1923 8.15633 10.1923C7.78463 10.1923 7.61248 10.1179 7.36599 9.84795C6.87692 9.31584 7.06864 8.45899 7.74551 8.16555C7.9607 8.07165 8.35587 8.08339 8.58671 8.19294ZM17.6599 8.19685C17.9768 8.34944 18.2038 8.67419 18.2546 9.04979C18.3133 9.46452 18.016 9.95359 17.5973 10.1336C17.2022 10.3018 16.717 10.1923 16.4196 9.8636C15.9032 9.29237 16.1145 8.43552 16.8383 8.1499C17.0143 8.07948 17.476 8.10687 17.6599 8.19685Z" />
-                      <path d="M3.55127 2.95075C3.42216 3.04857 3.40259 3.20507 3.40259 4.11278V5.00876H2.92135C2.47923 5.00876 2.42837 5.01658 2.36185 5.09092C2.2523 5.21221 2.26404 5.46653 2.38142 5.56043C2.46749 5.63085 2.58487 5.63477 5.398 5.63477H8.3285L8.40675 5.53304C8.51239 5.40001 8.51239 5.24351 8.40675 5.11048L8.3285 5.00876H6.19616H4.06773V4.03844C4.06773 3.07204 4.06773 3.06422 3.97774 2.98205C3.87601 2.88424 3.65691 2.86859 3.55127 2.95075Z" />
-                      <path d="M0.115705 3.37587C0.0335414 3.41891 0.0178912 3.45803 0.00615355 3.6341C-0.0134092 4.00579 -0.0681849 3.99014 1.34816 3.99014C2.72147 3.99014 2.71755 3.99014 2.7645 3.70844C2.78407 3.58323 2.76842 3.54802 2.66669 3.44238L2.54931 3.32501H1.37946C0.522611 3.32501 0.186131 3.34066 0.115705 3.37587Z" />
-                    </svg>
-                  </span>
+                    <path d="M3.77427 0.0548297C3.60603 0.129168 3.48082 0.281758 3.43779 0.457823C3.41822 0.539986 3.40257 0.829515 3.40257 1.10339V1.6042H2.67875C1.95884 1.6042 1.95102 1.6042 1.85712 1.70201C1.72409 1.83113 1.72409 2.04241 1.85712 2.17152L1.95102 2.26934H3.98554H6.02007L6.1218 2.17935C6.27048 2.05414 6.27048 1.81939 6.1218 1.69419C6.02007 1.6042 6.00442 1.6042 5.04193 1.6042H4.06771V1.13469V0.665188H9.23228H14.3968V4.73424V8.8033H12.1315H9.86611L9.81916 8.65462C9.66266 8.16947 9.334 7.78995 8.88015 7.57476C8.64148 7.46129 8.60236 7.45347 8.15633 7.45347C7.7103 7.45347 7.67508 7.46129 7.42859 7.57476C7.28383 7.64518 7.09211 7.76647 7.00212 7.84864C6.78693 8.04035 6.56 8.39248 6.49349 8.62332L6.44263 8.8033H5.25712H4.06771V7.94254V7.08178H4.56069C5.04976 7.08178 5.17105 7.05439 5.26886 6.92919C5.35103 6.82355 5.32755 6.62009 5.22191 6.51446L5.12801 6.41664H2.99958H0.871152L0.788988 6.50663C0.659874 6.64357 0.671611 6.89397 0.804638 6.99961C0.906365 7.07786 0.953315 7.08178 2.15447 7.08178H3.40257V8.11469C3.40257 9.17499 3.42605 9.35888 3.55908 9.42931C3.60211 9.45278 4.19682 9.46843 5.04193 9.46843H6.44654L6.47393 9.59364C6.51305 9.78144 6.67347 10.0905 6.83388 10.2822C7.31121 10.8652 8.23458 11.0491 8.9271 10.7009C9.34183 10.4935 9.67048 10.1101 9.80742 9.67971L9.87394 9.46843H12.6753H15.4767L15.5432 9.67971C15.7702 10.3879 16.4314 10.873 17.1787 10.877C17.9807 10.877 18.6302 10.3996 18.8572 9.63276L18.908 9.46843H19.2641C19.6592 9.46843 19.8079 9.40975 19.9409 9.20629C20.0035 9.10848 20.0114 8.99501 20.0075 7.9621C20.0075 6.89006 20.0035 6.81181 19.9214 6.58097C19.8275 6.31492 18.1764 3.3179 17.9964 3.09097C17.9377 3.01663 17.8242 2.91491 17.7382 2.86796C17.5895 2.78188 17.5582 2.77797 16.3257 2.77797H15.062V1.58855C15.062 0.42261 15.062 0.399134 14.972 0.27002C14.925 0.195682 14.8233 0.105693 14.749 0.0704799C14.6199 0.00396651 14.2795 5.3959e-05 9.25184 5.3959e-05C4.87369 0.00396651 3.87208 0.0117916 3.77427 0.0548297ZM18.3016 4.969C18.7633 5.79846 19.1897 6.58097 19.2445 6.71008C19.3384 6.93701 19.3423 6.98396 19.358 7.87211L19.3736 8.8033H19.1389H18.9041L18.8376 8.59593C18.6967 8.15382 18.3681 7.78604 17.926 7.57867C17.6756 7.46129 17.6404 7.45347 17.1943 7.45347C16.7483 7.45347 16.7092 7.46129 16.4705 7.57476C16.1184 7.743 15.8445 8.00123 15.6802 8.32206C15.6019 8.46682 15.5315 8.63506 15.5158 8.69375C15.4924 8.79547 15.4767 8.8033 15.2772 8.8033H15.062V6.1232V3.4431L16.2592 3.45093L17.4565 3.46266L18.3016 4.969ZM8.58671 8.19294C8.80581 8.29467 9.0523 8.54507 9.1462 8.76026C9.1775 8.83851 9.20489 9.01067 9.20489 9.15543C9.2088 9.4567 9.0836 9.7384 8.8645 9.93012C8.61409 10.1492 8.49672 10.1923 8.15633 10.1923C7.78463 10.1923 7.61248 10.1179 7.36599 9.84795C6.87692 9.31584 7.06864 8.45899 7.74551 8.16555C7.9607 8.07165 8.35587 8.08339 8.58671 8.19294ZM17.6599 8.19685C17.9768 8.34944 18.2038 8.67419 18.2546 9.04979C18.3133 9.46452 18.016 9.95359 17.5973 10.1336C17.2022 10.3018 16.717 10.1923 16.4196 9.8636C15.9032 9.29237 16.1145 8.43552 16.8383 8.1499C17.0143 8.07948 17.476 8.10687 17.6599 8.19685Z" />
+                    <path d="M3.55127 2.95075C3.42216 3.04857 3.40259 3.20507 3.40259 4.11278V5.00876H2.92135C2.47923 5.00876 2.42837 5.01658 2.36185 5.09092C2.2523 5.21221 2.26404 5.46653 2.38142 5.56043C2.46749 5.63085 2.58487 5.63477 5.398 5.63477H8.3285L8.40675 5.53304C8.51239 5.40001 8.51239 5.24351 8.40675 5.11048L8.3285 5.00876H6.19616H4.06773V4.03844C4.06773 3.07204 4.06773 3.06422 3.97774 2.98205C3.87601 2.88424 3.65691 2.86859 3.55127 2.95075Z" />
+                    <path d="M0.115705 3.37587C0.0335414 3.41891 0.0178912 3.45803 0.00615355 3.6341C-0.0134092 4.00579 -0.0681849 3.99014 1.34816 3.99014C2.72147 3.99014 2.71755 3.99014 2.7645 3.70844C2.78407 3.58323 2.76842 3.54802 2.66669 3.44238L2.54931 3.32501H1.37946C0.522611 3.32501 0.186131 3.34066 0.115705 3.37587Z" />
+                  </svg>
+                </span>
 
-                  {/* <p>{reasonValue && reasonValue[reasonValue?.length - 1]?.IN_TRANSIT}</p> */}
-                  <p>{item.IN_TRANSIT}</p> 
+                 <p>{intransitData[0]?.IN_TRANSIT}</p>
 
-                  {item?.reason ? <label>Reason</label> : ""}
+                {intransitData[0]?.reason ? <label>Reason</label> : ""}
 
-                  <p>{item.reason}</p>  
-                  {/* <p>{reasonValue && reasonValue[reasonValue?.length - 1]?.reason}</p> */}
+                <p>{intransitData[0]?.reason}</p>
 
 
-                  <h4>
-                    {PostOrderTrackData?.current_status === "IN_TRANSIT" ||
-                      PostOrderTrackData?.current_status === "DELIVERED" ||
-                      PostOrderTrackData?.current_status === "RTO" ||
-                      PostOrderTrackData?.current_status === "RTO_DELIVERED"
-                      ? "Your item is In-Transit"
-                      : ""}
-                  </h4>
+                <h4>
+                  {PostOrderTrackData?.current_status === "IN_TRANSIT" ||
+                  PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
+                    PostOrderTrackData?.current_status === "DELIVERED" ||
+                    PostOrderTrackData?.current_status === "RTO" ||
+                    PostOrderTrackData?.current_status === "RTO_DELIVERED"
+                    ? `Your item is In-Transit`
+                    : ""}
+                </h4>
+
+           
+              </li> */}
+
+                {/* Intransit */}
+                {
+                  // ArrInTrnasitOutDelverdValue.length >= 3 ?
+
+                    ArrInTrnasitOutDelverdValue?.map((item, id) => {
+
+                      return <li
+                        className={`${PostOrderTrackData?.current_status === "BOOKED" ||
+                          PostOrderTrackData?.current_status === "IN_TRANSIT" ||
+                          PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
+                          PostOrderTrackData?.current_status === "DELIVERED" ||
+                          PostOrderTrackData?.current_status === "RTO" ||
+                          PostOrderTrackData?.current_status === "RTO_DELIVERED"||
+                          PostOrderTrackData?.current_status === "CANCELLED" 
+                          ? "active"
+                          : ""
+                          }`}
+                      >
+                        <span>
+                          <svg
+                            width="21"
+                            height="11"
+                            viewBox="0 0 21 11"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M3.77427 0.0548297C3.60603 0.129168 3.48082 0.281758 3.43779 0.457823C3.41822 0.539986 3.40257 0.829515 3.40257 1.10339V1.6042H2.67875C1.95884 1.6042 1.95102 1.6042 1.85712 1.70201C1.72409 1.83113 1.72409 2.04241 1.85712 2.17152L1.95102 2.26934H3.98554H6.02007L6.1218 2.17935C6.27048 2.05414 6.27048 1.81939 6.1218 1.69419C6.02007 1.6042 6.00442 1.6042 5.04193 1.6042H4.06771V1.13469V0.665188H9.23228H14.3968V4.73424V8.8033H12.1315H9.86611L9.81916 8.65462C9.66266 8.16947 9.334 7.78995 8.88015 7.57476C8.64148 7.46129 8.60236 7.45347 8.15633 7.45347C7.7103 7.45347 7.67508 7.46129 7.42859 7.57476C7.28383 7.64518 7.09211 7.76647 7.00212 7.84864C6.78693 8.04035 6.56 8.39248 6.49349 8.62332L6.44263 8.8033H5.25712H4.06771V7.94254V7.08178H4.56069C5.04976 7.08178 5.17105 7.05439 5.26886 6.92919C5.35103 6.82355 5.32755 6.62009 5.22191 6.51446L5.12801 6.41664H2.99958H0.871152L0.788988 6.50663C0.659874 6.64357 0.671611 6.89397 0.804638 6.99961C0.906365 7.07786 0.953315 7.08178 2.15447 7.08178H3.40257V8.11469C3.40257 9.17499 3.42605 9.35888 3.55908 9.42931C3.60211 9.45278 4.19682 9.46843 5.04193 9.46843H6.44654L6.47393 9.59364C6.51305 9.78144 6.67347 10.0905 6.83388 10.2822C7.31121 10.8652 8.23458 11.0491 8.9271 10.7009C9.34183 10.4935 9.67048 10.1101 9.80742 9.67971L9.87394 9.46843H12.6753H15.4767L15.5432 9.67971C15.7702 10.3879 16.4314 10.873 17.1787 10.877C17.9807 10.877 18.6302 10.3996 18.8572 9.63276L18.908 9.46843H19.2641C19.6592 9.46843 19.8079 9.40975 19.9409 9.20629C20.0035 9.10848 20.0114 8.99501 20.0075 7.9621C20.0075 6.89006 20.0035 6.81181 19.9214 6.58097C19.8275 6.31492 18.1764 3.3179 17.9964 3.09097C17.9377 3.01663 17.8242 2.91491 17.7382 2.86796C17.5895 2.78188 17.5582 2.77797 16.3257 2.77797H15.062V1.58855C15.062 0.42261 15.062 0.399134 14.972 0.27002C14.925 0.195682 14.8233 0.105693 14.749 0.0704799C14.6199 0.00396651 14.2795 5.3959e-05 9.25184 5.3959e-05C4.87369 0.00396651 3.87208 0.0117916 3.77427 0.0548297ZM18.3016 4.969C18.7633 5.79846 19.1897 6.58097 19.2445 6.71008C19.3384 6.93701 19.3423 6.98396 19.358 7.87211L19.3736 8.8033H19.1389H18.9041L18.8376 8.59593C18.6967 8.15382 18.3681 7.78604 17.926 7.57867C17.6756 7.46129 17.6404 7.45347 17.1943 7.45347C16.7483 7.45347 16.7092 7.46129 16.4705 7.57476C16.1184 7.743 15.8445 8.00123 15.6802 8.32206C15.6019 8.46682 15.5315 8.63506 15.5158 8.69375C15.4924 8.79547 15.4767 8.8033 15.2772 8.8033H15.062V6.1232V3.4431L16.2592 3.45093L17.4565 3.46266L18.3016 4.969ZM8.58671 8.19294C8.80581 8.29467 9.0523 8.54507 9.1462 8.76026C9.1775 8.83851 9.20489 9.01067 9.20489 9.15543C9.2088 9.4567 9.0836 9.7384 8.8645 9.93012C8.61409 10.1492 8.49672 10.1923 8.15633 10.1923C7.78463 10.1923 7.61248 10.1179 7.36599 9.84795C6.87692 9.31584 7.06864 8.45899 7.74551 8.16555C7.9607 8.07165 8.35587 8.08339 8.58671 8.19294ZM17.6599 8.19685C17.9768 8.34944 18.2038 8.67419 18.2546 9.04979C18.3133 9.46452 18.016 9.95359 17.5973 10.1336C17.2022 10.3018 16.717 10.1923 16.4196 9.8636C15.9032 9.29237 16.1145 8.43552 16.8383 8.1499C17.0143 8.07948 17.476 8.10687 17.6599 8.19685Z" />
+                            <path d="M3.55127 2.95075C3.42216 3.04857 3.40259 3.20507 3.40259 4.11278V5.00876H2.92135C2.47923 5.00876 2.42837 5.01658 2.36185 5.09092C2.2523 5.21221 2.26404 5.46653 2.38142 5.56043C2.46749 5.63085 2.58487 5.63477 5.398 5.63477H8.3285L8.40675 5.53304C8.51239 5.40001 8.51239 5.24351 8.40675 5.11048L8.3285 5.00876H6.19616H4.06773V4.03844C4.06773 3.07204 4.06773 3.06422 3.97774 2.98205C3.87601 2.88424 3.65691 2.86859 3.55127 2.95075Z" />
+                            <path d="M0.115705 3.37587C0.0335414 3.41891 0.0178912 3.45803 0.00615355 3.6341C-0.0134092 4.00579 -0.0681849 3.99014 1.34816 3.99014C2.72147 3.99014 2.71755 3.99014 2.7645 3.70844C2.78407 3.58323 2.76842 3.54802 2.66669 3.44238L2.54931 3.32501H1.37946C0.522611 3.32501 0.186131 3.34066 0.115705 3.37587Z" />
+                          </svg>
+                        </span>
+
+                        {item?.PENDING?<p>{item?.PENDING}</p>:item?.BOOKED?<p>{item?.BOOKED}</p>:item?.IN_TRANSIT ? <p>{item?.IN_TRANSIT}</p>
+                          : item?.OUT_FOR_DELIVERY ? <p>{item?.OUT_FOR_DELIVERY}</p> :item?.CANCELLED?<p>{item?.CANCELLED}</p>:""}
 
 
-                </li>
-                 })}
-                {/* out for delivery */}
-                <li
+
+                        {item?.reason ? <label>Reason</label> : ""}
+
+                        <p>{item.reason}</p>
+
+
+                        <h4>
+                          {
+
+                            // PostOrderTrackData?.current_status === "IN_TRANSIT" ||
+                            // PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
+                            //   PostOrderTrackData?.current_status === "DELIVERED" ||
+                            //   PostOrderTrackData?.current_status === "RTO" ||
+                            //   PostOrderTrackData?.current_status === "RTO_DELIVERED"
+                            item?.PENDING?"Your item is Pending":item?.BOOKED?"Your item is Booked":
+                            item?.IN_TRANSIT
+                              ? "Your item is In-Transit":item?.OUT_FOR_DELIVERY?
+                               "Your item is Out For Delivery":item?.CANCELLED?"Your item is Cancelled":""}
+                        </h4>
+
+
+                      </li>
+                    })
+
+                    // : ""
+
+                }
+
+                {/* <li
                   className={`${PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
                     PostOrderTrackData?.current_status === "DELIVERED" ||
                     PostOrderTrackData?.current_status === "RTO" ||
                     PostOrderTrackData?.current_status === "RTO_DELIVERED"
+                    // || intransitData.length >= 2
                     ? "active"
                     : ""
                     }`}
@@ -251,13 +320,66 @@ const Ordertrack = () => {
                       PostOrderTrackData?.current_status === "DELIVERED" ||
                       PostOrderTrackData?.current_status === "RTO" ||
                       PostOrderTrackData?.current_status === "RTO_DELIVERED"
+                      // || intransitData.length >= 2
                       ? "Your item is Out For Delivery"
                       : ""}
                   </h4>
-                </li>
+                </li> */}
+                {/* out for delivery end */}
+                {/*------------- don't remove -------------------- */}
+                {
+                  // intransitData.length >= 2 && intransitData?.slice(1)?.map((item, id) => {
+                  // return <li
+                  //   className={`${PostOrderTrackData?.current_status === "IN_TRANSIT" ||
+                  //     PostOrderTrackData?.current_status === "OUT_FOR_DELIVERY" ||
+                  //     PostOrderTrackData?.current_status === "DELIVERED" ||
+                  //     PostOrderTrackData?.current_status === "RTO" ||
+                  //     PostOrderTrackData?.current_status === "RTO_DELIVERED"
+                  //     ? "active"
+                  //     : ""
+                  //     }`}
+                  // >
+                  //   <span>
+                  //     <svg
+                  //       width="21"
+                  //       height="11"
+                  //       viewBox="0 0 21 11"
+                  //       xmlns="http://www.w3.org/2000/svg"
+                  //     >
+                  //       <path d="M3.77427 0.0548297C3.60603 0.129168 3.48082 0.281758 3.43779 0.457823C3.41822 0.539986 3.40257 0.829515 3.40257 1.10339V1.6042H2.67875C1.95884 1.6042 1.95102 1.6042 1.85712 1.70201C1.72409 1.83113 1.72409 2.04241 1.85712 2.17152L1.95102 2.26934H3.98554H6.02007L6.1218 2.17935C6.27048 2.05414 6.27048 1.81939 6.1218 1.69419C6.02007 1.6042 6.00442 1.6042 5.04193 1.6042H4.06771V1.13469V0.665188H9.23228H14.3968V4.73424V8.8033H12.1315H9.86611L9.81916 8.65462C9.66266 8.16947 9.334 7.78995 8.88015 7.57476C8.64148 7.46129 8.60236 7.45347 8.15633 7.45347C7.7103 7.45347 7.67508 7.46129 7.42859 7.57476C7.28383 7.64518 7.09211 7.76647 7.00212 7.84864C6.78693 8.04035 6.56 8.39248 6.49349 8.62332L6.44263 8.8033H5.25712H4.06771V7.94254V7.08178H4.56069C5.04976 7.08178 5.17105 7.05439 5.26886 6.92919C5.35103 6.82355 5.32755 6.62009 5.22191 6.51446L5.12801 6.41664H2.99958H0.871152L0.788988 6.50663C0.659874 6.64357 0.671611 6.89397 0.804638 6.99961C0.906365 7.07786 0.953315 7.08178 2.15447 7.08178H3.40257V8.11469C3.40257 9.17499 3.42605 9.35888 3.55908 9.42931C3.60211 9.45278 4.19682 9.46843 5.04193 9.46843H6.44654L6.47393 9.59364C6.51305 9.78144 6.67347 10.0905 6.83388 10.2822C7.31121 10.8652 8.23458 11.0491 8.9271 10.7009C9.34183 10.4935 9.67048 10.1101 9.80742 9.67971L9.87394 9.46843H12.6753H15.4767L15.5432 9.67971C15.7702 10.3879 16.4314 10.873 17.1787 10.877C17.9807 10.877 18.6302 10.3996 18.8572 9.63276L18.908 9.46843H19.2641C19.6592 9.46843 19.8079 9.40975 19.9409 9.20629C20.0035 9.10848 20.0114 8.99501 20.0075 7.9621C20.0075 6.89006 20.0035 6.81181 19.9214 6.58097C19.8275 6.31492 18.1764 3.3179 17.9964 3.09097C17.9377 3.01663 17.8242 2.91491 17.7382 2.86796C17.5895 2.78188 17.5582 2.77797 16.3257 2.77797H15.062V1.58855C15.062 0.42261 15.062 0.399134 14.972 0.27002C14.925 0.195682 14.8233 0.105693 14.749 0.0704799C14.6199 0.00396651 14.2795 5.3959e-05 9.25184 5.3959e-05C4.87369 0.00396651 3.87208 0.0117916 3.77427 0.0548297ZM18.3016 4.969C18.7633 5.79846 19.1897 6.58097 19.2445 6.71008C19.3384 6.93701 19.3423 6.98396 19.358 7.87211L19.3736 8.8033H19.1389H18.9041L18.8376 8.59593C18.6967 8.15382 18.3681 7.78604 17.926 7.57867C17.6756 7.46129 17.6404 7.45347 17.1943 7.45347C16.7483 7.45347 16.7092 7.46129 16.4705 7.57476C16.1184 7.743 15.8445 8.00123 15.6802 8.32206C15.6019 8.46682 15.5315 8.63506 15.5158 8.69375C15.4924 8.79547 15.4767 8.8033 15.2772 8.8033H15.062V6.1232V3.4431L16.2592 3.45093L17.4565 3.46266L18.3016 4.969ZM8.58671 8.19294C8.80581 8.29467 9.0523 8.54507 9.1462 8.76026C9.1775 8.83851 9.20489 9.01067 9.20489 9.15543C9.2088 9.4567 9.0836 9.7384 8.8645 9.93012C8.61409 10.1492 8.49672 10.1923 8.15633 10.1923C7.78463 10.1923 7.61248 10.1179 7.36599 9.84795C6.87692 9.31584 7.06864 8.45899 7.74551 8.16555C7.9607 8.07165 8.35587 8.08339 8.58671 8.19294ZM17.6599 8.19685C17.9768 8.34944 18.2038 8.67419 18.2546 9.04979C18.3133 9.46452 18.016 9.95359 17.5973 10.1336C17.2022 10.3018 16.717 10.1923 16.4196 9.8636C15.9032 9.29237 16.1145 8.43552 16.8383 8.1499C17.0143 8.07948 17.476 8.10687 17.6599 8.19685Z" />
+                  //       <path d="M3.55127 2.95075C3.42216 3.04857 3.40259 3.20507 3.40259 4.11278V5.00876H2.92135C2.47923 5.00876 2.42837 5.01658 2.36185 5.09092C2.2523 5.21221 2.26404 5.46653 2.38142 5.56043C2.46749 5.63085 2.58487 5.63477 5.398 5.63477H8.3285L8.40675 5.53304C8.51239 5.40001 8.51239 5.24351 8.40675 5.11048L8.3285 5.00876H6.19616H4.06773V4.03844C4.06773 3.07204 4.06773 3.06422 3.97774 2.98205C3.87601 2.88424 3.65691 2.86859 3.55127 2.95075Z" />
+                  //       <path d="M0.115705 3.37587C0.0335414 3.41891 0.0178912 3.45803 0.00615355 3.6341C-0.0134092 4.00579 -0.0681849 3.99014 1.34816 3.99014C2.72147 3.99014 2.71755 3.99014 2.7645 3.70844C2.78407 3.58323 2.76842 3.54802 2.66669 3.44238L2.54931 3.32501H1.37946C0.522611 3.32501 0.186131 3.34066 0.115705 3.37587Z" />
+                  //     </svg>
+                  //   </span>
+
+                  //   {/* <p>{reasonValue && reasonValue[reasonValue?.length - 1]?.IN_TRANSIT}</p> */}
+                  //   <p>{item.IN_TRANSIT}</p>
+
+                  //   {item?.reason ? <label>Reason</label> : ""}
+
+                  //   <p>{item.reason}</p>
+                  //   {/* <p>{reasonValue && reasonValue[reasonValue?.length - 1]?.reason}</p> */}
+
+
+                  //   <h4>
+                  //     {PostOrderTrackData?.current_status === "IN_TRANSIT" ||
+                  //       PostOrderTrackData?.current_status === "DELIVERED" ||
+                  //       PostOrderTrackData?.current_status === "RTO" ||
+                  //       PostOrderTrackData?.current_status === "RTO_DELIVERED"
+                  //       ? `Your item is In-Transit`
+                  //       : ""}
+                  //   </h4>
+
+
+                  // </li>
+                  // })
+                }
+                {/* ------------- don't remove -------------------- */}
                 {/* delivered */}
-                <li
-                  className={`${PostOrderTrackData?.current_status === "DELIVERED" ||
+                { PostOrderTrackData?.current_status === "DELIVERED" ?
+                 <li
+                  className={`${
+                    PostOrderTrackData?.current_status === "DELIVERED" ||
                     PostOrderTrackData?.current_status === "RTO" ||
                     PostOrderTrackData?.current_status === "RTO_DELIVERED"
                     ? "active"
@@ -277,24 +399,24 @@ const Ordertrack = () => {
                       <path d="M17.7806 5.43867C17.6912 5.52805 17.6865 5.59392 17.6865 6.85002C17.6865 8.10613 17.6912 8.17199 17.7806 8.26138C17.87 8.35076 17.9359 8.35547 19.7565 8.35547C21.5772 8.35547 21.643 8.35076 21.7324 8.26138C21.7936 8.20022 21.8265 8.10613 21.8265 7.97911C21.8265 7.80504 21.7606 7.71565 20.8809 6.65243C20.3587 6.02203 19.8929 5.4716 19.8412 5.42455C19.7565 5.35399 19.6342 5.34458 18.8109 5.34458C17.9359 5.34458 17.87 5.34928 17.7806 5.43867ZM19.8506 6.69477C20.1235 7.01939 20.4057 7.35811 20.4763 7.44279L20.608 7.60275H19.526H18.4392V6.85002V6.0973H18.9003H19.3566L19.8506 6.69477Z" />
                     </svg>
                   </span>
-                  <p>{PostOrderTrackData?.track_details[3]?.DELIVERED}</p>
+                  <p>{PostOrderTrackData?.track_details?.DELIVERED}</p>
                   <h4>
-                    {PostOrderTrackData?.current_status === "DELIVERED" ||
-                      PostOrderTrackData?.current_status === "RTO" ||
-                      PostOrderTrackData?.current_status === "RTO_DELIVERED"
+                    {PostOrderTrackData?.current_status === "DELIVERED" 
                       ? "Your item has been Delivered"
                       : ""}
                   </h4>
-                </li>
+                </li> : ""}
                 {/* RTO */}
                 <li
                   className={`${PostOrderTrackData?.current_status === "RTO" ||
                     PostOrderTrackData?.current_status === "RTO_DELIVERED"
                     ? "active"
                     : ""
-                    }`}
+                    }
+                    ${PostOrderTrackData?.current_status === "DELIVERED" ?"d-none":""}
+                    `}
                 >
-                  <span>
+                <span>
                     <svg
                       width="16"
                       height="17"
@@ -326,9 +448,11 @@ const Ordertrack = () => {
                   className={`${PostOrderTrackData?.current_status === "RTO_DELIVERED"
                     ? "active"
                     : ""
-                    }`}
+                    }
+                    
+                    ${PostOrderTrackData?.current_status === "DELIVERED" ?"d-none":""}`}
                 >
-                  <span>
+                   <span>
                     <svg
                       width="16"
                       height="15"
@@ -343,7 +467,7 @@ const Ordertrack = () => {
                   </span>
 
                   <p>{returndeliveredreasonvalue && returndeliveredreasonvalue[returndeliveredreasonvalue?.length - 1]?.RTO_DELIVERED}</p>
-                  {returndeliveredreasonvalue && returndeliveredreasonvalue[returndeliveredreasonvalue?.length - 1]?.reason ? <label>Reason</label>:""}
+                  {returndeliveredreasonvalue && returndeliveredreasonvalue[returndeliveredreasonvalue?.length - 1]?.reason ? <label>Reason</label> : ""}
                   <h4>
                     {" "}
                     {PostOrderTrackData?.current_status === "RTO_DELIVERED"
@@ -371,7 +495,7 @@ const Ordertrack = () => {
                     <td>
                       {" "}
                       <img src="/images/icon33.svg" alt="img" />{" "}
-                      <p> {PostOrderTrackData?.order_details?.name}</p>
+                      <span> {PostOrderTrackData?.order_details?.name}</span>
                     </td>
                     <td>{PostOrderTrackData?.order_details?.product_type}</td>
                     <td>{PostOrderTrackData?.order_details.quantity}</td>
@@ -386,25 +510,33 @@ const Ordertrack = () => {
                 <ul>
                   <li>
                     <h4> Customer Name </h4>
-                    <p> {PostOrderTrackData?.customer_details?.name} </p>
+                    {console.log("PostOrderTrackData",PostOrderTrackData)}
+                
+                    <p> {PostOrderTrackData?.delivered_address?.delivered_name} </p>
                   </li>
                   <li>
-                    <h4> Phone Number </h4>
-                    <p>{PostOrderTrackData?.customer_details?.phone_number}</p>
-                  </li>
-                  <li>
-                    <h4> Email Id </h4>
-                    <p> {PostOrderTrackData?.customer_details?.email}</p>
-                  </li>
-                  <li>
-                    <h4>Delivered Address </h4>
-                    <p>
-                      {`${PostOrderTrackData?.delivered_address?.delivered_address},
-                     ${PostOrderTrackData?.delivered_address?.delivered_city},
-                     ${PostOrderTrackData?.delivered_address?.delivered_state}, 
-                     ${PostOrderTrackData?.delivered_address?.delivered_pincode}`}{" "}
-                    </p>
-                  </li>
+                      <h4>Address Line</h4>
+                      <p>
+                        {PostOrderTrackData?.delivered_address?.delivered_address}
+                      </p>
+                    </li>
+
+                    <li>
+                      <h4>Street Name</h4>
+                      <p>{`${PostOrderTrackData?.delivered_address?.delivered_city}, ${PostOrderTrackData?.delivered_address?.delivered_state}`}</p>
+                    </li>
+                    <li>
+                      <h4>Postcode</h4>
+                      <p>
+                        {PostOrderTrackData?.delivered_address?.delivered_pincode}
+                      </p>
+                    </li>
+                    <li>
+                      <h4>Phone Number</h4>
+                      <p>
+                        {PostOrderTrackData?.delivered_address?.delivered_phone_number}
+                      </p>
+                    </li>
                 </ul>
               </div>
             </div>

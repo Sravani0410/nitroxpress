@@ -5,14 +5,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { GetSettingViewB2cCloseFeedback, PostTicketDetail } from "../../Redux/action/ApiCollection";
 import { reactLocalStorage } from "reactjs-localstorage";
-
+import Popup from "reactjs-popup";
 
 function B2cClose() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [oldnewdata, setOldNewData] = useState(true)
   const [getsettingviewalldata, setGetSettingViewAllData] = useState("")
-
+  const [moredata, setMoreData] = useState(false);
+  const [morepopupid, setMorePopupId] = useState(false);
+  const [moredataid, setMoreDataId] = useState("");
+  const [pickuppopup, setPickUpPopup] = useState(false);
+  let isAdmin_Role = reactLocalStorage.get("Admin_Role", false);
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
@@ -50,7 +54,7 @@ const rate = (loop) => {
 }
 const NewOldFun = (e) => { 
   if (e.target.value == "OLDEST") { 
-    let AllData = getsettingviewalldata.slice(Math.max(getsettingviewalldata.length - 5, 0)).map((item, id) => { 
+    let AllData = getsettingviewalldata?.slice(Math.max(getsettingviewalldata.length - 5, 0)).map((item, id) => { 
       return item
     })
     setGetSettingViewAllData(AllData)
@@ -61,8 +65,29 @@ const NewOldFun = (e) => {
   }
 }
 useEffect(() => {
+  dispatch(GetSettingViewB2cCloseFeedback());
+}, []);
+useEffect(() => {
   GetSettingViewB2cCloseFeedbackData && setGetSettingViewAllData(GetSettingViewB2cCloseFeedbackData?.info)
 }, [GetSettingViewB2cCloseFeedbackData])
+const ShowFeedbackDataFun = (e, value) => {
+  if (value == "more") {
+    setMoreData(true);
+  } else {
+    setMoreData(false);
+  }
+};
+const Readmore = (id) => {
+  setPickUpPopup(true);
+  setMoreDataId(id);
+  setMoreData(false);
+};
+const ReadmoreFun = (id) => {
+  setPickUpPopup(true);
+  setMoreDataId(id);
+  setMorePopupId(id);
+  setMoreData(false);
+};
   return (
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -73,13 +98,15 @@ useEffect(() => {
             <div className='title'>
               <h2>Tickets</h2>
               <select className=" form-select" onChange={(e)=>CustomerChangeFun(e)}>
-              <option value="b2c">B2C</option>
+             {isAdmin_Role=="true"? <option value="b2c">B2C</option>:""}
                 <option value="b2b">B2B</option>
               </select>
             </div>
 
             <div className='sptitle'>
               <div className='select-box'>
+              <span>SORT BY : </span>
+
                <select className=" form-select" onChange={(e)=>TicketChangeFunn(e)}>
                <option value="close"  className="px-3">Close Tickets</option>
                   <option value="new" className="px-3">New Tickets</option>
@@ -98,7 +125,7 @@ useEffect(() => {
 
             </div>
 
-            <ul className='support-list'>
+          {isAdmin_Role=="true"?<ul className='support-list'>
             {PostTicketDetailData &&
                 PostTicketDetailData?.info?.map((item, id) => {
                   return ( 
@@ -112,12 +139,12 @@ useEffect(() => {
                   </div>
                 </div>
                 <div className='right-part'>
-                  <button className='btn dot-btn' type='button'>
+                  {/* <button className='btn dot-btn' type='button'>
                     <svg viewBox="0 0 16 4" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" clipRule="evenodd" d="M1.18121 3.53495C0.891647 3.4721 0.697355 3.36821 0.472144 3.15574C0.15145 2.8532 0 2.50494 0 2.07003C0 1.63224 0.151238 1.28708 0.4783 0.978543C1.07359 0.416918 1.97143 0.433186 2.55721 1.0162C3.15041 1.60662 3.15041 2.53345 2.55721 3.12387C2.32722 3.35279 2.06444 3.49172 1.75351 3.54889C1.499 3.59565 1.45623 3.59463 1.18121 3.53495ZM7.27762 3.55196C6.49246 3.41472 5.9225 2.62795 6.04748 1.85385C6.1798 1.0343 6.9548 0.457782 7.75206 0.585882C8.7503 0.746235 9.31538 1.78673 8.89804 2.69606C8.61633 3.30984 7.93907 3.66757 7.27762 3.55196ZM13.2665 3.5394C13.1594 3.51618 12.9923 3.45883 12.895 3.41197C12.6534 3.29552 12.3298 2.96585 12.2181 2.72246C11.9437 2.12466 12.0569 1.47058 12.5135 1.0162C13.0992 0.433221 13.9971 0.416954 14.5924 0.978543C14.9195 1.28708 15.0707 1.63224 15.0707 2.07003C15.0707 2.50494 14.9192 2.8532 14.5985 3.15574C14.3688 3.37252 14.1799 3.47164 13.873 3.53654C13.596 3.59512 13.5251 3.59544 13.2665 3.5394Z" fill="#C8C8C8" />
                     </svg>
-                  </button>
-                  <span className=" star-svg me-2"> 
+                  </button> */}
+                  {/* <span className=" star-svg me-2"> 
                           {rate(item?.rating).map((item, id) => { 
                             return <svg
                               viewBox="0 0 10 10"
@@ -145,12 +172,36 @@ useEffect(() => {
                               />
                             </svg>
                           })}
-                        </span>
-                  <span>{item.date}</span>
-                  <p className='mt-2'>{item.description}</p>
-
+                        </span> */}
+                   <p className="mt-2">{item.title}</p>
+                  <span className="date-text">{item.date}</span>
+                  {/* <p className='mt-2'>{item.description}</p> */}
+                  {item.description.length <= 30 ||
+                          (moredata == true &&
+                            morepopupid == item?.feedback_id) ? (
+                          <p className="ticket-description">
+                            {item.description}
+                          </p>
+                        ) : (
+                          <p className="ticket-description">
+                            {item?.description?.substring(0, 150)}
+                            <span
+                              onClick={(e) => ShowFeedbackDataFun(e, "more")}
+                            >
+                              {" "}
+                              ....
+                              <span
+                                className="text-primary"
+                                role="button"
+                                onClick={(e) => Readmore(item?.feedback_id)}
+                              >
+                                Read More
+                              </span>
+                            </span>
+                          </p>
+                        )}
                   <div className='b2cbtn-box'>
-                    <div className=''>
+                    {/* <div className=''>
                       <button className='btn dismiss-btn' type='button'>
                       <svg
                                 viewBox="0 0 10 7"
@@ -181,23 +232,71 @@ useEffect(() => {
                               </svg> Chat
                       </button>
 
-                    </div>
-                    <button className='btn' type='button'>
+                    </div> */}
+                    {/* <button className='btn' type='button'>
                       <svg width="18" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fillRule="evenodd" clipRule="evenodd" d="M5.45629 0.0212131C4.32632 0.122113 3.22756 0.559739 2.28857 1.28287C1.83144 1.63489 1.23779 2.29647 0.894732 2.83614C0.746572 3.06922 0.45816 3.65984 0.354842 3.94171C0.239323 4.25689 0.1162 4.73854 0.0556128 5.11227C-0.0185376 5.5697 -0.0185376 6.43819 0.0556128 6.89562C0.160456 7.54227 0.326309 8.06503 0.610192 8.64378C0.920356 9.27604 1.24286 9.72423 1.75931 10.2407C2.27578 10.7571 2.72397 11.0796 3.35624 11.3898C3.93499 11.6737 4.45775 11.8395 5.10441 11.9444C5.56184 12.0185 6.43034 12.0185 6.88777 11.9444C7.2615 11.8838 7.74315 11.7607 8.05834 11.6452C8.3402 11.5418 8.93082 11.2534 9.1639 11.1053C9.91744 10.6263 10.6184 9.92528 11.0974 9.17174C11.2456 8.93866 11.534 8.34804 11.6373 8.06618C11.8329 7.53258 11.9648 6.87415 11.9939 6.28637C12.0119 5.92311 11.995 5.83849 11.8779 5.70511C11.6401 5.43425 11.1956 5.55369 11.1134 5.91055C11.1001 5.96837 11.0889 6.09654 11.0886 6.19537C11.0878 6.46353 11.0231 6.91524 10.9357 7.26273C10.4864 9.05101 9.04317 10.4942 7.25488 10.9436C6.43477 11.1497 5.54429 11.1486 4.72957 10.9406C2.72144 10.4279 1.20668 8.71811 0.941522 6.66467C0.893723 6.29461 0.893676 5.71396 0.941381 5.34321C1.20541 3.29186 2.72223 1.57975 4.72957 1.06727C5.08108 0.977537 5.53105 0.912303 5.80466 0.911435C6.13998 0.910356 6.31153 0.833155 6.39704 0.644871C6.50658 0.403672 6.41311 0.152947 6.17208 0.0413462C6.06977 -0.00602997 5.83526 -0.0126237 5.45629 0.0212131ZM11.2406 1.5197C11.2019 1.52944 11.1438 1.55135 11.1115 1.56841C11.0793 1.58547 9.82269 2.82711 8.31915 4.32761L5.58545 7.05582L4.90495 6.315C3.64515 4.9435 3.57881 4.87482 3.46585 4.82484C3.25304 4.73072 3.00039 4.82001 2.90151 5.02427C2.83871 5.15399 2.83688 5.32019 2.89698 5.43585C2.93703 5.51296 3.61208 6.25732 4.88836 7.6317C5.31646 8.09272 5.40568 8.16171 5.57371 8.16171C5.77127 8.16171 5.73363 8.19702 8.79212 5.14249C11.9555 1.98321 11.812 2.13815 11.7862 1.9091C11.7572 1.65179 11.4857 1.45806 11.2406 1.5197Z" fill="#14AE5C" />
                       </svg>
-                    </button>
+                    </button> */}
                   </div>
 
 
 
                 </div>
+                 {moredataid == item?.feedback_id ? (
+                        <Popup
+                          open={pickuppopup}
+                          position=""
+                          model
+                          className="sign_up_loader"
+                        >
+                          <div className="container">
+                            <div className="loader-sec">
+                              <div className=" data_picker rounded bg-white">
+                                <div className="py-1 text-warning">
+                                  <h4
+                                    className="text-danger calender_popup_cancel"
+                                    onClick={(e) => {
+                                      ReadmoreFun(item?.id);
+                                      setPickUpPopup(false);
+                                    }}
+                                  >
+                                    {" "}
+                                    X{" "}
+                                  </h4>
+                                </div>
+                                <div className="data_picker_btn">
+                                  <span
+                                    className="readmore-popup"
+                                    onClick={(e) =>
+                                      ShowFeedbackDataFun(e, "less")
+                                    }
+                                  >
+                                    <p className="ticket-description">
+                                      {item.description}
+                                    </p>
+                                    <span
+                                      className="text-primary"
+                                      role="button"
+                                      onClick={(e) => ReadmoreFun(item?.id)}
+                                    >
+                                      Read Less
+                                    </span>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </Popup>
+                      ) : (
+                        ""
+                      )}
 
               </li>
                   );
                 })}
               
-            </ul>
+            </ul>:""}
 
 
           </div>

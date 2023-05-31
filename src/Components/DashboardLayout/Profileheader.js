@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { toast } from "react-toastify";
 import { reactLocalStorage } from 'reactjs-localstorage';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getViewProfile, PatchUserDetails, ResetPatchPassword } from '../../Redux/action/ApiCollection';
 
@@ -20,23 +20,27 @@ const Profileheader = ({ searchBox }) => {
     const [emailaddress, setEmailAddress] = useState("")
     const navigate = useNavigate();
     const dispatch = useDispatch()
+    let param = useLocation();
     const UserData = useSelector(state => state.productReducer.userDetails)
     // const ResetPasswordPatchData = useSelector(state => state?.ResetPasswordPatchReducer?.ResetPasswordPatchData)
 
     let as_individual = reactLocalStorage.get("as_individual", false);
 
-
     useEffect(() => {
-        dispatch(getViewProfile())
+        let pathname = param?.pathname?.split("/")
+        if (param.pathname != `${`/profile/trackorder/${pathname[3]}`}`) {
+            dispatch(getViewProfile())
+        } // this condition is for ,  when the user come's and track the order then this api will throug 401 errro and this condition will prevent 
+
     }, [])
 
 
 
-    useLayoutEffect(() => { 
+    useLayoutEffect(() => {
         if (as_individual.toString() != "true") {
-            navigate("/");
-            window.location.reload(false) 
-        }  
+            // navigate("/");
+            // window.location.reload(false)
+        }
     }, [as_individual])
 
     // useEffect(() => {

@@ -3,12 +3,12 @@ import { CSVLink } from "react-csv";
 import { actionType } from "../Redux/type/types";
 import { reactLocalStorage } from "reactjs-localstorage";
 import Sidebar from "./Sidebar";
-import LodingSpiner from "../Components/LodingSpiner";
+import LodingSpiner from '../Components/LodingSpiner';
 import Header from "./Header";
 import { toast } from "react-toastify";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import OtpInput from "react-otp-input";
+import OtpInput from 'react-otp-input';
 import Popup from "reactjs-popup";
 import {
   GetAdminOrderDelivered,
@@ -39,7 +39,7 @@ import { PostAdminOrderFilterationReducer } from "../Redux/reducer/Reducer";
 import { PermissionData } from "../Permission";
 let B2BPartner = reactLocalStorage.get("Is_Business");
 const Order = () => {
-  const [otpvalue, setOtpValue] = useState("");
+  const [otpvalue, setOtpValue] = useState('')
   const [pendingconfirmbutton, setPendingConfirmButton] = useState(false);
   const [partner, setPartner] = useState("");
   const [partnernameactive, setPartnerNameActive] = useState(false);
@@ -69,8 +69,7 @@ const Order = () => {
   const [codcheckBox, setCodCheckBox] = useState(false);
   const [prepaidcheckBox, setPrepaidCheckBox] = useState(false);
   const [shippingpartnervalue, setShippingPartnerValue] = useState("");
-  const [adminorderfilterationdata, setAdminOrderFilterationData] =
-    useState(false);
+  const [adminorderfilterationdata, setAdminOrderFilterationData] = useState(false);
   const [tabfiltersearchdata, setTabFilterSearchData] = useState("");
   const [adminorderpendingdata, setAdminOrderPendingData] = useState("");
   const [adminorderbookeddata, setAdminOrderBookedData] = useState("");
@@ -78,40 +77,38 @@ const Order = () => {
   const [adminorderdeliveredData, setAdminOrderDeliveredData] = useState("");
   const [adminoutfordeliveryData, setAdminOutForDeliveryData] = useState("");
   const [adminorderreturnData, setAdminOrderReturnData] = useState("");
-  const [adminorderrtodeliveredData, setAdminOrderRTODeliveredData] =
-    useState("");
+  const [adminorderrtodeliveredData, setAdminOrderRTODeliveredData] = useState("");
   const [adminordercancelData, setAdminOrderCancelData] = useState("");
-  const [filterdatahideaftertabchange, setFilterDataHideAfterTabChange] =
-    useState(false);
+  const [filterdatahideaftertabchange, setFilterDataHideAfterTabChange] = useState(false);
   const [editcancelobjectdata, setEditCancelObjectData] = useState(false);
-  const [editcancelobjectdatatruefalse, setEditCancelObjectDataTrueFalse] =
-    useState(false);
+  const [editcancelobjectdatatruefalse, setEditCancelObjectDataTrueFalse] = useState(false);
   const [b2bcheckBox, setB2BcheckBox] = useState("");
   const [b2ccheckBox, setB2ccheckBox] = useState("");
   const [allcheckBox, setAllcheckBox] = useState("");
   const [filteractive, setFilterActive] = useState(false);
   const [downloadcsvpermission, setDownloadCsvPermission] = useState(false);
-  const [reasonActionPopup, setReasonActionPopup] = useState(false);
-  const [reasonActionValue, setReasonActionValue] = useState(false);
-  const [reasonActionRowData, setReasonActionRowData] = useState(false);
-  const [reasonActionInputFieldData, setReasonActionInputFieldData] =
-    useState("");
-  const [ReasonActionInputFieldError, setReasonActionInputFieldError] =
-    useState(false);
-  const [SelectedReasonTrue, setSelectedReasonTrue] = useState(false);
-  const [otpActionPopup, setOtpActionPopup] = useState(false);
-  const [otpActionValue, setOtpActionValue] = useState(false);
-  const [otpActionRowData, setOtpActionRowData] = useState(false);
-  const [otpActionInputFieldData, setOtpActionInputFieldData] = useState("");
-  const [OtpActionInputFieldError, setOtpActionInputFieldError] =
-    useState(false);
-  const [SelectedOtpTrue, setSelectedOtpTrue] = useState(false);
+  const [reasonActionPopup, setReasonActionPopup] = useState(false)
+  const [reasonActionValue, setReasonActionValue] = useState(false)
+  const [reasonActionRowData, setReasonActionRowData] = useState(false)
+  const [reasonActionInputFieldData, setReasonActionInputFieldData] = useState("")
+  const [ReasonActionInputFieldError, setReasonActionInputFieldError] = useState(false)
+  const [SelectedReasonTrue, setSelectedReasonTrue] = useState(false)
+  const [otpActionPopup, setOtpActionPopup] = useState(false)
+  const [otpActionValue, setOtpActionValue] = useState(false)
+  const [otpActionRowData, setOtpActionRowData] = useState(false)
+  const [otpActionInputFieldData, setOtpActionInputFieldData] = useState("")
+  const [OtpActionInputFieldError, setOtpActionInputFieldError] = useState(false)
+  const [SelectedOtpTrue, setSelectedOtpTrue] = useState(false)
   const [paymentmethodpopup, setPaymentMethodPopup] = useState(false);
   const [wallettab, setWalletTab] = useState("");
   const [activepaymentwallet, setActivePaymentWallet] = useState(false);
   const [activepaymentrazorpay, setActivePaymentRazorPay] = useState(false);
   const [ReebookObjectDetails, setReebookObjectDetails] = useState("");
-  console.log("adminordercancelData", adminordercancelData);
+  const [PaymentStatusTrueFalse, setPaymentStatusTrueFalse] = useState(false);
+  const [PaymentStatusActive, setPaymentStatusActive] = useState(false);
+
+
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let param = useLocation();
@@ -132,20 +129,17 @@ const Order = () => {
     (state) => state.GetAdminOrderPendingReducer.GetAdminOrderPendingData?.data
   );
   const GetAdminOrderReturnData = useSelector(
-    (state) => state.GetAdminOrderReturnReducer.GetAdminOrderReturnData?.data
+    (state) => state.GetAdminOrderReturnReducer.GetAdminOrderReturnData
   );
   const GetAdminOrderRTODeliveredData = useSelector(
-    (state) =>
-      state.GetAdminOrderRTODeliveredReducer.GetAdminOrderRTODeliveredData
+    (state) => state.GetAdminOrderRTODeliveredReducer.GetAdminOrderRTODeliveredData?.data
   );
-  console.log("GetAdminOrderRTODeliveredData", GetAdminOrderRTODeliveredData);
   const GetAdminOrderBookedData = useSelector(
     (state) => state.GetAdminOrderBookedReducer.GetAdminOrderBookedData?.data
   );
   const GetCancelOrderDetailData = useSelector(
-    (state) => state.GetCancelOrderDetailReducer.GetCancelOrderDetailData?.data
+    (state) => state.GetCancelOrderDetailReducer.GetCancelOrderDetailData.data
   );
-  console.log("GetCancelOrderDetailData", GetCancelOrderDetailData);
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
@@ -157,7 +151,8 @@ const Order = () => {
       state.PostAdminOrderFilterationReducer.PostAdminOrderFilterationData?.data
   );
   const PostTrackingOtpData = useSelector(
-    (state) => state.PostTrackingOtpReducer.PostTrackingOtpData
+    (state) =>
+      state.PostTrackingOtpReducer.PostTrackingOtpData
   );
   const PostAdminPendingOrderActionData = useSelector(
     (state) =>
@@ -178,21 +173,22 @@ const Order = () => {
   );
   const PatchTrackDetailsData = useSelector(
     (state) => state.PatchTrackDetailsReducer.PatchTrackDetailsData?.data
-  );
+  )
   const HeaderToggleClassAddData = useSelector(
-    (state) => state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
+    (state) =>
+      state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
   );
-  const ToggleSideBarTrueFalseData = useSelector(
-    (state) => state.ToggleSideBarTrueFalseReducer.ToggleSideBarTrueFalseData
-  );
+  const ToggleSideBarTrueFalseData = useSelector((state) => state.ToggleSideBarTrueFalseReducer.ToggleSideBarTrueFalseData)
   const PostUploadFileData = useSelector(
-    (state) => state.PostUploadFileReducer.PostUploadFileData
+    (state) =>
+      state.PostUploadFileReducer.PostUploadFileData
   );
   const GetWalletBalanceData = useSelector(
     (state) => state.GetWalletBalanceReducer?.GetWalletBalanceData
   );
   const PostDebitBalanceData = useSelector(
-    (state) => state.PostDebitBalanceReducer?.PostDebitBalanceData
+    (state) =>
+      state.PostDebitBalanceReducer?.PostDebitBalanceData
   );
   useEffect(() => {
     dispatch(GetAdminOrderIntransit());
@@ -201,7 +197,7 @@ const Order = () => {
     dispatch(GetAdminOrderReturn());
     dispatch(GetAdminOrderRTODelivered());
     dispatch(GetAdminOrderBooked());
-    dispatch(GetAdminOutForDelivery());
+    dispatch(GetAdminOutForDelivery())
     dispatch(GetCancelOrderDetail());
   }, []);
   const IntransitFun = (e, id) => {
@@ -225,6 +221,7 @@ const Order = () => {
     setRecievedPartner(false);
     setPaidCustomer(false);
     setFilterActive(false);
+    setReasonActionInputFieldData("")
   }, [param.hash]);
   useEffect(() => {
     setTabFilterAvailable(param.hash);
@@ -247,14 +244,32 @@ const Order = () => {
     if (data === "COD") {
       setCodCheckBox((o) => !o);
       setPrepaidCheckBox(false);
-    } else {
+      setPaymentStatusActive(true)
+      setPaymentStatusTrueFalse(true)
+    }
+    else if (data === "noCOD") {
+      setCodCheckBox((o) => !o);
+      setPrepaidCheckBox(false);
+      setPaymentStatusActive(false)
+      setPendingPartner(false);
+      setRecievedPartner(false);
+      setPaidCustomer(false);
+      setPaymentStatusTrueFalse(false)
+    }
+
+    else if (data === "PREPAID") {
       setPrepaidCheckBox((o) => !o);
       setCodCheckBox(false);
       setPendingPartner(false);
       setRecievedPartner(false);
       setPaidCustomer(false);
+      setPaymentStatusTrueFalse(false)
     }
+
   };
+
+
+
   useEffect(() => {
     if (OrderPageBookNavigateFunData) {
       if (OrderPageBookNavigateFunData === "#pending") {
@@ -264,7 +279,8 @@ const Order = () => {
           booleanValue: true,
           tabindex: "-1",
         });
-      } else if (OrderPageBookNavigateFunData === "#transit") {
+      }
+      else if (OrderPageBookNavigateFunData === "#transit") {
         navigate("#transit");
         setTransitTab({
           activeValue: "active",
@@ -273,9 +289,9 @@ const Order = () => {
         });
         setBookTab("");
         setDeliveredTab("");
-        setOutForDeliveryTab("");
+        setOutForDeliveryTab("")
         setReturnTab("");
-        setReturnDeliveredTab("");
+        setReturnDeliveredTab("")
         setCancelTab("");
       } else if (OrderPageBookNavigateFunData === "#booked") {
         navigate("#booked");
@@ -286,11 +302,12 @@ const Order = () => {
         });
         setTransitTab("");
         setDeliveredTab("");
-        setOutForDeliveryTab("");
+        setOutForDeliveryTab("")
         setReturnTab("");
-        setReturnDeliveredTab("");
+        setReturnDeliveredTab("")
         setCancelTab("");
-      } else if (OrderPageBookNavigateFunData === "#delivered") {
+      }
+      else if (OrderPageBookNavigateFunData === "#delivered") {
         navigate("#delivered");
         setDeliveredTab({
           activeValue: "active",
@@ -299,11 +316,12 @@ const Order = () => {
         });
         setBookTab("");
         setTransitTab("");
-        setOutForDeliveryTab("");
+        setOutForDeliveryTab("")
         setReturnTab("");
-        setReturnDeliveredTab("");
+        setReturnDeliveredTab("")
         setCancelTab("");
-      } else if (OrderPageBookNavigateFunData === "#OUT_FOR_DELIVERY") {
+      }
+      else if (OrderPageBookNavigateFunData === "#OUT_FOR_DELIVERY") {
         navigate("#OUT_FOR_DELIVERY");
         setOutForDeliveryTab({
           activeValue: "active",
@@ -314,9 +332,10 @@ const Order = () => {
         setTransitTab("");
         setDeliveredTab("");
         setReturnTab("");
-        setReturnDeliveredTab("");
+        setReturnDeliveredTab("")
         setCancelTab("");
-      } else if (OrderPageBookNavigateFunData === "#return") {
+      }
+      else if (OrderPageBookNavigateFunData === "#return") {
         navigate("#return");
         setReturnTab({
           activeValue: "active",
@@ -324,35 +343,37 @@ const Order = () => {
           tabindex: "-1",
         });
         setDeliveredTab("");
-        setOutForDeliveryTab("");
+        setOutForDeliveryTab("")
         setBookTab("");
         setTransitTab("");
-        setReturnDeliveredTab("");
+        setReturnDeliveredTab("")
         setCancelTab("");
-      } else if (OrderPageBookNavigateFunData === "#RTO_DELIVERED") {
-        navigate("#RTO_DELIVERED");
+      }
+      else if (OrderPageBookNavigateFunData === "#rto_delivered") {
+        navigate("#rto_delivered");
         setReturnDeliveredTab({
           activeValue: "active",
           booleanValue: true,
           tabindex: "-1",
         });
         setDeliveredTab("");
-        setOutForDeliveryTab("");
+        setOutForDeliveryTab("")
         setBookTab("");
         setTransitTab("");
-        setReturnTab("");
+        setReturnTab("")
         setCancelTab("");
-      } else if (OrderPageBookNavigateFunData === "#cancel") {
+      }
+      else if (OrderPageBookNavigateFunData === "#cancel") {
         navigate("#cancel");
         setCancelTab({
           activeValue: "active",
           booleanValue: true,
           tabindex: "-1",
         });
-        setReturnTab("");
-        setReturnDeliveredTab("");
+        setReturnTab("")
+        setReturnDeliveredTab("")
         setDeliveredTab("");
-        setOutForDeliveryTab("");
+        setOutForDeliveryTab("")
         setBookTab("");
         setTransitTab("");
       }
@@ -364,9 +385,9 @@ const Order = () => {
         tabindex: "-1",
       });
       setReturnTab("");
-      setReturnDeliveredTab("");
+      setReturnDeliveredTab("")
       setDeliveredTab("");
-      setOutForDeliveryTab("");
+      setOutForDeliveryTab("")
       setBookTab("");
       setTransitTab("");
       setCancelTab("");
@@ -378,7 +399,7 @@ const Order = () => {
       if (
         tabfilteravailable === "#booked" ||
         tabfilteravailable === "#transit" ||
-        tabfilteravailable === "#delivered"
+        tabfilteravailable == "#OUT_FOR_DELIVERY"
       ) {
         setPendingPartner((o) => !o);
         setRecievedPartner(false);
@@ -386,8 +407,10 @@ const Order = () => {
       }
     } else if (dataParameter === "RecievedPartner") {
       if (
-        tabfilteravailable !== "#booked" &&
-        tabfilteravailable !== "#transit"
+        tabfilteravailable == "#delivered"
+        // tabfilteravailable !== "#booked" &&
+        // tabfilteravailable !== "#transit" &&
+        // tabfilteravailable !== "#OUT_FOR_DELIVERY"
       ) {
         setRecievedPartner((o) => !o);
         setPendingPartner(false);
@@ -395,10 +418,13 @@ const Order = () => {
       }
     } else if (dataParameter === "PaidCustomer") {
       if (
-        tabfilteravailable !== "#booked" &&
-        tabfilteravailable !== "#transit"
+        tabfilteravailable == "#delivered"
+        // tabfilteravailable !== "#booked" &&
+        // tabfilteravailable !== "#transit" &&
+        // tabfilteravailable !== "#OUT_FOR_DELIVERY"
       ) {
-        setPaidCustomer((o) => !o);
+        // setPaidCustomer((o) => !o);
+        setPaidCustomer(false);
         setRecievedPartner(false);
         setPendingPartner(false);
       }
@@ -437,7 +463,8 @@ const Order = () => {
       CustomerType = "all";
     }
     let dataObject = {
-      page_name: splitdata[1],
+      page_name: splitdata[1]?.toLowerCase(),
+      // page_name: splitdata[1],
       payment_status: paymentStatus,
       shipping_partner: shippingpartnervalue,
       cod_status: statusData,
@@ -493,7 +520,8 @@ const Order = () => {
         setAdminOrderDeliveredData(GetAdminOrderDeliveredData);
         setFilterActive(false);
       }
-    } else if (param.hash === "#OUT_FOR_DELIVERY") {
+    }
+    else if (param.hash === "#OUT_FOR_DELIVERY") {
       setFilterDataHideAfterTabChange(false); //this will false the if condition so when the tab is changed the if condition will false and then the tab is changed then the all data will show
       if (PostAdminOrderFilterationData && filterdatahideaftertabchange) {
         setAdminOutForDeliveryData(PostAdminOrderFilterationData?.data);
@@ -509,11 +537,12 @@ const Order = () => {
         setAdminOrderReturnData(PostAdminOrderFilterationData?.data);
         setFilterActive(true);
       } else {
-        setAdminOrderReturnData(GetAdminOrderReturnData);
+        setAdminOrderReturnData(GetAdminOrderReturnData?.data);
         setFilterActive(false);
       }
       // setAdminOrderReturnData(GetAdminOrderReturnData);
-    } else if (param.hash === "#RTO_DELIVERED") {
+    }
+    else if (param.hash === "#rto_delivered") {
       setFilterDataHideAfterTabChange(false); //this will false the if condition so when the tab is changed the if condition will false and then the tab is changed then the all data will show
       if (PostAdminOrderFilterationData && filterdatahideaftertabchange) {
         setAdminOrderRTODeliveredData(PostAdminOrderFilterationData?.data);
@@ -522,7 +551,8 @@ const Order = () => {
         setAdminOrderRTODeliveredData(GetAdminOrderRTODeliveredData);
         setFilterActive(false);
       }
-    } else if (param.hash === "#cancel") {
+    }
+    else if (param.hash === "#cancel") {
       setFilterDataHideAfterTabChange(false); //this will false the if condition so when the tab is changed the if condition will false and then the tab is changed then the all data will show
       if (PostAdminOrderFilterationData && filterdatahideaftertabchange) {
         setAdminOrderCancelData(PostAdminOrderFilterationData?.data);
@@ -531,7 +561,6 @@ const Order = () => {
         setAdminOrderCancelData(GetCancelOrderDetailData);
         setFilterActive(false);
       }
-      // setAdminOrderReturnData(GetAdminOrderReturnData);
     }
   }, [
     PostAdminOrderFilterationData,
@@ -541,7 +570,7 @@ const Order = () => {
     GetAdminOrderIntransitDate,
     GetAdminOrderDeliveredData,
     GetAdminOutForDeliveryData,
-    GetAdminOrderReturnData,
+    GetAdminOrderReturnData?.data,
     GetAdminOrderRTODeliveredData,
     GetCancelOrderDetailData,
     adminorderfilterationdata,
@@ -553,7 +582,7 @@ const Order = () => {
     let result = [];
     if (param.hash === "#pending") {
       result = GetAdminOrderPendingData?.filter((data) => {
-        if (value) {
+        if ((value)) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
@@ -565,7 +594,7 @@ const Order = () => {
     }
     if (param.hash === "#booked") {
       result = GetAdminOrderBookedData?.filter((data) => {
-        if (value) {
+        if ((value)) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
@@ -577,7 +606,7 @@ const Order = () => {
     }
     if (param.hash === "#transit") {
       result = GetAdminOrderIntransitDate?.filter((data) => {
-        if (value) {
+        if ((value)) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
@@ -589,7 +618,7 @@ const Order = () => {
     }
     if (param.hash === "#delivered") {
       result = GetAdminOrderDeliveredData?.filter((data) => {
-        if (value) {
+        if ((value)) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
@@ -601,7 +630,7 @@ const Order = () => {
     }
     if (param.hash === "#OUT_FOR_DELIVERY") {
       result = GetAdminOutForDeliveryData?.filter((data) => {
-        if (value) {
+        if ((value)) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
@@ -612,20 +641,20 @@ const Order = () => {
       }
     }
     if (param.hash === "#return") {
-      result = GetAdminOrderReturnData?.filter((data) => {
-        if (value) {
+      result = GetAdminOrderReturnData?.data?.filter((data) => {
+        if ((value)) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
       if (value === "") {
-        setAdminOrderReturnData(GetAdminOrderReturnData);
+        setAdminOrderReturnData(GetAdminOrderReturnData?.data);
       } else {
         setAdminOrderReturnData(result);
       }
     }
-    if (param.hash === "#RTO_DELIVERED") {
+    if (param.hash === "#rto_delivered") {
       result = GetAdminOrderRTODeliveredData?.filter((data) => {
-        if (value) {
+        if ((value)) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
@@ -637,7 +666,7 @@ const Order = () => {
     }
     if (param.hash === "#cancel") {
       result = GetCancelOrderDetailData?.filter((data) => {
-        if (value) {
+        if ((value)) {
           return data?.product_order_id?.toUpperCase().search(value) !== -1;
         }
       });
@@ -690,12 +719,13 @@ const Order = () => {
     dispatch(DeleteAdminPendingOrderAction(payload));
   };
   useEffect(() => {
-    if (DeleteAdminPendingOrderActionData?.status == 200) {
-      setLoadSpiner(false);
-    } else {
+    if (DeleteAdminPendingOrderActionData?.status == 200 || GetAdminOrderReturnData?.status == 200) {
+      setLoadSpiner(false)
+    }
+    else {
       setLoadSpiner(false);
     }
-  }, [DeleteAdminPendingOrderActionData]);
+  }, [DeleteAdminPendingOrderActionData, GetAdminOrderReturnData])
   const ActionCorrectFun = (e, allData) => {
     setPending((o) => !o);
     setPendingConfirm(true);
@@ -731,13 +761,11 @@ const Order = () => {
         adminorderpendingdata?.map((item, id) => {
           BlankArrayData.push(item?.product_order_id); //adding add product id in blanck array of that perticular tab
         });
-      if (
-        PermissionData() &&
-        PermissionData()?.DOWNLOAD_PENDING_CSV == "DOWNLOAD_PENDING_CSV"
-      ) {
-        setDownloadCsvPermission(true);
-      } else {
-        setDownloadCsvPermission(false);
+      if (PermissionData() && PermissionData()?.DOWNLOAD_PENDING_CSV == "DOWNLOAD_PENDING_CSV") {
+        setDownloadCsvPermission(true)
+      }
+      else {
+        setDownloadCsvPermission(false)
       }
     }
     if (param.hash === "#booked") {
@@ -747,9 +775,10 @@ const Order = () => {
           BlankArrayData.push(item.product_order_id);
         });
       if (PermissionData()?.DOWNLOAD_BOOKED_CSV == "DOWNLOAD_BOOKED_CSV") {
-        setDownloadCsvPermission(true);
-      } else {
-        setDownloadCsvPermission(false);
+        setDownloadCsvPermission(true)
+      }
+      else {
+        setDownloadCsvPermission(false)
       }
     }
     if (param.hash === "#transit") {
@@ -758,12 +787,11 @@ const Order = () => {
         adminorderintransitDate?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
-      if (
-        PermissionData()?.DOWNLOAD_IN_TRANSIT_CSV == "DOWNLOAD_IN_TRANSIT_CSV"
-      ) {
-        setDownloadCsvPermission(true);
-      } else {
-        setDownloadCsvPermission(false);
+      if (PermissionData()?.DOWNLOAD_IN_TRANSIT_CSV == "DOWNLOAD_IN_TRANSIT_CSV") {
+        setDownloadCsvPermission(true)
+      }
+      else {
+        setDownloadCsvPermission(false)
       }
     }
     if (param.hash === "#delivered") {
@@ -772,12 +800,11 @@ const Order = () => {
         adminorderdeliveredData?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
-      if (
-        PermissionData()?.DOWNLOAD_DELIVERED_CSV == "DOWNLOAD_DELIVERED_CSV"
-      ) {
-        setDownloadCsvPermission(true);
-      } else {
-        setDownloadCsvPermission(false);
+      if (PermissionData()?.DOWNLOAD_DELIVERED_CSV == "DOWNLOAD_DELIVERED_CSV") {
+        setDownloadCsvPermission(true)
+      }
+      else {
+        setDownloadCsvPermission(false)
       }
     }
     if (param.hash === "#OUT_FOR_DELIVERY") {
@@ -786,12 +813,11 @@ const Order = () => {
         adminoutfordeliveryData?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
-      if (
-        PermissionData()?.DOWNLOAD_DELIVERED_CSV == "DOWNLOAD_DELIVERED_CSV"
-      ) {
-        setDownloadCsvPermission(true);
-      } else {
-        setDownloadCsvPermission(false);
+      if (PermissionData()?.DOWNLOAD_DELIVERED_CSV == "DOWNLOAD_DELIVERED_CSV") {
+        setDownloadCsvPermission(true)
+      }
+      else {
+        setDownloadCsvPermission(false)
       }
     }
     if (param.hash === "#return") {
@@ -801,21 +827,24 @@ const Order = () => {
           BlankArrayData.push(item.product_order_id);
         });
       if (PermissionData()?.DOWNLOAD_RETURNS_CSV == "DOWNLOAD_RETURNS_CSV") {
-        setDownloadCsvPermission(true);
-      } else {
-        setDownloadCsvPermission(false);
+        setDownloadCsvPermission(true)
+      }
+      else {
+        setDownloadCsvPermission(false)
       }
     }
-    if (param.hash === "#RTO_DELIVERED") {
+    // rto_delivered RTO_DELIVERED
+    if (param.hash === "#rto_delivered") {
       // GetAdminOrderReturnData?.map((item, id) => {
-      adminorderrtodeliveredData?.data &&
-        adminorderrtodeliveredData?.data?.map((item, id) => {
+      adminorderrtodeliveredData &&
+        adminorderrtodeliveredData?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
       if (PermissionData()?.DOWNLOAD_RETURNS_CSV == "DOWNLOAD_RETURNS_CSV") {
-        setDownloadCsvPermission(true);
-      } else {
-        setDownloadCsvPermission(false);
+        setDownloadCsvPermission(true)
+      }
+      else {
+        setDownloadCsvPermission(false)
       }
     }
     if (param.hash === "#cancel") {
@@ -825,9 +854,10 @@ const Order = () => {
           BlankArrayData.push(item.product_order_id);
         });
       if (PermissionData()?.DOWNLOAD_RETURNS_CSV == "DOWNLOAD_RETURNS_CSV") {
-        setDownloadCsvPermission(true);
-      } else {
-        setDownloadCsvPermission(false);
+        setDownloadCsvPermission(true)
+      }
+      else {
+        setDownloadCsvPermission(false)
       }
     }
     let splitdata = param.hash.split("#");
@@ -855,7 +885,7 @@ const Order = () => {
     GetAdminOrderIntransitDate,
     GetAdminOrderDeliveredData,
     GetAdminOutForDeliveryData,
-    GetAdminOrderReturnData,
+    GetAdminOrderReturnData?.data,
     GetAdminOrderRTODeliveredData,
     GetCancelOrderDetailData,
     adminorderpendingdata,
@@ -864,14 +894,15 @@ const Order = () => {
     adminorderdeliveredData,
     adminoutfordeliveryData,
     adminorderreturnData,
+    adminorderrtodeliveredData,
     adminordercancelData,
   ]);
 
   const CloseOtp = () => {
-    setOtpActionPopup(false);
-    setReasonActionValue("null");
-    setReasonActionPopup(false);
-  };
+    setOtpActionPopup(false)
+    setReasonActionValue("null")
+    setReasonActionPopup(false)
+  }
 
   const SheetFile = (e) => {
     dispatch(PostUploadFile(e?.target?.files[0]));
@@ -921,6 +952,7 @@ const Order = () => {
     setRecievedPartner(false);
     setPaidCustomer(false);
     setFilterActive(false);
+    setShippingPartnerValue("")
   };
 
   const TransitTrack = (e, orderid) => {
@@ -955,38 +987,48 @@ const Order = () => {
   };
 
   const OffToogleSideBar = () => {
-    dispatch(ToggleSideBarTrueFalse(false));
-  };
+    dispatch(ToggleSideBarTrueFalse(false))
+  }
 
   const GoOrderPageFun = () => {
     if (PermissionData()?.CREATE_ORDER == "CREATE_ORDER") {
-      navigate("/admin/order/User");
-      window.location.reload(true);
-    } else {
+      navigate("/admin/order/User")
+      window.location.reload(true)
+    }
+    else {
     }
     // PermissionData()?.CREATE_ORDER == "CREATE_ORDER" ? navigate("/admin/order/User") : ""
-  };
+  }
 
   const OutForDevliveryActionFun = (e, item) => {
     // e.target.value = e
-    setReasonActionValue(e.target.value);
-    setReasonActionRowData(item);
-    if (e.target.value !== "" && e.target.value !== "null") {
+    setReasonActionValue(e.target.value)
+    setReasonActionRowData(item)
+    if (e.target.value !== "" && e.target.value !== "null"
+    ) {
       if (e.target.value == "DELIVERED") {
         // setOtpActionPopup(true)
         // setLoadSpiner((o) => !o);
         // // toast.success("OTP send Successfully.. Please Check Your Mail.")
         let payload = {
-          track_update_type: "DELIVERED",
-          product_order_id: item.product_order_id,
-        };
-        dispatch(PatchTrackDetails(payload));
-      } else {
-        setReasonActionPopup(true);
+          "track_update_type": "DELIVERED",
+          "product_order_id": item.product_order_id,
+        }
+        dispatch(PatchTrackDetails(payload))
+      }
+      else if (e.target.value == "delivered") {
+        setReasonActionPopup(false)
+      }
+      else if (e.target.value == "intransit") {
+        setReasonActionPopup(false)
+      }
+      else {
+        setReasonActionPopup(true)
       }
       // dispatch(PostTrackingOtp(otpPayload))
-    } else {
-      setReasonActionPopup(false);
+    }
+    else {
+      setReasonActionPopup(false)
       // if (e.target.value == "DELIVERED") {
       //   setOtpActionPopup(true)
       //   setLoadSpiner((o) => !o);
@@ -997,12 +1039,14 @@ const Order = () => {
       //   dispatch(PostTrackingOtp(otpPayload))
       // }
     }
-  };
+  }
   const IntransitActionFun = (e, item) => {
-    setReasonActionValue(e.target.value);
-    setReasonActionRowData(item);
-    if (e.target.value !== "" && e.target.value !== "null") {
+    setReasonActionValue(e.target.value)
+    setReasonActionRowData(item)
+    if (e.target.value !== "" && e.target.value !== "null"
+    ) {
       if (e.target.value == "OUT_FOR_DELIVERED") {
+
         // setOtpActionPopup(true)
         // setLoadSpiner((o) => !o);
         // // toast.success("OTP send Successfully.. Please Check Your Mail.")
@@ -1010,14 +1054,22 @@ const Order = () => {
           track_update_type: "OUT_FOR_DELIVERY",
           product_order_id: item.product_order_id,
         };
-        dispatch(PatchTrackDetails(payload));
-      } else {
-        // console.log("jzhdfjsh")
-        setReasonActionPopup(true);
+        dispatch(PatchTrackDetails(payload))
+
+      }
+      else if (e.target.value == "OFD") {
+        setReasonActionPopup(false)
+      }
+      else if (e.target.value == "rto") {
+        setReasonActionPopup(false)
+      }
+      else {
+        setReasonActionPopup(true)
       }
       // dispatch(PostTrackingOtp(otpPayload))
-    } else {
-      setReasonActionPopup(false);
+    }
+    else {
+      setReasonActionPopup(false)
       // if (e.target.value == "DELIVERED") {
       //   setOtpActionPopup(true)
       //   setLoadSpiner((o) => !o);
@@ -1028,92 +1080,97 @@ const Order = () => {
       //   dispatch(PostTrackingOtp(otpPayload))
       // }
     }
-  };
-  const ConformActionFun = (
-    e,
-    data //this data is comming from the OutForDevliveryActionFun Function
+  }
+  const ConformActionFun = (e, data //this data is comming from the OutForDevliveryActionFun Function
   ) => {
     if (reasonActionInputFieldData?.length < 2) {
-      setReasonActionInputFieldError(true);
-    } else {
-      setReasonActionInputFieldError(false);
+      setReasonActionInputFieldError(true)
+    }
+    else {
+      setReasonActionInputFieldError(false)
       if (reasonActionValue !== "DELIVERED") {
         let payload = {
-          track_update_type: reasonActionValue,
-          product_order_id: reasonActionRowData.product_order_id,
-          reason: reasonActionInputFieldData,
-        };
-        dispatch(PatchTrackDetails(payload));
-        setReasonActionValue("null");
-        setReasonActionPopup(false);
+          "track_update_type": reasonActionValue,
+          "product_order_id": reasonActionRowData.product_order_id,
+          "reason": reasonActionInputFieldData
+        }
+        dispatch(PatchTrackDetails(payload))
+        setReasonActionValue("null")
+        setLoadSpiner(true);
+        setReasonActionPopup(false)
       }
       // dispatch(PostOrderTrack(payload))
     }
-  };
+  }
 
-  const ConformOtpActionFun = (
-    e,
-    data //this data is comming from the OutForDevliveryActionFun Function
+  const ConformOtpActionFun = (e, data //this data is comming from the OutForDevliveryActionFun Function
   ) => {
     let payload = {
-      track_update_type: "DELIVERED",
-      product_order_id: reasonActionRowData.product_order_id,
-      otp_delivered: otpvalue,
-    };
-    if (otpvalue?.length == 4) {
-      dispatch(PatchTrackDetails(payload));
-      setOtpActionPopup(false);
-      setReasonActionValue("null");
+      "track_update_type": "DELIVERED",
+      "product_order_id": reasonActionRowData.product_order_id,
+      "otp_delivered": otpvalue
     }
-  };
+    if (otpvalue?.length == 4) {
+      dispatch(PatchTrackDetails(payload))
+      setOtpActionPopup(false)
+      setReasonActionValue("null")
+    }
+  }
 
   const ReasonTextFun = (e) => {
-    var newStr = e.target.value.replace(/  +/g, " ");
-    setReasonActionInputFieldData(newStr);
-  };
+    var newStr = e.target.value.replace(/  +/g, ' ');
+    setReasonActionInputFieldData(newStr)
+  }
 
   const handleChange = (otpvalue) => setOtpValue(otpvalue);
 
   useEffect(() => {
     if (PatchTrackDetailsData?.message == "Order Updated Successfully") {
-      setReasonActionPopup(false);
-      setReasonActionInputFieldData(null);
-      setSelectedReasonTrue(true);
+      setReasonActionPopup(false)
+      setReasonActionInputFieldData(null)
+      setSelectedReasonTrue(true)
     }
-    setReasonActionValue("null");
-    setSelectedReasonTrue(true);
-  }, [PatchTrackDetailsData]);
+    setReasonActionValue("null")
+    setSelectedReasonTrue(true)
+  }, [PatchTrackDetailsData])
 
   useEffect(() => {
     if (PostTrackingOtpData?.status == 200) {
       setLoadSpiner((o) => !o);
     }
     let RebookPayload = {
-      product_order_id: ReebookObjectDetails?.product_order_id,
-      is_successful: true,
-    };
+      "product_order_id": ReebookObjectDetails?.product_order_id,
+      "is_successful": true
+    }
     if (PostDebitBalanceData) {
-      if (PostDebitBalanceData.status == 200) {
+      if (PostDebitBalanceData.status == 200 && param.hash === "#cancel") {
         setPaymentMethodPopup(false);
-        dispatch(PostAdminOrderRebook(RebookPayload));
+
+        dispatch(PostAdminOrderRebook(RebookPayload))
+        //  dispatch(GetCancelOrderDetail())
         // setWalletPayPopup(false)
+        setLoadSpiner(false);
+
+      } else {
+        setLoadSpiner(false);
+
       }
     }
-  }, [PostTrackingOtpData, PostDebitBalanceData, ReebookObjectDetails]);
+  }, [PostTrackingOtpData, PostDebitBalanceData, ReebookObjectDetails])
 
   const RebookFun = (e, data) => {
-    setReebookObjectDetails(data);
-    setPaymentMethodPopup(true);
+    setReebookObjectDetails(data)
+    setPaymentMethodPopup(true)
 
     let WalletBalancePayload = {
-      company_name: data?.name,
-    };
-    dispatch(GetWalletBalance(WalletBalancePayload));
+      company_name: data?.name
+    }
+    dispatch(GetWalletBalance(WalletBalancePayload))
     // navigate("#pending");
     // setAdminOrderPendingData(GetAdminOrderPendingData);
     // dispatch(GetAdminOrderPending());
     // navigate("#pending");
-  };
+  }
 
   // useEffect(()=>{
   //   dispatch(GetAdminOrderPending());
@@ -1126,17 +1183,24 @@ const Order = () => {
       booleanValue: true,
       tabindex: "-1",
     });
-    setPaymentMethodPopup(false);
-  };
+    setPaymentMethodPopup(false)
+
+  }
+
 
   const ContinuePaymentFun = () => {
+
+    setLoadSpiner((o) => !o);
     let payLoad = {
       amount: Number(ReebookObjectDetails?.amount),
       order_id: ReebookObjectDetails?.product_order_id,
-      company_name: ReebookObjectDetails?.name,
+      company_name: ReebookObjectDetails?.name
+
     };
 
-    dispatch(PostDebitBalance(payLoad));
+    dispatch(PostDebitBalance(payLoad))
+
+
   };
 
   return (
@@ -1176,14 +1240,17 @@ const Order = () => {
                   </div>
                 </li>
                 {/* Add  order */}
-                <li onClick={(e) => GoOrderPageFun()}>
-                  <div
+                <li
+
+                  onClick={(e) =>
+                    GoOrderPageFun()
+
+
+                  }
+                >
+                  < div
                     role="button"
-                    className={`add-item d-flex align-items-center justify-content-center ${
-                      PermissionData()?.CREATE_ORDER == "CREATE_ORDER"
-                        ? " "
-                        : "permission_blur"
-                    }`}
+                    className={`add-item d-flex align-items-center justify-content-center ${PermissionData()?.CREATE_ORDER == "CREATE_ORDER" ? " " : "permission_blur"}`}
                   >
                     <svg
                       width="18"
@@ -1202,16 +1269,18 @@ const Order = () => {
                   </div>
                 </li>
 
+
                 {/*  download csv */}
+
 
                 <li>
                   {PostAdminOrderCsvFileData && downloadcsvpermission ? (
                     <>
-                      <CSVLink data={PostAdminOrderCsvFileData}>
+                      <CSVLink
+                        data={PostAdminOrderCsvFileData}
+                      >
                         <div
-                          onClick={(e) =>
-                            downloadcsvpermission == true ? CsvDownload(e) : ""
-                          }
+                          onClick={(e) => downloadcsvpermission == true ? CsvDownload(e) : ""}
                           className={`download-item d-flex align-items-center justify-content-center  `}
                         >
                           <svg
@@ -1231,61 +1300,37 @@ const Order = () => {
                         </div>
                       </CSVLink>
                     </>
-                  ) : (
-                    <div
-                      onClick={(e) =>
-                        downloadcsvpermission == true ? CsvDownload(e) : ""
-                      }
-                      className={`download-item d-flex align-items-center justify-content-center ${
-                        downloadcsvpermission ? " " : "permission_blur"
-                      }`}
+                  ) : <div
+                    onClick={(e) => downloadcsvpermission == true ? CsvDownload(e) : ""}
+                    className={`download-item d-flex align-items-center justify-content-center ${downloadcsvpermission ? " " : "permission_blur"}`}
+                  >
+                    <svg
+                      width="18"
+                      height="16"
+                      viewBox="0 0 18 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      <svg
-                        width="18"
-                        height="16"
-                        viewBox="0 0 18 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M8.72237 0.0351605C8.58526 0.0910857 8.40828 0.243903 8.33114 0.373031C8.29123 0.439823 8.2706 1.83814 8.25339 5.64346L8.22994 10.823L6.92956 9.81735C5.57272 8.76809 5.48559 8.71776 5.13628 8.78128C4.83118 8.83679 4.54874 9.16507 4.54874 9.4642C4.54874 9.52699 4.58255 9.66035 4.62391 9.76051C4.68849 9.91706 4.97098 10.1535 6.63474 11.4438C7.69933 12.2694 8.65049 12.9774 8.7484 13.017C9.14006 13.1757 9.12937 13.1821 11.3419 11.467C12.4519 10.6065 13.3946 9.85122 13.437 9.78857C13.7068 9.38932 13.4839 8.85453 12.9876 8.71035C12.6591 8.61496 12.5354 8.68616 11.1197 9.7852C10.3951 10.3477 9.79175 10.8079 9.77876 10.8079C9.76577 10.8079 9.74964 8.47687 9.74289 5.62787C9.7306 0.476333 9.73004 0.447189 9.63386 0.322334C9.58068 0.253269 9.48201 0.156832 9.41463 0.108045C9.27216 0.0049698 8.8941 -0.0348597 8.72237 0.0351605ZM0.445495 10.233C0.271799 10.3109 0.116063 10.4714 0.0500362 10.6403C0.0179606 10.7224 0 11.3591 0 12.4154C0 13.7477 0.0137399 14.1135 0.071795 14.3297C0.282491 15.1139 0.907497 15.718 1.72069 15.9233C2.12543 16.0256 15.882 16.0256 16.2867 15.9233C17.1215 15.7125 17.7883 15.0448 17.9587 14.2489C17.9929 14.0892 18.0062 13.4283 17.9974 12.3193C17.9845 10.6972 17.9802 10.6277 17.8872 10.507C17.7035 10.2685 17.5536 10.194 17.2571 10.194C16.9606 10.194 16.8107 10.2684 16.6269 10.507C16.5343 10.6272 16.5292 10.7049 16.5068 12.3538C16.4843 14.0026 16.4792 14.0804 16.3866 14.2005C16.3334 14.2695 16.2317 14.3682 16.1605 14.4197C16.031 14.5134 16.028 14.5135 9.00369 14.5135C1.97936 14.5135 1.9764 14.5134 1.84693 14.4197C1.7757 14.3682 1.67394 14.2695 1.62076 14.2005C1.52814 14.0804 1.52308 14.0026 1.50062 12.3538C1.47815 10.7049 1.47309 10.6272 1.38047 10.507C1.32729 10.438 1.22863 10.3416 1.16124 10.2928C1.00583 10.1803 0.632369 10.1491 0.445495 10.233Z"
-                          fill="black"
-                        />
-                      </svg>
-                    </div>
-                  )}
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M8.72237 0.0351605C8.58526 0.0910857 8.40828 0.243903 8.33114 0.373031C8.29123 0.439823 8.2706 1.83814 8.25339 5.64346L8.22994 10.823L6.92956 9.81735C5.57272 8.76809 5.48559 8.71776 5.13628 8.78128C4.83118 8.83679 4.54874 9.16507 4.54874 9.4642C4.54874 9.52699 4.58255 9.66035 4.62391 9.76051C4.68849 9.91706 4.97098 10.1535 6.63474 11.4438C7.69933 12.2694 8.65049 12.9774 8.7484 13.017C9.14006 13.1757 9.12937 13.1821 11.3419 11.467C12.4519 10.6065 13.3946 9.85122 13.437 9.78857C13.7068 9.38932 13.4839 8.85453 12.9876 8.71035C12.6591 8.61496 12.5354 8.68616 11.1197 9.7852C10.3951 10.3477 9.79175 10.8079 9.77876 10.8079C9.76577 10.8079 9.74964 8.47687 9.74289 5.62787C9.7306 0.476333 9.73004 0.447189 9.63386 0.322334C9.58068 0.253269 9.48201 0.156832 9.41463 0.108045C9.27216 0.0049698 8.8941 -0.0348597 8.72237 0.0351605ZM0.445495 10.233C0.271799 10.3109 0.116063 10.4714 0.0500362 10.6403C0.0179606 10.7224 0 11.3591 0 12.4154C0 13.7477 0.0137399 14.1135 0.071795 14.3297C0.282491 15.1139 0.907497 15.718 1.72069 15.9233C2.12543 16.0256 15.882 16.0256 16.2867 15.9233C17.1215 15.7125 17.7883 15.0448 17.9587 14.2489C17.9929 14.0892 18.0062 13.4283 17.9974 12.3193C17.9845 10.6972 17.9802 10.6277 17.8872 10.507C17.7035 10.2685 17.5536 10.194 17.2571 10.194C16.9606 10.194 16.8107 10.2684 16.6269 10.507C16.5343 10.6272 16.5292 10.7049 16.5068 12.3538C16.4843 14.0026 16.4792 14.0804 16.3866 14.2005C16.3334 14.2695 16.2317 14.3682 16.1605 14.4197C16.031 14.5134 16.028 14.5135 9.00369 14.5135C1.97936 14.5135 1.9764 14.5134 1.84693 14.4197C1.7757 14.3682 1.67394 14.2695 1.62076 14.2005C1.52814 14.0804 1.52308 14.0026 1.50062 12.3538C1.47815 10.7049 1.47309 10.6272 1.38047 10.507C1.32729 10.438 1.22863 10.3416 1.16124 10.2928C1.00583 10.1803 0.632369 10.1491 0.445495 10.233Z"
+                        fill="black"
+                      />
+                    </svg>
+                  </div>}
                 </li>
 
                 {/* upload csv */}
 
-                <li
-                  className={`form-control  ${
-                    PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
-                      ? " "
-                      : "permission_blur"
-                  }`}
-                >
+                <li className={`form-control  ${PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV" ? " " : "permission_blur"}`}>
                   <input
                     value={""}
                     accept=".csv"
-                    type={`${
-                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
-                        ? "file"
-                        : "text"
-                    }`}
-                    onChange={(e) =>
-                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
-                        ? SheetFile(e)
-                        : ""
-                    }
+                    type={`${PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV" ? "file" : "text"}`}
+                    onChange={(e) => PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV" ? SheetFile(e) : ""}
                     className={`custom-file-input  
-                    ${
-                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
-                        ? " "
-                        : "permission_blur"
-                    }  }`}
+                    ${PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV" ? " " : "permission_blur"}  }`}
                   />
                 </li>
               </ul>
@@ -1294,22 +1339,14 @@ const Order = () => {
             <div className="ordertab-sec">
               {/* {filter} */}
               <form>
-                <div
-                  className={`filter-part ${
-                    PermissionData()?.APPLY_ORDER_FILTER == "APPLY_ORDER_FILTER"
-                      ? " "
-                      : "permission_blur"
-                  }`}
-                >
+
+                <div className={`filter-part ${PermissionData()?.APPLY_ORDER_FILTER == "APPLY_ORDER_FILTER" ? " " : "permission_blur"}`} >
                   {tabfilteravailable !== "#pending" ? (
                     <button
-                      type="button"
                       className={`${filteractive ? "bg-warning btn" : " btn"} `}
-                      onClick={(e) =>
-                        PermissionData()?.APPLY_ORDER_FILTER ==
-                        "APPLY_ORDER_FILTER"
-                          ? setFilterShowHideBtn((o) => !o)
-                          : ""
+                      onClick={(e) => PermissionData()?.APPLY_ORDER_FILTER == "APPLY_ORDER_FILTER" ?
+                        `${setFilterShowHideBtn((o) => !o)} ${e.preventDefault()}` : e.preventDefault()
+
                       }
                     >
                       Filter
@@ -1348,17 +1385,14 @@ const Order = () => {
                   )}
 
                   <div
-                    className={`filter-body  ${
-                      filtershowhidebtn ? "BlockFilterFromOrderPage " : "d-none"
-                    } `}
+                    className={`filter-body  ${filtershowhidebtn ? "BlockFilterFromOrderPage " : "d-none"
+                      } `}
+
                   >
                     <button
-                      type="button"
-                      className={`  close-btn ${
-                        filtershowhidebtn
-                          ? "BlockFilterFromOrderPage"
-                          : "d-none"
-                      } `}
+                      type="reset"
+                      className={`  close-btn ${filtershowhidebtn ? "BlockFilterFromOrderPage" : "d-none"
+                        } `}
                       onClick={(e) => FilterShowHideBtnFun()}
                     >
                       <svg
@@ -1419,7 +1453,9 @@ const Order = () => {
                           <input
                             type="checkbox"
                             checked={codcheckBox}
-                            onChange={(e) => PaymentStatusFun("COD")}
+                            onChange={(e) => PaymentStatusFun(!PaymentStatusTrueFalse ? "COD" : "noCOD")}
+                          // onChange={(e) => PaymentStatusFun( true )}
+
                           />
                           <span className="checkmark"></span>
                         </label>
@@ -1434,11 +1470,10 @@ const Order = () => {
                         <button
                           type="button"
                           className={`btn ${pendingpartner ? "btn-active" : ""} 
-                                              ${
-                                                tabfilteravailable == "#return"
-                                                  ? "display_opacity"
-                                                  : ""
-                                              }`}
+                                              ${tabfilteravailable == "#return" || tabfilteravailable == "#rto_delivered" || tabfilteravailable == "#delivered" || tabfilteravailable == "#cancel"
+                              ? "display_opacity"
+                              : ""
+                            }`}
                           onClick={(e) =>
                             codcheckBox && StatusFun(e, "PendingPartner")
                           }
@@ -1449,13 +1484,12 @@ const Order = () => {
                         <button
                           type="button"
                           className={`btn ${recievedpartner ? "btn-active" : ""}
-                                              ${
-                                                tabfilteravailable ==
-                                                  "#booked" ||
-                                                tabfilteravailable == "#transit"
-                                                  ? "display_opacity"
-                                                  : ""
-                                              }`}
+                                              ${tabfilteravailable ==
+                              "#booked" ||
+                              tabfilteravailable == "#transit" || tabfilteravailable == "#OUT_FOR_DELIVERY" || tabfilteravailable == "#return" || tabfilteravailable == "#rto_delivered" || tabfilteravailable == "#cancel"
+                              ? "display_opacity"
+                              : ""
+                            }`}
                           onClick={(e) =>
                             codcheckBox && StatusFun(e, "RecievedPartner")
                           }
@@ -1466,13 +1500,12 @@ const Order = () => {
                         <button
                           type="button"
                           className={`btn ${paidcustomer ? "btn-active" : ""} 
-                                              ${
-                                                tabfilteravailable ==
-                                                  "#booked" ||
-                                                tabfilteravailable == "#transit"
-                                                  ? "display_opacity"
-                                                  : ""
-                                              }`}
+                                              ${tabfilteravailable ==
+                              "#booked" ||
+                              tabfilteravailable == "#transit" || tabfilteravailable == "#OUT_FOR_DELIVERY" || tabfilteravailable == "#return" || tabfilteravailable == "#rto_delivered" || tabfilteravailable == "#delivered" || tabfilteravailable == "#cancel"
+                              ? "display_opacity"
+                              : ""
+                            }`}
                           onClick={(e) =>
                             codcheckBox && StatusFun(e, "PaidCustomer")
                           }
@@ -1483,15 +1516,31 @@ const Order = () => {
                       </div>
                     </div>
 
-                    <h5 className="mp-3">Shipping Partner</h5>
-                    <div className="express-box">
+                    {/* <h5 className="mp-3">Shipping Partner</h5>
+                  <div className="express-box">
+                    <select
+                      className="form-select"
+                      onChange={(e) => setShippingPartnerValue(e.target.value)}
+                    >
+                      <option value="" selected={shippingpartnervalue==""?"selected":""} >
+                        Select Shipping Partner...
+                      </option>
+                      <option value="DTDC">DTDC</option>
+                      <option value="ANJANI">Anjani</option>
+                      <option value="DHL">DHL</option>
+                      <option value="SKYKING">Skyking</option>
+                      <option value="XPRESSBEES">Xpressbees</option>
+                      <option value="DELHIVERY">Delhivery</option>
+                      <option value="NITRO">Nitro</option>
+                    </select>
+                  </div> */}
+                    {param.hash !== "#cancel" ? <h5 className="mp-3">Shipping Partner</h5> : ""}
+                    {param.hash !== "#cancel" ? <div className="express-box">
                       <select
                         className="form-select"
-                        onChange={(e) =>
-                          setShippingPartnerValue(e.target.value)
-                        }
+                        onChange={(e) => setShippingPartnerValue(e.target.value)}
                       >
-                        <option value="" selected>
+                        <option value="" selected={shippingpartnervalue == "" ? "selected" : ""} >
                           Select Shipping Partner...
                         </option>
                         <option value="DTDC">DTDC</option>
@@ -1502,7 +1551,8 @@ const Order = () => {
                         <option value="DELHIVERY">Delhivery</option>
                         <option value="NITRO">Nitro</option>
                       </select>
-                    </div>
+                    </div> : ""}
+
                     <h5 className="pt-4 pb-3"> Customer Type</h5>
                     <div className="row">
                       <div className="col-sm-4">
@@ -1543,10 +1593,11 @@ const Order = () => {
                       <div className="row">
                         <div className="col-6">
                           <input
-                            type="reset"
-                            value="Reset"
+
+                            type="reset" value="Reset"
                             className="btn btn-cancel"
-                            onClick={(e) => FilterShowHideBtnFun()}
+
+                            onClick={(e) => { FilterShowHideBtnFun() }}
                           />
                           {/* Cancel */}
                           {/* </button> */}
@@ -1568,25 +1619,22 @@ const Order = () => {
 
               {/* {path} */}
 
-              <ul className="nav nav-tabs" id="myTab" role="tablist">
+              <ul className="nav nav-tabs orderTab " id="myTab" role="tablist">
                 <li className="nav-item" role="presentation">
                   <button
-                    className={`nav-link   ${
-                      pandingtab ? pandingtab?.activeValue : ""
-                    }`}
+                    className={`nav-link   ${pandingtab ? pandingtab?.activeValue : ""}`}
                     id="pending-tab"
                     data-bs-toggle="tab"
                     data-bs-target="#pending-tab-pane"
                     type="button"
                     role="tab"
                     aria-controls="pending-tab-pane"
-                    aria-selected={`${
-                      pandingtab ? pandingtab?.booleanValue : "false"
-                    }`}
+                    aria-selected={`${pandingtab ? pandingtab?.booleanValue : "false"}`}
                     onClick={(e) => {
                       navigate("#pending");
-                      window.location.reload(false);
+                      window.location.reload(false)
                       setFilterShowHideBtn(false);
+                      setShippingPartnerValue("")
                     }}
                   >
                     Pending
@@ -1594,38 +1642,39 @@ const Order = () => {
                 </li>
                 <li className="nav-item" role="presentation">
                   <button
-                    className={`nav-link ${
-                      booktab ? booktab?.activeValue : ""
-                    }`}
+                    className={`nav-link ${booktab ? booktab?.activeValue : ""}`}
                     id="booked-tab"
                     data-bs-toggle="tab"
                     data-bs-target="#booked-tab-pane"
                     type="button"
                     role="tab"
                     aria-controls="booked-tab-pane"
-                    aria-selected={`${
-                      booktab ? booktab?.booleanValue : "false"
-                    }`}
-                    onClick={(e) => navigate("#booked")}
+                    aria-selected={`${booktab ? booktab?.booleanValue : "false"
+                      }`}
+                    onClick={(e) => {
+                      navigate("#booked")
+                      setShippingPartnerValue("")
+                    }}
                   >
                     Booked
                   </button>
                 </li>
                 <li className="nav-item" role="presentation">
                   <button
-                    className={`nav-link ${
-                      transittab ? transittab?.activeValue : ""
-                    }`}
+                    className={`nav-link ${transittab ? transittab?.activeValue : ""
+                      }`}
                     id="transit-tab"
                     data-bs-toggle="tab"
                     data-bs-target="#transit-tab-pane"
                     type="button"
                     role="tab"
                     aria-controls="transit-tab-pane"
-                    aria-selected={`${
-                      transittab ? transittab.booleanValue : "false"
-                    }`}
-                    onClick={(e) => navigate("#transit")}
+                    aria-selected={`${transittab ? transittab.booleanValue : "false"
+                      }`}
+                    onClick={(e) => {
+                      navigate("#transit")
+                      setShippingPartnerValue("")
+                    }}
                   >
                     In-Transit
                   </button>
@@ -1633,21 +1682,20 @@ const Order = () => {
 
                 <li className="nav-item" role="presentation">
                   <button
-                    className={`nav-link ${
-                      outfordeliverytab ? outfordeliverytab?.activeValue : ""
-                    }`}
+                    className={`nav-link ${outfordeliverytab ? outfordeliverytab?.activeValue : ""
+                      }`}
                     id="outfordelivery-tab"
                     data-bs-toggle="tab"
                     data-bs-target="#outfordelivery-tab-pane"
                     type="button"
                     role="tab"
                     aria-controls="outfordelivery-tab-pane"
-                    aria-selected={`${
-                      outfordeliverytab
-                        ? outfordeliverytab?.booleanValue
-                        : "false"
-                    }`}
-                    onClick={(e) => navigate("#OUT_FOR_DELIVERY")}
+                    aria-selected={`${outfordeliverytab ? outfordeliverytab?.booleanValue : "false"
+                      }`}
+                    onClick={(e) => {
+                      navigate("#OUT_FOR_DELIVERY")
+                      setShippingPartnerValue("")
+                    }}
                   >
                     Out-For-Delivery
                   </button>
@@ -1655,81 +1703,88 @@ const Order = () => {
 
                 <li className="nav-item" role="presentation">
                   <button
-                    className={`nav-link ${
-                      deliveredtab ? deliveredtab?.activeValue : ""
-                    }`}
+                    className={`nav-link ${deliveredtab ? deliveredtab?.activeValue : ""
+                      }`}
                     id="delivered-tab"
                     data-bs-toggle="tab"
                     data-bs-target="#delivered-tab-pane"
                     type="button"
                     role="tab"
                     aria-controls="delivered-tab-pane"
-                    aria-selected={`${
-                      deliveredtab ? deliveredtab?.booleanValue : "false"
-                    }`}
-                    onClick={(e) => navigate("#delivered")}
+                    aria-selected={`${deliveredtab ? deliveredtab?.booleanValue : "false"
+                      }`}
+                    onClick={(e) => {
+                      navigate("#delivered")
+                      setShippingPartnerValue("")
+                    }}
                   >
                     Delivered
                   </button>
                 </li>
 
+
                 <li className="nav-item" role="presentation">
                   <button
-                    className={`nav-link ${
-                      returntab ? returntab?.activeValue : ""
-                    }`}
+                    className={`nav-link ${returntab ? returntab?.activeValue : ""
+                      }`}
                     id="returns-tab"
                     data-bs-toggle="tab"
                     data-bs-target="#returns-tab-pane"
                     type="button"
                     role="tab"
                     aria-controls="returns-tab-pane"
-                    aria-selected={`${
-                      returntab ? returntab?.booleanValue : "false"
-                    }`}
-                    onClick={(e) => navigate("#return")}
+                    aria-selected={`${returntab ? returntab?.booleanValue : "false"
+                      }`}
+                    onClick={(e) => {
+                      navigate("#return")
+                      setShippingPartnerValue("")
+                    }}
                   >
                     RTO
                   </button>
                 </li>
 
+
                 <li className="nav-item" role="presentation">
                   <button
-                    className={`nav-link ${
-                      returndeliveredtab ? returndeliveredtab?.activeValue : ""
-                    }`}
+                    className={`nav-link ${returndeliveredtab ? returndeliveredtab?.activeValue : ""
+                      }`}
                     id="rto-delivered-tab"
                     data-bs-toggle="tab"
                     data-bs-target="#rto-delivered-tab-pane"
                     type="button"
                     role="tab"
                     aria-controls="rto-delivered-tab"
-                    aria-selected={`${
-                      returndeliveredtab
-                        ? returndeliveredtab?.booleanValue
-                        : "false"
-                    }`}
-                    onClick={(e) => navigate("#RTO_DELIVERED")}
+                    aria-selected={`${returndeliveredtab ? returndeliveredtab?.booleanValue : "false"
+                      }`}
+
+                    onClick={(e) => {
+                      navigate("#rto_delivered")
+                      setShippingPartnerValue("")
+                    }}
                   >
                     RTO Delivered
                   </button>
                 </li>
 
+
+
                 <li className="nav-item" role="presentation">
                   <button
-                    className={`nav-link ${
-                      canceltab ? canceltab?.activeValue : ""
-                    }`}
+                    className={`nav-link ${canceltab ? canceltab?.activeValue : ""
+                      }`}
                     id="cancel-tab"
                     data-bs-toggle="tab"
                     data-bs-target="#cancel-tab-pane"
                     type="button"
                     role="tab"
                     aria-controls="cancel-tab-pane"
-                    aria-selected={`${
-                      canceltab ? canceltab?.booleanValue : "false"
-                    }`}
-                    onClick={(e) => navigate("#cancel")}
+                    aria-selected={`${canceltab ? canceltab?.booleanValue : "false"
+                      }`}
+                    onClick={(e) => {
+                      navigate("#cancel")
+                      setShippingPartnerValue("")
+                    }}
                   >
                     Cancelled Orders
                   </button>
@@ -1740,9 +1795,8 @@ const Order = () => {
 
               <div className="tab-content" id="myTabContent">
                 <div
-                  className={`tab-pane pending-tabpane fade   ${
-                    pandingtab ? "show active" : "-1"
-                  }`}
+                  className={`tab-pane pending-tabpane fade   ${pandingtab ? "show active" : "-1"
+                    }`}
                   id="pending-tab-pane"
                   role="tabpanel"
                   aria-labelledby="pending-tab"
@@ -1758,146 +1812,133 @@ const Order = () => {
                       <th>Action</th>
                     </tr>
 
-                    {PermissionData()?.VIEW_ORDER_PENDING ==
-                    "VIEW_ORDER_PENDING"
-                      ? adminorderpendingdata &&
-                        adminorderpendingdata?.map((item, id) => {
-                          return (
-                            <tr>
-                              <td>{item.date}</td>
+                    {PermissionData()?.VIEW_ORDER_PENDING == "VIEW_ORDER_PENDING" ?
+                      adminorderpendingdata &&
+                      adminorderpendingdata?.map((item, id) => {
 
-                              <td
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                <b> {item.product_order_id}</b>
-                              </td>
+                        return (
+                          <tr>
+                            <td>{item.date}</td>
 
-                              {/* <td>{item.product_order_id}</td> */}
-                              <td>{item.name ? item.name : "B2C"}</td>
-                              <td>{item.method}</td>
-                              <td>{item.product_type}</td>
-                              <td>
-                                {item.payment_status == "SUCCESSFULL" ? (
-                                  <div className="action-btngroup">
-                                    <button
-                                      type="button"
-                                      onClick={(e) =>
-                                        DeletePending(e, item.product_order_id)
-                                      }
+                            <td
+                              onClick={(e) =>
+                                IntransitFun(e, item.product_order_id)
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <b> {item.product_order_id}</b>
+                            </td>
+
+                            {/* <td>{item.product_order_id}</td> */}
+                            <td>{item.name ? item.name : "B2C"}</td>
+                            <td>{item.method}</td>
+                            <td>{item.product_type}</td>
+                            <td>
+                              {item.payment_status == "SUCCESSFULL" ? (
+                                <div className="action-btngroup">
+                                  <button
+                                    type="button"
+                                    className={`${PermissionData()?.ALLOW_CANCEL_ACTION == "ALLOW_CANCEL_ACTION" ? " " : "permission_blur"}`}
+
+                                    onClick={(e) =>
+                                      PermissionData()?.ALLOW_CANCEL_ACTION == "ALLOW_CANCEL_ACTION" ? DeletePending(e, item.product_order_id) : ""
+                                    }
+                                  >
+                                    <svg
+                                      width="25"
+                                      height="25"
+                                      viewBox="0 0 25 25"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
                                     >
-                                      <svg
-                                        width="25"
-                                        height="25"
-                                        viewBox="0 0 25 25"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          clipRule="evenodd"
-                                          d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM6.80954 6.98509L10.4481 12.5137L6.6175 18.2849H10.1146L12.4999 14.4138L14.875 18.2849H18.3822L14.5314 12.5137L18.2104 6.98509H14.7133L12.4999 10.5832L10.3066 6.98509H6.80954Z"
-                                          fill="#F14336"
-                                        />
-                                      </svg>
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className={`${
-                                        PermissionData()
-                                          ?.ALLOW_PENDING_ACTION_APPROVE ==
-                                        "ALLOW_PENDING_ACTION_APPROVE"
-                                          ? " "
-                                          : "permission_blur"
-                                      }`}
-                                      onClick={(e) =>
-                                        PermissionData()
-                                          ?.ALLOW_PENDING_ACTION_APPROVE ==
-                                        "ALLOW_PENDING_ACTION_APPROVE"
-                                          ? ActionCorrectFun(e, item)
-                                          : ""
-                                      }
+                                      <path
+                                        fillRule="evenodd"
+                                        clipRule="evenodd"
+                                        d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM6.80954 6.98509L10.4481 12.5137L6.6175 18.2849H10.1146L12.4999 14.4138L14.875 18.2849H18.3822L14.5314 12.5137L18.2104 6.98509H14.7133L12.4999 10.5832L10.3066 6.98509H6.80954Z"
+                                        fill="#F14336"
+                                      />
+                                    </svg>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={`${PermissionData()?.ALLOW_PENDING_ACTION_APPROVE == "ALLOW_PENDING_ACTION_APPROVE" ? " " : "permission_blur"}`}
+                                    onClick={(e) => PermissionData()?.ALLOW_PENDING_ACTION_APPROVE == "ALLOW_PENDING_ACTION_APPROVE" ? ActionCorrectFun(e, item) : ""}
+                                  >
+                                    <svg
+                                      width="25"
+                                      height="25"
+                                      viewBox="0 0 25 25"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
                                     >
-                                      <svg
-                                        width="25"
-                                        height="25"
-                                        viewBox="0 0 25 25"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          clipRule="evenodd"
-                                          d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM18.7793 10.1941C19.4388 9.48749 19.4006 8.38011 18.6941 7.72065C17.9875 7.06119 16.8801 7.09938 16.2207 7.80594L10.4566 13.9817L8.23744 11.7626C7.55402 11.0791 6.44598 11.0791 5.76256 11.7626C5.07915 12.446 5.07915 13.554 5.76256 14.2374L9.26256 17.7374C9.59815 18.073 10.0556 18.2579 10.5302 18.2497C11.0047 18.2416 11.4555 18.041 11.7793 17.6941L18.7793 10.1941Z"
-                                          fill="#4BAE4F"
-                                        />
-                                      </svg>
-                                    </button>
-                                  </div>
-                                ) : (
-                                  <div className="action-btngroup">
-                                    <button
-                                      type="button"
-                                      onClick={(e) =>
-                                        DeletePending(e, item.product_order_id)
-                                      }
+                                      <path
+                                        fillRule="evenodd"
+                                        clipRule="evenodd"
+                                        d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM18.7793 10.1941C19.4388 9.48749 19.4006 8.38011 18.6941 7.72065C17.9875 7.06119 16.8801 7.09938 16.2207 7.80594L10.4566 13.9817L8.23744 11.7626C7.55402 11.0791 6.44598 11.0791 5.76256 11.7626C5.07915 12.446 5.07915 13.554 5.76256 14.2374L9.26256 17.7374C9.59815 18.073 10.0556 18.2579 10.5302 18.2497C11.0047 18.2416 11.4555 18.041 11.7793 17.6941L18.7793 10.1941Z"
+                                        fill="#4BAE4F"
+                                      />
+                                    </svg>
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="action-btngroup">
+                                  <button
+                                    type="button"
+                                    className={`${PermissionData()?.ALLOW_CANCEL_ACTION == "ALLOW_CANCEL_ACTION" ? " " : "permission_blur"}`}
+
+                                    onClick={(e) =>
+                                      PermissionData()?.ALLOW_CANCEL_ACTION == "ALLOW_CANCEL_ACTION" ? DeletePending(e, item.product_order_id) : ""
+                                    }
+
+                                  >
+                                    <svg
+                                      width="25"
+                                      height="25"
+                                      viewBox="0 0 25 25"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
                                     >
-                                      <svg
-                                        width="25"
-                                        height="25"
-                                        viewBox="0 0 25 25"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          clipRule="evenodd"
-                                          d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM6.80954 6.98509L10.4481 12.5137L6.6175 18.2849H10.1146L12.4999 14.4138L14.875 18.2849H18.3822L14.5314 12.5137L18.2104 6.98509H14.7133L12.4999 10.5832L10.3066 6.98509H6.80954Z"
-                                          fill="#F14336"
-                                        />
-                                      </svg>
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className={`btnnn ${
-                                        pendingconfirmbutton ? "btn-active" : ""
+                                      <path
+                                        fillRule="evenodd"
+                                        clipRule="evenodd"
+                                        d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM6.80954 6.98509L10.4481 12.5137L6.6175 18.2849H10.1146L12.4999 14.4138L14.875 18.2849H18.3822L14.5314 12.5137L18.2104 6.98509H14.7133L12.4999 10.5832L10.3066 6.98509H6.80954Z"
+                                        fill="#F14336"
+                                      />
+                                    </svg>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={`btnnn ${pendingconfirmbutton ? "btn-active" : ""
                                       }
-                                    ${
-                                      item.payment_status == "SUCCESSFUL"
+                                    ${item.payment_status == "SUCCESSFUL"
                                         ? ""
                                         : "display_opacity"
-                                    }
-                                      ${
-                                        PermissionData()
-                                          ?.ALLOW_PENDING_ACTION_APPROVE ==
-                                        "ALLOW_PENDING_ACTION_APPROVE"
-                                          ? " "
-                                          : "permission_blur"
-                                      }`}
+                                      }
+                                      ${PermissionData()?.ALLOW_PENDING_ACTION_APPROVE == "ALLOW_PENDING_ACTION_APPROVE" ? " " : "permission_blur"}`}
+
+
+                                  >
+                                    <svg
+                                      width="25"
+                                      height="25"
+                                      viewBox="0 0 25 25"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
                                     >
-                                      <svg
-                                        width="25"
-                                        height="25"
-                                        viewBox="0 0 25 25"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          clipRule="evenodd"
-                                          d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM18.7793 10.1941C19.4388 9.48749 19.4006 8.38011 18.6941 7.72065C17.9875 7.06119 16.8801 7.09938 16.2207 7.80594L10.4566 13.9817L8.23744 11.7626C7.55402 11.0791 6.44598 11.0791 5.76256 11.7626C5.07915 12.446 5.07915 13.554 5.76256 14.2374L9.26256 17.7374C9.59815 18.073 10.0556 18.2579 10.5302 18.2497C11.0047 18.2416 11.4555 18.041 11.7793 17.6941L18.7793 10.1941Z"
-                                          fill="#4BAE4F"
-                                        />
-                                      </svg>
-                                    </button>
-                                  </div>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })
+                                      <path
+                                        fillRule="evenodd"
+                                        clipRule="evenodd"
+                                        d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM18.7793 10.1941C19.4388 9.48749 19.4006 8.38011 18.6941 7.72065C17.9875 7.06119 16.8801 7.09938 16.2207 7.80594L10.4566 13.9817L8.23744 11.7626C7.55402 11.0791 6.44598 11.0791 5.76256 11.7626C5.07915 12.446 5.07915 13.554 5.76256 14.2374L9.26256 17.7374C9.59815 18.073 10.0556 18.2579 10.5302 18.2497C11.0047 18.2416 11.4555 18.041 11.7793 17.6941L18.7793 10.1941Z"
+                                        fill="#4BAE4F"
+                                      />
+                                    </svg>
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
                       : ""}
                   </table>
                 </div>
@@ -1917,12 +1958,13 @@ const Order = () => {
                       <th>Name</th>
                       <th style={{ textAlign: "center" }}>Package Detail</th>
                       <th>Method</th>
-                      <th>Pickup Address</th>
-                      <th>Status</th>
+                      <th style={{ width: "35%" }}>Pickup Address</th>
+                      {/* <th>Status</th> */}
                       <th>Action</th>
                     </tr>
-                    {PermissionData()?.VIEW_ORDER_BOOKED == "VIEW_ORDER_BOOKED"
-                      ? adminorderbookeddata &&
+                    {
+                      PermissionData()?.VIEW_ORDER_BOOKED == "VIEW_ORDER_BOOKED" ?
+                        adminorderbookeddata &&
                         adminorderbookeddata?.map((item, id) => {
                           return (
                             <tr>
@@ -1935,29 +1977,21 @@ const Order = () => {
                                 <b> {item.product_order_id}</b>
                               </td>
                               <td>{item.name ? item.name : "B2C"}</td>
-                              <td style={{ textAlign: "center" }}>
-                                {item.package_details}
-                              </td>
+                              <td style={{ textAlign: "center" }}>{item.package_details}</td>
                               <td>{item.method}</td>
                               <td>{`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}</td>
-                              <td>{item.cod_status}</td>
+                              {/* <td>{item.cod_status}</td> */}
                               <td>
                                 <div className="action-btngroup">
                                   <button
                                     type="button"
-                                    className={`btn btn-ship ${
-                                      PermissionData()?.ALLOW_BOOKED_ACTION ==
-                                      "ALLOW_BOOKED_ACTION"
-                                        ? " "
-                                        : "permission_blur"
-                                    }`}
+                                    className={`btn btn-ship ${PermissionData()?.ALLOW_BOOKED_ACTION == "ALLOW_BOOKED_ACTION" ? " " : "permission_blur"}`}
                                     onClick={(e) =>
-                                      PermissionData()?.ALLOW_BOOKED_ACTION ==
-                                      "ALLOW_BOOKED_ACTION"
-                                        ? TransitTrack(e, item.product_order_id)
-                                        : ""
+                                      PermissionData()?.ALLOW_BOOKED_ACTION == "ALLOW_BOOKED_ACTION" ?
+                                        TransitTrack(e, item.product_order_id) : ""
                                     }
                                   >
+
                                     In-Transit
                                   </button>
                                   {/* <button type="button" className="btn order-btn">
@@ -1985,16 +2019,15 @@ const Order = () => {
                             </tr>
                           );
                         })
-                      : ""}
+                        : ""}
                   </table>
                 </div>
 
                 {/* in-transit start */}
 
                 <div
-                  className={`tab-pane fade   ${
-                    transittab ? "show active" : ""
-                  }`}
+                  className={`tab-pane fade   ${transittab ? "show active" : ""
+                    }`}
                   id="transit-tab-pane"
                   role="tabpanel"
                   aria-labelledby="transit-tab"
@@ -2010,9 +2043,10 @@ const Order = () => {
                       <th>Action</th>
                     </tr>
 
-                    {PermissionData()?.VIEW_ORDER_IN_TRANSIT ==
-                    "VIEW_ORDER_IN_TRANSIT"
-                      ? adminorderintransitDate &&
+                    {
+                      PermissionData()?.VIEW_ORDER_IN_TRANSIT == "VIEW_ORDER_IN_TRANSIT" ?
+
+                        adminorderintransitDate &&
                         adminorderintransitDate.map((item, id) => {
                           return (
                             <tr>
@@ -2027,76 +2061,63 @@ const Order = () => {
                               <td> {item.name ? item.name : "B2C"}</td>
                               <td> {item.product_type}</td>
                               <td> {item.method}</td>
-                              {B2BPartner == "false" ? (
-                                <td> {item.delivery_partner}</td>
-                              ) : (
-                                ""
-                              )}
+                              {B2BPartner == "false" ? <td> {item.delivery_partner}</td> : ""}
                               <td>
+
+
+
                                 <div className="action-btngroup">
-                                  <select
+                                  <button
                                     type="button"
-                                    className="btn order-btn"
-                                    onChange={(e) =>
-                                      IntransitActionFun(e, item)
+                                    className={`btn btn-ship ${PermissionData()?.ALLOW_OUT_FOR_DELIVERY_ACTION == "ALLOW_OUT_FOR_DELIVERY_ACTION" ? " " : "permission_blur"}`}
+                                    onClick={(e) =>
+                                      PermissionData()?.ALLOW_OUT_FOR_DELIVERY_ACTION == "ALLOW_OUT_FOR_DELIVERY_ACTION" ?
+                                        DeliveredTrack(e, item.product_order_id) : ""
                                     }
+                                  > Out For Delivery
+                                  </button>
+                                  {/* <select type="button" className="btn order-btn"
+                                    onChange={(e) => IntransitActionFun(e, item)}
                                   >
-                                    <option
-                                      selected={reasonActionValue == "null"}
-                                      value="null"
-                                    >
-                                      Select...
+
+                                    <option selected={reasonActionValue == "null"} value="null"  >
+                                      Select
                                     </option>
-                                    <option value="OUT_FOR_DELIVERED">
+                                  
+
+                                    {PermissionData()?.ALLOW_OUT_FOR_DELIVERY_ACTION == "ALLOW_OUT_FOR_DELIVERY_ACTION" ? <option value="OUT_FOR_DELIVERED">
                                       Out For Delivery
                                     </option>
-                                    <option value="RTO">Return</option>
+                                      : <option disabled className={`btn ${PermissionData()?.ALLOW_OUT_FOR_DELIVERY_ACTION == "ALLOW_OUT_FOR_DELIVERY_ACTION" ? "permission_blur" : ""}`} 
+                                      value="OFD">Out For Delivery
+                                      </option>
+                                    }
+                                
+                                    {PermissionData()?.ALLOW_RETURN_ACTION == "ALLOW_RETURN_ACTION" ? <option value="RTO">
+                                      RTO
+                                    </option>
+                                      : <option disabled className={`btn ${PermissionData()?.ALLOW_RETURN_ACTION == "ALLOW_RETURN_ACTION" ? "permission_blur" : ""}`} 
+                                      value="rto">RTO
+                                      </option>
+                                    }
+                                  
+
                                   </select>
-                                  {/* <button type="button" className={`btn btn-ship  ${PermissionData()?.ALLOW_IN_TRANSIT_ACTION == "ALLOW_IN_TRANSIT_ACTION" ? " " : "permission_blur"}`}
-                                    onClick={((e) =>
-                                      PermissionData()?.ALLOW_IN_TRANSIT_ACTION == "ALLOW_IN_TRANSIT_ACTION" ?
-                                        DeliveredTrack(e, item.product_order_id) : "")}
-                                  // style={{whiteSpace: "nowrap"}}
-                                  >
-                                    {" "}
-                                    Out For Delivery
-
-                                  </button> */}
-                                  {/* <button type="button" className="btn order-btn">
-                                    <img
-                                      src="/images/icon32.png"
-                                      alt="img"
-                                      onClick={(e) => EditCancelFun(e, item)}
-                                    />
-
-                                    {editcancelobjectdata ==
-                                      item.product_order_id && (
-                                        <ul className="dropdown">
-                                          <li
-                                            onClick={(e) =>
-                                              CancelOrder(e, item.product_order_id)
-                                            }
-                                          >
-                                            <a href="#">Cancel Order</a>
-                                          </li>
-                                        </ul>
-                                      )}
-                                  </button> */}
+                             */}
                                 </div>
                               </td>
                             </tr>
                           );
                         })
-                      : ""}
+                        : ""}
                   </table>
                 </div>
 
                 {/* {Delivered} */}
 
                 <div
-                  className={`tab-pane fade ${
-                    deliveredtab ? "show active" : ""
-                  }`}
+                  className={`tab-pane fade ${deliveredtab ? "show active" : ""
+                    }`}
                   id="delivered-tab-pane"
                   role="tabpanel"
                   aria-labelledby="delivered-tab"
@@ -2112,31 +2133,26 @@ const Order = () => {
                       {/* <th>Action</th> */}
                     </tr>
 
-                    {PermissionData()?.VIEW_ORDER_DELIVERED ==
-                    "VIEW_ORDER_DELIVERED"
-                      ? adminorderdeliveredData &&
-                        adminorderdeliveredData.map((item, id) => {
-                          return (
-                            <tr>
-                              <td
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                <b> {item.product_order_id}</b>
-                              </td>
-                              <td> {item.name ? item.name : "B2C"}</td>
-                              <td> {item.product_type}</td>
-                              <td> {item.method}</td>
-                              {B2BPartner == "false" ? (
-                                <td> {item.delivery_partner}</td>
-                              ) : (
-                                ""
-                              )}
-                              <td>
-                                <div className="action-btngroup">
-                                  {/* <select
+                    {PermissionData()?.VIEW_ORDER_DELIVERED == "VIEW_ORDER_DELIVERED" ?
+                      adminorderdeliveredData &&
+                      adminorderdeliveredData.map((item, id) => {
+                        return (
+                          <tr>
+                            <td
+                              onClick={(e) =>
+                                IntransitFun(e, item.product_order_id)
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <b> {item.product_order_id}</b>
+                            </td>
+                            <td> {item.name ? item.name : "B2C"}</td>
+                            <td> {item.product_type}</td>
+                            <td> {item.method}</td>
+                            {B2BPartner == "false" ? <td> {item.delivery_partner}</td> : ""}
+                            {/* <td>
+                              <div className="action-btngroup"> */}
+                            {/* <select
                                   type="button"
                                   className={`  btn order-btn ${PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? " " : "permission_blur"}`}
                                   onChange={((e) => PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION"
@@ -2149,7 +2165,7 @@ const Order = () => {
                                     Return
                                   </option>
                                 </select> */}
-                                  {/* <button type="button"  
+                            {/* <button type="button"  
 
                                     className={`btn btn-ship ${PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? " " : "permission_blur"}`}
                                    onClick={((e) => PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION"
@@ -2158,7 +2174,7 @@ const Order = () => {
                                  Return{" "}
                                 </button> */}
 
-                                  {/* <button type="button" className="btn order-btn">
+                            {/* <button type="button" className="btn order-btn">
                                   <img
                                     src="/images/icon32.png"
                                     alt="img"
@@ -2178,11 +2194,11 @@ const Order = () => {
                                       </ul>
                                     )}
                                 </button> */}
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })
+                            {/* </div>
+                            </td> */}
+                          </tr>
+                        );
+                      })
                       : ""}
                   </table>
                 </div>
@@ -2190,9 +2206,8 @@ const Order = () => {
                 {/* {OUt For Deliviry} */}
 
                 <div
-                  className={`tab-pane fade ${
-                    outfordeliverytab ? "show active" : ""
-                  }`}
+                  className={`tab-pane fade ${outfordeliverytab ? "show active" : ""
+                    }`}
                   id="outfordelivery-tab-pane"
                   role="tabpanel"
                   aria-labelledby="outfordelivery-tab"
@@ -2208,59 +2223,66 @@ const Order = () => {
                       <th>Action</th>
                     </tr>
 
-                    {PermissionData()?.VIEW_ORDER_DELIVERED ==
-                    "VIEW_ORDER_DELIVERED"
-                      ? adminoutfordeliveryData &&
-                        adminoutfordeliveryData.map((item, id) => {
-                          return (
-                            <tr>
-                              <td
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                <b> {item.product_order_id}</b>
-                              </td>
-                              <td> {item.name ? item.name : "B2C"}</td>
-                              <td> {item.product_type}</td>
-                              <td> {item.method}</td>
-                              {B2BPartner == "false" ? (
-                                <td> {item.delivery_partner}</td>
-                              ) : (
-                                ""
-                              )}
-                              <td>
-                                <div className="action-btngroup">
-                                  <select
-                                    type="button"
-                                    className="btn order-btn"
-                                    onChange={(e) =>
-                                      OutForDevliveryActionFun(e, item)
-                                    }
-                                  >
-                                    <option
-                                      selected={reasonActionValue == "null"}
-                                      value="null"
-                                    >
-                                      Select...
-                                    </option>
-                                    {/* <option value="RTO">
-                                    Return
-                                  </option> */}
-                                    <option value="DELIVERED">delivered</option>
-                                    <option value="IN_TRANSIT">
-                                      In-transit
-                                    </option>
-                                  </select>
+                    {PermissionData()?.VIEW_ORDER_DELIVERED == "VIEW_ORDER_DELIVERED" ?
+                      adminoutfordeliveryData &&
+                      adminoutfordeliveryData.map((item, id) => {
+                        return (
+                          <tr>
+                            <td
+                              onClick={(e) =>
+                                IntransitFun(e, item.product_order_id)
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <b> {item.product_order_id}</b>
+                            </td>
+                            <td> {item.name ? item.name : "B2C"}</td>
+                            <td> {item.product_type}</td>
+                            <td> {item.method}</td>
+                            {B2BPartner == "false" ? <td> {item.delivery_partner}</td> : ""}
+                            <td>
+                              <div className="action-btngroup">
 
-                                  {/* <button type="button"
+                                <select type="button" className="btn order-btn"
+                                  onChange={(e) => OutForDevliveryActionFun(e, item)}
+                                >
+
+                                  <option selected={reasonActionValue == "null"} value="null"  >
+                                    Select
+                                  </option>
+                                  {PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? <option value="DELIVERED">
+                                    Delivered
+                                  </option> :
+                                    <option value="delivered" disabled className={`btn${PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? "permission_blur" : ""}`}>Delivered</option>}
+                                  {PermissionData()?.ALLOW_IN_TRANSIT_ACTION == "ALLOW_IN_TRANSIT_ACTION" ? <option value="IN_TRANSIT">
+                                    In-transit
+                                  </option> :
+                                    <option value="intransit" disabled
+                                      className={`btn permission-btn ${PermissionData()?.ALLOW_IN_TRANSIT_ACTION == "ALLOW_IN_TRANSIT_ACTION" ? "permission_blur" : ""}`}>In-transit</option>}
+                                  {PermissionData()?.ALLOW_RETURN_ACTION == "ALLOW_RETURN_ACTION" ? <option value="RTO">
+                                    RTO
+                                  </option>
+                                    : <option disabled className={`btn ${PermissionData()?.ALLOW_RETURN_ACTION == "ALLOW_RETURN_ACTION" ? "permission_blur" : ""}`}
+                                      value="rto">RTO
+                                    </option>
+                                  }
+
+
+
+                                  {/* <option value="IN_TRANSIT" 
+                                   className={`btn ${PermissionData()?.ALLOW_IN_TRANSIT_ACTION !== "ALLOW_IN_TRANSIT_ACTION" ? "permission_blur" : "permission_blur"}`} 
+                                   onClick={(e) => PermissionData()?.ALLOW_IN_TRANSIT_ACTION !== "ALLOW_IN_TRANSIT_ACTION" ? OutForDevliveryActionFun(e, item) : ""} >
+                                    In-transit
+                                  </option>  */}
+                                </select>
+
+                                {/* <button type="button"
                                   className={`btn btn-ship ${PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? " " : "permission_blur"}`}
                                   onClick={((e) => PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? ReturnTrack(e, item.product_order_id) : "")}>
                                   {" "}
                                    
                                 </button> */}
-                                  {/* <button type="button" className="btn order-btn">
+                                {/* <button type="button" className="btn order-btn">
                                   <img
                                     src="/images/icon32.png"
                                     alt="img"
@@ -2280,11 +2302,11 @@ const Order = () => {
                                       </ul>
                                     )}
                                 </button> */}
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
                       : ""}
                   </table>
                 </div>
@@ -2308,11 +2330,10 @@ const Order = () => {
                       {B2BPartner == "false" ? <th>Partner</th> : ""}
                       <th>Action</th>
                     </tr>
-                    {PermissionData()?.VIEW_ORDER_RETURNS ==
-                    "VIEW_ORDER_RETURNS"
-                      ? adminorderreturnData &&
+                    {
+                      PermissionData()?.VIEW_ORDER_RETURNS == "VIEW_ORDER_RETURNS" ?
+                        adminorderreturnData &&
                         adminorderreturnData?.map((item, id) => {
-                          console.log("item", item);
                           return (
                             <tr>
                               <td
@@ -2324,45 +2345,22 @@ const Order = () => {
                                 <b>{item.product_order_id}</b>
                               </td>
                               <td>{item.name ? item.name : "B2C"}</td>
-                              <td>
-                                {new Date(item.date).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    month: "short",
-                                    year: "numeric",
-                                    day: "numeric",
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                    hour12: true,
-                                  }
-                                )}
-                              </td>
+                              <td>{new Date(item.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric', day: 'numeric' })}</td>
                               <td>{item.product_type}</td>
                               <td>{item?.address?.address}</td>
-                              {B2BPartner == "false" ? (
-                                <td>{item.delivery_patner} </td>
-                              ) : (
-                                ""
-                              )}
+                              {B2BPartner == "false" ? <td>{item.delivery_partner} </td> : ""}
                               <td>
                                 <div className="action-btngroup">
                                   <button
                                     type="button"
-                                    className={`btn btn-ship ${
-                                      PermissionData()?.ALLOW_BOOKED_ACTION ==
-                                      "ALLOW_BOOKED_ACTION"
-                                        ? " "
-                                        : "permission_blur"
-                                    }`}
+                                    className={`btn btn-ship ${PermissionData()?.ALLOW_RTO_DELIVERED_ACTION == "ALLOW_RTO_DELIVERED_ACTION" ? " " : "permission_blur"}`}
                                     onClick={(e) =>
-                                      // PermissionData()?.ALLOW_BOOKED_ACTION == "ALLOW_BOOKED_ACTION" ?
-                                      // TransitTrack(e, item.product_order_id) : ""
-                                      ReturnDeliveredTrack(
-                                        e,
-                                        item.product_order_id
-                                      )
+                                      PermissionData()?.ALLOW_RTO_DELIVERED_ACTION == "ALLOW_RTO_DELIVERED_ACTION" ?
+                                        ReturnDeliveredTrack(e, item.product_order_id) : ""
+                                      // ReturnDeliveredTrack(e, item.product_order_id)
                                     }
                                   >
+
                                     RTO Delivered
                                   </button>
                                   {/* <button type="button" className="btn order-btn">
@@ -2419,17 +2417,14 @@ const Order = () => {
                               </td>*/}
                             </tr>
                           );
-                        })
-                      : ""}
+                        }) : ""}
                   </table>
                 </div>
 
                 {/* return delivered */}
 
                 <div
-                  className={`tab-pane fade ${
-                    returndeliveredtab ? "show active" : ""
-                  }`}
+                  className={`tab-pane fade ${returndeliveredtab ? "show active" : ""}`}
                   id="rto-delivered-tab-pane"
                   role="tabpanel"
                   aria-labelledby="rto-delivered-tab"
@@ -2446,11 +2441,10 @@ const Order = () => {
                       {/* <th>Action</th> */}
                     </tr>
 
-                    {PermissionData()?.VIEW_ORDER_RETURNS ==
-                    "VIEW_ORDER_RETURNS"
-                      ? adminorderrtodeliveredData?.data &&
-                        adminorderrtodeliveredData?.data?.map((item, id) => {
-                          console.log("sdghsad", item);
+                    {
+                      PermissionData()?.VIEW_ORDER_RTU_DELIVERED == "VIEW_ORDER_RTU_DELIVERED" ?
+                        adminorderrtodeliveredData &&
+                        adminorderrtodeliveredData?.map((item, id) => {
                           return (
                             <tr>
                               <td
@@ -2462,26 +2456,10 @@ const Order = () => {
                                 <b>{item.product_order_id}</b>
                               </td>
                               <td>{item.name ? item.name : "B2C"}</td>
-                              <td>
-                                {new Date(item.date).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    month: "short",
-                                    year: "numeric",
-                                    day: "numeric",
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                    hour12: true,
-                                  }
-                                )}
-                              </td>
+                              <td>{new Date(item.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric', day: 'numeric' })}</td>
                               <td>{item.product_type}</td>
                               <td>{item?.address?.address}</td>
-                              {B2BPartner == "false" ? (
-                                <td>{item.delivery_patner} </td>
-                              ) : (
-                                ""
-                              )}
+                              {B2BPartner == "false" ? <td>{item.delivery_partner} </td> : ""}
                               {/*  <td>
                                 {" "}
                                 <div className="action-btngroup">
@@ -2514,17 +2492,16 @@ const Order = () => {
                               </td>*/}
                             </tr>
                           );
-                        })
-                      : ""}
+                        }) : ""}
                   </table>
                 </div>
+
 
                 {/* {cancel} */}
 
                 <div
-                  className={`tab-pane fade   ${
-                    canceltab ? "show active" : "-1"
-                  }`}
+                  className={`tab-pane fade   ${canceltab ? "show active" : "-1"
+                    }`}
                   id="cancel-tab-pane"
                   role="tabpanel"
                   aria-labelledby="cancel-tab"
@@ -2540,65 +2517,42 @@ const Order = () => {
                       <th>Action</th>
                     </tr>
 
-                    {PermissionData()?.VIEW_ORDER_PENDING ==
-                    "VIEW_ORDER_PENDING"
-                      ? adminordercancelData &&
-                        adminordercancelData?.map((item, id) => {
-                          console.log("item===>", item);
-                          return (
-                            <tr>
-                              <td>
-                                {new Date(item.date).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    month: "short",
-                                    year: "numeric",
-                                    day: "numeric",
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                    hour12: true,
-                                  }
-                                )}
-                              </td>
+                    {PermissionData()?.VIEW_ORDER_CANCEL_DETAILS == "VIEW_ORDER_CANCEL_DETAILS" ?
+                      adminordercancelData &&
+                      adminordercancelData?.map((item, id) => {
 
-                              <td
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                <b> {item.product_order_id}</b>
-                              </td>
 
-                              {/* <td>{item.product_order_id}</td> */}
-                              <td>{item.name ? item.name : "B2C"}</td>
-                              <td>{item.method}</td>
-                              <td>{item.product_type}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className={`btn btn-ship  ${
-                                    PermissionData()?.ALLOW_IN_TRANSIT_ACTION ==
-                                    "ALLOW_IN_TRANSIT_ACTION"
-                                      ? " "
-                                      : "permission_blur"
-                                  }`}
-                                  onClick={(e) =>
-                                    PermissionData()?.ALLOW_IN_TRANSIT_ACTION ==
-                                    "ALLOW_IN_TRANSIT_ACTION"
-                                      ? RebookFun(e, item)
-                                      : ""
-                                  }
-                                  // style={{whiteSpace: "nowrap"}}
-                                >
-                                  {" "}
-                                  Rebook
-                                  {/* Delivered{" "} */}
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })
+                        return (
+                          <tr>
+                            <td>{new Date(item.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric', day: 'numeric' })}</td>
+
+                            <td
+                              onClick={(e) =>
+                                IntransitFun(e, item.product_order_id)
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <b> {item.product_order_id}</b>
+                            </td>
+
+                            {/* <td>{item.product_order_id}</td> */}
+                            <td>{item.name ? item.name : "B2C"}</td>
+                            <td>{item.method}</td>
+                            <td>{item.product_type}</td>
+                            <td><button type="button" className={`btn btn-ship  ${PermissionData()?.ALLOW_REBOOK_ACTION == "ALLOW_REBOOK_ACTION" ? " " : "permission_blur"}`}
+                              onClick={((e) =>
+                                PermissionData()?.ALLOW_REBOOK_ACTION == "ALLOW_REBOOK_ACTION" ?
+                                  RebookFun(e, item) : "")}
+                            // style={{whiteSpace: "nowrap"}}
+                            >
+                              {" "}
+                              Rebook
+                              {/* Delivered{" "} */}
+                            </button>
+                            </td>
+                          </tr>
+                        );
+                      })
                       : ""}
                   </table>
                 </div>
@@ -2608,30 +2562,31 @@ const Order = () => {
         </div>
       </div>
 
-      {pending && (
-        <div className="popupouter 11">
-          <div className="editb2b-box">
-            <h2>Edit B2B</h2>
-            <div
-              className="close-btn"
-              type="button"
-              onClick={(e) => setPending((o) => !o)}
-            >
-              <svg
-                viewBox="0 0 10 9"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+      {
+        pending && (
+          <div className="popupouter 11">
+            <div className="editb2b-box">
+              <h2>Edit B2B</h2>
+              <div
+                className="close-btn"
+                type="button"
+                onClick={(e) => setPending((o) => !o)}
               >
-                <path
-                  d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z"
-                  fill="black"
-                />
-              </svg>
-            </div>
-            <div className="popup-body row ">
-              <div className="col-sm-6">
-                <label>Delivery Partner</label>
-                {/* <input
+                <svg
+                  viewBox="0 0 10 9"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z"
+                    fill="black"
+                  />
+                </svg>
+              </div>
+              <div className="popup-body row ">
+                <div className="col-sm-6">
+                  <label>Delivery Partner</label>
+                  {/* <input
                                         type="text"
                                         className={`form-control ${partnernameactive ? "alert_border" : ""}`}
                                         placeholder="Ecom Express"
@@ -2639,291 +2594,321 @@ const Order = () => {
                                         onChange={(e) => PartnerNameFun(e)}
                                     /> */}
 
-                <div className="express-box">
-                  <select
-                    className="form-select"
-                    onChange={(e) => PartnerNameFun(e)}
-                  >
-                    <option value="none" selected disabled hidden>
-                      Select Partner...
-                    </option>
-                    <option value="DTDC">DTDC</option>
-                    <option value="ANJANI">Anjani</option>
-                    <option value="DHL">DHL</option>
-                    <option value="SKYKING">Skyking</option>
-                    <option value="XPRESSBEES">Xpressbees</option>
-                    <option value="DELHIVERY">Delhivery</option>
-                    <option value="NITRO">Nitro</option>
-                  </select>
-                </div>
-                {!partnernameactive && !partner ? (
-                  <div className="text-danger ">
-                    <small> Select partner </small>
+                  <div className="express-box">
+                    <select
+                      className="form-select"
+                      onChange={(e) => PartnerNameFun(e)}
+                    >
+                      <option value="none" selected disabled hidden>
+                        Select Partner...
+                      </option>
+                      <option value="DTDC">DTDC</option>
+                      <option value="ANJANI">Anjani</option>
+                      <option value="DHL">DHL</option>
+                      <option value="SKYKING">Skyking</option>
+                      <option value="XPRESSBEES">Xpressbees</option>
+                      <option value="DELHIVERY">Delhivery</option>
+                      <option value="NITRO">Nitro</option>
+                    </select>
                   </div>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="col-sm-6">
-                <label>AWB No.</label>
-                <input
-                  type="text"
-                  className={`form-control  ${
-                    awbactive ? "alert_border" : ""
-                  } `}
-                  placeholder="AWB No."
-                  value={awbcode}
-                  onChange={(e) => AwbFun(e)}
-                />
-                {awbactive ? (
-                  <div className="text-danger ">
-                    <small>Max 12 Number </small>
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="col-sm-6 mt-3">
-                <label>Order Date</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  placeholder="01/09/2022"
-                  value={pendingeditobjectdata?.date}
-                />
-              </div>
-              <div className="col-sm-6 mt-3">
-                <label>Order ID</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="128924833"
-                  value={pendingeditobjectdata?.product_order_id}
-                />
-              </div>
-              <div className="col-sm-12 mt-3">
-                <label>Expected Delivery Date</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  placeholder="01/09/2022"
-                  value={expecteddeliverydate}
-                  onChange={(e) => expect(e)}
-                />
-              </div>
-              <div className="col-sm-6 mt-3">
-                <label>Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Name"
-                  value={pendingeditobjectdata?.name}
-                />
-              </div>
-              <div className="col-sm-6 mt-3">
-                <label>Method</label>
-                <input
-                  type="text"
-                  className="form-control  "
-                  placeholder="Electrical"
-                  value={pendingeditobjectdata?.method}
-                />
-              </div>
-              <div className="col-12 mt-3">
-                <label>Product Type</label>
-                <input
-                  type="text"
-                  className="form-control  "
-                  placeholder="Electrical"
-                  value={pendingeditobjectdata?.product_type}
-                />
-              </div>
-
-              <div className="btngroups">
-                <button
-                  type="button"
-                  className="save-btn"
-                  onClick={(e) => SaveAwbFun(e)}
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={(e) => setPending((o) => !o)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {reasonActionPopup && (
-        <div className="popupouter 11">
-          <div className="editb2b-box">
-            <h2>Reason</h2>
-            <div
-              className="close-btn"
-              type="button"
-              onClick={(e) => CloseOtp()}
-            >
-              <svg
-                viewBox="0 0 10 9"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z"
-                  fill="black"
-                />
-              </svg>
-            </div>
-            <div className="popup-body row   ">
-              <div className="col-sm-6 mt-4">
-                <label className="fw-bold">Name</label>
-                <div className="">{reasonActionRowData.name}</div>
-              </div>
-              <div className="col-sm-6 mt-4">
-                <label className="fw-bold">Delivery Partner</label>
-                <div className="">{reasonActionRowData.delivery_partner}</div>
-              </div>
-              <div className="col-sm-6 mt-2">
-                <label className="fw-bold">Method</label>
-                <div className="">{reasonActionRowData.method}</div>
-              </div>
-
-              <div className="col-sm-6 mt-2">
-                <label className="fw-bold">Product Type</label>
-                <div className="">{reasonActionRowData.product_type}</div>
-              </div>
-              <div className="col-sm-12 mt-2  ">
-                <label className="fw-bold">Product Order Id</label>
-                <div className="">{reasonActionRowData.product_order_id}</div>
-              </div>
-
-              <div className="col-sm-12 pt-3">
-                <textarea
-                  className="w-100 p-2"
-                  rows="5"
-                  cols="70"
-                  placeholder="reason...."
-                  value={reasonActionInputFieldData}
-                  onChange={(e) => ReasonTextFun(e)}
-                />
-                {ReasonActionInputFieldError && (
-                  <span className="text-danger">
-                    <small> Enter your Reason </small>
-                  </span>
-                )}
-              </div>
-
-              <div className="btngroups">
-                <button
-                  type="button"
-                  className="save-btn"
-                  onClick={(e) => ConformActionFun(e)}
-                >
-                  Confirm
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={(e) => CloseOtp()}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {otpActionPopup && (
-        <div className="popupouter 11">
-          <div className="editb2b-box">
-            <h2>Reason</h2>
-            <div
-              className="close-btn"
-              type="button"
-              onClick={(e) => CloseOtp()}
-            >
-              <svg
-                viewBox="0 0 10 9"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z"
-                  fill="black"
-                />
-              </svg>
-            </div>
-            <div className="popup-body row   ">
-              <div className="col-sm-6 mt-4">
-                <label className="fw-bold">Name</label>
-                <div className="">{reasonActionRowData.name}</div>
-              </div>
-              <div className="col-sm-6 mt-4">
-                <label className="fw-bold">Delivery Partner</label>
-                <div className="">{reasonActionRowData.delivery_partner}</div>
-              </div>
-              <div className="col-sm-6 mt-2">
-                <label className="fw-bold">Method</label>
-                <div className="">{reasonActionRowData.method}</div>
-              </div>
-
-              <div className="col-sm-6 mt-2">
-                <label className="fw-bold">Product Type</label>
-                <div className="">{reasonActionRowData.product_type}</div>
-              </div>
-              <div className="col-sm-12 mt-2  ">
-                <label className="fw-bold">Product Order Id</label>
-                <div className="">{reasonActionRowData.product_order_id}</div>
-              </div>
-              <div className="col-sm-12 mt-2  ">
-                <label className="fw-bold">OTP :-</label>
-
-                <div className="col-sm-12 pt-3">
-                  <div className="otp_container">
-                    <OtpInput
-                      value={otpvalue}
-                      onChange={handleChange}
-                      numInputs={4}
-                      focusStyle={false}
-                    />
-                  </div>
-                  {otpvalue && otpvalue.length == 4 ? (
-                    ""
+                  {!partnernameactive && !partner ? (
+                    <div className="text-danger ">
+                      <small> Select partner </small>
+                    </div>
                   ) : (
-                    <span className="text-danger">
-                      <small> Please Enter Otp </small>
-                    </span>
+                    ""
                   )}
                 </div>
-              </div>
+                <div className="col-sm-6">
+                  <label>AWB No.</label>
+                  <input
+                    type="text"
+                    className={`form-control  ${awbactive ? "alert_border" : ""
+                      } `}
+                    placeholder="AWB No."
+                    value={awbcode}
+                    onChange={(e) => AwbFun(e)}
+                  />
+                  {awbactive ? (
+                    <div className="text-danger ">
+                      <small>Max 12 Number </small>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div className="col-sm-6 mt-3">
+                  <label>Order Date</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    placeholder="01/09/2022"
+                    value={pendingeditobjectdata?.date}
+                  />
+                </div>
+                <div className="col-sm-6 mt-3">
+                  <label>Order ID</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="128924833"
+                    value={pendingeditobjectdata?.product_order_id}
+                  />
+                </div>
+                <div className="col-sm-12 mt-3">
+                  <label>Expected Delivery Date</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    placeholder="01/09/2022"
+                    value={expecteddeliverydate}
+                    onChange={(e) => expect(e)}
+                  />
+                </div>
+                <div className="col-sm-6 mt-3">
+                  <label>Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Name"
+                    value={pendingeditobjectdata?.name}
+                  />
+                </div>
+                <div className="col-sm-6 mt-3">
+                  <label>Method</label>
+                  <input
+                    type="text"
+                    className="form-control  "
+                    placeholder="Electrical"
+                    value={pendingeditobjectdata?.method}
+                  />
+                </div>
+                <div className="col-12 mt-3">
+                  <label>Product Type</label>
+                  <input
+                    type="text"
+                    className="form-control  "
+                    placeholder="Electrical"
+                    value={pendingeditobjectdata?.product_type}
+                  />
+                </div>
 
-              <div className="btngroups">
-                <button
-                  type="button"
-                  className="save-btn"
-                  onClick={(e) => ConformOtpActionFun(e)}
-                >
-                  Confirm
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={(e) => CloseOtp()}
-                >
-                  Cancel
-                </button>
+                <div className="btngroups">
+                  <button
+                    type="button"
+                    className="save-btn"
+                    onClick={(e) => SaveAwbFun(e)}
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={(e) => setPending((o) => !o)}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
+
+
+      {
+        reasonActionPopup && (
+          <div className="popupouter 11">
+            <div className="editb2b-box">
+              <h2>Reason</h2>
+              <div
+                className="close-btn"
+                type="button"
+                onClick={(e) => CloseOtp()}
+              >
+                <svg
+                  viewBox="0 0 10 9"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z"
+                    fill="black"
+                  />
+                </svg>
+              </div>
+              <div className="popup-body row   ">
+                <div className="col-sm-6 mt-4">
+                  <label className="fw-bold">Name</label>
+                  <div className="">
+                    {reasonActionRowData.name}
+                  </div>
+
+                </div>
+                <div className="col-sm-6 mt-4">
+                  <label className="fw-bold">Delivery Partner</label>
+                  <div className="">
+                    {reasonActionRowData.delivery_partner}
+                  </div>
+
+                </div>
+                <div className="col-sm-6 mt-2">
+                  <label className="fw-bold">Method</label>
+                  <div className="">
+                    {reasonActionRowData.method}
+                  </div>
+
+                </div>
+
+                <div className="col-sm-6 mt-2">
+                  <label className="fw-bold">Product Type</label>
+                  <div className="">
+                    {reasonActionRowData.product_type}
+                  </div>
+
+                </div>
+                <div className="col-sm-12 mt-2  "  >
+                  <label className="fw-bold">Product Order Id</label>
+                  <div className="">
+                    {reasonActionRowData.product_order_id}
+                  </div>
+
+                </div>
+
+                <div className="col-sm-12 pt-3">
+
+                  <textarea
+                    className="w-100 p-2"
+                    rows="5" cols="70"
+                    placeholder="reason"
+                    value={reasonActionInputFieldData}
+                    onChange={(e) => ReasonTextFun(e)}
+                  />
+                  {ReasonActionInputFieldError && <span className='text-danger' >
+                    <small>  Enter your Reason </small></span>}
+                </div>
+
+
+                <div className="btngroups">
+                  <button
+                    type="button"
+                    className="save-btn"
+                    onClick={(e) => ConformActionFun(e)}
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={(e) => CloseOtp()}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+
+      {
+        otpActionPopup && (
+          <div className="popupouter 11">
+            <div className="editb2b-box">
+              <h2>Reason</h2>
+              <div
+                className="close-btn"
+                type="button"
+                onClick={(e) => CloseOtp()}
+              >
+                <svg
+                  viewBox="0 0 10 9"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z"
+                    fill="black"
+                  />
+                </svg>
+              </div>
+              <div className="popup-body row   ">
+                <div className="col-sm-6 mt-4">
+                  <label className="fw-bold">Name</label>
+                  <div className="">
+                    {reasonActionRowData.name}
+                  </div>
+
+                </div>
+                <div className="col-sm-6 mt-4">
+                  <label className="fw-bold">Delivery Partner</label>
+                  <div className="">
+                    {reasonActionRowData.delivery_partner}
+                  </div>
+
+                </div>
+                <div className="col-sm-6 mt-2">
+                  <label className="fw-bold">Method</label>
+                  <div className="">
+                    {reasonActionRowData.method}
+                  </div>
+
+                </div>
+
+                <div className="col-sm-6 mt-2">
+                  <label className="fw-bold">Product Type</label>
+                  <div className="">
+                    {reasonActionRowData.product_type}
+                  </div>
+
+                </div>
+                <div className="col-sm-12 mt-2  "  >
+                  <label className="fw-bold">Product Order Id</label>
+                  <div className="">
+                    {reasonActionRowData.product_order_id}
+                  </div>
+
+                </div>
+                <div className="col-sm-12 mt-2  "  >
+                  <label className="fw-bold">OTP :-</label>
+
+                  <div className="col-sm-12 pt-3">
+                    <div className="otp_container">
+                      <OtpInput
+                        value={otpvalue}
+                        onChange={handleChange}
+                        numInputs={4}
+                        focusStyle={false}
+                      />
+                    </div>
+                    {otpvalue && otpvalue.length == 4 ? "" : <span className='text-danger' >
+                      <small> Please Enter Otp </small></span>}
+                  </div>
+                </div>
+
+
+                <div className="btngroups">
+                  <button
+                    type="button"
+                    className="save-btn"
+                    onClick={(e) => ConformOtpActionFun(e)}
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={(e) => CloseOtp()}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
 
       <Popup
         open={paymentmethodpopup}
@@ -2931,52 +2916,43 @@ const Order = () => {
         model
         className="sign_up_loader"
       >
-        <div className="wallet-popup">
-          <div className={`popupinner ${wallettab ? "active" : ""}`}>
+        <div className="wallet-popup" >
+          <div className={`popupinner  walletpaymement_inner ${wallettab ? "active" : ""}`}>
             <h4
               className="text-danger calender_popup_cancel "
               aria-selected={`${wallettab ? "true" : "false"}`}
               onClick={(e) => {
-                PaymentPopupFun(e);
+                PaymentPopupFun(e)
                 // setPaymentMethodPopup((o) => !o);
+
               }}
             >
               {" "}
               X{" "}
             </h4>
-            <h2>Select your payment Mode</h2>
-            <p>Total Amount to pay Rs. {ReebookObjectDetails?.amount}</p>
+            <h2>Select Your Payment Mode</h2>
+            <p>
+            Total Amount To Pay Rs.{" "}
+              {ReebookObjectDetails?.amount}
+            </p>
             <div className="popup-body mt-5">
               <ul className="pay-list">
-                <li
-                  className={`row mx-0 ${activepaymentwallet}`}
-                  onClick={(e) => {
-                    setActivePaymentWallet("activeWalletPayment");
-                    setActivePaymentRazorPay("activeRazorPayment");
-                  }}
-                >
+                <li className={`row mx-0 ${activepaymentwallet}`}
+                  onClick={(e) => { setActivePaymentWallet("activeWalletPayment"); setActivePaymentRazorPay("activeRazorPayment") }}>
                   <div className="col-2 ">
                     <img
                       src="/images/wallet.svg"
                       alt="img"
-                      // onClick={(e) => setWallet(o => !o)}
+                    // onClick={(e) => setWallet(o => !o)}
                     />
                   </div>
-                  <div
-                    className="col-9"
-                    // onClick={(e) => GoTOWalletFun(e)}
+                  <div className="col-9"
+                  // onClick={(e) => GoTOWalletFun(e)}
                   >
                     <p className="mb-1">Wallet</p>
                     <p className="mb-0">
                       Current Balance :
-                      <b>
-                        {" "}
-                        {GetWalletBalanceData?.data?.balance_status ==
-                        "NEGATIVE"
-                          ? `-${GetWalletBalanceData?.data?.balance}`
-                          : GetWalletBalanceData?.data?.balance}
-                        /-
-                      </b>
+                      <b> {GetWalletBalanceData?.data?.balance_status == "NEGATIVE" ? `-${GetWalletBalanceData?.data?.balance}` : GetWalletBalanceData?.data?.balance}/-</b>
                     </p>
                   </div>
                   <div className="col-1 d-flex justify-content-end align-items-center">
@@ -3013,6 +2989,10 @@ const Order = () => {
       </Popup>
 
       <LodingSpiner loadspiner={loadspiner} />
+
+
+
+
     </>
   );
 };

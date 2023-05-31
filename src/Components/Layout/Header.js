@@ -24,7 +24,7 @@ const Header = () => {
     navigate("/")
   }
 
-  console.log("mnsbsf", as_individual)
+
 
   const profilefun = () => {
     reactLocalStorage.get('token')

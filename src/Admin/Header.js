@@ -116,7 +116,7 @@ const Sidebar = () => {
     { label: "Support B2B", path: "/admin/support/b2b" },
     { label: "Support B2C", path: "/admin/support/b2b/b2c" },
     { label: "Accounting", path: "/admin/support/accounting" },
-    { label: "Add order", path: "/admin/order/User#pending" },
+    { label: "Add Order", path: "/admin/order/User#pending" },
     { label: "COD Remittance", path: "/admin/invoices/cod#pending" },
     { label: "Invoices", path: "/admin/invoices/cod#hd" },
     { label: "Tickets B2B", path: "/admin/support/b2b" },
@@ -190,6 +190,8 @@ const Sidebar = () => {
   };
   const openSearchFun = () => {
     setAllSearchBar((o) => !o);
+    setNotification(false);
+
   };
 
   const ClearNotification = (e, item) => {
@@ -243,10 +245,11 @@ const Sidebar = () => {
   
     if (e.length == 0) {
       setOpenPathSearch(false)
+    
+
     }
     else {
       setOpenPathSearch(true)
-
     }
     // setSelectedOption(e)
   }
@@ -271,6 +274,7 @@ const Sidebar = () => {
         className={`adminheader-bar ${allsearchbar !== true ? "" : "formsmshow"
           }`}
       >
+     
         <div className={`left-part ${allsearchbar !== true ? "" : ""}`}>
           <div className={`form-group 
             ${selectedOptionclass}
@@ -280,6 +284,7 @@ const Sidebar = () => {
               value={selectedOption}
               onChange={setSelectedOption}
               options={pageData}
+              
               placeholder={"Search"}
               onInputChange={SearchFilterPathFun}
               styles={{
@@ -338,10 +343,11 @@ const Sidebar = () => {
               </svg>
               <div className="text-nowrap pt-1">
                 &nbsp;&nbsp;
-                <b> Rs. {GetWalletBalanceData?.data?.current_balance}/-</b>
+                <b> {GetWalletBalanceData?.data?.balance_status=="NEGATIVE"?`Rs. -${GetWalletBalanceData?.data?.balance}`:`Rs. ${GetWalletBalanceData?.data?.balance}`}/-</b>
               </div>
             </li> : ""}
-           {isAdmin_Role =="true"?  <li onClick={(e) => setNotification((o) => !o)}
+           {isAdmin_Role =="true"?  <li onClick={(e) => {setNotification((o) => !o);   setAllSearchBar(false);}
+}
            role="button">
               {GetUserNotificationData && GetUserNotificationData.length > "0" || GetUserNotificationData?.data?.length > "0" ||GetDashboardNotificationData && GetDashboardNotificationData.length > "0" ||GetDashboardNotificationData?.data?.length > "0"? (
                 <svg
@@ -395,7 +401,7 @@ const Sidebar = () => {
                 </svg>
               </span>
             </li>
-            <li className="user-part">
+            <li className="user-part" onClick={(e) => {setAllSearchBar(false); setNotification(false)}}>
               <div className="dropdown">
                 <img
                   src="/images/user.png"
@@ -557,7 +563,7 @@ const Sidebar = () => {
       {/* {**************************************************NOTOFICATION*******************************************************************} */}
 
       {notification && (
-        <div className="notification-box" onClick={(e) => setNotification((o) => !o)}>
+        <div className="notification-box" onClick={(e) => {setNotification((o) => !o);setAllSearchBar(false)}}>
           <div className=" title">
             <h2>Notifications</h2>
             {GetUserNotificationData.length > "0" || GetUserNotificationData?.data?.length > "0"  ||GetDashboardNotificationData.length > "0" ||GetDashboardNotificationData?.data?.length > "0"
@@ -565,7 +571,7 @@ const Sidebar = () => {
               ? <button
                 type="button"
                 className="btn"
-                onClick={(e) => {ClearNotificationn(e); setNotification((o) => !o)}}
+                onClick={(e) => {ClearNotificationn(e); setNotification((o) => !o); setAllSearchBar(false)}}
               >
                 <svg
                 

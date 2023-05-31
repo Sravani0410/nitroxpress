@@ -14,9 +14,9 @@ const AdminSetting = () => {
   const [showpassword1, setShowPassword1] = useState(false);
   const [showpassword2, setShowPassword2] = useState(false);
   const [showpassword3, setShowPassword3] = useState(false);
-  const [currentpassword, setCurrentPassword] = useState("");
-  const [newpassword, setNewPassword] = useState("");
-  const [confirmpassword, setConfirmPassword] = useState("");
+  const [currentpassword, setCurrentPassword] = useState("");//
+  const [newpassword, setNewPassword] = useState("");//
+  const [confirmpassword, setConfirmPassword] = useState("");//
 
   const navigate = useNavigate();
 
@@ -291,12 +291,12 @@ const AdminSetting = () => {
                 </div>
               </div>
               <div className="col-sm-4 mt-3">
-                <label>Confirm New Passwords</label>
+                <label>Confirm New Password</label>
                 <div className="input_filed text-center">
                   <input
                     type={showpassword3 ? "text" : "password"}
                     value={confirmpassword}
-                    placeholder="New Password"
+                    placeholder="Confirm New Password"
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
 
@@ -376,12 +376,12 @@ const AdminSetting = () => {
               </div>
               <div className="col-sm-4 mt-4 ">
                 <div  className="orderaction">
-                <button
+               { currentpassword !=="" ||newpassword !=="" || confirmpassword!=="" ?<button
                   type="button" className="btn action-btn"
                   onClick={(e) => MakePassword(e)}
                 >
                   Save
-                </button>
+                </button>:""}
                 </div>
               </div>
             </div>

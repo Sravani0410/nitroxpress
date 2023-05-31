@@ -8,18 +8,18 @@ const Carosel = () => {
     // const sliderArray = [
     //     {
     //         image: `${homeSlider}`,
-    //         infoHeading: "Welcome aboard my friend",
+    //         infoHeading: "Welcome Aboard My Friend",
     //         infoPera: "just a couple of clicks and we start"
 
     //     },
     //     {
     //         image: `${homeSlider}`,
-    //         infoHeading: "Welcome aboard my friend",
+    //         infoHeading: "Welcome Aboard My Friend",
     //         infoPera: "just a couple of clicks and we start"
     //     },
     //     {
     //         image: `${homeSlider}`,
-    //         infoHeading: "Welcome aboard my friend",
+    //         infoHeading: "Welcome Aboard My Friend",
     //         infoPera: "just a couple of clicks and we start"
     //     }
     // ]
@@ -35,17 +35,17 @@ const Carosel = () => {
                 <div className="carousel-inner" >
                     <div className="carousel-item active"  data-bs-interval="2000">
                         <img src="/images/img10.png" alt="img" />
-                        <h3>Welcome aboard my friend</h3>
+                        <h3>Welcome Aboard My Friend</h3>
                         <p>just a couple of clicks and we start</p>
                     </div>
                     <div className="carousel-item" data-bs-interval="2000">
                         <img src="/images/img15.png" alt="img" />
-                        <h3>Welcome aboard my friend</h3>
+                        <h3>Welcome Aboard My Friend</h3>
                         <p>just a couple of clicks and we start</p>
                     </div>
                     <div className="carousel-item" data-bs-interval="2000">
                         <img src="/images/img16.png" alt="img" />
-                        <h3>Welcome aboard my friend</h3>
+                        <h3>Welcome Aboard My Friend</h3>
                         <p>just a couple of clicks and we start</p>
                     </div>
                 </div>               

@@ -668,8 +668,10 @@
     position: absolute;
     content: "";
     transform: rotate(-135deg);
-    right: 22px;
-    top: 45px;
+    /* right: 22px;
+    top: 45px; */
+    right: 25px;
+    top: 39px;
     width: 8px;
     height: 8px;
     border-top: 2px solid #CCCFDF;

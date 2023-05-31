@@ -90,7 +90,7 @@ const SignUp = () => {
                toast.warn("Please Verify your Email")
                
             }
-            console.log(err);
+
             toast.warn(err?.response?.data?.message)
             
           })
@@ -139,7 +139,7 @@ const SignUp = () => {
             <div className="sign_up ">Sign Up</div>
             <div className="sign_up_ ">
               Already Have an Account ?
-              <div onClick={() => navigate("/login")}>Sign in</div>
+              <div onClick={() => navigate("/login")}>Sign In</div>
             </div>
 
             <br />
@@ -154,7 +154,7 @@ const SignUp = () => {
                   individualActive ? "choose_business_active" : ""
                 }`}
               >
-                As a individual
+                As Individual
               </button>
 
               <button
@@ -165,7 +165,7 @@ const SignUp = () => {
                 value="as_business"
                 className={`${BusinessActive ? "choose_business_active" : ""}`}
               >
-                As a Business
+                As Business
               </button>
             </div>
 
