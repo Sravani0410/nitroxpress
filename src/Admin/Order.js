@@ -813,7 +813,7 @@ const Order = () => {
         adminoutfordeliveryData?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
-      if (PermissionData()?.DOWNLOAD_DELIVERED_CSV == "DOWNLOAD_DELIVERED_CSV") {
+      if (PermissionData()?.DOWNLOAD_OUT_FOR_DELIVERED_CSV == "DOWNLOAD_OUT_FOR_DELIVERED_CSV") {
         setDownloadCsvPermission(true)
       }
       else {
@@ -840,7 +840,7 @@ const Order = () => {
         adminorderrtodeliveredData?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
-      if (PermissionData()?.DOWNLOAD_RETURNS_CSV == "DOWNLOAD_RETURNS_CSV") {
+      if (PermissionData()?.DOWNLOAD_RTO_DELIVERED_CSV == "DOWNLOAD_RTO_DELIVERED_CSV") {
         setDownloadCsvPermission(true)
       }
       else {
@@ -853,7 +853,7 @@ const Order = () => {
         adminordercancelData?.map((item, id) => {
           BlankArrayData.push(item.product_order_id);
         });
-      if (PermissionData()?.DOWNLOAD_RETURNS_CSV == "DOWNLOAD_RETURNS_CSV") {
+      if (PermissionData()?.DOWNLOAD_CANCEL_CSV == "DOWNLOAD_CANCEL_CSV") {
         setDownloadCsvPermission(true)
       }
       else {
@@ -2255,7 +2255,7 @@ const Order = () => {
                                   </option> :
                                     <option value="delivered" disabled className={`btn${PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? "permission_blur" : ""}`}>Delivered</option>}
                                   {PermissionData()?.ALLOW_IN_TRANSIT_ACTION == "ALLOW_IN_TRANSIT_ACTION" ? <option value="IN_TRANSIT">
-                                    In-transit
+                                    In-Transit
                                   </option> :
                                     <option value="intransit" disabled
                                       className={`btn permission-btn ${PermissionData()?.ALLOW_IN_TRANSIT_ACTION == "ALLOW_IN_TRANSIT_ACTION" ? "permission_blur" : ""}`}>In-transit</option>}
@@ -2442,7 +2442,7 @@ const Order = () => {
                     </tr>
 
                     {
-                      PermissionData()?.VIEW_ORDER_RTU_DELIVERED == "VIEW_ORDER_RTU_DELIVERED" ?
+                      PermissionData()?.VIEW_ORDER_RTO_DELIVERED == "VIEW_ORDER_RTO_DELIVERED" ?
                         adminorderrtodeliveredData &&
                         adminorderrtodeliveredData?.map((item, id) => {
                           return (

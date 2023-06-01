@@ -1016,12 +1016,10 @@ export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
     let newPayload = [];
 
     if (OrderDetailsIdDataObject?.product_order_id) {
-      newPayload.push({
-        ...payload,
-        order_id: OrderDetailsIdDataObject?.product_order_id,
-      });
-    } else {
-      newPayload.push(payload);
+      newPayload.push({ ...payload, "order_id": OrderDetailsIdDataObject?.product_order_id })
+    }
+    else {
+      newPayload.push(payload)
     }
     const responce = await axios
       .post(
@@ -1044,12 +1042,8 @@ export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
         reactLocalStorage.set("OrderDetailsId", data);
         let totalPriceValue = reactLocalStorage.get("totalPriceValue", false);
         if (res?.data?.order_id) {
-          let ItemDetailPayload = {
-            ...ItemDetailPayloadData,
-            product_order_id: res?.data?.order_id,
-            total_price: totalPriceValue,
-          };
-          dispatch(PostAdminOrderAddShipment(ItemDetailPayload));
+          let ItemDetailPayload = { ...ItemDetailPayloadData, "product_order_id": res?.data?.order_id, "total_price": totalPriceValue }
+          dispatch(PostAdminOrderAddShipment(ItemDetailPayload))
         }
 
         const TagOrderData = reactLocalStorage.get("add_order_tag", false);

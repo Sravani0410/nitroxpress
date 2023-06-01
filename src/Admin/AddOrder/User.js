@@ -730,7 +730,7 @@ const User = () => {
 
   let orderType = [
     { value: "PREPAID", data: "Prepaid" },
-    { data: "Cod", value: "COD" }]
+    { data: "COD", value: "COD" }]
 
 
   return (

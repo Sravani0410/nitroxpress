@@ -406,7 +406,7 @@ const UserProfile = () => {
                       </div>:""}
                     </div>
                     <p>
-                      <a href="mailto:work123@gmail.com">
+                      <a href="#">
                         <svg
                           width="10"
                           height="7"
@@ -426,7 +426,7 @@ const UserProfile = () => {
                       </a>
                     </p>
                     <p>
-                      <a href="tel:98756-33145">
+                      <a href="#">
                         <svg
                           width="10"
                           height="10"
@@ -453,7 +453,7 @@ const UserProfile = () => {
           {/* ================================= Edit B2B popup ======================================== */}
           {useredit && (
             <div className="popupouter editb2b-popup">
-              <div className="popupinner userPermisssionPopup">
+              <div className="popupinner">
                 <h2>Edit B2B</h2>
                 <div
                   className="close-btn"

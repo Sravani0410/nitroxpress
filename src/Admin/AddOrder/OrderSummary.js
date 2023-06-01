@@ -286,7 +286,7 @@ console.log("UpdateFromLocalStoragevalues",UpdateFromLocalStoragevalues)
 
                 <div className="col-sm-4 col-6 pe-0">
                   <button
-
+                    tabIndex="1"
                     type="button"
                     className="btn next-btn"
                     onClick={(e) => {
@@ -303,7 +303,7 @@ console.log("UpdateFromLocalStoragevalues",UpdateFromLocalStoragevalues)
 
                 <div className="col-sm-4 col-6 ps-0">
                   <button
-
+                   tabIndex="2"
                     type="button"
                     className="btn next-btn"
                     onClick={(e) => {

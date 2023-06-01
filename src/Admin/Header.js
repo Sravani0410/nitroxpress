@@ -343,7 +343,7 @@ const Sidebar = () => {
               </svg>
               <div className="text-nowrap pt-1">
                 &nbsp;&nbsp;
-                <b> {GetWalletBalanceData?.data?.balance_status=="NEGATIVE"?`Rs. -${GetWalletBalanceData?.data?.balance}`:`Rs. ${GetWalletBalanceData?.data?.balance}`}/-</b>
+                <b> {GetWalletBalanceData?.data?.current_balance_status=="NEGATIVE"?`Rs. -${GetWalletBalanceData?.data?.current_balance}`:`Rs. ${GetWalletBalanceData?.data?.current_balance}`}/-</b>
               </div>
             </li> : ""}
            {isAdmin_Role =="true"?  <li onClick={(e) => {setNotification((o) => !o);   setAllSearchBar(false);}

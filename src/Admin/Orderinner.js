@@ -1459,7 +1459,7 @@ const TrackOrder=()=>{
                 </div>
               </div>
               <div className="right-part">
-                <div className={`box delivery-box ${paramHash.hash == "#pending" ? "d-none" : ""}`}>
+                <div className={`box delivery-box mb-3 ${paramHash.hash == "#pending" ? "d-none" : ""}`}>
                   <h2>Delivery Partner</h2>
                   <div className=" d-flex align-items-center justify-content-sm-between  justify-content-center ">
 
@@ -1472,14 +1472,14 @@ const TrackOrder=()=>{
                     {/* <h5 className="px-1">
                       {GetAdminOrderReturnData?.delivery_partner}
                     </h5> */}
-                    <button type="button" className={`btn btn-ship  ${PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD == "VIEW_TRACKSEARCH_DASHBOARD" ? " " : "permission_blur"}`} onClick={((e) => PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD == "VIEW_TRACKSEARCH_DASHBOARD" ?
-                      PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD == "VIEW_TRACKSEARCH_DASHBOARD" ?TrackOrder(): ""
+                    <button type="button" className={`btn btn-ship  ${PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD == "VIEW_TRACK_SEARCH_DASHBOARD" ? " " : "permission_blur"}`} onClick={((e) => PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD == "VIEW_TRACK_SEARCH_DASHBOARD" ?
+                      PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD == "VIEW_TRACK_SEARCH_DASHBOARD" ?TrackOrder(): ""
                     :"")}>
                       Track
                     </button>
                   </div>
                 </div>
-                <div className="box order-box mt-3">
+                <div className="box order-box mb-3">
                   <ul>
                     <li>
                       <h2>Order Summary</h2>
@@ -1504,7 +1504,7 @@ const TrackOrder=()=>{
                     </li>
                   </ul>
                 </div>
-                <div className="box order-box mt-3">
+                <div className="box order-box mb-3">
                   <li className="mb-0">
                     <h5>Total</h5>
                     <h5>
@@ -1513,7 +1513,7 @@ const TrackOrder=()=>{
                   </li>
                 </div>
 
-                <div className="box order-box mt-3">
+                <div className="box order-box">
                   <ul>
                     <li>
                       <h2>Delivery Address</h2>

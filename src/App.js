@@ -92,12 +92,7 @@ function App({ auth }) {
       }
 
     }
-   })
- 
-
-  
-
-
+  })
 
   useEffect(() => {
 

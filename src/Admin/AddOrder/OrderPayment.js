@@ -61,7 +61,7 @@ const OrderPayment = () => {
   );
   // let BearerToken = reactLocalStorage.get("token", false);
   let totalPriceValue = reactLocalStorage.get('totalPriceValue', false)
-  useEffect(() => {  
+  useEffect(() => {
     let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
     let OrderDetailsIdData = JSON.parse(OrderDetailsId);
     const PaymentMethod = reactLocalStorage.get("PaymentMethod", false);
@@ -73,7 +73,7 @@ const OrderPayment = () => {
     // );
   }, []);
   useEffect(() => {
-   if (
+    if (
       paymentmethod == "online" &&
       totalPriceValue
     ) {
@@ -81,7 +81,7 @@ const OrderPayment = () => {
     }
   }, [totalPriceValue]);
 
-  const handlePaymentSuccess = async (response) => { 
+  const handlePaymentSuccess = async (response) => {
     setLoadSpiner((o) => !o);
     let BearerToken = reactLocalStorage.get("token", false);
     let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
@@ -108,22 +108,22 @@ const OrderPayment = () => {
         },
       })
         .then((res) => {
-  
+
           setLoadSpiner((o) => !o);
           reactLocalStorage.remove('UserDetailsPayload');
           reactLocalStorage.remove("Eway_bill_URL");
           reactLocalStorage.remove("PayloadOrderData");
-          reactLocalStorage.remove("Eway_bill_id"); 
+          reactLocalStorage.remove("Eway_bill_id");
           reactLocalStorage.remove("add_order_tag")
-          toast.success(res.data.message); 
-          navigate("/admin/order#pending"); 
+          toast.success(res.data.message);
+          navigate("/admin/order#pending");
           dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
         })
         .catch((err) => {
-   
+
         });
     } catch (error) {
-      
+
     }
   };
 
@@ -131,7 +131,7 @@ const OrderPayment = () => {
   // this will load a script tag which will open up Razorpay payment card to make //transactions
 
   // const handlePaymentSuccess = async (response) => {
-  
+
   //   setLoadSpiner((o) => !o);
   //   let BearerToken = reactLocalStorage.get("token", false);
 
@@ -162,7 +162,7 @@ const OrderPayment = () => {
   //       },
   //     })
   //       .then((res) => {
-  
+
   //         setLoadSpiner((o) => !o);
   //         toast.success(res.data.message);
   //         // reactLocalStorage.remove('PaymentMethod');
@@ -354,7 +354,7 @@ const OrderPayment = () => {
     //   }
 
     // } else if (activepaymentwallet == "activeWalletPayment") {
-      dispatch(PostDebitBalance(payLoad)) //Total amount will be debit by this api from the wallet 
+    dispatch(PostDebitBalance(payLoad)) //Total amount will be debit by this api from the wallet 
 
     // } else if (activepaymentrazorpay == "activeWalletPayment") {
     //   PaymentFun() // This function open the RazorPay Popup
@@ -368,7 +368,7 @@ const OrderPayment = () => {
         setPaymentMethodPopup(false);
         setWalletPayPopup(false)
         setLoadSpiner((o) => !o);
-      }else{
+      } else {
         setLoadSpiner(false);
       }
     }
@@ -379,24 +379,25 @@ const OrderPayment = () => {
 
   useEffect(() => {
     if (PostAdminOrderAddShipmentData) {
-      if (PostAdminOrderAddShipmentData.status == 200) {
+      // if (PostAdminOrderAddShipmentData.status == 200) {
         let CompanyDetails = reactLocalStorage.get("UserDetailsPayload", false);
 
-  let OrderComapnyData = JSON.parse(CompanyDetails);
+        let OrderComapnyData = JSON.parse(CompanyDetails);
 
-  let walletpayload ={
-    company_name: OrderComapnyData?.company_name
-  }
+        let walletpayload = {
+          company_name: OrderComapnyData?.company_name
+        }
 
 
-  dispatch(GetWalletBalance(walletpayload))
-      }
+        dispatch(GetWalletBalance(walletpayload))
+      // }
     }
-   dispatch( PostAdminOrderAddShipment)
+    dispatch(PostAdminOrderAddShipment)
+     
 
   }, [PostAdminOrderAddShipmentData])
 
- 
+
 
 
 
@@ -425,18 +426,18 @@ const OrderPayment = () => {
     };
     let calaculated = totalPriceValue - GetWalletBalanceData?.data?.balance
     let calculatedTotal = GetWalletBalanceData?.data?.balance + calaculated
-      let CompanyDetails = reactLocalStorage.get("UserDetailsPayload", false);
+    let CompanyDetails = reactLocalStorage.get("UserDetailsPayload", false);
 
 
     let payLoad = {
       amount: calculatedTotal.toFixed(2),
       order_id: OrderDetailsIdData?.product_order_id,
-      company_name:CompanyDetails?.company_name
+      company_name: CompanyDetails?.company_name
 
     };
 
 
-    
+
     try {
       let bodyData = new FormData();
       let objectResponse = { ...response, "txnId": parseInt(PaymentFunResData?.data?.txnId) }
@@ -564,6 +565,7 @@ const OrderPayment = () => {
     dispatch(PaymentPopupValue(false))
   }
 
+  console.log("hsgdhvsjd",GetWalletBalanceData)
 
 
   return (
@@ -783,7 +785,7 @@ const OrderPayment = () => {
                     <p className="mb-1">Wallet</p>
                     <p className="mb-0">
                       Current Balance :
-                      <b> {GetWalletBalanceData?.data?.balance_status=="NEGATIVE"?`-${GetWalletBalanceData?.data?.balance}`:GetWalletBalanceData?.data?.balance}/-</b>
+                      <b> {GetWalletBalanceData?.data?.balance_status == "NEGATIVE" ? `-${GetWalletBalanceData?.data?.balance}` : GetWalletBalanceData?.data?.balance}/-</b>
                     </p>
                   </div>
                   <div className="col-1 d-flex justify-content-end align-items-center">

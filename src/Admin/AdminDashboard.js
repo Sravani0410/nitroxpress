@@ -588,9 +588,9 @@ const AdminDashboard = () => {
                       <input
                         type="search"
                         placeholder="Order Id"
-                        className= {`${trackActive ? "" : " btn"} ${PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD=="VIEW_TRACKSEARCH_DASHBOARD"?"":"permission_blur"}`}
-                        onChange={(e) =>  PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD=="VIEW_TRACKSEARCH_DASHBOARD" ?setOrderId(e.target.value):''}
-                        value={PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD=="VIEW_TRACKSEARCH_DASHBOARD"?OrderId :""}
+                        className= {`${trackActive ? "" : " btn"} ${PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD=="VIEW_TRACK_SEARCH_DASHBOARD"?"":"permission_blur"}`}
+                        onChange={(e) =>  PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD=="VIEW_TRACK_SEARCH_DASHBOARD" ?setOrderId(e.target.value):''}
+                        value={PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD=="VIEW_TRACK_SEARCH_DASHBOARD"?OrderId :""}
                       />
                       <span className="search-icon pt-1">
                         <svg
@@ -610,8 +610,8 @@ const AdminDashboard = () => {
                     </div>
                   </ul>
                   {/* track-btn bg-warning btn  btn */}
-                  <button type="button" className= {`${trackActive ? "track-btn" : ""} ${PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD=="VIEW_TRACKSEARCH_DASHBOARD"?"":"permission_blur"}`}
-                    onClick={(e) => PermissionData()?.VIEW_TRACKSEARCH_DASHBOARD=="VIEW_TRACKSEARCH_DASHBOARD" ? TrackFun():"" // dispatch(OrderPageBookNavigate(paramHash?.hash));
+                  <button type="button" className= {`${trackActive ? "track-btn" : ""} ${PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD=="VIEW_TRACK_SEARCH_DASHBOARD"?"":"permission_blur"}`}
+                    onClick={(e) => PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD=="VIEW_TRACK_SEARCH_DASHBOARD" ? TrackFun():"" // dispatch(OrderPageBookNavigate(paramHash?.hash));
                     }
                   >
                     Track
