@@ -1,0 +1,56 @@
+<div>
+                        <div className="row my-3">
+                          <div className="col-sm-6 mb-2">
+                            <b>Company I’d :</b>{" "}
+
+                            <span>{PostKYCdetailData?.company_id} </span>
+                          </div>
+                          <div className="col-sm-6 mb-2">
+                            <b>Upload Price</b>{" "}
+                            <span className="upload-form-control">
+                              <input
+                                value={""}
+                                accept=".xlsx"
+                                type={`${PermissionData()?.ALLOW_B2B_UPLOAD_PRICE_ACTION == "ALLOW_B2B_UPLOAD_PRICE_ACTION" ? "file" : "text"}`}
+                                    onChange={(e) => PermissionData()?.ALLOW_B2B_UPLOAD_PRICE_ACTION == "ALLOW_B2B_UPLOAD_PRICE_ACTION" ? SheetFile(e) : ""}
+                                    className={`custom-file-input  
+                                    ${PermissionData()?.ALLOW_B2B_UPLOAD_PRICE_ACTION == "ALLOW_B2B_UPLOAD_PRICE_ACTION" ? " " : "permission_blur"}  }`}
+                              />
+                            </span>
+                          </div>
+                           <div className="col-sm-6 mb-2">
+                            <b>Upload Insurance</b>{" "}
+                            <span className="upload-form-control">
+                              <input
+                                value={""}
+                                accept=".xlsx"
+                                type={`${PermissionData()?.ALLOW_B2B_UPLOAD_PRICE_ACTION == "ALLOW_B2B_UPLOAD_PRICE_ACTION" ? "file" : "text"}`}
+                                    onChange={(e) => PermissionData()?.ALLOW_B2B_UPLOAD_PRICE_ACTION == "ALLOW_B2B_UPLOAD_PRICE_ACTION" ? SheetFile(e) : ""}
+                                    className={`custom-file-input  
+                                    ${PermissionData()?.ALLOW_B2B_UPLOAD_PRICE_ACTION == "ALLOW_B2B_UPLOAD_PRICE_ACTION" ? " " : "permission_blur"}  }`}
+                              />
+                            </span>
+                          </div>
+                           <div className="col-sm-6 mb-2">
+                            <b>Upload Packaging</b>{" "}
+                            <span className="upload-form-control">
+                              <input
+                                value={""}
+                                accept=".xlsx"
+                                type={`${PermissionData()?.ALLOW_B2B_UPLOAD_PRICE_ACTION == "ALLOW_B2B_UPLOAD_PRICE_ACTION" ? "file" : "text"}`}
+                                    onChange={(e) => PermissionData()?.ALLOW_B2B_UPLOAD_PRICE_ACTION == "ALLOW_B2B_UPLOAD_PRICE_ACTION" ? SheetFile(e) : ""}
+                                    className={`custom-file-input  
+                                    ${PermissionData()?.ALLOW_B2B_UPLOAD_PRICE_ACTION == "ALLOW_B2B_UPLOAD_PRICE_ACTION" ? " " : "permission_blur"}  }`}
+                              />
+                            </span>
+                          </div>
+                          <div className="col-sm-6">
+
+                            <b> GSTIN : </b>{" "}
+
+                            <span>{PostKYCdetailData?.gstin_number}</span>
+                          </div>
+
+                        </div>
+
+</div>

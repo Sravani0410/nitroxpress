@@ -24,22 +24,22 @@ const OrderSummary = () => {
   const PostAdminOrderAddShipmentData = useSelector(state => state.PostAdminOrderAddShipmentReducer?.PostAdminOrderAddShipmentData)
   const PaymentPopupValueData = useSelector(state => state.PaymentPopupValueReducer?.PaymentPopupValueData)
 
-  let PayloadUser = reactLocalStorage.get("UserDetailsPayload", false);
+  let PayloadUser = sessionStorage.getItem("UserDetailsPayload", false);
   let PayloadUserData = JSON.parse(PayloadUser)
-  let PayloadEwayId = reactLocalStorage.get("Eway_bill_id", false);
-  let PayloadOrder = reactLocalStorage.get("PayloadOrderData", false);
+  let PayloadEwayId = sessionStorage.getItem("Eway_bill_id", false);
+  let PayloadOrder = sessionStorage.getItem("PayloadOrderData", false);
   let PayloadOrderData = JSON.parse(PayloadOrder)
-  let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
+  let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
   let OrderDetailsIdData = JSON.parse(OrderDetailsId)
 
-  let totalPriceValue = reactLocalStorage.get('totalPriceValue',false)
-console.log("UpdateFromLocalStoragevalues",UpdateFromLocalStoragevalues)
+  let totalPriceValue = sessionStorage.getItem('totalPriceValue',false)
+
 
   useEffect(() => {
 
   
 
-    let PayloadUser = reactLocalStorage.get("UserDetailsPayload", false);
+    let PayloadUser = sessionStorage.getItem("UserDetailsPayload", false);
     let PayloadUserData = JSON.parse(PayloadUser)
     setUpdateFromLocalStorageValues(PayloadUserData)
 
@@ -56,7 +56,7 @@ console.log("UpdateFromLocalStoragevalues",UpdateFromLocalStoragevalues)
 
   useEffect(() => {
 
-    let PayloadOrder = reactLocalStorage.get("PayloadOrderData", false);
+    let PayloadOrder = sessionStorage.getItem("PayloadOrderData", false);
     let PayloadOrderData = JSON.parse(PayloadOrder)
     let object = {
       "amount": PayloadUserData?.amount,
@@ -90,9 +90,9 @@ console.log("UpdateFromLocalStoragevalues",UpdateFromLocalStoragevalues)
   };
 
   const ProceedToPayFun = () => {
-    const TagOrderData=reactLocalStorage.get("add_order_tag",false)
+    const TagOrderData=sessionStorage.getItem("add_order_tag",false)
     const PayloadTagOrderData=JSON.parse(TagOrderData)
-    const OrderDetailsId=reactLocalStorage.get("OrderDetailsId",false)
+    const OrderDetailsId=sessionStorage.getItem("OrderDetailsId",false)
     const OrderDetailsIdpayload=JSON.parse(OrderDetailsId)
     let payload = {
       product_order_id: OrderDetailsIdpayload?.product_order_id,

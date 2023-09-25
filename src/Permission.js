@@ -79,11 +79,9 @@
 // };
 
 export const PermissionData = () => {
- 
 
   const permission = () => {
-
-    let Data = reactLocalStorage.get("Permission_Data"); 
+    let Data = sessionStorage.getItem("Permission_Data"); 
     if (Data == undefined) {
       let array = {};
       return array

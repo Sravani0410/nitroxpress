@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import { reactLocalStorage } from "reactjs-localstorage";
 import Carosel from "./Carosel";
 import LodingSpiner from "../Components/LodingSpiner";
@@ -31,77 +31,119 @@ const KYC = () => {
   const [conformpassword, setConformPassword] = useState(false);
   const [loadspiner, setLoadSpiner] = useState(false);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const BusinessAlert = () => {
     toast.warn("Please select the Business ");
     setLoadSpiner((o) => !o);
   };
-  let mail = reactLocalStorage.get("User_Mail", false);
+  let mail = sessionStorage.getItem("User_Mail", false);
   const UploadFile = async () => {
     setLoadSpiner((o) => !o);
     companyId && gstno && gstPdf && pancard && aadharcard
       ? axios
-          .post(`${process.env.REACT_APP_BASE_URL}/signup`, {
-            email: mail,
-            company_id: companyId,
-            registration_pdf: registartionpdf,
-            gstin_number: gstno,
-            gstin_pdf: gstPdf,
-            pan_card: pancard,
-            aadhar_card: aadharcard,
-            // contry_code: countrycode,
-          })
-          .then((Response) => {
-            setLoadSpiner((o) => !o);
-            reactLocalStorage.set(
-              "userDetails",
-              JSON.stringify({
-                email: Response.data.email,
-                phoneNumber: Response.data.phone_number,
-              })
-            );
-            reactLocalStorage.set("token", Response.data.Token);
-            if (Response.data.Token) {
-              navigate("/profile");
-              dispatch(getViewProfile());
-            }
-            navigate("/login");
-            navigate("/verifyemail");
-            toast.success("OTP Send SuccessFully");
-            
-          })
-          .catch((err) => {
-            setLoadSpiner((o) => !o);
-            toast.warn(err.response.data.message);            
-          })
-      : 
-      
+        .post(`${process.env.REACT_APP_BASE_URL}/signup`, {
+          email: mail,
+          company_id: companyId,
+          registration_pdf: registartionpdf,
+          gstin_number: gstno,
+          gstin_pdf: gstPdf,
+          pan_card: pancard,
+          aadhar_card: aadharcard,
+          // contry_code: countrycode,
+        })
+        .then((Response) => {
+          setLoadSpiner((o) => !o);
+          sessionStorage.setItem(
+            "userDetails",
+            JSON.stringify({
+              email: Response.data.email,
+              phoneNumber: Response.data.phone_number,
+            })
+          );
+          sessionStorage.setItem("token", Response.data.Token);
+          if (Response.data.Token) {
+            navigate("/profile");
+            dispatch(getViewProfile());
+          }
+          navigate("/login");
+          navigate("/verifyemail");
+          toast.success("OTP Send SuccessFully");
+
+        })
+        .catch((err) => {
+          setLoadSpiner((o) => !o);
+          toast.warn(err.response.data.message);
+        })
+      :
+
       toast.warn("Please fill the fields")
-      
+
   };
+   
+
+  let CompanySpace = companyId.replace(/  +/g, '');
+  let GSTSpace = gstno.replace(/  +/g, '');
+
+  
 
   const KycFile = (e) => {
+
+
+
+    if (
+      !companyId &&
+      !registartionpdf &&
+      !gstno &&
+      !gstPdf &&
+      !pancard &&
+      !aadharcard) 
+      {
+      toast.warn("Please Fill All The Input Fields")
+    }
+    else if (CompanySpace.length == 0) {
+      toast.warn("Please Fill Company ID")
+    }
+    else if(registartionpdf.length==0){
+      toast.warn("Please Upload Registration PDF")
+    }else if(GSTSpace.length==0){
+      toast.warn("Please Enter GSTIN Number")
+    }else if(gstPdf.length==0){
+      toast.warn("Please Upload GSTIN PDF")
+    }else if(pancard.length==0){
+      toast.warn("Please Upload PAN Card PDF")
+    }else if(aadharcard.length==0){
+      toast.warn("Please Upload Aadhaar PDF")
+    }
+    
+    else{
+
     let payload = {
       email: mail,
-      company_id: companyId,
+      company_id: CompanySpace,
       registration_pdf: registartionpdf,
-      gstin_number: gstno,
+      gstin_number: GSTSpace,
       gstin_pdf: gstPdf,
       pan_card: pancard,
       aadhar_card: aadharcard,
     };
+    dispatch(PostCompanyFile(payload)) && setLoadSpiner((o) => !o)
+  }
 
-    mail &&
-    companyId &&
-    registartionpdf &&
-    gstno &&
-    gstPdf &&
-    pancard &&
-    aadharcard
-      ? dispatch(PostCompanyFile(payload)) && setLoadSpiner((o) => !o)
-      : toast.warn("Please Fill all the Input Fields");
+
+   
+
+
+    // mail &&
+    // companyId &&
+    // registartionpdf &&
+    // gstno &&
+    // gstPdf &&
+    // pancard &&
+    // aadharcard
+    //   ? dispatch(PostCompanyFile(payload)) && setLoadSpiner((o) => !o)
+    //   : toast.warn("Please Fill all the Input Fields");
   };
   // name
   let Formate1 = registartionpdf?.name?.split(".");
@@ -139,8 +181,8 @@ const KYC = () => {
   useEffect(() => {
     if (PostCompanyFileData?.message === "Documents uploaded successfully!") {
       navigate("/verifyemail");
-      toast.warn("OTP Send SuccessFully")
-      
+      toast.success("OTP Send SuccessFully")
+
     }
   }, [PostCompanyFileData]);
 
@@ -294,8 +336,6 @@ const KYC = () => {
                     />
                   </svg>
                 </span>
-                
-
                 <input
                   type="text"
                   value={gstno}
@@ -333,7 +373,6 @@ const KYC = () => {
                 ) : (
                   ""
                 )}
-
                 <input
                   id="uploaddd"
                   type="file"

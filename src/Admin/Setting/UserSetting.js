@@ -10,7 +10,7 @@ import edit from "../AddOrder/icon34.svg"
 import { PostAdminSettingAddCategory, GetSettingViewPermission, GetCategoryDetails, PatchEditCategoryDetails, DeleteCategoryDetails } from "../../Redux/action/ApiCollection";
 import { PermissionData } from "../../Permission";
 import { concat } from "lodash";
-
+import LodingSpiner from "../../Components/LodingSpiner";
 
 const UserSetting = () => {
 
@@ -22,6 +22,9 @@ const UserSetting = () => {
   const [fromdate, setFromDate] = useState('')
   const [todate, setToDate] = useState('')
   const [categoryid, setCategoryId] = useState('')
+
+  const [AfterEditActiveSaveBtn, setAfterEditActiveSaveBtn] = useState(false)
+
 
 
   const [editpermissiondata, setEditPermissionData] = useState(false);
@@ -39,7 +42,7 @@ const UserSetting = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  let IsAdminRole=reactLocalStorage.get("Admin_Role",false)
+  let IsAdminRole=sessionStorage.getItem("Admin_Role",false)
 
 
   const ToggleFunData = useSelector(
@@ -74,7 +77,9 @@ const UserSetting = () => {
       state.DeleteCategoryDetailsReducer.DeleteCategoryDetailsData
         ?.data
   );
-
+  const OrderPagesLoaderTrueFalseData = useSelector(
+    (state) => state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
+  );
 
   useEffect(() => {
    
@@ -110,6 +115,7 @@ const UserSetting = () => {
     dispatch(DeleteCategoryDetails(deleted))
   }
   const EditCategory = (e, data) => {
+    setAfterEditActiveSaveBtn(false)
     setCategoryId(data?.id)
     setCategoryName(data?.category_name);
     setPermissionData(data?.permission);
@@ -153,6 +159,7 @@ const UserSetting = () => {
     setPermissionData(pyloadData);
   };
   const onSelectEdit = (selectedList, selectedItem) => {
+    setAfterEditActiveSaveBtn(true) //this will activate save button
     setSelectedEditPermission([...selectededitpermission, selectedItem])
     let array = [];
     selectedList.map((item, id) => {
@@ -161,6 +168,7 @@ const UserSetting = () => {
     setEditPermissionData(array);
   };
   const onRemoveEdit = (selectedList, removedItem) => {
+    setAfterEditActiveSaveBtn(true) //this will activate save button 
     setEditRemovedPermissionData([...editremovedpermissiondata, removedItem])
     let array = [];
     selectedList.map((item, id) => {
@@ -209,7 +217,7 @@ const UserSetting = () => {
             }}> Back </button>
           </div>
 
-          {IsAdminRole=="true"?<div className="usersetting-table">
+          <div className="usersetting-table">
             <table>
               <tr>
                 <th>Category</th>
@@ -273,7 +281,7 @@ const UserSetting = () => {
                 }) : ""}
 
             </table>
-          </div>:<h3 className="text-center">Only Admin Can Access This Page</h3>}
+          </div>
 
           {/* =============================Add Category========================================= */}
           {addcategory && (
@@ -284,35 +292,42 @@ const UserSetting = () => {
                   <svg viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z" fill="black" />
                   </svg></div>
-                <div className='row mx-0 pt-3'>
+                  <div className="popup_body">                    
+                    <div className='row mx-0 pt-3'>
 
-                  <div className='col-12 p-0 m-0 mb-3'>
-                    <label>Category Name</label>
-                    <input type="text" className="form-control" placeholder="Category Name"
-                      value={categoryname}
-                      onChange={(e) => setCategoryName(e.target.value)}
-                    />
-                  </div>
-                  <div className='col-12 p-0 mb-4'>
-                    <label>Permissions</label>
-                    <Multiselect
-                      options={GetSettingViewPermissionData?.user_permissions}
-                      // Options to display in the dropdown
-                      // selectedValues={this.state.selectedValue} // Preselected value to persist in dropdown
-                      onSelect={onSelect} // Function will trigger on select event
-                      onRemove={onRemove} // Function will trigger on remove event
-                      displayValue="permission" // Property name to display in the dropdown options
-                      showCheckbox
-                    />
-                  </div>
-
-                  <div className='col-12 '>
-                    <div className="btngroups text-end mt-3">
-                      <button type="button" className="btn save-btn" onClick={(e) => AddCategory(e)}>Save</button>
-                      <button type="button" className="btn cancel-btn" onClick={(e) => setAddCategory((o) => !o)}>Cancel</button>
+                    <div className='col-12 p-0 m-0 mb-3'>
+                      <label>Category Name</label>
+                      <input type="text" className="form-control" placeholder="Category Name"
+                        value={categoryname}
+                        onChange={(e) => setCategoryName(e.target.value)}
+                      />
+                    </div>
+                    <div className='col-12'>
+                      <label>Permissions</label>
+                    </div>
+                    <div className="col-md-12 multiselectblockclass">
+                      <Multiselect
+                        options={GetSettingViewPermissionData?.user_permissions}
+                        // Options to display in the dropdown
+                        // selectedValues={this.state.selectedValue} // Preselected value to persist in dropdown
+                        onSelect={onSelect} // Function will trigger on select event
+                        onRemove={onRemove} // Function will trigger on remove event
+                        displayValue="permission" // Property name to display in the dropdown options
+                        showCheckbox
+                      />
                     </div>
                   </div>
+
                 </div>
+
+                      <div className='col-12 '>
+                        <div className="btngroups text-end mt-3">
+{                          <button type="button" className="btn save-btn" onClick={(e) => AddCategory(e)}>Save</button>
+}                          <button type="button" className="btn cancel-btn" onClick={(e) => setAddCategory((o) => !o)}>Cancel</button>
+                        </div>
+                      </div>
+                    
+                  
               </div>
             </div>
           )}
@@ -321,7 +336,7 @@ const UserSetting = () => {
 
 
           {editcategory && (
-            <div className="popupouter">
+            <div className="popupouter editb2b-popup">
               <div className="popupinner">
                 <h2>Edit User</h2>
                 <div className='close-btn' type='button' onClick={(e) => setEditCategory((o) => !o)}>
@@ -332,8 +347,9 @@ const UserSetting = () => {
 
                   <div className='col-12'>
                     <label>Category Name</label>
-                    <input type="text" className="form-control"
+                    <input type="text" className="form-control input_filed_block"
                       value={categoryname}
+                      disabled
                       placeholder="Design Team" />
                   </div>
 
@@ -342,9 +358,7 @@ const UserSetting = () => {
                   <div className='col-12'>
                     <label>Permissions</label>
                   </div>
-                  <div className="col-md-12">
-
-
+                  <div className="col-md-12 multiselectblockclass">
                     <Multiselect
                       options={GetSettingViewPermissionData?.user_permissions}
                       // Options to display in the dropdown
@@ -356,24 +370,26 @@ const UserSetting = () => {
                       showCheckbox
                     />
                   </div>
-
-                  <div className='col-12'>
+                  
+                </div>
+                
+                <div className='col-12'>
                     <div className="btngroups text-end my-3">
+                    {AfterEditActiveSaveBtn==true ?
                       <button type="button" className="btn save-btn" onClick={(e) => EditSaveBtn(e)}>Save</button>
+                      :   <button   className="  btn cancel-btn"  style={{cursor:"not-allowed"}}>Save</button>
+                    }
                       <button type="button" className="btn cancel-btn" onClick={(e) => setEditCategory((o) => !o)}>Cancel</button>
                     </div>
 
                   </div>
 
-
-
-                </div>
               </div>
             </div>
           )}
-
         </div>
       </div>
+      <LodingSpiner loadspiner={OrderPagesLoaderTrueFalseData} />
     </div>
   )
 }

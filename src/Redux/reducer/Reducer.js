@@ -16,35 +16,43 @@ const stateData = {
   GetAdminDashboardViewOrderData: [],
   PostAdminDashboardTransactionData: [],
   PostAdminDashboardShippingMatrixData: [],
+  PostAdminOrderCsvFileData:[],
   GetAdminOrderIntransitData: [],
   GetAdminOrderDeliveredData: [],
   GetAdminOutForDeliveryData: [],
   GetAdminOrderPendingData: [],
+  PostViewOrderDetailsData: [],
   GetAdminOrderCustomerData: [],
   GetAdminOrderEditData: [],
   GetAdminOrderReturnData: [],
-  GetAdminOrderRTODeliveredData:[],
-  GetAdminOrderRebookData:[],
+  GetAdminOrderRTODeliveredData: [],
+  GetAdminOrderRebookData: [],
+  PostTrackLocationDetailsData:[],
   GetAdminOrderSummaryData: [],
   GetAdminOrderBookedData: [],
+  GetAdminOrderPickedUpData: [],
+  GetAdminOrderReadyForPickupData: [],
+  GetAdminOrderReceivedAtHubData: [],
   PostAdminOrderFilterationData: [],
   ToggleSideBarData: false,
-  PaymentPopupValueData:false,
+  PaymentPopupValueData: false,
   OrderPageBookNavigateData: false,
   OrderPageBoookNavigateData: false,
   GetAdminOrderCallBuyerData: [],
   GetAdminOrderGenerateOrderIdData: [],
   GetAdminOrderPaymentOrderData: [],
-  PostAdminOrderPaymentOrderData:[],
-  PostAdminOrderEwayBillData:[],
+  PostAdminOrderPaymentOrderData: [],
+  PostAdminOrderEwayBillData: [],
   PostAdminOrderPaymentCalReducerData: [],
-  PostAdminOrderAddShipmentData: [], 
+  PostAdminOrderAddShipmentData: [],
   PostViewAdminOrderData: [],
   GetDeliveryPriceDetailData: [],
   GetDeliveryPriceDetailReducerData: [],
   PostAdminPendingOrderActionData: [],
   DeleteAdminPendingOrderActionData: [],
-  PostAdminSettingAddEmployeeData: [],
+  PostAdminSettingAddDeliveryboyData: [],
+  PostAssignDeliveryBoyPartnerData:[],
+  PostAdminSettingAddData: [],
   GetCategoryDetailsData: [],
   GetSettingViewPermissionData: [],
   GetSettingEmployeeInfoData: [],
@@ -70,9 +78,12 @@ const stateData = {
   GetOrderDownloadLabelGenerationData: [],
   DeleteAdminOrderData: [],
   PatchEditEmployeeData: [],
+  PatchEditDeliveryboyData: [],
   GetBillingInvoiceDetailData: [],
   GetBillingAmountCountData: [],
   GetDashboardNotificationData: [],
+  PostDeliveryBoyNotificationData:[],
+  GetDeliveryBoyNotificationData:[],
   PostAddOrderTagData: [],
   PostUploadFileData: [],
   PostDashboardRevenueData: [],
@@ -81,6 +92,9 @@ const stateData = {
   GetCodRemittanceBillingAmountData: [],
   GetB2bCompanyInfoData: [],
   PostUploadBillRemittanceFileData: [],
+  PostUploadTariffFileData: [],
+  PostUploadInsuranceFileData: [],
+  PostUploadPackagingFileData: [],
   GetWalletHistoryData: [],
   GetWalletBalanceData: [],
   PostWalletAddMoneyData: [],
@@ -106,13 +120,18 @@ const stateData = {
   ShipmentLoaderTrueFalseData: true,
   GetUserNotificationData: [],
   ToggleSideBarTrueFalseData: true,
-  GetAuthDetailsData: [], 
-  GetPermissionData:[],
-  GetGoogleCityStateData:[],
-  PostTransactionHistoryData : [],
-  GetCancelOrderDetailData:[],
-  PostTrackingOtpData:[],
-  PostOtpTrackingUpdateOrderData:[],
+  GetAuthDetailsData: [],
+  GetPermissionData: [],
+  GetGoogleCityStateData: [],
+  PostTransactionHistoryData: [],
+  GetCancelOrderDetailData: [],
+  PostTrackingOtpData: [],
+  PostOtpTrackingUpdateOrderData: [],
+  PostQrDetailsData: [],
+  PostPaymentApprovalData: [],
+  PostPaymentChatData: [],
+  PostPaymentAddAmountData: [],
+  OrderPagesLoaderTrueFalseData: false,
 };
 
 export const productReducer = (state = stateData, action) => {
@@ -156,7 +175,7 @@ export const DeleteUserAddressReducer = (state = stateData, action) => {
     case actionType.DeleteUserAddress_Type:
       return {
         ...state,
-        DeleteUserAddressData: action.payload
+        DeleteUserAddressData: action.payload,
       };
     default:
       return state;
@@ -214,7 +233,7 @@ export const PatchPickupAddressReducer = (state = stateData, action) => {
     case actionType.PatchPickupAddressDispatch_Type:
       return {
         ...state,
-        PatchPickupAddressData: action.payload
+        PatchPickupAddressData: action.payload,
       };
     default:
       return state;
@@ -347,6 +366,18 @@ export const GetAdminOrderPendingReducer = (state = stateData, action) => {
       return state;
   }
 };
+export const PostViewOrderDetailsReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostViewOrderDetailsDispatch_Type:
+      return {
+        ...state,
+        PostViewOrderDetailsData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
 export const GetAdminOrderReturnReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.GetAdminOrderReturnDispatch_Type:
@@ -370,13 +401,23 @@ export const GetAdminOrderRTODeliveredReducer = (state = stateData, action) => {
   }
 };
 
-
 export const PostAdminOrderRebookDispatch = (state = stateData, action) => {
   switch (action.type) {
     case actionType.GetAdminOrderRebookDispatch_Type:
       return {
         ...state,
         GetAdminOrderRebookData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+export const PostTrackLocationDetailsReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostTrackLocationDetailsDispatch_Type:
+      return {
+        ...state,
+        PostTrackLocationDetailsData: action.payload,
       };
     default:
       return state;
@@ -407,6 +448,42 @@ export const GetAdminOrderBookedReducer = (state = stateData, action) => {
   }
 };
 
+
+export const GetAdminOrderPickedUpReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.GetAdminOrderPickedUpDispatch_Type:
+      return {
+        ...state,
+        GetAdminOrderPickedUpData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const GetAdminOrderReadyForPickupReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.GetAdminOrderReadyForPickupDispatch_Type:
+      return {
+        ...state,
+        GetAdminOrderReadyForPickupData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const GetAdminOrderReceivedAtHubReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.GetAdminOrderReceivedAtHubDispatch_Type:
+      return {
+        ...state,
+        GetAdminOrderReceivedAtHubData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 export const ToggleSideBarReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.ToggleSideBar_Type:
@@ -455,7 +532,6 @@ export const OrderPageBookNavigateReducer = (state = stateData, action) => {
   }
 };
 
-
 export const HeaderToggleClassAddReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.HeaderToggleClassAdd_Type:
@@ -470,17 +546,27 @@ export const HeaderToggleClassAddReducer = (state = stateData, action) => {
 
 export const ShipmentLoaderTrueFalseReducer = (state = stateData, action) => {
   switch (action.type) {
-    case actionType.ShipmentLoaderTrueFalse_Type: 
+    case actionType.ShipmentLoaderTrueFalse_Type:
       return {
         ...state,
         ShipmentLoaderTrueFalseData: action.payload,
-
       };
     default:
       return state;
   }
 };
 
+export const OrderPagesLoaderTrueFalseReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.OrderPagesLoaderTrueFalse_Type:
+      return {
+        ...state,
+        OrderPagesLoaderTrueFalseData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
 export const OrderPageBoookNavigateReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -530,8 +616,6 @@ export const PatchAdminOrderEditReducer = (state = stateData, action) => {
   }
 };
 
-
-
 export const GetAdminOrderCallBuyerReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.GetAdminOrderCallBuyerDispatch_Type:
@@ -544,9 +628,10 @@ export const GetAdminOrderCallBuyerReducer = (state = stateData, action) => {
   }
 };
 
-
-
-export const GetAdminOrderGenerateOrderIdReducer = (state = stateData, action) => {
+export const GetAdminOrderGenerateOrderIdReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.GetAdminOrderGenerateOrderIdDispatch_Type:
       return {
@@ -570,29 +655,32 @@ export const GetAdminOrderPaymentOrderReducer = (state = stateData, action) => {
   }
 };
 
-export const PostAdminOrderPaymentOrderReducer=(state=stateData,action)=>{
-  switch(action.type){
+export const PostAdminOrderPaymentOrderReducer = (
+  state = stateData,
+  action
+) => {
+  switch (action.type) {
     case actionType.PostAdminOrderPaymentOrderDispatch_Type:
       return {
         ...state,
         PostAdminOrderPaymentOrderData: action.payload,
       };
-      default:
-        return state
+    default:
+      return state;
   }
-}
+};
 
-export const PostAdminOrderEwayBillReducer=(state=stateData,action)=>{
-  switch(action.type){
+export const PostAdminOrderEwayBillReducer = (state = stateData, action) => {
+  switch (action.type) {
     case actionType.PostAdminOrderEwayBillDispatch_Type:
-      return{
+      return {
         ...state,
         PostAdminOrderEwayBillData: action.payload,
       };
-      default:
-        return state
+    default:
+      return state;
   }
-}
+};
 
 export const PostAdminOrderPaymentCalReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -606,7 +694,6 @@ export const PostAdminOrderPaymentCalReducer = (state = stateData, action) => {
   }
 };
 
-
 export const GetAdminOrderCloneOrderReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.GetAdminOrderCloneOrderDispatch_Type:
@@ -619,10 +706,7 @@ export const GetAdminOrderCloneOrderReducer = (state = stateData, action) => {
   }
 };
 
-
-
 export const PostAdminOrderAddShipmentReducer = (state = stateData, action) => {
-   
   switch (action.type) {
     case actionType.PostAdminOrderAddShipmentDispatch_Type:
       return {
@@ -634,8 +718,10 @@ export const PostAdminOrderAddShipmentReducer = (state = stateData, action) => {
   }
 };
 
-
-export const PostAdminPendingOrderActionReducer = (state = stateData, action) => {
+export const PostAdminPendingOrderActionReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.PostAdminPendingOrderActionDispatch_Type:
       return {
@@ -647,9 +733,10 @@ export const PostAdminPendingOrderActionReducer = (state = stateData, action) =>
   }
 };
 
-
-
-export const DeleteAdminPendingOrderActionReducer = (state = stateData, action) => {
+export const DeleteAdminPendingOrderActionReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.DeleteAdminPendingOrderActionDispatch_Type:
       return {
@@ -661,8 +748,10 @@ export const DeleteAdminPendingOrderActionReducer = (state = stateData, action) 
   }
 };
 
-
-export const PostAdminSettingAddEmployeeReducer = (state = stateData, action) => {
+export const PostAdminSettingAddEmployeeReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.PostAdminSettingAddEmployeeDispatch_Type:
       return {
@@ -673,8 +762,45 @@ export const PostAdminSettingAddEmployeeReducer = (state = stateData, action) =>
       return state;
   }
 };
-
-
+export const PostAdminSettingAddDeliveryboyReducer = (
+  state = stateData,
+  action
+) => {
+  switch (action.type) {
+    case actionType.PostAdminSettingAddDeliveryboyDispatch_Type:
+      return {
+        ...state,
+        PostAdminSettingAddDeliveryboyData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+export const PostAssignDeliveryBoyPartnerReducer = (
+  state = stateData,
+  action
+) => {
+  switch (action.type) {
+    case actionType.PostAssignDeliveryBoyPartnerDispatch_Type:
+      return {
+        ...state,
+        PostAssignDeliveryBoyPartnerData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+export const GetSettingDeliveryboyInfoReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.GetSettingDeliveryboyInfoDispatch_Type:
+      return {
+        ...state,
+        GetSettingDeliveryboyInfoData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 export const GetCategoryDetailsReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.GetCategoryDetailsDispatch_Type:
@@ -711,22 +837,17 @@ export const GetSettingEmployeeInfoReducer = (state = stateData, action) => {
   }
 };
 
-
-
 export const PostViewAdminOrderReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.PostViewAdminOrderDispatch_Type:
       return {
         ...state,
         PostViewAdminOrderData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
-
 
 export const GetDeliveryPriceDetailReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -734,28 +855,26 @@ export const GetDeliveryPriceDetailReducer = (state = stateData, action) => {
       return {
         ...state,
         GetDeliveryPriceDetailData: action.payload,
-
       };
     default:
       return state;
   }
 };
 
-
-
-export const PostAdminSettingAddCategoryReducer = (state = stateData, action) => {
+export const PostAdminSettingAddCategoryReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.PostAdminSettingAddCategoryDispatch_Type:
       return {
         ...state,
         PostAdminSettingAddCategoryData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
 
 export const GetSettingUserInfoReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -763,20 +882,21 @@ export const GetSettingUserInfoReducer = (state = stateData, action) => {
       return {
         ...state,
         GetSettingUserInfoData: action.payload,
-
       };
     default:
       return state;
   }
 };
 
-export const DeleteAdminSettingDeleteUserReducer = (state = stateData, action) => {
+export const DeleteAdminSettingDeleteUserReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.DeleteAdminSettingDeleteUserDispatch_Type:
       return {
         ...state,
         DeleteAdminSettingDeleteUserData: action.payload,
-
       };
     default:
       return state;
@@ -789,14 +909,11 @@ export const PatchEditUserPermissionReducer = (state = stateData, action) => {
       return {
         ...state,
         PatchEditUserPermissionData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
-
 
 export const GetSettingViewB2bFeedbackReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -804,21 +921,21 @@ export const GetSettingViewB2bFeedbackReducer = (state = stateData, action) => {
       return {
         ...state,
         GetSettingViewB2bFeedbackData: action.payload,
-
       };
     default:
       return state;
   }
-}
+};
 
-
-export const GetSettingViewB2bCloseFeedbackReducer = (state = stateData, action) => {
+export const GetSettingViewB2bCloseFeedbackReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.GetSettingViewB2bCloseFeedbackDispatch_Type:
       return {
         ...state,
         GetSettingViewB2bCloseFeedbackData: action.payload,
-
       };
     default:
       return state;
@@ -831,34 +948,36 @@ export const GetSettingViewB2cFeedbackReducer = (state = stateData, action) => {
       return {
         ...state,
         GetSettingViewB2cFeedbackData: action.payload,
-
       };
     default:
       return state;
   }
 };
 
-export const GetSettingViewB2cCloseFeedbackReducer = (state = stateData, action) => {
+export const GetSettingViewB2cCloseFeedbackReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.GetSettingViewB2cCloseFeedbackDispatch_Type:
       return {
         ...state,
         GetSettingViewB2cCloseFeedbackData: action.payload,
-
       };
     default:
       return state;
   }
 };
 
-
-export const DeleteSettingDismissTicketReducer = (state = stateData, action) => {
+export const DeleteSettingDismissTicketReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.DeleteSettingDismissTicketDispatch_Type:
       return {
         ...state,
         DeleteSettingDismissTicketData: action.payload,
-
       };
     default:
       return state;
@@ -871,7 +990,6 @@ export const PatchEditCategoryDetailsReducer = (state = stateData, action) => {
       return {
         ...state,
         PatchEditCategoryDetailsData: action.payload,
-
       };
     default:
       return state;
@@ -884,7 +1002,6 @@ export const DeleteCategoryDetailsReducer = (state = stateData, action) => {
       return {
         ...state,
         DeleteCategoryDetailsData: action.payload,
-
       };
     default:
       return state;
@@ -897,7 +1014,6 @@ export const GetAdminProfileReducer = (state = stateData, action) => {
       return {
         ...state,
         GetAdminProfileData: action.payload,
-
       };
     default:
       return state;
@@ -910,20 +1026,28 @@ export const PatchEditProfileReducer = (state = stateData, action) => {
       return {
         ...state,
         PatchEditProfileData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
+export const PatchAdminEditProfileReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PatchAdminEditProfileDispatch_Type:
+      return {
+        ...state,
+        PatchAdminEditProfileData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 export const PostAdminOrderCsvFileReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.PostAdminOrderCsvFileDispatch_Type:
       return {
         ...state,
-        PostAdminOrderCsvFileData: action.payload,
-
+        PostAdminOrderCsvFileData: action?.payload,
       };
     default:
       return state;
@@ -936,33 +1060,33 @@ export const GetAdminCloneOrderReducer = (state = stateData, action) => {
       return {
         ...state,
         GetAdminCloneOrderData: action.payload,
-
       };
     default:
       return state;
   }
 };
 
-export const PostOrderDownloadInvoiceFileReducer = (state = stateData, action) => {
+export const PostOrderDownloadInvoiceFileReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.PostOrderDownloadInvoiceFileDispatch_Type:
       return {
         ...state,
         PostOrderDownloadInvoiceFileData: action.payload,
-
       };
     default:
       return state;
   }
 };
- 
+
 export const GetOrderDownloadInvoiceReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.GetOrderDownloadInvoiceDispatch_Type:
       return {
         ...state,
         GetOrderDownloadInvoiceData: action.payload,
-
       };
     default:
       return state;
@@ -971,26 +1095,30 @@ export const GetOrderDownloadInvoiceReducer = (state = stateData, action) => {
 
 // label generation
 
-export const PostOrderDownloadLabelGenerationFileReducer = (state = stateData, action) => {
+export const PostOrderDownloadLabelGenerationFileReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.PostOrderDownloadLabelGenerationFileDispatch_Type:
       return {
         ...state,
         PostOrderDownloadLabelGenerationFileData: action.payload,
-
       };
     default:
       return state;
   }
 };
- 
-export const GetOrderDownloadILabelGenerationReducer = (state = stateData, action) => {
+
+export const GetOrderDownloadILabelGenerationReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.GetOrderDownloadLabelGenerationDispatch_Type:
       return {
         ...state,
         GetOrderDownloadLabelGenerationData: action.payload,
-
       };
     default:
       return state;
@@ -1003,7 +1131,6 @@ export const DeleteAdminOrderReducer = (state = stateData, action) => {
       return {
         ...state,
         DeleteAdminOrderData: action.payload,
-
       };
     default:
       return state;
@@ -1016,6 +1143,17 @@ export const PatchEditEmployeeReducer = (state = stateData, action) => {
       return {
         ...state,
         PatchEditEmployeeData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+export const PatchEditDeliveryboyReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PatchEditDeliveryboyDispatch_Type:
+      return {
+        ...state,
+        PatchEditDeliveryboyData: action.payload,
       };
     default:
       return state;
@@ -1052,20 +1190,41 @@ export const GetDashboardNotificationReducer = (state = stateData, action) => {
       return {
         ...state,
         GetDashboardNotificationData: action.payload,
-
       };
     default:
       return state;
   }
 };
+// PostDeliveryBoyNotificationData
 
+export const PostDeliveryBoyNotificationReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostDeliveryBoyNotificationDispatch_Type:
+      return {
+        ...state,
+        PostDeliveryBoyNotificationData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+export const GetDeliveryBoyNotificationReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.GetDeliveryBoyNotificationDispatch_Type:
+      return {
+        ...state,
+        GetDeliveryBoyNotificationData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 export const PostAddOrderTagReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.PostAddOrderTagDispatch_Type:
       return {
         ...state,
         PostAddOrderTagData: action.payload,
-
       };
     default:
       return state;
@@ -1078,7 +1237,6 @@ export const PostUploadFileReducer = (state = stateData, action) => {
       return {
         ...state,
         PostUploadFileData: action.payload,
-
       };
     default:
       return state;
@@ -1091,7 +1249,6 @@ export const PostDashboardRevenueReducer = (state = stateData, action) => {
       return {
         ...state,
         PostDashboardRevenueData: action.payload,
-
       };
     default:
       return state;
@@ -1104,7 +1261,6 @@ export const PostDashboardViewOrderReducer = (state = stateData, action) => {
       return {
         ...state,
         PostDashboardViewOrderData: action.payload,
-
       };
     default:
       return state;
@@ -1117,20 +1273,21 @@ export const GetCodRemittanceReducer = (state = stateData, action) => {
       return {
         ...state,
         GetCodRemittanceData: action.payload,
-
       };
     default:
       return state;
   }
 };
 
-export const GetCodRemittanceBillingAmountReducer = (state = stateData, action) => {
+export const GetCodRemittanceBillingAmountReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.GetCodRemittanceBillingAmountDispatch_Type:
       return {
         ...state,
         GetCodRemittanceBillingAmountData: action.payload,
-
       };
     default:
       return state;
@@ -1143,26 +1300,62 @@ export const GetB2bCompanyInfoReducer = (state = stateData, action) => {
       return {
         ...state,
         GetB2bCompanyInfoData: action.payload,
-
       };
     default:
       return state;
   }
 };
 
-export const PostUploadBillRemittanceFileReducer = (state = stateData, action) => {
+export const PostUploadBillRemittanceFileReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.PostUploadBillRemittanceFileDispatch_Type:
       return {
         ...state,
         PostUploadBillRemittanceFileData: action.payload,
-
       };
     default:
       return state;
   }
 };
 
+export const PostUploadTariffFileReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostUploadTariffFileDispatch_Type:
+      return {
+        ...state,
+        PostUploadTariffFileData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const PostUploadInsuranceFileReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostUploadInsuranceFileDispatch_Type:
+      return {
+        ...state,
+        PostUploadInsuranceFileData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const PostUploadPackagingFileReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostUploadPackagingFileDispatch_Type:
+      return {
+        ...state,
+        PostUploadPackagingFileData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
 export const GetWalletHistoryReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1170,14 +1363,11 @@ export const GetWalletHistoryReducer = (state = stateData, action) => {
       return {
         ...state,
         GetWalletHistoryData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
-
 
 export const GetWalletBalanceReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1185,7 +1375,6 @@ export const GetWalletBalanceReducer = (state = stateData, action) => {
       return {
         ...state,
         GetWalletBalanceData: action.payload,
-
       };
     default:
       return state;
@@ -1198,14 +1387,11 @@ export const PostWalletAddMoneyReducer = (state = stateData, action) => {
       return {
         ...state,
         PostWalletAddMoneyData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
-
 
 export const PostPincodeUploadFileReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1213,14 +1399,11 @@ export const PostPincodeUploadFileReducer = (state = stateData, action) => {
       return {
         ...state,
         PostPincodeUploadFileData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
-
 
 export const PostDebitBalanceReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1228,13 +1411,11 @@ export const PostDebitBalanceReducer = (state = stateData, action) => {
       return {
         ...state,
         PostDebitBalanceData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
 
 export const PostTrackingOrderDetailsReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1242,13 +1423,11 @@ export const PostTrackingOrderDetailsReducer = (state = stateData, action) => {
       return {
         ...state,
         PostTrackingOrderDetailsData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
 
 export const PostCreateTicketReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1261,13 +1440,15 @@ export const PostCreateTicketReducer = (state = stateData, action) => {
       return state;
   }
 };
-export const PostBillingCodRemittanceCountReducer = (state = stateData, action) => {
+export const PostBillingCodRemittanceCountReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.PostBillingCodRemittanceCountDispatch_Type:
       return {
         ...state,
         PostBillingCodRemittanceCountData: action.payload,
-
       };
     default:
       return state;
@@ -1280,7 +1461,6 @@ export const PostTicketDetailReducer = (state = stateData, action) => {
       return {
         ...state,
         PostTicketDetailData: action.payload,
-
       };
     default:
       return state;
@@ -1298,20 +1478,20 @@ export const DeleteSupportTicketReducer = (state = stateData, action) => {
       return state;
   }
 };
-export const PostBillingCodRemittanceDetailsReducer = (state = stateData, action) => {
+export const PostBillingCodRemittanceDetailsReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.PostBillingCodRemittanceDetailsDispatch_Type:
       return {
         ...state,
         PostBillingCodRemittanceDetailsData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
-
 
 export const PostCreateFeedbackReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1319,13 +1499,11 @@ export const PostCreateFeedbackReducer = (state = stateData, action) => {
       return {
         ...state,
         PostCreateFeedbackData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
 
 export const PatchTrackDetailsReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1333,7 +1511,6 @@ export const PatchTrackDetailsReducer = (state = stateData, action) => {
       return {
         ...state,
         PatchTrackDetailsData: action.payload,
-
       };
     default:
       return state;
@@ -1346,7 +1523,6 @@ export const GetCustomerOrderDetailReducer = (state = stateData, action) => {
       return {
         ...state,
         GetCustomerOrderDetailData: action.payload,
-
       };
     default:
       return state;
@@ -1359,13 +1535,11 @@ export const PostRaiseContactUSReducer = (state = stateData, action) => {
       return {
         ...state,
         PostRaiseContactUSData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
 
 export const PostOrderTrackReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1373,7 +1547,6 @@ export const PostOrderTrackReducer = (state = stateData, action) => {
       return {
         ...state,
         PostOrderTrackData: action.payload,
-
       };
     default:
       return state;
@@ -1386,7 +1559,6 @@ export const PostCompanyFileReducer = (state = stateData, action) => {
       return {
         ...state,
         PostCompanyFileData: action.payload,
-
       };
     default:
       return state;
@@ -1399,7 +1571,6 @@ export const PostGetFeedbackReducer = (state = stateData, action) => {
       return {
         ...state,
         PostGetFeedbackData: action.payload,
-
       };
     default:
       return state;
@@ -1412,7 +1583,6 @@ export const PostKYCdetailReducer = (state = stateData, action) => {
       return {
         ...state,
         PostKYCdetailData: action.payload,
-
       };
     default:
       return state;
@@ -1425,15 +1595,11 @@ export const PostClearNotificationReducer = (state = stateData, action) => {
       return {
         ...state,
         PostClearNotificationData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
-
-
 
 export const GetUserNotificationReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1441,7 +1607,6 @@ export const GetUserNotificationReducer = (state = stateData, action) => {
       return {
         ...state,
         GetUserNotificationData: action.payload,
-
       };
     default:
       return state;
@@ -1458,7 +1623,7 @@ export const GetAuthDetailsReducer = (state = stateData, action) => {
     default:
       return state;
   }
-}
+};
 
 export const GetPermissionReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1466,14 +1631,11 @@ export const GetPermissionReducer = (state = stateData, action) => {
       return {
         ...state,
         GetPermissionData: action.payload,
-
       };
     default:
       return state;
   }
 };
-
-
 
 export const GetCancelOrderDetailReducer = (state = stateData, action) => {
   switch (action.type) {
@@ -1481,7 +1643,6 @@ export const GetCancelOrderDetailReducer = (state = stateData, action) => {
       return {
         ...state,
         GetCancelOrderDetailData: action.payload,
-
       };
     default:
       return state;
@@ -1494,7 +1655,6 @@ export const GetGoogleCityStateReducer = (state = stateData, action) => {
       return {
         ...state,
         GetGoogleCityStateData: action.payload,
-
       };
     default:
       return state;
@@ -1506,31 +1666,84 @@ export const PostTransactionHistoryReducer = (state = stateData, action) => {
     case actionType.PostTransactionHistoryDispatch_Type:
       return {
         ...state,
-        PostTransactionHistoryData : action.payload,
-
+        PostTransactionHistoryData: action.payload,
       };
     default:
       return state;
   }
 };
-
-
 
 export const PostTrackingOtpReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.PostTrackingOtpDispatch_Type:
       return {
         ...state,
-        PostTrackingOtpData : action.payload,
-
+        PostTrackingOtpData: action.payload,
       };
     default:
       return state;
   }
 };
 
+export const PostQrDetailsReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostQrDetailsDispatch_Type:
+      return {
+        ...state,
+        PostQrDetailsData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
+export const PostPaymentApprovalReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostPaymentApprovalDispatch_Type:
+      return {
+        ...state,
+        PostPaymentApprovalData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
+export const PostPaymentChatReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostPaymentChatDispatch_Type:
+      return {
+        ...state,
+        PostPaymentChatData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
+export const PatchPaymentApprovalActionReducer = (
+  state = stateData,
+  action
+) => {
+  switch (action.type) {
+    case actionType.PatchPaymentApprovalActionDispatch_Type:
+      return {
+        ...state,
+        PatchPaymentApprovalActionData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
-
+export const PostPaymentAddAmountReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostPaymentAddAmountDispatch_Type:
+      return {
+        ...state,
+        PostPaymentAddAmountData: action.payload,
+      };
+    default:
+      return state;
+  }
+};

@@ -7,8 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   GetAdminProfile,
   PatchEditProfile,
+  PatchAdminEditProfile
 } from "../../Redux/action/ApiCollection";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AdminSetting = () => {
   const [showpassword1, setShowPassword1] = useState(false);
@@ -20,7 +22,7 @@ const AdminSetting = () => {
 
   const navigate = useNavigate();
 
-  let isAdmin=reactLocalStorage.get("Admin_Role",false)
+  let isAdmin = sessionStorage.getItem("Admin_Role", false)
 
   const dispatch = useDispatch();
   const ToggleFunData = useSelector(
@@ -28,26 +30,70 @@ const AdminSetting = () => {
   );
 
   const GetAdminProfileData = useSelector(
-    (state) => state.GetAdminProfileReducer.GetAdminProfileData?.data
+    (state) => state.GetAdminProfileReducer.GetAdminProfileData
   );
 
   const PatchEditProfileData = useSelector(
-    (state) => state.PatchEditProfileReducer.PatchEditProfileData?.data
+    (state) => state.PatchEditProfileReducer.PatchEditProfileData
   );
-
+  const PatchAdminEditProfileData=useSelector(
+    (state) => state.PatchAdminEditProfileReducer.PatchAdminEditProfileData
+  )
   useEffect(() => {
-   
+
     dispatch(GetAdminProfile());
   }, []);
 
   const MakePassword = (e) => {
+    let currentpasswordSpaceCancelation = currentpassword.replace(/  +/g, '');
+    let newpasswordSpaceCancelation = newpassword.replace(/  +/g, '');
+    let confirmpasswordSpaceCancelation = confirmpassword.replace(/  +/g, '');
+    const passwordvalidRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+
+
     let payload = {
-      current_pass: currentpassword,
-      new_pass: newpassword,
-      confirm_pass: confirmpassword,
+      current_pass: currentpasswordSpaceCancelation,
+      new_pass: newpasswordSpaceCancelation,
+      confirm_pass: confirmpasswordSpaceCancelation,
     };
-    dispatch(PatchEditProfile(payload));
+
+
+     if (currentpasswordSpaceCancelation.length != 0 && !passwordvalidRegex.test(currentpasswordSpaceCancelation) ){
+      toast.warn("Please enter your current password with minimum 8 characters, at least one uppercase, one lowercase, one number and one special character.")
+     }
+
+     else if (newpasswordSpaceCancelation.length == 0) {
+        toast.warn("Please enter the new password")
+     }
+    else if (newpasswordSpaceCancelation.length != 0 && !passwordvalidRegex.test(newpasswordSpaceCancelation)) {
+      toast.warn("Please enter your new password with minimum 8 characters, at least one uppercase, one lowercase, one number and one special character.")
+    }
+    else if (confirmpasswordSpaceCancelation.length == 0) {
+      toast.warn("Please enter your confirm password")
+    }
+    else if (confirmpasswordSpaceCancelation.length != 0 && !passwordvalidRegex.test(confirmpasswordSpaceCancelation)) {
+      toast.warn("Please enter your confirm password with minimum 8 characters, at least one uppercase, one lowercase, one number and one special character.")
+    }
+    else {
+      dispatch(PatchEditProfile(payload));
+    }
+    // else{
+    // let payload = {
+    //   current_pass: currentpassword,
+    //   new_pass: newpasswordSpaceCancelation,
+    //   confirm_pass: confirmpasswordSpaceCancelation ,
+    // };
+    //   dispatch(PatchEditProfile(payload));
+    // }
+    
+    // if(payload.confirm_pass.length==0){
+    //   toast.warn("please enter confirm password")
+    // }
+    
   };
+
+
+
   return (
     <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
       <Header />
@@ -75,57 +121,63 @@ const AdminSetting = () => {
 
           <div className="adminform-part">
             <div className="row">
-              <div className="col-md-4 col-sm-6">
-                <label>{isAdmin=="true"?"First Name":"Username"} </label>
+              <div className="col-md-4 col-sm-6 mb-3">
+                <label>{isAdmin == "true" ? "First Name" : "Username"} </label>
                 <input
                   type="text"
-                  className="form-control mt-1"
-                  value={ isAdmin=="true"?
-                    GetAdminProfileData && GetAdminProfileData[0]?.first_name
-                    : GetAdminProfileData && GetAdminProfileData[0]?.username
+                  className="form-control mt-1 input_filed_block"
+                  disabled
+                  value={isAdmin == "true" ?
+                    GetAdminProfileData?.data && GetAdminProfileData?.data[0]?.first_name
+                    : GetAdminProfileData?.data && GetAdminProfileData?.data[0]?.username
                   }
                 />
               </div>
-              <div className="col-md-4 col-sm-6">
+              <div className="col-md-4 col-sm-6 mb-3">
                 <label>
-                {isAdmin=="true"?"Last Name":"Company Name"} 
-                 </label>
+                  {isAdmin == "true" ? "Last Name" : "Company Name"}
+                </label>
                 <input
                   type="text"
-                  className="form-control mt-1"
+                  className="form-control mt-1 input_filed_block"
+                  disabled
                   value={
-                    isAdmin=="true"? GetAdminProfileData && GetAdminProfileData[0]?.last_name :
-                    GetAdminProfileData && GetAdminProfileData[0]?.company_name
+                    isAdmin == "true" ? GetAdminProfileData?.data && GetAdminProfileData?.data[0]?.last_name :
+                      GetAdminProfileData?.data && GetAdminProfileData?.data[0]?.company_name
                   }
                 />
               </div>
               <div className="col-12"></div>
-              <div className="col-md-4 col-sm-6 mt-3">
+              <div className="col-md-4 col-sm-6 mb-3">
                 <label>Email</label>
                 <input
                   type="email"
-                  className="form-control mt-1"
-                  value={GetAdminProfileData && GetAdminProfileData[0]?.email}
+                  className="form-control mt-1 input_filed_block"
+                  disabled
+                  value={GetAdminProfileData?.data && GetAdminProfileData?.data[0]?.email}
                 />
               </div>
-              <div className="col-md-4 col-sm-6 mt-3">
+              <div className="col-md-4 col-sm-6 mb-3">
                 <label>Number</label>
                 <input
                   type="text"
-                  className="form-control mt-1"
+                  className="form-control mt-1 input_filed_block"
+                  disabled
                   value={
-                    GetAdminProfileData && GetAdminProfileData[0]?.phone_number
+                    GetAdminProfileData?.data && GetAdminProfileData?.data[0]?.phone_number
                   }
                 />
               </div>
               <div className="col-12 mt-5">
                 <label>Password</label>
-                <span className="mt-1" role="button">Reset Password</span>
+                <span className="mt-1" >Reset Password</span>
+                {/* <span className="mt-1" role="button">Reset Password</span> */}
               </div>
               <div className="col-sm-4 mt-3">
                 <label>Current Password</label>
                 <div className="input_filed text-center">
                   <input
+                    maxLength={15}
                     type={showpassword1 ? "text" : "password"}
                     value={currentpassword}
                     placeholder="Current Password"
@@ -210,6 +262,7 @@ const AdminSetting = () => {
                 <label>New Password</label>
                 <div className="input_filed text-center">
                   <input
+                    maxLength={15}
                     type={showpassword2 ? "text" : "password"}
                     value={newpassword}
                     placeholder="New Password"
@@ -294,6 +347,7 @@ const AdminSetting = () => {
                 <label>Confirm New Password</label>
                 <div className="input_filed text-center">
                   <input
+                    maxLength={15}
                     type={showpassword3 ? "text" : "password"}
                     value={confirmpassword}
                     placeholder="Confirm New Password"
@@ -375,13 +429,13 @@ const AdminSetting = () => {
                 </div>
               </div>
               <div className="col-sm-4 mt-4 ">
-                <div  className="orderaction">
-               { currentpassword !=="" ||newpassword !=="" || confirmpassword!=="" ?<button
-                  type="button" className="btn action-btn"
-                  onClick={(e) => MakePassword(e)}
-                >
-                  Save
-                </button>:""}
+                <div className="orderaction">
+                  {currentpassword !== "" || newpassword !== "" || confirmpassword !== "" ? <button
+                    type="button" className="btn action-btn"
+                    onClick={(e) => MakePassword(e)}
+                  >
+                    Save
+                  </button> : ""}
                 </div>
               </div>
             </div>

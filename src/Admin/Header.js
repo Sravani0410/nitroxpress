@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Select from 'react-select';
+import Select from "react-select";
 import { toast } from "react-toastify";
 import { reactLocalStorage } from "reactjs-localstorage";
 import {
@@ -10,10 +10,13 @@ import {
   PostClearNotification,
   GetAdminProfile,
   GetDashboardNotification,
+  GetDeliveryBoyNotification,
+  PostDeliveryBoyNotification,
   PostPincodeUploadFile,
   GetUserNotification,
   GetAuthDetails,
   PostPincodeUploadFileDispatch,
+  latAndLogAttendence,
 } from "../Redux/action/ApiCollection";
 
 import { useLocation, useNavigate } from "react-router-dom";
@@ -34,8 +37,9 @@ const Sidebar = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedOptionclass, setSelectedOptionClass] = useState("");
 
+  const [SearchFiterData, setSearchFiterData] = useState("");
 
-
+  const [HeaderMenu, setHeaderMenu] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -47,6 +51,11 @@ const Sidebar = () => {
   const GetDashboardNotificationData = useSelector(
     (state) =>
       state.GetDashboardNotificationReducer.GetDashboardNotificationData?.data
+  );
+  const GetDeliveryBoyNotificationData = useSelector(
+    (state) =>
+      state.GetDeliveryBoyNotificationReducer.GetDeliveryBoyNotificationData
+        ?.data
   );
   const GetUserNotificationData = useSelector(
     (state) => state.GetUserNotificationReducer.GetUserNotificationData
@@ -67,22 +76,38 @@ const Sidebar = () => {
   const GetAuthDetailsData = useSelector(
     (state) => state.GetAuthDetailsReducer?.GetAuthDetailsData?.data
   );
-
-
-  let isEmployeData = reactLocalStorage.get("isEmploye", false);
-  let isAdmin_Role = reactLocalStorage.get("Admin_Role", false);
-
- 
-   
+  // GetDeliveryBoyNotificationData
+  let isEmployeData = sessionStorage.getItem("isEmploye", false);
+  let isAdmin_Role = sessionStorage.getItem("Admin_Role", false);
+  let isDeliveryboy_Role = sessionStorage.getItem("Is_delivery_boy", false);
   useEffect(() => {
-
     // navigate(TokenDataValidCheck())
 
     dispatch(GetAdminProfile());
     dispatch(GetUserNotification());
-    dispatch(GetDashboardNotification());
-    dispatch(GetWalletBalance());
-    dispatch(GetAuthDetails());
+    // dispatch(GetDashboardNotification());
+    if (isDeliveryboy_Role == "true") {
+      dispatch(GetDeliveryBoyNotification());
+      setInterval(() => {
+        dispatch(GetDeliveryBoyNotification());
+      }, 50000);
+    } else {
+      dispatch(GetDashboardNotification());
+    }
+    // VIEW_WALLET_BALANCE
+    // if (isEmployeData != "true" || isDeliveryboy_Role != "true") {
+    //   dispatch(GetWalletBalance());
+    // }
+    // else{
+
+    // }
+
+    if (isEmployeData != "true") {
+      dispatch(GetWalletBalance());
+    } else {
+    }
+
+    // dispatch(GetAuthDetails());
   }, []);
 
   const timeConvert = (time) => {
@@ -96,7 +121,7 @@ const Sidebar = () => {
       time[5] = +time[0] < 12 ? "AM" : "PM"; // Set AM/PM
       time[0] = +time[0] % 12 || 12; // Adjust hours
     }
-  
+
     let hour = time[0];
     let coln = time[1];
     let mint = time[2];
@@ -108,31 +133,173 @@ const Sidebar = () => {
   };
 
   let pageData = [
-    { label: "Dashboard", path: "/admin/dashboard" },
-    { label: "Order", path: "/admin/order#pending" },
+    {
+      label: ` Dashboard `,
+      path: `${
+        PermissionData().VIEW_ADMIN_DASHBOARD_PAGE ==
+        "VIEW_ADMIN_DASHBOARD_PAGE"
+          ? "/admin/dashboard"
+          : "null"
+      }`,
+    },
+    {
+      label: ` Order `,
+      path: `${
+        PermissionData().VIEW_ORDER_PAGE == "VIEW_ORDER_PAGE"
+          ? "/admin/order#pending"
+          : ""
+      }`,
+    },
     // { label: "Tracking", path: "/admin/tracking" },
-    { label: "Customer", path: "/admin/customer" },
-    { label: "Setting", path: "/admin/setting" },
-    { label: "Support B2B", path: "/admin/support/b2b" },
-    { label: "Support B2C", path: "/admin/support/b2b/b2c" },
-    { label: "Accounting", path: "/admin/support/accounting" },
-    { label: "Add Order", path: "/admin/order/User#pending" },
-    { label: "COD Remittance", path: "/admin/invoices/cod#pending" },
-    { label: "Invoices", path: "/admin/invoices/cod#hd" },
-    { label: "Tickets B2B", path: "/admin/support/b2b" },
-    { label: "Tickets B2C", path: "/admin/support/b2b/b2c" },
-    { label: "Employee", path: "/admin/setting/employee#pending" },
-    { label: "Feedback B2B", path: "/admin/setting/b2bfeedback" },
-    { label: "Feedback B2C", path: "/admin/setting/b2cfeedback" },
+    // { label: "Customer", path: "/admin/customer"},
+    {
+      label: `${
+        PermissionData().VIEW_SETTING_PAGE == "VIEW_SETTING_PAGE"
+          ? "Setting"
+          : ""
+      }`,
+      path: `${
+        PermissionData().VIEW_SETTING_PAGE == "VIEW_SETTING_PAGE"
+          ? "/admin/setting"
+          : ""
+      }`,
+    },
+    {
+      label: `Support B2B`,
+      path: `${
+        PermissionData().VIEW_B2B_TICKETS == "VIEW_B2B_TICKETS" ||
+        PermissionData().VIEW_SUPPORT_B2B_PAGE !== "VIEW_SUPPORT_B2B_PAGE"
+          ? "/admin/support/b2b"
+          : "null"
+      }`,
+    },
+    {
+      label: `Support B2C`,
+      path: `${
+        PermissionData().VIEW_B2C_TICKETS == "VIEW_B2C_TICKETS" ||
+        PermissionData().VIEW_SUPPORT_B2C_PAGE == "VIEW_SUPPORT_B2C_PAGE"
+          ? "/admin/support/b2b/b2c"
+          : "null"
+      }`,
+    },
+    // { label: "Accounting", path:`${PermissionData().CREATE_ORDER =="CREATE_ORDER"? "/admin/support/accounting" :"null"}` },
+    {
+      label: `Add Order `,
+      path: `${
+        PermissionData().CREATE_ORDER == "CREATE_ORDER" ||
+        PermissionData().VIEW_ORDER_CREATE_PAGE == "VIEW_ORDER_CREATE_PAGE"
+          ? "/admin/order/User#pending"
+          : "null"
+      }`,
+    },
+    {
+      label: `COD Remittance `,
+      path: `${
+        PermissionData().VIEW_COD_REMITTANCE == "VIEW_COD_REMITTANCE" ||
+        PermissionData().VIEW_COD_REMITTANCE_PAGE == "VIEW_COD_REMITTANCE_PAGE"
+          ? "/admin/invoices/cod#pending"
+          : "null"
+      }`,
+    },
+    {
+      label: `Invoices `,
+      path: `${
+        PermissionData().VIEW_INVOICES == "VIEW_INVOICES" ||
+        PermissionData().VIEW_INVOICE_PAGE == "VIEW_INVOICE_PAGE"
+          ? "/admin/invoices/cod#hd"
+          : "null"
+      }`,
+    },
+    {
+      label: "Tickets B2B",
+      path: `${
+        PermissionData().VIEW_B2B_TICKETS == "VIEW_B2B_TICKETS" ||
+        PermissionData().VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"
+          ? "/admin/support/b2b"
+          : "null"
+      }`,
+    },
+    {
+      label: "Tickets B2C",
+      path: `${
+        PermissionData().VIEW_B2C_TICKETS == "VIEW_B2C_TICKETS" ||
+        PermissionData().VIEW_SUPPORT_B2C_PAGE == "VIEW_SUPPORT_B2C_PAGE"
+          ? "/admin/support/b2b/b2c"
+          : "null"
+      }`,
+    },
+    {
+      label: "Feedback B2B",
+      path: `${
+        PermissionData().VIEW_B2B_FEEDBACK == "VIEW_B2B_FEEDBACK" ||
+        PermissionData().VIEW_B2B_FEEDBACK_PAGE == "VIEW_B2B_FEEDBACK_PAGE"
+          ? "/admin/setting/b2bfeedback"
+          : "null"
+      }`,
+    },
+    {
+      label: "Feedback B2C",
+      path: `${
+        PermissionData().VIEW_B2C_FEEDBACK == "VIEW_B2C_FEEDBACK" ||
+        PermissionData().VIEW_B2C_FEEDBACK_PAGE == "VIEW_B2C_FEEDBACK_PAGE"
+          ? "/admin/setting/b2cfeedback"
+          : "null"
+      }`,
+    },
     { label: "Profile", path: "/admin/setting/adminsetting#pending" },
-    { label: "Employee", path: "/admin/setting/employee#pending" },
-    { label: "User Profile B2B", path: "/admin/setting/userprofile#pending" },
-    { label: "User Profile B2C", path: "/admin/setting/userb2c#pending" },
-    { label: "Categories", path: "/admin/setting/usersetting#pending" },
+    {
+      label: "Employee",
+      path: `${
+        PermissionData().VIEW_EMPLOYEE == "VIEW_EMPLOYEE" ||
+        PermissionData().VIEW_SETTING_EMPLOYEE_PAGE ==
+          "VIEW_SETTING_EMPLOYEE_PAGE"
+          ? "/admin/setting/employee#pending"
+          : "null"
+      }`,
+    },
+    {
+      label: "User Profile B2B",
+      path: `${
+        PermissionData().VIEW_B2B_USER_PROFILE == "VIEW_B2B_USER_PROFILE" ||
+        PermissionData().VIEW_SETTING_USER_PROFILE_PAGE ==
+          "VIEW_SETTING_USER_PROFILE_PAGE"
+          ? "/admin/setting/userprofile#pending"
+          : "null"
+      }`,
+    },
+    {
+      label: "User Profile B2C",
+      path: `${
+        PermissionData().VIEW_B2C_USER_PROFILE == "VIEW_B2C_USER_PROFILE" ||
+        PermissionData().VIEW_SETTING_USER_B2C_PAGE ==
+          "VIEW_SETTING_USER_B2C_PAGE"
+          ? "/admin/setting/userb2c#pending"
+          : "null"
+      }`,
+    },
+    {
+      label: "Categories",
+      path: `${
+        PermissionData().VIEW_CATEGORY == "VIEW_CATEGORY" ||
+        PermissionData().VIEW_SETTING_CATEGORY_PAGE ==
+          "VIEW_SETTING_CATEGORY_PAGE"
+          ? "/admin/setting/usersetting#pending"
+          : "null"
+      }`,
+    },
   ];
 
-  let as_individual = reactLocalStorage.get("as_individual", false);
+  useEffect(() => {
+    const result = pageData?.filter((item) => item.path != "null");
+    setSearchFiterData(result);
+    // if( PermissionData()?.VIEW_B2C_TICKETS == "VIEW_B2C_TICKETS"){
+    //   return( item.label = "Support B2C",item.path="/admin/support/b2b/b2c" )
+    // }else{
+    //   return("")
+    // }
+  }, []);
 
+  let as_individual = sessionStorage.getItem("as_individual", false);
 
   const SearchPage = (e) => {
     let value = e.target.value.toUpperCase();
@@ -147,32 +314,81 @@ const Sidebar = () => {
     setPagePathData(result);
   };
 
-
   // [0].value
 
   useEffect(() => {
     if (selectedOption?.length !== 0) {
-
-      navigate(selectedOption?.path)
+      navigate(selectedOption?.path);
+      setSelectedOption("");
     }
 
-    if (as_individual.toString() == "true") {
+    if (as_individual?.toString() == "true") {
       navigate("/");
-      window.location.reload(false) 
-  }  
-
-    
-  }, [selectedOption,as_individual])
-
-
+      window.location.reload(false);
+    }
+  }, [selectedOption, as_individual]);
 
   const Logoutfun = () => {
+    let is_delivery_boy = sessionStorage.getItem("Is_delivery_boy", false);
+    if (is_delivery_boy == "true") {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            // Do something with the latitude and longitude
+            var currentTime = new Date();
+            var currentOffset = currentTime.getTimezoneOffset();
+            var ISTOffset = 330; // IST offset UTC +5:30
+            var ISTTime = new Date(
+              currentTime.getTime() + (ISTOffset + currentOffset) * 60000
+            );
 
-    reactLocalStorage.remove("token");
-    reactLocalStorage.remove("Admin_Role");
-    toast.success(" Logout successfully");
-    reactLocalStorage.clear();
-    navigate("/");
+            // ISTTime now represents the time in IST coordinates
+
+            var hoursIST = ISTTime.getHours();
+            var minutesIST = ISTTime.getMinutes();
+            const payload = {
+              logout_time: hoursIST + ":" + minutesIST,
+              latitude: latitude,
+              longitude: longitude,
+              login_logout: "logout",
+            };
+
+            let logouttoken = sessionStorage.getItem("token", false);
+            dispatch(latAndLogAttendence(payload, logouttoken));
+            sessionStorage.removeItem("token");
+            sessionStorage.removeItem("Admin_Role");
+            toast.success(" Logout successfully");
+            sessionStorage.clear();
+            navigate("/");
+            // sessionStorage.setItem("deliveryboytoken", Response.data.Token);
+          },
+          function (error) {
+            // Handle any errors that occur during location retrieval
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                console.error("User denied the request for geolocation.");
+                break;
+              case error.POSITION_UNAVAILABLE:
+                console.error("Location information is unavailable.");
+                break;
+              case error.TIMEOUT:
+                console.error("The request to get user location timed out.");
+                break;
+              default:
+                console.error("An unknown error occurred.");
+            }
+          }
+        );
+      }
+    } else {
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("Admin_Role");
+      toast.success(" Logout successfully");
+      sessionStorage.clear();
+      navigate("/");
+    }
   };
 
   const PincodeFile = (e) => {
@@ -187,23 +403,28 @@ const Sidebar = () => {
     };
     setRaiseIssue((o) => !o);
     dispatch(PostCreateTicket(payload));
+    setOrderId("");
+    setTilte("");
+    setDescription("");
   };
   const openSearchFun = () => {
     setAllSearchBar((o) => !o);
     setNotification(false);
-
   };
 
   const ClearNotification = (e, item) => {
     let payload = {
       order_id: [item.order_id],
     };
-    dispatch(PostClearNotification(payload));
+    if (isDeliveryboy_Role == "true") {
+      dispatch(PostDeliveryBoyNotification(payload));
+    } else {
+      dispatch(PostClearNotification(payload));
+    }
     setNotification((o) => !o);
   };
 
   const ClearNotificationn = (e, item) => {
-
     let arrayData = [];
     GetDashboardNotificationData?.map((item, id) => {
       arrayData.push(item?.order_id);
@@ -212,6 +433,11 @@ const Sidebar = () => {
     let array = [];
     GetUserNotificationData?.data?.map((item, id) => {
       array.push(item?.email);
+    });
+
+    let deliveryboyarray=[];
+    GetDeliveryBoyNotificationData?.map((item,id)=>{
+      deliveryboyarray.push(item?.order_id)
     })
 
     let payload = {
@@ -219,12 +445,16 @@ const Sidebar = () => {
     };
 
     let payloaaad = {
-      email: array
+      email: array,
     };
 
+    let deliveryboypayload={
+      order_id:deliveryboyarray,
+    }
     setNotification((o) => !o);
     dispatch(PostClearNotification(payloaaad));
     dispatch(PostClearNotification(payload));
+    dispatch(PostDeliveryBoyNotification(deliveryboypayload));
   };
 
   const ClearUserNotification = (e, item) => {
@@ -236,55 +466,43 @@ const Sidebar = () => {
   };
 
   const requestRegion = (event, item) => {
-    let Data = (event.target.value);
-
-
+    let Data = event.target.value;
   };
 
   const SearchFilterPathFun = (e) => {
-  
     if (e.length == 0) {
-      setOpenPathSearch(false)
-    
-
-    }
-    else {
-      setOpenPathSearch(true)
+      setOpenPathSearch(false);
+    } else {
+      setOpenPathSearch(true);
     }
     // setSelectedOption(e)
-  }
- 
+  };
+
   useEffect(() => {
-
     if (OpenPathSearch == true) {
-      setSelectedOptionClass("opnePathDataBlock")
+      setSelectedOptionClass("opnePathDataBlock");
+    } else {
+      setSelectedOptionClass("opnePathData");
     }
-    else {
-      setSelectedOptionClass("opnePathData")
-    }
-  }, [OpenPathSearch])
-
-
-  
-
+  }, [OpenPathSearch]);
 
   return (
     <>
       <div
-        className={`adminheader-bar ${allsearchbar !== true ? "" : "formsmshow"
-          }`}
+        className={`adminheader-bar ${
+          allsearchbar !== true ? "" : "formsmshow"
+        }`}
       >
-     
         <div className={`left-part ${allsearchbar !== true ? "" : ""}`}>
-          <div className={`form-group 
+          <div
+            className={`form-group 
             ${selectedOptionclass}
-            `}>
-             
+            `}
+          >
             <Select
               value={selectedOption}
               onChange={setSelectedOption}
-              options={pageData}
-              
+              options={SearchFiterData}
               placeholder={"Search"}
               onInputChange={SearchFilterPathFun}
               styles={{
@@ -294,14 +512,19 @@ const Sidebar = () => {
                   border: "none !important",
                   borderRadius: "14px !important",
                   backgroundColor: "#f6f7f8 !important",
-                  boxShadow: "none !important"
+                  boxShadow: "none !important",
                 }),
               }}
+              theme={(theme) => ({
+                ...theme,
+                borderRadius: 0,
+                colors: {
+                  ...theme.colors,
+                  primary25: "#FFDC5A",
+                  // primary: 'white',
+                },
+              })}
             />
-
-
-
-             
 
             <span className="search-icon pt-1">
               <svg
@@ -322,69 +545,109 @@ const Sidebar = () => {
         </div>
         <div className="right-part">
           <ul>
-            {isEmployeData == "false" ? <li
-              onClick={(e) => {
-                navigate("/admin/wallethistory");
-              }}
-              className="d-flex pt-1 "
-              role="button"
-            >
-              <svg
-                width="23"
-                height="23"
-                viewBox="0 0 23 23"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M13.9576 0.101521C13.7853 0.161831 11.7692 1.31204 8.7063 3.09552L3.73496 5.99044H2.84753C2.36074 5.99044 1.83517 6.01198 1.68009 6.03783C0.943433 6.15414 0.331709 6.67109 0.0861583 7.39051C0 7.63606 0 7.74807 0 14.0247C0 19.5776 0.00861583 20.4349 0.0646187 20.6244C0.258475 21.2706 0.788348 21.8005 1.43454 21.9943C1.62408 22.0503 2.75707 22.059 10.5285 22.059C20.1352 22.059 19.5364 22.0719 20.0189 21.8306C20.286 21.6928 20.6651 21.318 20.8158 21.038C21.0528 20.6115 21.0657 20.465 21.0657 18.6471V16.9756L21.2725 16.8722C21.5094 16.7516 21.7894 16.463 21.9359 16.1916L22.035 16.0063V14.0462V12.0861L21.9316 11.8751C21.798 11.6123 21.4836 11.2935 21.2466 11.1858L21.0657 11.1039V9.41523C21.0657 7.98931 21.0571 7.69207 20.9968 7.4939C20.7771 6.74863 20.1869 6.19722 19.4718 6.06367L19.2305 6.01629L17.7658 3.45739C16.215 0.743399 16.0599 0.515079 15.6248 0.265221C15.1251 -0.0147934 14.4832 -0.0794125 13.9576 0.101521ZM15.026 1.14834C15.1509 1.20865 15.2888 1.31204 15.3362 1.38097L15.418 1.49728L11.5624 3.74602L7.70255 5.99044L6.78497 5.98182L5.86738 5.9689L9.93405 3.59955C12.1742 2.29425 14.0955 1.18711 14.2075 1.13542C14.4832 1.00187 14.746 1.00618 15.026 1.14834ZM16.1848 2.81551C16.3055 3.0309 16.3959 3.22476 16.3787 3.24199C16.3615 3.25922 15.2974 3.88387 14.0093 4.63345L11.6744 5.99044L10.7569 5.98182L9.83928 5.9689L12.8807 4.19404C14.5521 3.22045 15.9264 2.41918 15.9393 2.41918C15.9522 2.41918 16.0599 2.5958 16.1848 2.81551ZM17.4686 5.06855C17.7443 5.55534 17.964 5.96029 17.9554 5.97321C17.9425 5.98182 17.0076 5.98613 15.8747 5.98182L13.8155 5.9689L15.3405 5.07716C16.1805 4.58606 16.887 4.18542 16.9129 4.18111C16.9387 4.18111 17.1886 4.58175 17.4686 5.06855ZM19.4545 7.14065C19.6829 7.26127 19.9155 7.53267 19.9801 7.75238C20.0146 7.86438 20.0318 8.4158 20.0318 9.47554V11.0307H18.3173C16.7492 11.0307 16.5682 11.0393 16.2667 11.1169C15.2328 11.3796 14.4186 12.1895 14.1257 13.2493C14.005 13.6801 13.9964 14.3607 14.1041 14.7786C14.3669 15.7866 15.138 16.6008 16.1719 16.9455C16.4175 17.0273 16.5596 17.0359 18.2354 17.0489L20.0318 17.0661V18.6471C20.0318 20.2195 20.0318 20.2281 19.9284 20.4478C19.8121 20.6934 19.5665 20.9217 19.3425 20.982C19.2478 21.0078 16.0039 21.0251 10.4898 21.0251C2.10226 21.0251 1.78348 21.0208 1.61547 20.9432C1.52069 20.9001 1.38284 20.7967 1.3053 20.7192C1.01236 20.409 1.0339 20.9001 1.0339 14.0333V7.817L1.14591 7.59298C1.27514 7.3302 1.54223 7.12342 1.82225 7.06742C1.92133 7.05019 5.88892 7.03726 10.6405 7.04157L19.2779 7.04588L19.4545 7.14065ZM20.7641 12.1292C21.0183 12.2628 21.0226 12.2929 21.0226 14.0462C21.0226 15.8168 21.0226 15.8297 20.7469 15.959C20.6177 16.0193 20.3764 16.0279 18.7954 16.0279C17.8046 16.0279 16.8784 16.0063 16.7362 15.9848C16.5941 15.9633 16.3442 15.8771 16.1762 15.7953C14.9571 15.1921 14.6986 13.6111 15.6593 12.6462C15.9177 12.3877 16.2021 12.224 16.5553 12.1292C16.8999 12.0388 20.5875 12.0388 20.7641 12.1292Z"
-                  fill="#656E7A"
-                />
-              </svg>
-              <div className="text-nowrap pt-1">
-                &nbsp;&nbsp;
-                <b> {GetWalletBalanceData?.data?.current_balance_status=="NEGATIVE"?`Rs. -${GetWalletBalanceData?.data?.current_balance}`:`Rs. ${GetWalletBalanceData?.data?.current_balance}`}/-</b>
+            {isEmployeData == "false" ? (
+              <div className="d-flex pt-1 ">
+                <li
+                  onClick={(e) => {
+                    navigate("/admin/wallethistory");
+                  }}
+                  className="d-flex pt-1 "
+                  role="button"
+                >
+                  {PermissionData()?.VIEW_WALLET_HISTORY_PAGE ==
+                  "VIEW_WALLET_HISTORY_PAGE" ? (
+                    <svg
+                      width="23"
+                      height="23"
+                      viewBox="0 0 23 23"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13.9576 0.101521C13.7853 0.161831 11.7692 1.31204 8.7063 3.09552L3.73496 5.99044H2.84753C2.36074 5.99044 1.83517 6.01198 1.68009 6.03783C0.943433 6.15414 0.331709 6.67109 0.0861583 7.39051C0 7.63606 0 7.74807 0 14.0247C0 19.5776 0.00861583 20.4349 0.0646187 20.6244C0.258475 21.2706 0.788348 21.8005 1.43454 21.9943C1.62408 22.0503 2.75707 22.059 10.5285 22.059C20.1352 22.059 19.5364 22.0719 20.0189 21.8306C20.286 21.6928 20.6651 21.318 20.8158 21.038C21.0528 20.6115 21.0657 20.465 21.0657 18.6471V16.9756L21.2725 16.8722C21.5094 16.7516 21.7894 16.463 21.9359 16.1916L22.035 16.0063V14.0462V12.0861L21.9316 11.8751C21.798 11.6123 21.4836 11.2935 21.2466 11.1858L21.0657 11.1039V9.41523C21.0657 7.98931 21.0571 7.69207 20.9968 7.4939C20.7771 6.74863 20.1869 6.19722 19.4718 6.06367L19.2305 6.01629L17.7658 3.45739C16.215 0.743399 16.0599 0.515079 15.6248 0.265221C15.1251 -0.0147934 14.4832 -0.0794125 13.9576 0.101521ZM15.026 1.14834C15.1509 1.20865 15.2888 1.31204 15.3362 1.38097L15.418 1.49728L11.5624 3.74602L7.70255 5.99044L6.78497 5.98182L5.86738 5.9689L9.93405 3.59955C12.1742 2.29425 14.0955 1.18711 14.2075 1.13542C14.4832 1.00187 14.746 1.00618 15.026 1.14834ZM16.1848 2.81551C16.3055 3.0309 16.3959 3.22476 16.3787 3.24199C16.3615 3.25922 15.2974 3.88387 14.0093 4.63345L11.6744 5.99044L10.7569 5.98182L9.83928 5.9689L12.8807 4.19404C14.5521 3.22045 15.9264 2.41918 15.9393 2.41918C15.9522 2.41918 16.0599 2.5958 16.1848 2.81551ZM17.4686 5.06855C17.7443 5.55534 17.964 5.96029 17.9554 5.97321C17.9425 5.98182 17.0076 5.98613 15.8747 5.98182L13.8155 5.9689L15.3405 5.07716C16.1805 4.58606 16.887 4.18542 16.9129 4.18111C16.9387 4.18111 17.1886 4.58175 17.4686 5.06855ZM19.4545 7.14065C19.6829 7.26127 19.9155 7.53267 19.9801 7.75238C20.0146 7.86438 20.0318 8.4158 20.0318 9.47554V11.0307H18.3173C16.7492 11.0307 16.5682 11.0393 16.2667 11.1169C15.2328 11.3796 14.4186 12.1895 14.1257 13.2493C14.005 13.6801 13.9964 14.3607 14.1041 14.7786C14.3669 15.7866 15.138 16.6008 16.1719 16.9455C16.4175 17.0273 16.5596 17.0359 18.2354 17.0489L20.0318 17.0661V18.6471C20.0318 20.2195 20.0318 20.2281 19.9284 20.4478C19.8121 20.6934 19.5665 20.9217 19.3425 20.982C19.2478 21.0078 16.0039 21.0251 10.4898 21.0251C2.10226 21.0251 1.78348 21.0208 1.61547 20.9432C1.52069 20.9001 1.38284 20.7967 1.3053 20.7192C1.01236 20.409 1.0339 20.9001 1.0339 14.0333V7.817L1.14591 7.59298C1.27514 7.3302 1.54223 7.12342 1.82225 7.06742C1.92133 7.05019 5.88892 7.03726 10.6405 7.04157L19.2779 7.04588L19.4545 7.14065ZM20.7641 12.1292C21.0183 12.2628 21.0226 12.2929 21.0226 14.0462C21.0226 15.8168 21.0226 15.8297 20.7469 15.959C20.6177 16.0193 20.3764 16.0279 18.7954 16.0279C17.8046 16.0279 16.8784 16.0063 16.7362 15.9848C16.5941 15.9633 16.3442 15.8771 16.1762 15.7953C14.9571 15.1921 14.6986 13.6111 15.6593 12.6462C15.9177 12.3877 16.2021 12.224 16.5553 12.1292C16.8999 12.0388 20.5875 12.0388 20.7641 12.1292Z"
+                        fill="#656E7A"
+                      />
+                    </svg>
+                  ) : (
+                    ""
+                  )}
+                </li>
+                <div className="text-nowrap pt-1">
+                  &nbsp;&nbsp;
+                  <b>
+                    {" "}
+                    {PermissionData().VIEW_WALLET_BALANCE ==
+                    "VIEW_WALLET_BALANCE"
+                      ? GetWalletBalanceData?.data?.current_balance_status ==
+                        "NEGATIVE"
+                        ? `Rs. -${GetWalletBalanceData?.data?.current_balance} /-`
+                        : `Rs. ${GetWalletBalanceData?.data?.current_balance} /-`
+                      : ""}
+                  </b>
+                </div>
               </div>
-            </li> : ""}
-           {isAdmin_Role =="true"?  <li onClick={(e) => {setNotification((o) => !o);   setAllSearchBar(false);}
-}
-           role="button">
-              {GetUserNotificationData && GetUserNotificationData.length > "0" || GetUserNotificationData?.data?.length > "0" ||GetDashboardNotificationData && GetDashboardNotificationData.length > "0" ||GetDashboardNotificationData?.data?.length > "0"? (
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M11.0001 20.949C11.385 20.9401 11.7545 20.7954 12.043 20.5404C12.3315 20.2854 12.5206 19.9366 12.5767 19.5557H9.3623C9.42004 19.947 9.61795 20.304 9.91921 20.5603C10.2205 20.8166 10.6046 20.9547 11.0001 20.949V20.949Z"
-                    fill="#656E7A"
-                  />
-                  <path
-                    d="M19.8676 17.0072C19.2783 16.4819 18.7624 15.8796 18.3337 15.2167C17.8657 14.3016 17.5852 13.3022 17.5087 12.2772V9.25833C17.5062 8.89163 17.4735 8.52576 17.4109 8.16444C16.9299 8.06829 16.4677 7.89494 16.042 7.65111C16.2043 8.17351 16.2867 8.71742 16.2865 9.26444V12.2833C16.3614 13.5337 16.7053 14.7531 17.2948 15.8583C17.7167 16.5269 18.2173 17.1424 18.7859 17.6917H3.13537C3.70395 17.1424 4.20457 16.5269 4.62648 15.8583C5.21597 14.7531 5.55991 13.5337 5.63481 12.2833V9.25833C5.6316 8.55108 5.76792 7.85015 6.03597 7.19566C6.30403 6.54117 6.69855 5.94598 7.19694 5.44418C7.69534 4.94237 8.28783 4.54381 8.94048 4.2713C9.59313 3.9988 10.2931 3.85771 11.0004 3.85611C12.0354 3.85693 13.0473 4.16304 13.9093 4.73611C13.8142 4.38715 13.7609 4.02817 13.7504 3.66666V3.28166C13.1123 2.96777 12.4268 2.76129 11.7215 2.67055V1.90055C11.7215 1.68418 11.6355 1.47667 11.4825 1.32367C11.3295 1.17067 11.122 1.08472 10.9056 1.08472C10.6893 1.08472 10.4818 1.17067 10.3288 1.32367C10.1758 1.47667 10.0898 1.68418 10.0898 1.90055V2.70111C8.51053 2.92389 7.06516 3.7105 6.02056 4.91573C4.97595 6.12096 4.40265 7.66341 4.40648 9.25833V12.2772C4.32994 13.3022 4.04946 14.3016 3.58148 15.2167C3.16035 15.8781 2.65271 16.4803 2.07204 17.0072C2.00685 17.0645 1.95461 17.135 1.91878 17.214C1.88295 17.293 1.86437 17.3788 1.86426 17.4656V18.2967C1.86426 18.4587 1.92864 18.6142 2.04325 18.7288C2.15785 18.8434 2.31329 18.9078 2.47537 18.9078H19.4643C19.6263 18.9078 19.7818 18.8434 19.8964 18.7288C20.011 18.6142 20.0754 18.4587 20.0754 18.2967V17.4656C20.0753 17.3788 20.0567 17.293 20.0208 17.214C19.985 17.135 19.9328 17.0645 19.8676 17.0072V17.0072Z"
-                    fill="#656E7A"
-                  />
-                  <path
-                    d="M18.3329 6.72219C20.0204 6.72219 21.3885 5.35418 21.3885 3.66664C21.3885 1.9791 20.0204 0.611084 18.3329 0.611084C16.6454 0.611084 15.2773 1.9791 15.2773 3.66664C15.2773 5.35418 16.6454 6.72219 18.3329 6.72219Z"
-                    fill="#FFC900"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  width="19"
-                  height="19"
-                  viewBox="0 0 19 19"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M18.4784 16.4225C17.8891 15.8972 17.3731 15.2949 16.9445 14.6319C16.4765 13.7168 16.196 12.7175 16.1195 11.6925V8.67361C16.117 8.30691 16.0843 7.94105 16.0217 7.57972L14.6528 7.06639C14.8151 7.58879 14.8975 8.1327 14.8973 8.67972V11.6986C14.9722 12.949 15.3161 14.1684 15.9056 15.2736C16.3275 15.9422 16.8281 16.5577 17.3967 17.1069H1.74615C2.31473 16.5577 2.81535 15.9422 3.23726 15.2736C3.82674 14.1684 4.17069 12.949 4.24559 11.6986V8.67361C4.24238 7.96636 4.3787 7.26543 4.64675 6.61094C4.9148 5.95645 5.30933 5.36126 5.80772 4.85946C6.30612 4.35766 6.89861 3.95909 7.55126 3.68659C8.2039 3.41408 8.90389 3.27299 9.61115 3.27139C10.6462 3.27222 13.811 3.68659 14.6528 7.06639L16.0217 7.57972C16.0217 7.57972 15.6709 5.72861 14.5 4.5C13.3291 3.27139 12.3611 2.69694 12.3611 2.69694C11.7231 2.38305 11.0376 2.17658 10.3323 2.08583V1.31583C10.3323 1.09946 10.2463 0.891951 10.0933 0.738952C9.94031 0.585954 9.7328 0.5 9.51642 0.5C9.30005 0.5 9.09254 0.585954 8.93954 0.738952C8.78654 0.891951 8.70059 1.09946 8.70059 1.31583V2.11639C7.12131 2.33917 5.67594 3.12579 4.63134 4.33101C3.58673 5.53624 3.01343 7.0787 3.01726 8.67361V11.6925C2.94072 12.7175 2.66023 13.7168 2.19226 14.6319C1.77113 15.2934 1.26349 15.8956 0.682814 16.4225C0.617628 16.4798 0.565384 16.5503 0.529558 16.6293C0.493733 16.7083 0.475146 16.7941 0.475037 16.8808V17.7119C0.475037 17.874 0.539421 18.0295 0.654027 18.1441C0.768632 18.2587 0.924071 18.3231 1.08615 18.3231H18.075C18.2371 18.3231 18.3926 18.2587 18.5072 18.1441C18.6218 18.0295 18.6861 17.874 18.6861 17.7119V16.8808C18.686 16.7941 18.6675 16.7083 18.6316 16.6293C18.5958 16.5503 18.5436 16.4798 18.4784 16.4225Z"
-                    fill="#656E7A"
-                  />
-                </svg>
-              )}
-            </li>:""}
+            ) : (
+              ""
+            )}
+            {isAdmin_Role == "true" ||
+            isEmployeData == "false" ||
+            isDeliveryboy_Role == "true" ? (
+              <li
+                onClick={(e) => {
+                  setNotification((o) => !o);
+                  setAllSearchBar(false);
+                  setHeaderMenu(false);
+                }}
+                role="button"
+              >
+                {(GetUserNotificationData &&
+                  GetUserNotificationData?.length > 0) ||
+                (GetUserNotificationData?.data?.length &&
+                  GetUserNotificationData?.data?.length > 0) ||
+                (GetDashboardNotificationData &&
+                  GetDashboardNotificationData?.length > 0) ||
+                (GetDashboardNotificationData?.data?.length &&
+                  GetDashboardNotificationData?.data?.length > 0) ||
+                (GetDeliveryBoyNotificationData?.length &&
+                  GetDeliveryBoyNotificationData?.length >= 0) ? (
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 22 22"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M11.0001 20.949C11.385 20.9401 11.7545 20.7954 12.043 20.5404C12.3315 20.2854 12.5206 19.9366 12.5767 19.5557H9.3623C9.42004 19.947 9.61795 20.304 9.91921 20.5603C10.2205 20.8166 10.6046 20.9547 11.0001 20.949V20.949Z"
+                      fill="#656E7A"
+                    />
+                    <path
+                      d="M19.8676 17.0072C19.2783 16.4819 18.7624 15.8796 18.3337 15.2167C17.8657 14.3016 17.5852 13.3022 17.5087 12.2772V9.25833C17.5062 8.89163 17.4735 8.52576 17.4109 8.16444C16.9299 8.06829 16.4677 7.89494 16.042 7.65111C16.2043 8.17351 16.2867 8.71742 16.2865 9.26444V12.2833C16.3614 13.5337 16.7053 14.7531 17.2948 15.8583C17.7167 16.5269 18.2173 17.1424 18.7859 17.6917H3.13537C3.70395 17.1424 4.20457 16.5269 4.62648 15.8583C5.21597 14.7531 5.55991 13.5337 5.63481 12.2833V9.25833C5.6316 8.55108 5.76792 7.85015 6.03597 7.19566C6.30403 6.54117 6.69855 5.94598 7.19694 5.44418C7.69534 4.94237 8.28783 4.54381 8.94048 4.2713C9.59313 3.9988 10.2931 3.85771 11.0004 3.85611C12.0354 3.85693 13.0473 4.16304 13.9093 4.73611C13.8142 4.38715 13.7609 4.02817 13.7504 3.66666V3.28166C13.1123 2.96777 12.4268 2.76129 11.7215 2.67055V1.90055C11.7215 1.68418 11.6355 1.47667 11.4825 1.32367C11.3295 1.17067 11.122 1.08472 10.9056 1.08472C10.6893 1.08472 10.4818 1.17067 10.3288 1.32367C10.1758 1.47667 10.0898 1.68418 10.0898 1.90055V2.70111C8.51053 2.92389 7.06516 3.7105 6.02056 4.91573C4.97595 6.12096 4.40265 7.66341 4.40648 9.25833V12.2772C4.32994 13.3022 4.04946 14.3016 3.58148 15.2167C3.16035 15.8781 2.65271 16.4803 2.07204 17.0072C2.00685 17.0645 1.95461 17.135 1.91878 17.214C1.88295 17.293 1.86437 17.3788 1.86426 17.4656V18.2967C1.86426 18.4587 1.92864 18.6142 2.04325 18.7288C2.15785 18.8434 2.31329 18.9078 2.47537 18.9078H19.4643C19.6263 18.9078 19.7818 18.8434 19.8964 18.7288C20.011 18.6142 20.0754 18.4587 20.0754 18.2967V17.4656C20.0753 17.3788 20.0567 17.293 20.0208 17.214C19.985 17.135 19.9328 17.0645 19.8676 17.0072V17.0072Z"
+                      fill="#656E7A"
+                    />
+                    <path
+                      d="M18.3329 6.72219C20.0204 6.72219 21.3885 5.35418 21.3885 3.66664C21.3885 1.9791 20.0204 0.611084 18.3329 0.611084C16.6454 0.611084 15.2773 1.9791 15.2773 3.66664C15.2773 5.35418 16.6454 6.72219 18.3329 6.72219Z"
+                      fill="#FFC900"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    width="19"
+                    height="19"
+                    viewBox="0 0 19 19"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M18.4784 16.4225C17.8891 15.8972 17.3731 15.2949 16.9445 14.6319C16.4765 13.7168 16.196 12.7175 16.1195 11.6925V8.67361C16.117 8.30691 16.0843 7.94105 16.0217 7.57972L14.6528 7.06639C14.8151 7.58879 14.8975 8.1327 14.8973 8.67972V11.6986C14.9722 12.949 15.3161 14.1684 15.9056 15.2736C16.3275 15.9422 16.8281 16.5577 17.3967 17.1069H1.74615C2.31473 16.5577 2.81535 15.9422 3.23726 15.2736C3.82674 14.1684 4.17069 12.949 4.24559 11.6986V8.67361C4.24238 7.96636 4.3787 7.26543 4.64675 6.61094C4.9148 5.95645 5.30933 5.36126 5.80772 4.85946C6.30612 4.35766 6.89861 3.95909 7.55126 3.68659C8.2039 3.41408 8.90389 3.27299 9.61115 3.27139C10.6462 3.27222 13.811 3.68659 14.6528 7.06639L16.0217 7.57972C16.0217 7.57972 15.6709 5.72861 14.5 4.5C13.3291 3.27139 12.3611 2.69694 12.3611 2.69694C11.7231 2.38305 11.0376 2.17658 10.3323 2.08583V1.31583C10.3323 1.09946 10.2463 0.891951 10.0933 0.738952C9.94031 0.585954 9.7328 0.5 9.51642 0.5C9.30005 0.5 9.09254 0.585954 8.93954 0.738952C8.78654 0.891951 8.70059 1.09946 8.70059 1.31583V2.11639C7.12131 2.33917 5.67594 3.12579 4.63134 4.33101C3.58673 5.53624 3.01343 7.0787 3.01726 8.67361V11.6925C2.94072 12.7175 2.66023 13.7168 2.19226 14.6319C1.77113 15.2934 1.26349 15.8956 0.682814 16.4225C0.617628 16.4798 0.565384 16.5503 0.529558 16.6293C0.493733 16.7083 0.475146 16.7941 0.475037 16.8808V17.7119C0.475037 17.874 0.539421 18.0295 0.654027 18.1441C0.768632 18.2587 0.924071 18.3231 1.08615 18.3231H18.075C18.2371 18.3231 18.3926 18.2587 18.5072 18.1441C18.6218 18.0295 18.6861 17.874 18.6861 17.7119V16.8808C18.686 16.7941 18.6675 16.7083 18.6316 16.6293C18.5958 16.5503 18.5436 16.4798 18.4784 16.4225Z"
+                      fill="#656E7A"
+                    />
+                  </svg>
+                )}
+              </li>
+            ) : (
+              ""
+            )}
             <li className="searchicon" onClick={(e) => openSearchFun(e)}>
               <span>
                 <svg
@@ -401,41 +664,57 @@ const Sidebar = () => {
                 </svg>
               </span>
             </li>
-            <li className="user-part" onClick={(e) => {setAllSearchBar(false); setNotification(false)}}>
-              <div className="dropdown">
-                <img
-                  src="/images/user.png"
-                  alt="img"
-                  className="  dropdown-toggle"
-                  type="button"
-                  id="dropdownMenuButton1"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                />
+            <li
+              className="user-part"
+              onClick={(e) => {
+                setAllSearchBar(false);
+                setNotification(false);
+                setHeaderMenu((o) => !o);
+              }}
+            >
+              <div className="dropdown-box">
+                <img src="/images/user.png" alt="img" type="button" />
 
-                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                  <li>
-                    <a
-                      className="dropdown-item"
-                      onClick={(e) => {
-                        navigate("/admin/setting/adminsetting");
-                      }}
-                    >
-                      {" "}
-                      My Profile
-                    </a>
-                  </li>
-                  {isEmployeData == "false" ? <li>
-                    <a
-                      className="dropdown-item"
-                      onClick={(e) => {
-                        navigate("/admin/wallethistory");
-                      }}
-                    >
-                      {" "}
-                      My Wallet
-                    </a>
-                  </li> : ""}
+                <ul
+                  className={` ${
+                    HeaderMenu
+                      ? "d-block dropdown-menu"
+                      : "d-none dropdown-menu"
+                  }  `}
+                >
+                  {PermissionData()?.VIEW_PROFILE_PAGE ==
+                  "VIEW_PROFILE_PAGE" ? (
+                    <li>
+                      <a
+                        className="dropdown-item"
+                        onClick={(e) => {
+                          navigate("/admin/setting/adminsetting");
+                        }}
+                      >
+                        {" "}
+                        My Profile
+                      </a>
+                    </li>
+                  ) : (
+                    ""
+                  )}
+                  {isEmployeData == "false" ||
+                  PermissionData()?.VIEW_WALLET_HISTORY_PAGE ==
+                    "VIEW_WALLET_HISTORY_PAGE" ? (
+                    <li>
+                      <a
+                        className="dropdown-item"
+                        onClick={(e) => {
+                          navigate("/admin/wallethistory");
+                        }}
+                      >
+                        {" "}
+                        My Wallet
+                      </a>
+                    </li>
+                  ) : (
+                    ""
+                  )}
                   <li>
                     <a
                       className="dropdown-item"
@@ -445,34 +724,44 @@ const Sidebar = () => {
                       Raise Issue
                     </a>
                   </li>
-                   
+
                   <li
-                    className={`uploadLabel ${PermissionData()?.UPLOAD_PINCODE ==
-                      "UPLOAD_PINCODE"
-                      ? " "
-                      : "permission_blur"
-                      }`}
+                    className={`uploadLabel ${
+                      PermissionData()?.UPLOAD_PINCODE == "UPLOAD_PINCODE"
+                        ? " "
+                        : "permission_blur"
+                    }`}
                   >
                     <div className="permis">
                       <input
-                        value={""}
-                        accept=".csv"
+                        // value={""}
+                        accept=".xlsx"
                         type={
-                          PermissionData()?.UPLOAD_PINCODE ==
-                            "UPLOAD_PINCODE"
+                          PermissionData()?.UPLOAD_PINCODE == "UPLOAD_PINCODE"
                             ? "file"
                             : "text"
                         }
                         onChange={(e) =>
-                          PermissionData()?.UPLOAD_PINCODE ==
-                            "UPLOAD_PINCODE"
-                            ?
-                            PincodeFile(e)
+                          PermissionData()?.UPLOAD_PINCODE == "UPLOAD_PINCODE"
+                            ? PincodeFile(e)
                             : ""
                         }
                       />
                     </div>
                   </li>
+
+                  {/* <li>
+                  <a
+                      className="dropdown-item"
+                      onClick={(e) => {
+                        navigate("/payment-approval");
+                      }}
+                    >
+                      {" "}
+                      Payment Approval
+                    </a>
+                  </li> */}
+
                   <li>
                     <a className="dropdown-item" onClick={(e) => Logoutfun(e)}>
                       Log out
@@ -480,11 +769,14 @@ const Sidebar = () => {
                   </li>
                 </ul>
               </div>
+
               <div className="user-info">
                 <h6>
                   {GetAdminProfileData && GetAdminProfileData[0]?.username}
                 </h6>
-                <p>{GetAdminProfileData && GetAdminProfileData[0]?.company_name}</p>
+                <p>
+                  {GetAdminProfileData && GetAdminProfileData[0]?.company_name}
+                </p>
               </div>
             </li>
           </ul>
@@ -563,18 +855,32 @@ const Sidebar = () => {
       {/* {**************************************************NOTOFICATION*******************************************************************} */}
 
       {notification && (
-        <div className="notification-box" onClick={(e) => {setNotification((o) => !o);setAllSearchBar(false)}}>
+        <div
+          className="notification-box"
+          onClick={(e) => {
+            setNotification((o) => !o);
+            setAllSearchBar(false);
+          }}
+        >
           <div className=" title">
             <h2>Notifications</h2>
-            {GetUserNotificationData.length > "0" || GetUserNotificationData?.data?.length > "0"  ||GetDashboardNotificationData.length > "0" ||GetDashboardNotificationData?.data?.length > "0"
+            {(GetUserNotificationData &&
+              GetUserNotificationData?.length >= 0) ||
+            GetUserNotificationData?.data?.length >= 0 ||
+            GetDashboardNotificationData.length >= 0 ||
+            GetDashboardNotificationData?.data?.length >= 0 ||
+            (GetDeliveryBoyNotificationData&&GetDeliveryBoyNotificationData?.length >= 0 )? (
               // GetUserNotificationData && GetUserNotificationData?.data?.length || GetDashboardNotificationData && GetDashboardNotificationData?.data?.length !== 0
-              ? <button
+              <button
                 type="button"
                 className="btn"
-                onClick={(e) => {ClearNotificationn(e); setNotification((o) => !o); setAllSearchBar(false)}}
+                onClick={(e) => {
+                  ClearNotificationn(e);
+                  setNotification((o) => !o);
+                  setAllSearchBar(false);
+                }}
               >
                 <svg
-                
                   viewBox="0 0 14 8"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -588,48 +894,88 @@ const Sidebar = () => {
                   />
                 </svg>{" "}
                 Clear{" "}
-              </button> : ""}
+              </button>
+            ) : (
+              ""
+            )}
           </div>
           <ul>
-            {GetDashboardNotificationData &&
-              GetDashboardNotificationData?.map((item, id) => {
+            {isDeliveryboy_Role != "true"
+              ? GetDashboardNotificationData &&
+                GetDashboardNotificationData?.map((item, id) => {
+                  return (
+                    <li onClick={(e) => ClearNotification(e, item)}>
+                      <p
+                        onClick={(e) => {
+                          navigate("/admin/order");
+                        }}
+                      >
+                        {item.notification}
+                      </p>
 
-                return (
-                  <li onClick={(e) => ClearNotification(e, item)}>
-                    <p
-                      onClick={(e) => {
-                        navigate("/admin/order");
-                      }}
-                    >
-                      {item.notification}
-                    </p>
+                      <div>
+                        <span>{item.date}</span> at{" "}
+                        <span>{timeConvert(item.time)}</span>{" "}
+                      </div>
+                    </li>
+                  );
+                })
+              : GetDeliveryBoyNotificationData &&
+                GetDeliveryBoyNotificationData?.map((item, id) => {
+                  return (
+                    <li onClick={(e) => ClearNotification(e, item)}>
+                      <p
+                        onClick={(e) => {
+                          navigate("/admin/order");
+                        }}
+                      >
+                        {item.notification}
+                      </p>
 
-                    <div>
-                      <span>{item.date}</span> at{" "}
-                      <span>{timeConvert(item.time)}</span>{" "}
-                    </div>
-                  </li>
-                );
-              })}
+                      <div>
+                        <span>{item.date}</span> at{" "}
+                        <span>{timeConvert(item.time)}</span>{" "}
+                      </div>
+                    </li>
+                  );
+                })}
 
-            {GetUserNotificationData &&
-              GetUserNotificationData?.data?.map((item, id) => {
-                return (
-                  <li onClick={(e) => ClearUserNotification(e, item)}>
-                    <p
-                      onClick={(e) => {
-                        navigate("/admin/setting/userprofile");
-                      }}
-                    >
-                      {item.notification}
-                    </p>
-                    <div>
-                      <span>{item.date}</span> at{" "}
-                      <span>{timeConvert(item.time)}</span>{" "}
-                    </div>
-                  </li>
-                );
-              })}
+            {isDeliveryboy_Role != "true"
+              ? GetUserNotificationData &&
+                GetUserNotificationData?.data?.map((item, id) => {
+                  return (
+                    <li onClick={(e) => ClearUserNotification(e, item)}>
+                      <p
+                        onClick={(e) => {
+                          navigate("/admin/setting/userprofile");
+                        }}
+                      >
+                        {item.notification}
+                      </p>
+                      <div>
+                        <span>{item.date}</span> at{" "}
+                        <span>{timeConvert(item.time)}</span>{" "}
+                      </div>
+                    </li>
+                  );
+                })
+              : GetUserNotificationData?.data?.map((item, id) => {
+                  return (
+                    <li onClick={(e) => ClearUserNotification(e, item)}>
+                      <p
+                        onClick={(e) => {
+                          navigate("/admin/setting/userprofile");
+                        }}
+                      >
+                        {item.notification}
+                      </p>
+                      <div>
+                        <span>{item.date}</span> at{" "}
+                        <span>{timeConvert(item.time)}</span>{" "}
+                      </div>
+                    </li>
+                  );
+                })}
           </ul>
         </div>
       )}

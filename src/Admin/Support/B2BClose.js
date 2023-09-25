@@ -9,7 +9,8 @@ import {
 } from "../../Redux/action/ApiCollection";
 import { reactLocalStorage } from "reactjs-localstorage";
 import Popup from "reactjs-popup";
-
+import LodingSpiner from "../../Components/LodingSpiner";
+import { PermissionData } from "../../Permission";
 function B2BClose() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -19,7 +20,8 @@ function B2BClose() {
   const [morepopupid, setMorePopupId] = useState(false);
   const [moredataid, setMoreDataId] = useState("");
   const [pickuppopup, setPickUpPopup] = useState(false);
-  let isAdmin_Role = reactLocalStorage.get("Admin_Role", false);
+  let isAdmin_Role = sessionStorage.getItem("Admin_Role", false);
+  let isEmploye_Role=sessionStorage.getItem("isEmploye",false)
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
@@ -33,6 +35,9 @@ function B2BClose() {
   const PostTicketDetailData = useSelector(
     (state) => state.PostTicketDetailReducer.PostTicketDetailData?.data
   );
+  const OrderPagesLoaderTrueFalseData = useSelector(
+    (state) => state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
+  );
   useEffect(() => {
     let payload = {
       user_type: "b2b",
@@ -40,9 +45,9 @@ function B2BClose() {
     };
     dispatch(PostTicketDetail(payload));
   }, []);
-  useEffect(() => {
-    dispatch(GetSettingViewB2bCloseFeedback());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(GetSettingViewB2bCloseFeedback());
+  // }, []);
   const TicketChangeFun = (e) => {
     if (e.target.value == "new") {
       navigate("/admin/support/b2b");
@@ -65,7 +70,7 @@ function B2BClose() {
   const NewOldFun = (e) => {
     if (e.target.value == "OLDEST") {
       let AllData = getsettingviewalldata
-        .slice(Math.max(getsettingviewalldata.length - 3, 0))
+        .slice(Math?.max(getsettingviewalldata?.length - 3, 0))
         .map((item, id) => {
           return item;
         });
@@ -100,7 +105,7 @@ function B2BClose() {
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
         <Header />
-        <div className="dashboard-part  ">
+        <div className="dashboard-part">
           <Sidebar />
           <div className="content-sec support-page">
             <div className="title">
@@ -109,8 +114,8 @@ function B2BClose() {
                 className=" form-select"
                 onChange={(e) => CustomerChangeFun(e)}
               >
-                <option value="b2b">B2B</option>
-                {isAdmin_Role=="true"?<option value="b2c">B2C</option>:""}
+                {PermissionData()?.VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"?<option value="b2b">B2B</option>:""}
+                {isAdmin_Role=="true" || isEmploye_Role=="true" || PermissionData()?.VIEW_SUPPORT_B2C_PAGE == "VIEW_SUPPORT_B2C_PAGE"?<option value="b2c">B2C</option>:""}
               </select>
             </div>
 
@@ -122,12 +127,12 @@ function B2BClose() {
                   className=" form-select"
                   onChange={(e) => TicketChangeFun(e)}
                 >
-                  <option value="close" className="px-3">
+                 {PermissionData()?.VIEW_SUPPORT_B2B_RESOLVE_PAGE == "VIEW_SUPPORT_B2B_RESOLVE_PAGE"? <option value="close" className="px-3">
                     Close Tickets
-                  </option>
-                  <option value="new" className="px-3">
+                  </option>:""}
+                 {PermissionData()?.VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"? <option value="new" className="px-3">
                     New Tickets
-                  </option>
+                  </option>:""}
                 </select>
               </div>
               <div className="select-box">
@@ -203,7 +208,7 @@ function B2BClose() {
                         <p className="mt-2">{item.title}</p>
                         <span className="date-text">{item.date}</span>
                         {/* <p className="mt-2">{item.description}</p> */}
-                         {item.description.length <= 30 ||
+                         {item.description.length <= 40 ||
                           (moredata == true &&
                             morepopupid == item?.feedback_id) ? (
                           <p className="ticket-description">
@@ -211,14 +216,14 @@ function B2BClose() {
                           </p>
                         ) : (
                           <p className="ticket-description">
-                            {item?.description?.substring(0, 150)}
+                            {item?.description?.substring(0, 40)}
                             <span
                               onClick={(e) => ShowFeedbackDataFun(e, "more")}
                             >
                               {" "}
                               ....
                               <span
-                                className="text-primary"
+                                className="text-warning"
                                 role="button"
                                 onClick={(e) => Readmore(item?.feedback_id)}
                               >
@@ -292,7 +297,7 @@ function B2BClose() {
                               <div className=" data_picker rounded bg-white">
                                 <div className="py-1 text-warning">
                                   <h4
-                                    className="text-danger calender_popup_cancel"
+                                    className="text-dark calender_popup_cancel"
                                     onClick={(e) => {
                                       ReadmoreFun(item?.id);
                                       setPickUpPopup(false);
@@ -313,7 +318,7 @@ function B2BClose() {
                                       {item.description}
                                     </p>
                                     <span
-                                      className="text-primary"
+                                      className="text-warning"
                                       role="button"
                                       onClick={(e) => ReadmoreFun(item?.id)}
                                     >
@@ -334,6 +339,7 @@ function B2BClose() {
             </ul>
           </div>
         </div>
+        <LodingSpiner loadspiner={OrderPagesLoaderTrueFalseData} />
       </div>
     </>
   );

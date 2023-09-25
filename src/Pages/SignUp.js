@@ -2,101 +2,160 @@ import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import { reactLocalStorage } from "reactjs-localstorage";
 import Carosel from "./Carosel";
 import LodingSpiner from "../Components/LodingSpiner";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 
 
 const SignUp = () => {
   const [name, setName] = useState("");
-  const [phonenumber, setPhoneNumber] = useState("+91");
+  const [phonenumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
   const [Businessdetails, setBusinessDetails] = useState("");
   const [BusinessActive, setBusinessActive] = useState(false);
   const [individualActive, setIndividualActive] = useState("");
-  const [countrycode, setCountryCode] = useState("");
+  const [countrycode, setCountryCode] = useState("+91");
   const [showpassword, setShowPassword] = useState(false);
   const [conformpassword, setConformPassword] = useState(false);
   const [loadspiner, setLoadSpiner] = useState(false);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const BusinessAlert = () => {
-    toast.warn("Please select the Business ");
+    toast.warn("Please Select The Account Type ");
     setLoadSpiner((o) => !o);
   };
   const VerifyOtp = async () => {
+
+    let emailSpaceCancelation = email.replace(/  +/g, '');
+    let passwordSpaceCancelation = password.replace(/  +/g, '');
+
+    sessionStorage.setItem("User_Mail", emailSpaceCancelation)
+    sessionStorage.setItem("user_right", Businessdetails)
+
+
+
+
+    if (Businessdetails?.toString() == "as_individual") {
+      sessionStorage.setItem("as_individual", true)
+    }
+    else {
+      sessionStorage.setItem("as_individual", false)
+    }
+
+
+  let NameSpace = name.replace(/  +/g, '');
+  let COnfirmPasswordSpace = confirmpassword.replace(/  +/g, '')
+// let PhoneSpace = .replace
+
+
+    let emailvalidRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+    const passwordvalidRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+
+
+    if (!name && !email && !password && !confirmpassword && !Businessdetails && !phonenumber) {
+      toast.warn("Please Enter All Input Fields")
+
+    }else if(Businessdetails.length == 0){
+      toast.warn("Please Select Account Type")  
+    }
+    else if(NameSpace.length==0){
+      toast.warn("Please Enter Name")
+    }
+    else if(phonenumber.length== 0){
+      toast.warn("Please Enter Mobile Number")
+    }
    
-    reactLocalStorage.set("User_Mail", email)
-    reactLocalStorage.set("user_right",Businessdetails)
-     if(Businessdetails.toString()=="as_individual"){
-      reactLocalStorage.set("as_individual",true)  
+    else if (emailSpaceCancelation.length == 0) {
+      toast.warn("Please enter your email")
     }
-    else{
-      reactLocalStorage.set("as_individual",false)  
-
+    else if (emailSpaceCancelation.length != 0 && !emailvalidRegex.test(emailSpaceCancelation)) {
+      toast.warn("Please enter valid email")
     }
-    setLoadSpiner((o) => !o);
-    name && email && password && confirmpassword && !Businessdetails
-      ? BusinessAlert()
-      : Businessdetails && !phonenumber
-      ? setLoadSpiner((o) => !o)
-      : phonenumber
-      ? axios
-          .post(`${process.env.REACT_APP_BASE_URL}/signup`, {
-            name: name,
-            email,
-            password,
-            confirm_password: confirmpassword,
-            phone_number:`${countrycode}-${phonenumber}`,
-            user_right: Businessdetails,
-           
-            // contry_code: countrycode,
-          })
+
+    else if (passwordSpaceCancelation.length == 0) {
+      toast.warn("Please enter your password")
+    }
+    else if (passwordSpaceCancelation.length >= 16) {
+      toast.warn("Password Length Only 15 Characters Is Acceptable")
+    }
 
 
-          .then((Response) => {
-           
-            if(Businessdetails === "as_business"){
-              navigate("/page/kyc")
-            }else{
-            setLoadSpiner((o) => !o);
-            reactLocalStorage.set(
-              "userDetails",
-              JSON.stringify({
-                email: Response.data.email,
-                phoneNumber: Response.data.phone_number,
+    else if (passwordSpaceCancelation.length != 0 && !passwordvalidRegex.test(passwordSpaceCancelation)) {
+      toast.warn("Please Enter Password with Minimum 8 Characters, at least one uppercase, one lowercase, one number and one special character.")
+    }
+    else if(COnfirmPasswordSpace.length==0){
+      toast.warn("Please Enter Confirm Password")
+    }
+
+    else if(COnfirmPasswordSpace !== passwordSpaceCancelation){
+      toast.warn("Password And Confirm Password Are Different")
+    }
+    else {
+
+      setLoadSpiner((o) => !o);
+      name && email && password && confirmpassword && !Businessdetails
+        ? BusinessAlert()
+        : Businessdetails && !phonenumber
+          ? setLoadSpiner((o) => !o)
+          : phonenumber
+            ? axios
+              .post(`${process.env.REACT_APP_BASE_URL}/signup`, {
+                name: NameSpace,
+                email:emailSpaceCancelation,
+                password:passwordSpaceCancelation,
+                confirm_password: COnfirmPasswordSpace,
+                phone_number: `${countrycode}-${phonenumber}`,
+                user_right: Businessdetails,
+
+                // contry_code: countrycode,
               })
-            );
-            reactLocalStorage.set("token", Response.data.Token);
-            if (Response.status === 200) {
-              navigate("/profile"); 
-            }
-            // navigate("/login")
-            navigate("/verifyemail")
-            toast.success("OTP Send SuccessFully")
-             
-          }})
-          .catch((err) => {
-            setLoadSpiner((o) => !o);
-            if(err?.response?.status == 409){
-               navigate("/verifyemail")
-               toast.warn("Please Verify your Email")
-               
-            }
 
-            toast.warn(err?.response?.data?.message)
-            
-          })
-      :
-      toast.warn("Please fill the fields")
-       
+
+              .then((Response) => {
+
+                if (Businessdetails === "as_business") {
+                  navigate("/page/kyc")
+                } else {
+                  setLoadSpiner((o) => !o);
+                  sessionStorage.setItem(
+                    "userDetails",
+                    JSON.stringify({
+                      email: Response.data.email,
+                      phoneNumber: Response.data.phone_number,
+                    })
+                  );
+                  sessionStorage.setItem("token", Response.data.Token);
+                  if (Response.status === 200) {
+                    navigate("/profile");
+                  }
+                  // navigate("/login")
+                  navigate("/verifyemail")
+                  toast.success("OTP Send SuccessFully")
+
+                }
+              })
+              .catch((err) => {
+                setLoadSpiner((o) => !o);
+                // if(err?.response?.status == 409){
+                //    navigate("/verifyemail")
+                //    toast.warn("Please Verify your Email")
+
+                // }
+
+                toast.warn(err?.response?.data?.message)
+
+              })
+            :
+            toast.warn("Please fill the fields")
+    }
+
   };
 
   const BusinessdetailsActiveFun = (value) => {
@@ -150,9 +209,8 @@ const SignUp = () => {
                   BusinessdetailsActiveFun("individual");
                 }}
                 value="as_individual"
-                className={`${
-                  individualActive ? "choose_business_active" : ""
-                }`}
+                className={`${individualActive ? "choose_business_active" : ""
+                  }`}
               >
                 As Individual
               </button>
@@ -189,18 +247,20 @@ const SignUp = () => {
                   </svg>
                 </span>
 
-                {Businessdetails === "as_business"?<input
+                {Businessdetails === "as_business" ? <input
+                  maxLength={40}
                   type="text"
                   value={name}
                   placeholder="Company Name"
                   onChange={(e) => setName(e.target.value)}
-                />:
-                <input
-                  type="text"
-                  value={name}
-                  placeholder="Full Name"
-                  onChange={(e) => setName(e.target.value)}
-                />}
+                /> :
+                  <input
+                    maxLength={40}
+                    type="text"
+                    value={name}
+                    placeholder="Full Name"
+                    onChange={(e) => setName(e.target.value)}
+                  />}
               </div>
 
 
@@ -295,6 +355,7 @@ const SignUp = () => {
                   </svg>
                 </span>
                 <input
+                  maxLength={15}
                   type={showpassword ? "text" : "password"}
                   value={password}
                   placeholder="Password"
@@ -409,6 +470,7 @@ const SignUp = () => {
                   </svg>
                 </span>
                 <input
+                  maxLength={15}
                   type={conformpassword ? "text" : "password"}
                   value={confirmpassword}
                   placeholder="Confirm Password"

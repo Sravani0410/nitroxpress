@@ -1,0 +1,137 @@
+Do Permission:
+
+==============
+
+side bar:
+=========
+
+VIEW_ORDER_BOOKED_PAGE
+
+VIEW_ORDER_INTRANSIT_PAGE
+
+VIEW_ORDER_OUT_FOR_DELIVERED_PAGE
+
+VIEW_ORDER_DELIVERED_PAGE
+
+VIEW_ORDER_RTO_PAGE
+
+VIEW_ORDER_RTO_DELIVERED_PAGE
+
+VIEW_ORDER_CANCEL_PAGE
+         path="/admin/dashboard"  =============>  <AdminDashboard />=========================>VIEW_ADMIN_DASHBOARD_PAGE
+         path="/admin/order"  =============>  <Order />=========================>VIEW_ORDER_PAGE
+         path="/admin/order/User"  =============>  <User />=========================> VIEW_ORDER_CREATE_PAGE
+         path="/admin/Orderinner/:id"  =============>  <Orderinner />=========================>VIEW_ORDER_SUMMARY_PAGE
+         path="/admin/setting"  =============>  <Setting />=========================> VIEW_SETTING_PAGE
+         path="/admin/setting/employee"  =============>  <Employee />=========================> VIEW_SETTING_EMPLOYEE_PAGE
+       path="/admin/setting/userprofile"  =============>  <UserProfile />=========================> VIEW_SETTING_USER_PROFILE_PAGE
+       path="/admin/wallethistory"  =============>  <WalletHistory />=========================>VIEW_WALLET_HISTORY_PAGE
+          path="/admin/setting/userb2c"  =============>  <UserB2C />=========================> VIEW_SETTING_USER_B2C_PAGE
+path="/admin/setting/usersetting"  =============>  <UserSetting />=========================> VIEW_SETTING_CATEGORY_PAGE
+ path="/admin/setting/adminsetting"  =============>  <AdminSetting />=========================> VIEW_PROFILE_PAGE
+        path="/admin/setting/deliveryboy"  =============>  <DeliveryBoy />=========================> VIEW_SETTING_DELIVERY_BOY_PAGE
+          path="/admin/setting/b2bfeedback" ==========> <B2bfeedback />  ============================>VIEW_B2B_FEEDBACK_PAGE
+          path="/admin/setting/b2cfeedback"  =============>  <B2cfeedback />  =========================> VIEW_B2C_FEEDBACK_PAGE
+    path="/admin/ordertrack/:id"  =============>  <Ordertrack />=====================>VIEW_ORDER_TRACK_PAGE 
+         path="/admin/support/b2b"  =============>  <B2B />=========================> VIEW_SUPPORT_B2B_PAGE
+         path="/admin/support/b2b/b2c"  =============>  <B2C />=========================> VIEW_SUPPORT_B2C_PAGE
+         path="/admin/support/b2b/b2bclose"  =============>  <B2BCLose />=========================>  VIEW_SUPPORT_B2B_RESOLVE_PAGE
+         path="/admin/support/b2b/b2cclose"  =============>  <B2cClose />=========================> VIEW_SUPPORT_B2C_RESOLVE_PAGE
+
+
+         path="/admin/invoices/cod"  =============>  <Cod />=========================>VIEW_COD_REMITTANCE_PAGE, VIEW_INVOICE_PAGE
+         path="/admin/transaction/"  =============>  <Transactions />VIEW_B2B_TRANSACTIONS_PAGE,VIEW_B2C_TRANSACTIONS_PAGE  
+
+new Permissions:
+===============
+page:
+=====
+VIEW_ORDER_READY_TO_PICKUP_PAGE
+VIEW_ORDER_PICKUP_PAGE
+VIEW_ORDER_RECIEVED_AT_HUB_PAGE
+
+csv:
+====
+DOWNLOAD_READY_TO_PICKUP_CSV
+DOWNLOAD_PICKUP_CSV
+DOWNLOAD_RECIEVED_AT_HUB_CSV
+
+display data:
+============
+VIEW_ORDER_READY_TO_PICKUP
+VIEW_ORDER_PICKUP
+VIEW_ORDER_RECIEVED_AT_HUB
+
+transfer stage:
+==============
+ALLOW_READY_TO_PICKUP_ACTION
+ALLOW_PICKUP_ACTION
+ALLOW_RECIEVED_AT_HUB_ACTION
+
+3 dots:
+=======
+ALLOW_TRACKING_INTRANSIT_ACTION
+ALLOW_TRACKING_OUT_FOR_DELIVERY_ACTION
+ALLOW_TRACKING_RTO_ACTION
+
+Balance Api:
+===========
+VIEW_WALLET_BALANCE
+
+
+DON'T WANT:
+
+===========
+
+         path="/admin/support/b2c"  =============>  <B2C />=========================> VIEW_SUPPORT_B2C_PAGE  ======> ????????
+
+    path="/profile/trackorder/:id"  =============>  <TrackOrder />VIEW_ORDER_TRACK_PAGE
+    path="/profile"  =============>  <ProfilePage />=========================>  VIEW_PROFILE_PAGE------>??  B2C ACCOCUNT
+    
+   path="/resetpassword/:id"  =============>  <ResetPassword />=========================>  ALLOW_RESETPASSWORD_PAGE
+
+   path="/shipping"  =============>  <Shipping />=========================> ALLOW_SHIPPING_PAGE
+
+         path="/shippingpayment"  =============>  <Shippingpayment />=========================> ALLOW_SHIPPINGPAYMENT_PAGE
+
+         path="/"  =============>  <Homepage /> =========================>     VIEW_HOME_PAGE
+
+         path="/payment-approval"  =============>  <PaymentApproval />=========================> VIEW_PAYMENTAPPROVAL_PAGE
+
+         path="/Servicepage"  =============>  <Servicepage />=========================> VIEW_SERVICE_PAGE
+
+         path="/support"  =============>  <Supportpage />=========================> VIEW_SUPPORT_PAGE
+
+         path="/privacy-policy"  =============>  <Privacypage />=========================>  VIEW_PRIVACY_POLICY_PAGE
+
+         path="/terms-and-conditions"  =============>  <Termspage />=========================> VIEW_TERMS_AND_CONDITIONS_PAGE
+
+         path="/signup"  =============>  <SignUp />=========================> VIEW_SIGNUP_PAGE
+
+         path="/login"  =============>  <Login />=========================>  VIEW_LOGIN_PAGE
+
+         path="/verifyemail"  =============>  <VeryfiyEmail />=========================> VIEW_VERIFYEMAIL_PAGE
+
+         path="/veryfiyphone"  =============>  <VeryfiyPhone />=========================> VERIFYPHONE_PAGE
+
+         path="/generalinfo"  =============>  <Generalinfo />=========================> VIEW_GENERALINFO_PAGE
+
+        path="/admin/Ordertracking"  =============>  <Ordertracking />=========================> VIEW_ORDER_TRACKING_PAGE
+
+ path="/admin/order/orderselection"=============>  <OrderSelection />=========================> VIEW_ORDER_SELECTION_PAGE
+
+ path="/admin/customer"  =============>  <Customer />=========================>  VIEW_CUSTOMER_PAGE
+
+path="/admin/setting/Ware"  =============>  <Warehouse />=========================> VIEW_SETTING_WARE_PAGE
+
+path="/admin/tracking"  =============>  <Tracking />=========================>  VIEW_TRACKING_PAGE     //  coming soon page
+
+ path="/admin/support/accounting"  =============>  <Accounting />=========================>  VIEW_SUPPORT_ACCOUNTING_PAGE //comming soon
+
+    path="/page/kyc"  =============>  <KYC /> VIEW_KYC_PAGE
+
+         path="/b-card"  =============>  <Blogs /> VIEW_BLOGS_PAGE
+
+ 
+ 
+ 

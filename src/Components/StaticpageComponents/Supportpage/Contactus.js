@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { PostRaiseContactUS } from "../../../Redux/action/ApiCollection";
 import { toast } from "react-toastify";
 import { useNavigate, NavLink, useLocation, Navigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { message } from "antd";
 import LodingSpiner from "../../LodingSpiner";
 
 function Contactus() {
+  const contactRef = useRef();
   const [name, setName] = useState();
   const [loadspiner, setLoadSpiner] = useState(false);
 
@@ -20,9 +21,16 @@ function Contactus() {
   const PostRaiseContactUSData = useSelector(
     (state) => state.PostRaiseContactUSReducer.PostRaiseContactUSData?.data
   );
+  const OrderPagesLoaderTrueFalseData = useSelector(
+    (state) =>
+      state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
+  );
 
-  let Token = reactLocalStorage.get("token", false);
-
+  let Token = sessionStorage.getItem("token", false);
+  const handleOnWheel = (e) => {
+    e.preventDefault();
+    contactRef.current.blur();
+  };
   useEffect(() => {
     if (
       PostRaiseContactUSData?.message ===
@@ -36,16 +44,16 @@ function Contactus() {
   }, [PostRaiseContactUSData]);
 
   const SendContact = (e) => {
-    e.preventDefault(); 
-      let payload = {
-        name: name,
-        email: email,
-        number: number,
-        message: massage,
-      };
-      name && email && number && message
-        ? dispatch(PostRaiseContactUS(payload))
-        : toast.warn("Please Fill all the input Fields !");
+    e.preventDefault();
+    let payload = {
+      name: name,
+      email: email,
+      number: number,
+      message: massage,
+    };
+    name && email && number && message
+      ? dispatch(PostRaiseContactUS(payload))
+      : toast.warn("Please Fill all the input Fields !");
   };
 
   return (
@@ -73,6 +81,8 @@ function Contactus() {
 
                     <input
                       type="number"
+                      onWheel={handleOnWheel}
+                      ref={contactRef}
                       placeholder="Contact No."
                       className="mb-3"
                       value={number}
@@ -90,7 +100,7 @@ function Contactus() {
                       className="mb-3"
                       value={massage}
                       onChange={(e) => setMassage(e.target.value)}
-                    /> 
+                    />
                     <input
                       type="submit"
                       value="Send"
@@ -130,6 +140,7 @@ function Contactus() {
         </div>
       </div>
       <LodingSpiner loadspiner={loadspiner} />
+      <LodingSpiner loadspiner={OrderPagesLoaderTrueFalseData} />
     </section>
   );
 }

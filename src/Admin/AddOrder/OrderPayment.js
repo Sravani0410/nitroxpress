@@ -25,7 +25,7 @@ const OrderPayment = () => {
   const [paymentmethod, setPaymentMethod] = useState("");
   const [pickuppopup, setPickUpPopup] = useState(false);
   const [wallettab, setWalletTab] = useState("");
-  const [onlinetab, setOnlineTab] = useState("")
+  const [onlinetab, setOnlineTab] = useState("");
   const [customcheckbox, setCustomCheckBox] = useState(false);
   const [paymentmethodpopup, setPaymentMethodPopup] = useState(true);
   const [walletpaypopup, setWalletPayPopup] = useState(false);
@@ -38,6 +38,8 @@ const OrderPayment = () => {
   const [loadspiner, setLoadSpiner] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  let isEmployeData = sessionStorage.getItem("isEmploye", false);
+
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
@@ -52,19 +54,18 @@ const OrderPayment = () => {
       state.PostAdminOrderPaymentCalReducer?.PostAdminOrderPaymentCalData
   );
   const PostDebitBalanceData = useSelector(
-    (state) =>
-      state.PostDebitBalanceReducer?.PostDebitBalanceData
+    (state) => state.PostDebitBalanceReducer?.PostDebitBalanceData
   );
   const PostAdminOrderAddShipmentData = useSelector(
     (state) =>
       state.PostAdminOrderAddShipmentReducer?.PostAdminOrderAddShipmentData
   );
-  // let BearerToken = reactLocalStorage.get("token", false);
-  let totalPriceValue = reactLocalStorage.get('totalPriceValue', false)
+  // let BearerToken = sessionStorage.getItem("token", false);
+  let totalPriceValue = sessionStorage.getItem("totalPriceValue", false);
   useEffect(() => {
-    let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
+    let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
     let OrderDetailsIdData = JSON.parse(OrderDetailsId);
-    const PaymentMethod = reactLocalStorage.get("PaymentMethod", false);
+    const PaymentMethod = sessionStorage.getItem("PaymentMethod", false);
     setPaymentMethod(PaymentMethod);
     // dispatch(
     //   PostViewAdminOrder({
@@ -73,29 +74,26 @@ const OrderPayment = () => {
     // );
   }, []);
   useEffect(() => {
-    if (
-      paymentmethod == "online" &&
-      totalPriceValue
-    ) {
+    if (paymentmethod == "online" && totalPriceValue) {
       PaymentFun();
     }
   }, [totalPriceValue]);
 
   const handlePaymentSuccess = async (response) => {
     setLoadSpiner((o) => !o);
-    let BearerToken = reactLocalStorage.get("token", false);
-    let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
+    let BearerToken = sessionStorage.getItem("token", false);
+    let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
     let OrderDetailsIdData = JSON.parse(OrderDetailsId);
-    let product_order_idString = OrderDetailsIdData?.product_order_id.toString();
-    let InvoicePayLoad = {
-      product_order_id: product_order_idString,
-      request_type: "create",
-    };
+    let product_order_idString =
+      OrderDetailsIdData?.product_order_id?.toString();
+    // let InvoicePayLoad = {
+    //   product_order_id: product_order_idString,
+    //   request_type: "create",
+    // };
     try {
       let bodyData = new FormData();
       // we will send the response we've got from razorpay to the backend to validate the payment
       bodyData.append("response", JSON.stringify(response));
-
 
       await Axios({
         url: `${process.env.REACT_APP_BASE_URL}/payment/status`,
@@ -108,34 +106,28 @@ const OrderPayment = () => {
         },
       })
         .then((res) => {
-
           setLoadSpiner((o) => !o);
-          reactLocalStorage.remove('UserDetailsPayload');
-          reactLocalStorage.remove("Eway_bill_URL");
-          reactLocalStorage.remove("PayloadOrderData");
-          reactLocalStorage.remove("Eway_bill_id");
-          reactLocalStorage.remove("add_order_tag")
+          sessionStorage.removeItem("UserDetailsPayload");
+          sessionStorage.removeItem("Eway_bill_URL");
+          sessionStorage.removeItem("PayloadOrderData");
+          sessionStorage.removeItem("Eway_bill_id");
+          sessionStorage.removeItem("add_order_tag");
           toast.success(res.data.message);
           navigate("/admin/order#pending");
-          dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
+          // dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
         })
-        .catch((err) => {
-
-        });
-    } catch (error) {
-
-    }
+        .catch((err) => {});
+    } catch (error) {}
   };
-
 
   // this will load a script tag which will open up Razorpay payment card to make //transactions
 
   // const handlePaymentSuccess = async (response) => {
 
   //   setLoadSpiner((o) => !o);
-  //   let BearerToken = reactLocalStorage.get("token", false);
+  //   let BearerToken = sessionStorage.getItem("token", false);
 
-  //   let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
+  //   let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
   //   let OrderDetailsIdData = JSON.parse(OrderDetailsId);
   //   let product_order_idString = OrderDetailsIdData?.product_order_id.toString();
   //   let InvoicePayLoad = {
@@ -148,8 +140,6 @@ const OrderPayment = () => {
 
   //     // we will send the response we've got from razorpay to the backend to validate the payment
   //     bodyData.append("response", JSON.stringify(response));
-
-
 
   //     await Axios({
   //       url: `${process.env.REACT_APP_BASE_URL}/payment/status`,
@@ -165,7 +155,7 @@ const OrderPayment = () => {
 
   //         setLoadSpiner((o) => !o);
   //         toast.success(res.data.message);
-  //         // reactLocalStorage.remove('PaymentMethod');
+  //         // sessionStorage.removeItem('PaymentMethod');
   //         navigate("/admin/order#pending");
 
   //         dispatch(PostOrderDownloadLabelGenerationFile(InvoicePayLoad));
@@ -186,16 +176,15 @@ const OrderPayment = () => {
     const res = await loadScript();
 
     let amount = totalPriceValue;
-    let BearerToken = reactLocalStorage.get("token", false);
+    let BearerToken = sessionStorage.getItem("token", false);
 
-    let getShipmentId = reactLocalStorage.get("ShipmentId", false);
-    let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
-    const ProductOrderId = reactLocalStorage.get("product_order_id", false);
+    let getShipmentId = sessionStorage.getItem("ShipmentId", false);
+    let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
+    const ProductOrderId = sessionStorage.getItem("product_order_id", false);
 
     let dataa = JSON.parse(OrderDetailsId);
     let deliverdIdData = dataa?.deliverd_id;
     let pickupIdData = dataa?.pickup_id;
-
 
     let bodyContent = JSON.stringify({
       amount: Number(amount),
@@ -237,7 +226,6 @@ const OrderPayment = () => {
 
     // });
 
-
     // var config = {
     //   method: 'post',
     //   url: `${process.env.REACT_APP_BASE_URL}/razorpay`,
@@ -256,10 +244,6 @@ const OrderPayment = () => {
     //   });
     //   let productIDget=JSON.parse(config.data)
 
-
-
-
-
     let options = {
       key_id: "rzp_test_G0kWdsA9toFR0a", // in react your environment variable must start with REACT_APP_
       key_secret: "qW4iPbrU5Vc84pHzZc4uI5ZA",
@@ -270,7 +254,6 @@ const OrderPayment = () => {
       order_id: data?.data?.order_id,
       // order_id: dataa?.product_order_id,
 
-
       handler: function (response) {
         // we will handle success by calling handlePaymentSuccess method and
         // will pass the response that we've got from razorpay
@@ -278,8 +261,6 @@ const OrderPayment = () => {
         handlePaymentSuccess(response);
       },
     };
-
-
 
     var rzp1 = new window.Razorpay(options);
     rzp1.open();
@@ -292,7 +273,7 @@ const OrderPayment = () => {
   };
 
   useEffect(() => {
-    let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
+    let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
     let OrderDetailsIdData = JSON.parse(OrderDetailsId);
 
     // dispatch(
@@ -304,24 +285,17 @@ const OrderPayment = () => {
     setPaymentMethodPopup(true);
   }, []);
 
-  // 
+  //
   useEffect(() => {
-
-
     if (GetWalletBalanceData && totalPriceValue) {
-      if (
-        GetWalletBalanceData?.data?.balance >=
-        Number(totalPriceValue)
-      ) {
-
+      if (GetWalletBalanceData?.data?.balance >= Number(totalPriceValue)) {
       } else {
-
-        let calaculated = Number(totalPriceValue) - GetWalletBalanceData?.data?.balance
+        let calaculated =
+          Number(totalPriceValue) - GetWalletBalanceData?.data?.balance;
         // ?.toFixed(2)
-        setCalculatedAmount(calaculated.toFixed(2))
+        setCalculatedAmount(calaculated.toFixed(2));
         setAmountLessThenWalletPayPopup(true);
       }
-
     }
   }, [totalPriceValue, GetWalletBalanceData]);
 
@@ -329,17 +303,17 @@ const OrderPayment = () => {
 
   const ContinuePaymentFun = () => {
     setLoadSpiner((o) => !o);
-    let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
+    let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
     let OrderDetailsIdData = JSON.parse(OrderDetailsId);
-    let CompanyDetails = reactLocalStorage.get("UserDetailsPayload", false);
+    let CompanyDetails = sessionStorage.getItem("UserDetailsPayload", false);
 
     let OrderComapnyData = JSON.parse(CompanyDetails);
 
     let payLoad = {
       amount: Number(totalPriceValue),
       order_id: OrderDetailsIdData?.product_order_id,
-      company_name: OrderComapnyData?.company_name
-
+      company_name: OrderComapnyData?.company_name,
+      is_true: true,
     };
 
     // PostDebitBalance
@@ -354,7 +328,7 @@ const OrderPayment = () => {
     //   }
 
     // } else if (activepaymentwallet == "activeWalletPayment") {
-    dispatch(PostDebitBalance(payLoad)) //Total amount will be debit by this api from the wallet 
+    dispatch(PostDebitBalance(payLoad)); //Total amount will be debit by this api from the wallet
 
     // } else if (activepaymentrazorpay == "activeWalletPayment") {
     //   PaymentFun() // This function open the RazorPay Popup
@@ -366,81 +340,66 @@ const OrderPayment = () => {
     if (PostDebitBalanceData) {
       if (PostDebitBalanceData.status == 200) {
         setPaymentMethodPopup(false);
-        setWalletPayPopup(false)
+        setWalletPayPopup(false);
         setLoadSpiner((o) => !o);
       } else {
         setLoadSpiner(false);
       }
     }
-
-  }, [PostDebitBalanceData])
-
-
+  }, [PostDebitBalanceData]);
 
   useEffect(() => {
     if (PostAdminOrderAddShipmentData) {
       // if (PostAdminOrderAddShipmentData.status == 200) {
-        let CompanyDetails = reactLocalStorage.get("UserDetailsPayload", false);
+      let CompanyDetails = sessionStorage.getItem("UserDetailsPayload", false);
 
-        let OrderComapnyData = JSON.parse(CompanyDetails);
+      let OrderComapnyData = JSON.parse(CompanyDetails);
 
-        let walletpayload = {
-          company_name: OrderComapnyData?.company_name
-        }
+      let walletpayload = {
+        company_name: OrderComapnyData?.company_name,
+      };
 
-
-        dispatch(GetWalletBalance(walletpayload))
+      // if (!isEmployeData) {
+      //   dispatch(GetWalletBalance(walletpayload));
+      // }
+      dispatch(GetWalletBalance(walletpayload));
       // }
     }
-    dispatch(PostAdminOrderAddShipment)
-     
-
-  }, [PostAdminOrderAddShipmentData])
-
-
-
-
-
-
-
-
+    dispatch(PostAdminOrderAddShipment);
+  }, [PostAdminOrderAddShipmentData]);
 
   const ProceedToPayFun = () => {
-
-    AddPaymentFun()
-  }
-
-
+    AddPaymentFun();
+  };
 
   const handlePaymentSuccess_addmoney = async (response, PaymentFunResData) => {
-    setLoadSpiner(o => !o)
+    setLoadSpiner((o) => !o);
     // setLoadSpiner((o) => !o);
-    let BearerToken = reactLocalStorage.get("token", false);
-    const ProductOrderId = reactLocalStorage.get("product_order_id", false);
+    let BearerToken = sessionStorage.getItem("token", false);
+    const ProductOrderId = sessionStorage.getItem("product_order_id", false);
 
-    let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
+    let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
     let OrderDetailsIdData = JSON.parse(OrderDetailsId);
     let InvoicePayLoad = {
       product_order_id: ProductOrderId,
       request_type: "create",
     };
-    let calaculated = totalPriceValue - GetWalletBalanceData?.data?.balance
-    let calculatedTotal = GetWalletBalanceData?.data?.balance + calaculated
-    let CompanyDetails = reactLocalStorage.get("UserDetailsPayload", false);
-
+    let calaculated = totalPriceValue - GetWalletBalanceData?.data?.balance;
+    let calculatedTotal = GetWalletBalanceData?.data?.balance + calaculated;
+    let CompanyDetails = sessionStorage.getItem("UserDetailsPayload", false);
 
     let payLoad = {
       amount: calculatedTotal.toFixed(2),
       order_id: OrderDetailsIdData?.product_order_id,
-      company_name: CompanyDetails?.company_name
-
+      company_name: CompanyDetails?.company_name,
     };
-
-
 
     try {
       let bodyData = new FormData();
-      let objectResponse = { ...response, "txnId": parseInt(PaymentFunResData?.data?.txnId) }
+      let objectResponse = {
+        ...response,
+        txnId: parseInt(PaymentFunResData?.data?.txnId),
+      };
 
       // let objectResponse={
       //   "razorpay_order_id":response.razorpay_order_id,
@@ -463,11 +422,11 @@ const OrderPayment = () => {
         },
       })
         .then((res) => {
-          dispatch(PostDebitBalance(payLoad))
+          dispatch(PostDebitBalance(payLoad));
           setLoadSpiner((o) => !o);
-          setResponceDetail(res)
+          setResponceDetail(res);
           // toast.success(res.data.message);
-          // reactLocalStorage.remove('PaymentMethod');
+          // sessionStorage.removeItem('PaymentMethod');
 
           // navigate("/admin/wallethistory");
           // window.location.reload(false)
@@ -475,45 +434,35 @@ const OrderPayment = () => {
           // dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
         })
         .catch((err) => {
-          setLoadSpiner(o => !o)
+          setLoadSpiner((o) => !o);
         });
     } catch (error) {
-      setLoadSpiner(o => !o)
+      setLoadSpiner((o) => !o);
     }
   };
-
-
-
 
   const loadScript_addmoney = () => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     document.body.appendChild(script);
-
   };
-
 
   const AddPaymentFun = async () => {
     const res = await loadScript_addmoney();
 
     let amountValue = calculatedamount;
-    let BearerToken = reactLocalStorage.get("token", false);
+    let BearerToken = sessionStorage.getItem("token", false);
 
-    let getShipmentId = reactLocalStorage.get("ShipmentId", false);
-    let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
-    const ProductOrderId = reactLocalStorage.get("product_order_id", false);
+    let getShipmentId = sessionStorage.getItem("ShipmentId", false);
+    let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
+    const ProductOrderId = sessionStorage.getItem("product_order_id", false);
 
     let dataa = JSON.parse(OrderDetailsId);
 
-
-
-    let bodyContent
+    let bodyContent;
     bodyContent = JSON.stringify({
       amount: parseFloat(amountValue),
-
     });
-
-
 
     const data = await Axios({
       url: `${process.env.REACT_APP_BASE_URL}/wallet/add_money`, //razorpay
@@ -526,7 +475,7 @@ const OrderPayment = () => {
       data: bodyContent,
     }).then((res) => {
       return res;
-    })
+    });
     // in data we will receive an object from the backend with the information about the payment
     //that has been made by the user
 
@@ -547,7 +496,6 @@ const OrderPayment = () => {
 
     let rzp1 = new window.Razorpay(options);
     rzp1.open();
-
   };
 
   const PaymentPopupFun = () => {
@@ -562,11 +510,8 @@ const OrderPayment = () => {
 
     navigate("/admin/order/ordersummary");
 
-    dispatch(PaymentPopupValue(false))
-  }
-
-  console.log("hsgdhvsjd",GetWalletBalanceData)
-
+    dispatch(PaymentPopupValue(false));
+  };
 
   return (
     <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -615,7 +560,13 @@ const OrderPayment = () => {
 
               {paymentmethod !== "online" && (
                 <div className="payment-text">
-                  <p>  {responcedetails?.status == 200 || PostDebitBalanceData.status == 200 ? "Order Placed SuccesFully" : "Processing..."}</p>
+                  <p>
+                    {" "}
+                    {responcedetails?.status == 200 ||
+                    PostDebitBalanceData.status == 200
+                      ? "Order Placed SuccesFully"
+                      : "Processing..."}
+                  </p>
                   {/* <p>order placed SuccesFully </p> */}
 
                   <button
@@ -631,7 +582,6 @@ const OrderPayment = () => {
           </div>
         </div>
       </div>
-
 
       {/* <button
                     className={`nav-link   ${pandingtab ? "active" : ""}`}
@@ -683,23 +633,27 @@ const OrderPayment = () => {
                 setCustomCheckBox(false);
 
                 navigate("/admin/order/ordersummary");
-
-              }
-              }
+              }}
             >
               {" "}
               X{" "}
             </h4>
             <h2>Recharge your wallet</h2>
             <p>
-              Current Wallet Amount <b>{GetWalletBalanceData?.data?.balance}/-</b>
+              Current Wallet Amount{" "}
+              <b>{GetWalletBalanceData?.data?.balance}/-</b>
             </p>
             <div className="popup-body">
               <div className="amout">
                 <p>Enter Amount in multiples of 100 below</p>
                 <div className="">
                   <p>Rs.</p>
-                  <input type="number" className="form-control" value={calculatedamount} placeholder="500" />
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={calculatedamount}
+                    placeholder="500"
+                  />
                   <span>
                     <svg
                       width="10"
@@ -734,8 +688,11 @@ const OrderPayment = () => {
                   <p className="mb-3">Rs. {calculatedamount}</p>
                 </div>
               </div>
-              <button type="button" className="btn pr-pay"
-                onClick={(e) => ProceedToPayFun()}>
+              <button
+                type="button"
+                className="btn pr-pay"
+                onClick={(e) => ProceedToPayFun()}
+              >
                 Proceed To Pay{" "}
               </button>
             </div>
@@ -749,43 +706,56 @@ const OrderPayment = () => {
         model
         className="sign_up_loader"
       >
-        <div className="wallet-popup " >
-          <div className={`popupinner walletpaymement_inner ${wallettab ? "active" : ""}`}>
+        <div className="wallet-popup ">
+          <div
+            className={`popupinner walletpaymement_inner ${
+              wallettab ? "active" : ""
+            }`}
+          >
             <h4
               className="text-danger calender_popup_cancel"
               aria-selected={`${wallettab ? "true" : "false"}`}
               onClick={(e) => {
-                PaymentPopupFun(e)
+                PaymentPopupFun(e);
                 // setPaymentMethodPopup((o) => !o);
-
               }}
             >
               {" "}
               X{" "}
             </h4>
             <h2>Select Your Payment Mode</h2>
-            <p>
-              Total Amount To Pay Rs.{" "}
-              {totalPriceValue}
-            </p>
+            <p>Total Amount To Pay Rs. {totalPriceValue}</p>
             <div className="popup-body">
               <ul className="pay-list">
-                <li className={`row mx-0 ${activepaymentwallet}`}
-                  onClick={(e) => { setActivePaymentWallet("activeWalletPayment"); setActivePaymentRazorPay("activeRazorPayment") }}>
+                <li
+                  className={`row mx-0 ${activepaymentwallet}`}
+                  onClick={(e) => {
+                    setActivePaymentWallet("activeWalletPayment");
+                    setActivePaymentRazorPay("activeRazorPayment");
+                  }}
+                >
                   <div className="col-2 ">
                     <img
                       src="/images/wallet.svg"
                       alt="img"
-                    // onClick={(e) => setWallet(o => !o)}
+                      // onClick={(e) => setWallet(o => !o)}
                     />
                   </div>
-                  <div className="col-9"
-                  // onClick={(e) => GoTOWalletFun(e)}
+                  <div
+                    className="col-9"
+                    // onClick={(e) => GoTOWalletFun(e)}
                   >
                     <p className="mb-1">Wallet</p>
                     <p className="mb-0">
                       Current Balance :
-                      <b> {GetWalletBalanceData?.data?.balance_status == "NEGATIVE" ? `-${GetWalletBalanceData?.data?.balance}` : GetWalletBalanceData?.data?.balance}/-</b>
+                      <b>
+                        {" "}
+                        {GetWalletBalanceData?.data?.balance_status ==
+                        "NEGATIVE"
+                          ? `-${GetWalletBalanceData?.data?.balance}`
+                          : GetWalletBalanceData?.data?.balance}
+                        /-
+                      </b>
                     </p>
                   </div>
                   <div className="col-1 d-flex justify-content-end align-items-center">

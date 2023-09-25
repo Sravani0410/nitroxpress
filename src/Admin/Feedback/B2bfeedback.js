@@ -16,7 +16,8 @@ import { reactLocalStorage } from "reactjs-localstorage";
 function B2bfeedback() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let IsAdminRole=reactLocalStorage.get("Admin_Role",false)
+  let IsAdminRole=sessionStorage.getItem("Admin_Role",false)
+  let isEmploye_Role=sessionStorage.getItem("isEmploye",false)
   const[date, setDate]= useState("")
 
   const [oldnewdata, setOldNewData] = useState(true);
@@ -43,9 +44,9 @@ function B2bfeedback() {
         ?.data
   );
 
-  useEffect(() => {
-    dispatch(GetSettingViewB2bFeedback());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(GetSettingViewB2bFeedback());
+  // }, []);
 
   const DeleteTicket = (e, data) => {
     let payload = {
@@ -164,7 +165,7 @@ function B2bfeedback() {
                 onChange={(e) => CustomerChangeFun(e)}
               >
                 <option value="b2bb">B2B</option>
-               {IsAdminRole=="true"?<option value="b2cc">B2C</option>:""}
+               {IsAdminRole=="true"|| isEmploye_Role=="true" ?<option value="b2cc">B2C</option>:""}
               </select>
             </div>
 

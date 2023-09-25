@@ -3089,3 +3089,7 @@ top: 0;
 .BlockFilterFromOrderPage{
   display: block !important;
 }
+
+.active_DELIVERED+li{
+  display: none !important;
+}

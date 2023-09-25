@@ -24,7 +24,7 @@ const Profileheader = ({ searchBox }) => {
     const UserData = useSelector(state => state.productReducer.userDetails)
     // const ResetPasswordPatchData = useSelector(state => state?.ResetPasswordPatchReducer?.ResetPasswordPatchData)
 
-    let as_individual = reactLocalStorage.get("as_individual", false);
+    let as_individual = sessionStorage.getItem("as_individual", false);
 
     useEffect(() => {
         let pathname = param?.pathname?.split("/")
@@ -37,7 +37,7 @@ const Profileheader = ({ searchBox }) => {
 
 
     useLayoutEffect(() => {
-        if (as_individual.toString() != "true") {
+        if (as_individual?.toString() != "true") {
             // navigate("/");
             // window.location.reload(false)
         }
@@ -81,16 +81,16 @@ const Profileheader = ({ searchBox }) => {
     // }
 
     const Logoutfun = () => {
-        reactLocalStorage.remove('token')
+        sessionStorage.removeItem('token')
 
-        reactLocalStorage.remove('Admin_Role')
-        reactLocalStorage.clear();
+        sessionStorage.removeItem('Admin_Role')
+        sessionStorage.clear();
         toast.success(" Logout successfully");
         navigate("/")
     }
 
     const profilefun = () => {
-        reactLocalStorage.get('token')
+        sessionStorage.getItem('token')
         navigate("/profile")
     }
 

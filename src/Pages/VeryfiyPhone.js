@@ -14,7 +14,7 @@ const VeryfiyPhone = () => {
     const products = useSelector(state => state.productReducer.products)
     let navigate = useNavigate(); 
 
-    let phoneNumber = reactLocalStorage.get('userDetails', true);
+    let phoneNumber = sessionStorage.getItem('userDetails', true);
     let localStorageDetails = JSON.parse(phoneNumber)
 
     const VerifyOtp = async() => { 

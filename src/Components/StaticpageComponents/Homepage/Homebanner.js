@@ -22,8 +22,8 @@ function Homebanner() {
         setOrderId(newStr)
     }
     const ConfirmDeleverFun = (e) => {         
-        let data = reactLocalStorage.set("order_id", orderid);
-        let Token = reactLocalStorage.get("token", false)
+        let data = sessionStorage.setItem("order_id", orderid);
+        let Token = sessionStorage.getItem("token", false)
         let payload = {
             "oid": orderid
         }
@@ -47,6 +47,7 @@ function Homebanner() {
         if (PostOrderTrackData.status == 200 && param?.pathname == "/" && OrderId1 == true) {
             if (PostOrderTrackData?.data?.current_status !== "PENDING") {
                 navigate(`/profile/trackorder/${orderid}`)
+                window.location.reload(false)
             }
         }
     }, [PostOrderTrackData])

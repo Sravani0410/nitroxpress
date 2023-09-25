@@ -38,7 +38,7 @@ function Generalinfo() {
         setContactNumber(UserData[0]?.phone_number)
         setEmailAddress(UserData[0]?.email)
 
-        // let BearerToken = reactLocalStorage.get("token", false);
+        // let BearerToken = sessionStorage.getItem("token", false);
 
         // axios.post(`${process.env.REACT_APP_BASE_URL}/viewprofile`, {
         //     headers: {
@@ -79,7 +79,7 @@ function Generalinfo() {
         setEditSaveButton(o => !o)
         e.preventDefault()
 
-        let BearerToken = reactLocalStorage.get("token", false);
+        let BearerToken = sessionStorage.getItem("token", false);
 
         axios.patch(`${process.env.REACT_APP_BASE_URL}/editprofile`, {
             username: username,
@@ -106,7 +106,7 @@ function Generalinfo() {
 
     const ResetPassword = (e) => {
         e.preventDefault()
-        let BearerToken = reactLocalStorage.get("token", false);
+        let BearerToken = sessionStorage.getItem("token", false);
         axios.patch(`${process.env.REACT_APP_BASE_URL}/address/resetpassword`, {
             current_pass: currentpassword,
             new_pass: newpassword,
@@ -141,7 +141,7 @@ function Generalinfo() {
                                     <form className='row info-form'>
                                         <div className="col-lg-6 col-md-6 mb-3">
                                             <label for="#text" className="form-label">User Name</label>
-                                            <input type="text" className="form-control" id="text" placeholder="Name"
+                                            <input type="text" maxLength={40} className="form-control" id="text" placeholder="Name"
                                                 onChange={(e) => { editsavebutton && setUserName(e.target.value) }}
                                                 value={username} />
                                         </div>
@@ -178,7 +178,7 @@ function Generalinfo() {
                                             <div className=" col-xl-4 mb-xl-4 mb-3">
                                                 <label for="#pwd" className="form-label">Current Password</label>
                                                 <div className='d-flex'>
-                                                    <input type={`${changepassword ? "text" : "password"}`} className="form-control " id="pwd" placeholder="Current New Password"
+                                                    <input maxLength={15} type={`${changepassword ? "text" : "password"}`} className="form-control " id="pwd" placeholder="Current New Password"
                                                         onChange={(e) => setCurrentPassword(e.target.value)} value={currentpassword} />
 
                                                     {changepassword ? <span className="password_eye1" onClick={() => setChangePassword(o => !o)}>
@@ -200,7 +200,7 @@ function Generalinfo() {
                                             <div className="col-xl-4 new-pwd mb-xl-4 mb-3">
                                                 <label for="#phone" className="form-label">New Password</label>
                                                 <div className='d-flex'>
-                                                    <input type={`${showpassword ? "text" : "password"}`} className="form-control" id="phone" placeholder="Enter New Password"
+                                                    <input maxLength={15} type={`${showpassword ? "text" : "password"}`} className="form-control" id="phone" placeholder="Enter New Password"
                                                         onChange={(e) => setNewPassword(e.target.value)} value={newpassword} />
                                                     {showpassword ? <span className="password_eye1" onClick={() => setShowPassword(o => !o)}>
                                                         <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -221,7 +221,7 @@ function Generalinfo() {
                                             <div className="col-xl-4 new-pwd mb-xl-4 mb-3">
                                                 <label for="exampleFormControlInput1" className="form-label">Confirm New Password</label>
                                                 <div className='d-flex'>
-                                                    <input type={`${confirmshowpassword ? "text" : "password"}`} className="form-control" id="exampleFormControlInput1" placeholder="Enter New Password"
+                                                    <input maxLength={15} type={`${confirmshowpassword ? "text" : "password"}`} className="form-control" id="exampleFormControlInput1" placeholder="Enter New Password"
                                                         onChange={(e) => setConfirmPassword(e.target.value)} value={confirmpassword} />
                                                     {confirmshowpassword ? <span className="password_eye1" onClick={() => setConfirmShowPassword(o => !o)}>
                                                         <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">

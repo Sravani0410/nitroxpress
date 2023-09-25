@@ -11,24 +11,24 @@ const Header = () => {
   const ToggleOpenHideFun = () => {
     setToggleOpenClose((o) => !o);
   };
-  let Token = reactLocalStorage.get("token", false)
-  let Role = reactLocalStorage.get("Admin_Role", false)
-  let B2bRole = reactLocalStorage.get("Is_Business", false)
-  let as_individual = reactLocalStorage.get("as_individual", false)
+  let Token = sessionStorage.getItem("token", false)
+  let Role = sessionStorage.getItem("Admin_Role", false)
+  let B2bRole = sessionStorage.getItem("Is_Business", false)
+  let as_individual = sessionStorage.getItem("as_individual", false)
 
   const Logoutfun = () => {
-    reactLocalStorage.remove('token')
-    reactLocalStorage.remove('Admin_Role')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('Admin_Role')
     toast.success(" Logout successfully");
-    reactLocalStorage.clear();
+    sessionStorage.clear();
     navigate("/")
   }
 
 
 
   const profilefun = () => {
-    reactLocalStorage.get('token')
-    let Role = reactLocalStorage.get("Admin_Role", false)
+    sessionStorage.getItem('token')
+    let Role = sessionStorage.getItem("Admin_Role", false)
     if (JSON.parse(as_individual) !== true) {
       navigate("/admin/setting/adminsetting#pending")
       // window.location.reload(true);
@@ -93,7 +93,7 @@ const Header = () => {
               {/* <li><NavLink to='/signup' className={` ${param.pathname === "/signup" ? "active" : ""} `}> Login / Sign up</NavLink> </li> */}
               {/* JSON.parse(B2bRole) */}
 
-              {JSON.parse(as_individual) ? <>
+              {JSON?.parse(as_individual) ? <>
                 {Token !== false ? <li>
                   <NavLink to="/shipping" className="btn">
                     Ship with us
@@ -121,7 +121,7 @@ const Header = () => {
                 </li>}
 
 
-               {Token == false ? <li>
+               {Token == null ? <li>
                 <NavLink
                   to="/login"
                   className={`btn ${param.pathname === "/signup" ? "active" : ""
@@ -135,7 +135,7 @@ const Header = () => {
                   <div className='user-box' onClick={() => setProfileDropDownShow(o => !o)} >
                     <img src="/images/icon30.png" alt="img" />
                     {profiledropdownshow && <ul className="dropdown-menubar">
-                      {/* <li><a href='javascript:void' onClick={() => setProfileDetailsShow(o => !o)}>My Profile</a> </li> */}
+                      {/* <li><a href='javascript:void' onClick={() => setProfileDetailsShow(o => !o)}></a> </li> */}
                       <li><a href='#' onClick={() => profilefun()}>My Profile</a> </li>
                       <li><a href='#' onClick={() => Logoutfun()}>Log out</a> </li>
                     </ul>}

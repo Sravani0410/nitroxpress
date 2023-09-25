@@ -30,6 +30,7 @@ import tokenData from "../../Authanticate";
 import { PostAdminOrderFilterationReducer } from "../../Redux/reducer/Reducer";
 
 import { PermissionData } from "../../Permission";
+import LodingSpiner from "../../Components/LodingSpiner";
 
 const Transactions = () => {
   const [pendingconfirmbutton, setPendingConfirmButton] = useState(false);
@@ -54,10 +55,12 @@ const Transactions = () => {
   const [adminorderpendingdata, setAdminOrderPendingData] = useState("");
   const [filterdatahideaftertabchange, setFilterDataHideAfterTabChange] = useState(false);
   const [filteractive, setFilterActive] = useState(false);
-  const [userType, setUsertype] = useState("b2c");
+  const [userType, setUsertype] = useState("b2b");
+
+   
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  let selectdata = reactLocalStorage.get("Is_Business");  
+  let selectdata = sessionStorage.getItem("Is_Business");  
   let param = useLocation();
   const GetAdminOrderIntransitDate = useSelector(
     (state) =>
@@ -116,22 +119,29 @@ const Transactions = () => {
   );
   const ToggleSideBarTrueFalseData = useSelector((state) => state.ToggleSideBarTrueFalseReducer.ToggleSideBarTrueFalseData)
   const GetSettingUserInfoData = useSelector(
-    (state) => state.GetSettingUserInfoReducer.GetSettingUserInfoData?.data
+    (state) => state.GetSettingUserInfoReducer.GetSettingUserInfoData
+  );
+  const TransactionPagesLoaderTrueFalseData = useSelector(
+    (state) => state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
   );
   useEffect(() => {
     if (TransactionHistorytData?.data) {
       setPopup(true)
     }
+    else{
+      setPopup(false)
+    }
   }, [TransactionHistorytData])
   useEffect(() => {  
-    dispatch(GetAdminOrderIntransit());
-    dispatch(GetAdminOrderDelivered());
-    dispatch(GetAdminOrderPending());
-    dispatch(GetAdminOrderReturn());
-    dispatch(GetAdminOrderBooked());
+    // dispatch(GetAdminOrderIntransit());
+    // dispatch(GetAdminOrderDelivered());
+    // dispatch(GetAdminOrderPending());
+    // dispatch(GetAdminOrderReturn());
+    // dispatch(GetAdminOrderBooked());
+    setPopup(false)
   }, []);
   const IntransitFun = (e, id) => {
-    reactLocalStorage.set("order_id", id);
+    sessionStorage.setItem("order_id", id);
     let objectData = {
       product_order_id: id,
     };
@@ -150,7 +160,7 @@ const Transactions = () => {
     setBookTab("");
     setTransitTab("");
   }, [OrderPageBookNavigateFunData]);
-  useEffect(() => {
+  useEffect(() => { 
     dispatch(GetSettingUserInfo({
       user_type: `${userType}`
     }))
@@ -194,7 +204,7 @@ const Transactions = () => {
       setAwbCode("");
       setExpectedDelliveryDate("");
     } else {
-      toast.warn("please fill all the fields correctly");
+      toast.warn("please fill all the fields");
       setPartnerNameActive(true);
     }
   };
@@ -251,8 +261,8 @@ const Transactions = () => {
                 className="form-select"
                 onChange={(e) => CustomerChangeFun(e)}
               >
-                <option value="b2c">B2C</option>
                 <option value="b2b">B2B</option>
+               {PermissionData()?.VIEW_B2C_TRANSACTIONS_PAGE == "VIEW_B2C_TRANSACTIONS_PAGE"? <option value="b2c">B2C</option>:""}
               </select>:""}
             </div>
 
@@ -276,8 +286,8 @@ const Transactions = () => {
                     </tr>
 
                     {PermissionData()?.VIEW_ORDER_PENDING == "VIEW_ORDER_PENDING" ?
-                      GetSettingUserInfoData &&
-                      GetSettingUserInfoData?.User_info?.map((item, id) => {
+                      GetSettingUserInfoData?.data&&
+                      GetSettingUserInfoData?.data?.User_info?.map((item, id) => {
 
                         return (
                           <tr>
@@ -329,7 +339,9 @@ const Transactions = () => {
                 />
               </svg>
             </div>
-            <div  className="tab-content mt-5">
+            <div className="popup-body ">
+
+            <div  className="tab-content">
               <table>
                 <tr>
                 <th>Order Id</th>
@@ -364,6 +376,7 @@ const Transactions = () => {
 
               </table>
             </div>
+            </div>
             {/* <div className="popup-body row ">
               <div className="btngroups">
                 <button
@@ -385,6 +398,7 @@ const Transactions = () => {
           </div>
         </div>
       )}
+      <LodingSpiner loadspiner={TransactionPagesLoaderTrueFalseData } />
     </>
   );
 };

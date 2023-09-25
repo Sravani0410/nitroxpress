@@ -28,7 +28,7 @@ const ResetPassword = () => {
 
                 })
             .then((Response) => {
-                reactLocalStorage.set("token", Response.data.Token);
+                sessionStorage.setItem("token", Response.data.Token);
                 toast.success("Password change SuccessFully");
                  
                 navigate("/login")
@@ -66,6 +66,7 @@ const ResetPassword = () => {
 
                             </span>
                             <input
+                            maxLength={15}
                                 type={showpassword ? "text" : "password"}
                                 value={password}
                                 placeholder="Password"
@@ -97,6 +98,7 @@ const ResetPassword = () => {
                                 </svg>
                             </span>
                             <input
+                            maxLength={15}
                                 type={conformpassword ? "text" : "password"}
                                 value={confirmpassword}
                                 placeholder="Confirm Password"

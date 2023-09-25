@@ -1,32 +1,31 @@
-
 import "./App.css";
 import { toast } from "react-toastify";
-import React, { useEffect, useState } from 'react'
-import PlacesAutocomplete from 'react-places-autocomplete';
+import React, { useEffect, useState } from "react";
+import PlacesAutocomplete from "react-places-autocomplete";
 import "bootstrap/dist/css/bootstrap.min.css";
-import 'react-toastify/dist/ReactToastify.css';
-import "./Components/DashboardLayout/Dashboard.css"
-import "../src/Admin/Admin.css"
+import "react-toastify/dist/ReactToastify.css";
+import "./Components/DashboardLayout/Dashboard.css";
+import "../src/Admin/Admin.css";
 import { ToastContainer } from "react-toastify";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useLocation } from 'react-router-dom';
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.min.js'
-import './index.css';
-import 'react-phone-input-2/lib/style.css'
+import { useLocation } from "react-router-dom";
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.min.js";
+import "./index.css";
+import "react-phone-input-2/lib/style.css";
 import Homepage from "./Pages/Staticpages/Homepage";
 import Servicepage from "./Pages/Staticpages/Servicepage";
 import Supportpage from "./Pages/Staticpages/Supportpage";
-import Privacypage from './Pages/Staticpages/Privacypage';
-import Termspage from './Pages/Staticpages/Termspage'
-import SignUp from './Pages/SignUp'
-import Login from './Pages/Login'
-import VeryfiyEmail from './Pages/VeryfiyEmail'
-import VeryfiyPhone from './Pages/VeryfiyPhone'
-import ProfilePage from './ProfilePage/ProfilePage'
-import ResetPassword from './Pages/resetpassword/[id]'
-import Generalinfo from './ProfilePage/Generalinfo'
+import Privacypage from "./Pages/Staticpages/Privacypage";
+import Termspage from "./Pages/Staticpages/Termspage";
+import SignUp from "./Pages/SignUp";
+import Login from "./Pages/Login";
+import VeryfiyEmail from "./Pages/VeryfiyEmail";
+import VeryfiyPhone from "./Pages/VeryfiyPhone";
+import ProfilePage from "./ProfilePage/ProfilePage";
+import ResetPassword from "./Pages/resetpassword/[id]";
+import Generalinfo from "./ProfilePage/Generalinfo";
 import Shipping from "./ProfilePage/Shipping";
 import Shippingpayment from "./ProfilePage/Shippingpayment";
 import Tracking from "./ProfilePage/Tracking";
@@ -46,6 +45,7 @@ import UserProfile from "./Admin/Setting/UserProfile";
 import UserSetting from "./Admin/Setting/UserSetting";
 import AdminSetting from "./Admin/Setting/AdminSetting";
 import Warehouse from "./Admin/Setting/Warehouse";
+import DeliveryBoy from "./Admin/Setting/DeliveryBoy";
 import B2B from "./Admin/Support/B2B";
 import B2C from "./Admin/Support/B2C";
 import Cod from "./Admin/Invoices/Cod";
@@ -66,83 +66,101 @@ import BlogsIshita from "./BlogsPage/BlogsIshita";
 import * as Sentry from "@sentry/react";
 import { reactLocalStorage } from "reactjs-localstorage";
 import { TokenDataValidCheck1 } from "./Authanticate";
+import PaymentApproval from "./Admin/PaymentApproval";
+import { PermissionData } from "./Permission";
+import PageNotFound from "./ProfilePage/Pagenotfound";
 
 // import Blogs from "./BlogsPage/Blogs";
 // import BlogsShweta from "./BlogsPage/BlogsShweta";
 // import BlogsIshita from "./BlogsPage/BlogsIshita";
 
-
 function App({ auth }) {
-
   let location = useLocation();
-  let navigate = useNavigate()
+  let navigate = useNavigate();
 
   const [isOnline, setNetwork] = useState(window.navigator.onLine);
 
-
-
+  let SessionTokenData = sessionStorage.getItem("token");
+  let deliveryTokenData = sessionStorage.getItem("token");
+  let Autherization = sessionStorage.getItem("Authorized");
 
   useEffect(() => {
-    let BearerToken1 = reactLocalStorage.get("token", false);
-    let Autherization = reactLocalStorage.get("Authorized", false);
-    if (BearerToken1 == false && location.pathname !== "/login") {
-      if (Autherization == "unAuthorized") {
+    if (SessionTokenData == null && location.pathname != "/login") {
+      let splitOrderId = location?.pathname.split("/");
+      if (
+        location.pathname == "/" ||
+        location.pathname == "/login" ||
+        location.pathname == "/Servicepage" ||
+        location.pathname ==
+          `${location.pathname?.includes("support") ? "/support" : "/login"}` ||
+        location.pathname == "/privacy-policy" ||
+        location.pathname == "/signup" ||
+        location.pathname == "/verifyemail" ||
+        location.pathname == "/veryfiyphone" ||
+        location.pathname == `${"/resetpassword/"}${splitOrderId[2]}` ||
+        location.pathname == "/page/kyc" ||
+        location.pathname == `${"/profile/trackorder/"}${splitOrderId[3]}` ||
+        location.pathname == "/signup"
+      ) {
+        navigate(`${location.pathname}`);
+      } else if (
+        location.pathname == `/support/` &&
+        location.hash == "#contactdata"
+      ) {
+        navigate(`${location.pathname}${location.hash}`);
+      } else {
         toast.warn("Login Session is Expired Please Login-again");
-        navigate("/login")
+        const myTimeout = setTimeout(sessionStorageLogOutFun, 1000);
       }
 
+      // navigate("/login"); i can't use this navigation here becouse it always go to login when tere is no token
+      // soo he can't go in nitro website he will re-render on login page
     }
-  })
+  }, [location.pathname]);
+
+  function sessionStorageLogOutFun(error) {
+    navigate("/login");
+    sessionStorage.clear();
+  }
 
   useEffect(() => {
-
-    window.addEventListener("offline", () => setNetwork(window.navigator.onLine)
+    window.addEventListener("offline", () =>
+      setNetwork(window.navigator.onLine)
     );
-    window.addEventListener("online", () => setNetwork(window.navigator.onLine)
+    window.addEventListener("online", () =>
+      setNetwork(window.navigator.onLine)
     );
-
   }, []);
-
-  useEffect(() => {
-    let SessionTokenData = sessionStorage.getItem("token");
-    if (!SessionTokenData) {
-      reactLocalStorage.clear()
-      sessionStorage.clear()
-      // window.location.reload()
-      navigate("/")
-    }
-  }, [])
-
 
   useEffect(() => {
     if (isOnline == false) {
       toast.warn("Internet lost!");
     }
-
-  }, [isOnline])
-
+  }, [isOnline]);
 
   useEffect(() => {
+    let value = location.pathname.split("/");
 
-    let value = location.pathname.split("/")
-
-    if (value[3] == "User" || value[3] == "orderdetails" || value[3] == "ordersummary" || value[3] == "orderpayment") {
+    if (
+      value[3] == "User" ||
+      value[3] == "orderdetails" ||
+      value[3] == "ordersummary" ||
+      value[3] == "orderpayment"
+    ) {
+    } else {
+      sessionStorage.removeItem("UserDetailsPayload");
+      sessionStorage.removeItem("Eway_bill_URL");
+      sessionStorage.removeItem("PayloadOrderData");
+      sessionStorage.removeItem("Eway_bill_id");
+      sessionStorage.removeItem("OrderDetailsId");
+      sessionStorage.removeItem("add_order_tag");
     }
-    else {
-
-      reactLocalStorage.remove('UserDetailsPayload');
-      reactLocalStorage.remove("Eway_bill_URL");
-      reactLocalStorage.remove("PayloadOrderData");
-      reactLocalStorage.remove("Eway_bill_id");
-      reactLocalStorage.remove("OrderDetailsId");
-      reactLocalStorage.remove("add_order_tag")
-    }
-
-  }, [location?.pathname])
+  }, [location?.pathname]);
   return (
     <>
       <Routes>
         <Route path="/" element={<Homepage />}></Route>
+        <Route path="/payment-approval" element={<PaymentApproval />}></Route>
         <Route path="/Servicepage" element={<Servicepage />}></Route>
         <Route path="/support" element={<Supportpage />}></Route>
         <Route path="/privacy-policy" element={<Privacypage />} />
@@ -157,39 +175,259 @@ function App({ auth }) {
         <Route path="/shipping" element={<Shipping />} />
         <Route path="/shippingpayment" element={<Shippingpayment />} />
         <Route path="/admin/tracking" element={<Tracking />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/order" element={<Order />} />
-        <Route path="/admin/Orderinner/:id" element={<Orderinner />} />
-        <Route path="/admin/order/User" element={<User />} />
+        {/* {PermissionData()?.VIEW_ADMIN_DASHBOARD == "VIEW_ADMIN_DASHBOARD" ? (
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        ) : (
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        )} */}
+
+        <Route
+          path="/admin/dashboard"
+          element={
+            PermissionData()?.VIEW_ADMIN_DASHBOARD_PAGE ==
+            "VIEW_ADMIN_DASHBOARD_PAGE" ? (
+              <AdminDashboard />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/order"
+          element={
+            PermissionData()?.VIEW_ORDER_PAGE == "VIEW_ORDER_PAGE" ? (
+              <Order />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/Orderinner/:id"
+          element={
+            PermissionData()?.VIEW_ORDER_SUMMARY_PAGE ==
+            "VIEW_ORDER_SUMMARY_PAGE" ? (
+              <Orderinner />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/order/User"
+          element={
+            PermissionData()?.VIEW_ORDER_CREATE_PAGE ==
+            "VIEW_ORDER_CREATE_PAGE" ? (
+              <User />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
         <Route path="/admin/Ordertracking" element={<Ordertracking />} />
-        <Route path="/admin/order/orderselection" element={<OrderSelection />} />
+        <Route
+          path="/admin/order/orderselection"
+          element={<OrderSelection />}
+        />
         <Route path="/admin/order/orderdetails" element={<OrderDatails />} />
         <Route path="/admin/order/ordersummary" element={<OrderSummary />} />
         <Route path="/admin/order/orderpayment" element={<OrderPayment />} />
         <Route path="/admin/customer" element={<Customer />} />
-        <Route path="/admin/setting" element={<Setting />} />
-        <Route path="/admin/setting/employee" element={<Employee />} />
-        <Route path="/admin/setting/userprofile" element={<UserProfile />} />
-        <Route path="/admin/setting/userb2c" element={<UserB2C />} />
-        <Route path="/admin/setting/usersetting" element={<UserSetting />} />
-        <Route path="/admin/setting/adminsetting" element={<AdminSetting />} />
+        <Route
+          path="/admin/setting"
+          element={
+            PermissionData()?.VIEW_SETTING_PAGE == "VIEW_SETTING_PAGE" ? (
+              <Setting />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/setting/employee"
+          element={
+            PermissionData()?.VIEW_SETTING_EMPLOYEE_PAGE ==
+            "VIEW_SETTING_EMPLOYEE_PAGE" ? (
+              <Employee />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/setting/userprofile"
+          element={
+            PermissionData()?.VIEW_SETTING_USER_PROFILE_PAGE ==
+            "VIEW_SETTING_USER_PROFILE_PAGE" ? (
+              <UserProfile />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/setting/userb2c"
+          element={
+            PermissionData()?.VIEW_SETTING_USER_B2C_PAGE ==
+            "VIEW_SETTING_USER_B2C_PAGE" ? (
+              <UserB2C />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/setting/usersetting"
+          element={
+            PermissionData()?.VIEW_SETTING_CATEGORY_PAGE ==
+            "VIEW_SETTING_CATEGORY_PAGE" ? (
+              <UserSetting />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/setting/adminsetting"
+          element={
+            PermissionData()?.VIEW_PROFILE_PAGE == "VIEW_PROFILE_PAGE" ? (
+              <AdminSetting />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/setting/deliveryboy"
+          element={
+            PermissionData()?.VIEW_SETTING_DELIVERY_BOY_PAGE ==
+            "VIEW_SETTING_DELIVERY_BOY_PAGE" ? (
+              <DeliveryBoy />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
         <Route path="/admin/setting/Ware" element={<Warehouse />} />
-        <Route path="/admin/support/b2b" element={<B2B />} />
+        <Route
+          path="/admin/support/b2b"
+          element={
+            PermissionData()?.VIEW_SUPPORT_B2B_PAGE ==
+            "VIEW_SUPPORT_B2B_PAGE" ? (
+              <B2B />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
         <Route path="/admin/support/b2c" element={<B2C />} />
-        <Route path="/admin/invoices/cod" element={<Cod />} />
-        <Route path="/admin/support/b2b/b2c" element={<B2C />} />
-        <Route path="/admin/support/b2b/b2bclose" element={<B2BCLose />} />
-        <Route path="/admin/support/b2b/b2cclose" element={<B2cClose />} />
+        <Route
+          path="/admin/invoices/cod"
+          element={
+            PermissionData()?.VIEW_COD_REMITTANCE_PAGE ==
+            "VIEW_COD_REMITTANCE_PAGE" ||  PermissionData()?.VIEW_INVOICE_PAGE ==
+            "VIEW_INVOICE_PAGE"? (
+              <Cod />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/support/b2b/b2c"
+          element={
+            PermissionData()?.VIEW_SUPPORT_B2C_PAGE ==
+            "VIEW_SUPPORT_B2C_PAGE" ? (
+              <B2C />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/support/b2b/b2bclose"
+          element={
+            PermissionData()?.VIEW_SUPPORT_B2B_RESOLVE_PAGE ==
+            "VIEW_SUPPORT_B2B_RESOLVE_PAGE" ? (
+              <B2BCLose />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/support/b2b/b2cclose"
+          element={
+            PermissionData()?.VIEW_SUPPORT_B2C_RESOLVE_PAGE ==
+            "VIEW_SUPPORT_B2C_RESOLVE_PAGE" ? (
+              <B2cClose />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
         <Route path="/admin/support/accounting" element={<Accounting />} />
-        <Route path="/admin/wallethistory" element={<WalletHistory />}></Route>
-        <Route path="/admin/setting/b2cfeedback" element={<B2cfeedback />}></Route>
-        <Route path="/admin/setting/b2bfeedback" element={<B2bfeedback />}></Route>
-        <Route path="/admin/ordertrack/:id" element={<Ordertrack />}></Route>
+        <Route
+          path="/admin/wallethistory"
+          element={
+            PermissionData()?.VIEW_WALLET_HISTORY_PAGE ==
+            "VIEW_WALLET_HISTORY_PAGE" ? (
+              <WalletHistory />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        ></Route>
+        <Route
+          path="/admin/setting/b2cfeedback"
+          element={
+            PermissionData()?.VIEW_B2C_FEEDBACK_PAGE ==
+            "VIEW_B2C_FEEDBACK_PAGE" ? (
+              <B2cfeedback />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        ></Route>
+        <Route
+          path="/admin/setting/b2bfeedback"
+          element={
+            PermissionData()?.VIEW_B2B_FEEDBACK_PAGE ==
+            "VIEW_B2B_FEEDBACK_PAGE" ? (
+              <B2bfeedback />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        ></Route>
+        <Route
+          path="/admin/ordertrack/:id"
+          element={
+            PermissionData()?.VIEW_ORDER_TRACK_PAGE ==
+            "VIEW_ORDER_TRACK_PAGE" ? (
+              <Ordertrack />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        ></Route>
         <Route path="/profile/trackorder/:id" element={<TrackOrder />}></Route>
-        <Route path="/admin/transaction/" element={<Transactions />}></Route>
+        <Route
+          path="/admin/transaction/"
+          element={
+            PermissionData()?.VIEW_B2B_TRANSACTIONS_PAGE ==
+              "VIEW_B2B_TRANSACTIONS_PAGE" ||
+            PermissionData()?.VIEW_B2C_TRANSACTIONS_PAGE ==
+              "VIEW_B2C_TRANSACTIONS_PAGE" ? (
+              <Transactions />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        ></Route>
         <Route path="/page/kyc" element={<KYC />}></Route>
         <Route path="/b-card" element={<Blogs />}></Route>
-
+        <Route path="/notfound" element={<PageNotFound />}></Route>
         {/* <Route path="/b-card/ishita" element={<BlogsIshita />}></Route>
 
         <Route path="/b-card/shweta" element={<BlogsShweta />}></Route> */}
@@ -198,13 +436,10 @@ function App({ auth }) {
         <Route path="/admin/support" element={<Support />} />
         <Route path="/admin/accounting" element={<Accounting/>} />
         <Route path="/admin/invoice" element={<Invoice />} /> */}
-
       </Routes>
       <ToastContainer autoClose={2000} />
     </>
-
   );
 }
 
 export default Sentry.withProfiler(App);
-

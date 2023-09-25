@@ -3,18 +3,22 @@ import Sidebar from "../Sidebar";
 import Header from "../Header";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { GetSettingViewB2cFeedback , DeleteSettingDismissTicket , PostTicketDetail,   DeleteSupportTicket
+import {
+  GetSettingViewB2cFeedback,
+  DeleteSettingDismissTicket,
+  PostTicketDetail,
+  DeleteSupportTicket,
 } from "../../Redux/action/ApiCollection";
 import { isTomorrow } from "date-fns";
 import { PermissionData } from "../../Permission";
 import { reactLocalStorage } from "reactjs-localstorage";
 import Popup from "reactjs-popup";
-
-const  B2B=()=> {
+import LodingSpiner from "../../Components/LodingSpiner";
+const B2B = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [oldnewdata, setOldNewData] = useState(true)
-  const [getsettingviewalldata, setGetSettingViewAllData] = useState("")
+  const [oldnewdata, setOldNewData] = useState(true);
+  const [getsettingviewalldata, setGetSettingViewAllData] = useState("");
   const [moredata, setMoreData] = useState(false);
   const [morepopupid, setMorePopupId] = useState(false);
   const [moredataid, setMoreDataId] = useState("");
@@ -24,85 +28,89 @@ const  B2B=()=> {
   );
   const GetSettingViewB2cFeedbackData = useSelector(
     (state) =>
-      state.GetSettingViewB2cFeedbackReducer.GetSettingViewB2cFeedbackData?.data
+      state?.GetSettingViewB2cFeedbackReducer?.GetSettingViewB2cFeedbackData
   );
+
   const DeleteSettingDismissTicketData = useSelector(
     (state) =>
-      state.DeleteSettingDismissTicketReducer.DeleteSettingDismissTicketData?.data
+      state.DeleteSettingDismissTicketReducer.DeleteSettingDismissTicketData
+        ?.data
+  );
+  const OrderPagesLoaderTrueFalseData = useSelector(
+    (state) =>
+      state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
   );
   const PostTicketDetailData = useSelector(
-    (state) =>
-      state.PostTicketDetailReducer.PostTicketDetailData
-        ?.data
+    (state) => state.PostTicketDetailReducer.PostTicketDetailData?.data
   );
   const DeleteSupportTicketData = useSelector(
-    (state) =>
-      state.DeleteSupportTicketReducer.DeleteSupportTicketData
-        ?.data
+    (state) => state.DeleteSupportTicketReducer.DeleteSupportTicketData?.data
   );
-  let isAdmin_Role = reactLocalStorage.get("Admin_Role", false);
-
+  let isAdmin_Role = sessionStorage.getItem("Admin_Role", false);
+  let isEmploye_Role = sessionStorage.getItem("isEmploye", false);
   useEffect(() => {
-    let payload= {
-      "user_type":"b2c",
-      "ticket_type":"active_ticket"
-  }
-  dispatch(PostTicketDetail(payload))
-}, []);
-const DeleteTicket = (e, data) => {
-  let payload = {
-    id: data.feedback_id,
-  };
-  dispatch(DeleteSupportTicket(payload));
-  // let payloadd = {
-  //   user_type: "b2c",
-  //   ticket_type: "active_ticket",
-  // };
-  // dispatch(PostTicketDetail(payloadd));
-};
-
-useEffect(() => {
-  if (DeleteSupportTicketData?.message == "ticket closed") {
-    let payloadd = {
+    let payload = {
       user_type: "b2c",
       ticket_type: "active_ticket",
     };
-    dispatch(PostTicketDetail(payloadd));
-  }
-}, [DeleteSupportTicketData])
+    dispatch(PostTicketDetail(payload));
+  }, []);
+  const DeleteTicket = (e, data) => {
+    let payload = {
+      id: data.feedback_id,
+    };
+    dispatch(DeleteSupportTicket(payload));
+    // let payloadd = {
+    //   user_type: "b2c",
+    //   ticket_type: "active_ticket",
+    // };
+    // dispatch(PostTicketDetail(payloadd));
+  };
 
-const TicketChangeFunn =(e)=>{
-  if(e.target.value=="close"){
-    navigate("/admin/support/b2b/b2cclose")
-  }
-}
-const CustomerChangeFun = (e) =>{
-    if(e.target.value=="b2b"){
-        navigate("/admin/support/b2b")    
-      }
-}
-const rate = (loop) => {
-  const countArray = []
-  for (let i = 0; i < Number(loop); i++) {
-    countArray.push('star')
-  }
-  return countArray
-}
-const NewOldFun = (e) => { 
-  if (e.target.value == "OLDEST") { 
-    let AllData = getsettingviewalldata?.slice(Math.max(getsettingviewalldata?.length - 5, 0))?.map((item, id) => { 
-      return item
-    })
-    setGetSettingViewAllData(AllData)
-  }
-  else {
-    setOldNewData(true)
-    setGetSettingViewAllData(GetSettingViewB2cFeedbackData?.info) 
-  }
-}
-useEffect(() => {
-  GetSettingViewB2cFeedbackData && setGetSettingViewAllData(GetSettingViewB2cFeedbackData?.info)
-}, [GetSettingViewB2cFeedbackData])
+  useEffect(() => {
+    if (DeleteSupportTicketData?.message == "ticket closed") {
+      let payloadd = {
+        user_type: "b2c",
+        ticket_type: "active_ticket",
+      };
+      dispatch(PostTicketDetail(payloadd));
+    }
+  }, [DeleteSupportTicketData]);
+
+  const TicketChangeFunn = (e) => {
+    if (e.target.value == "close") {
+      navigate("/admin/support/b2b/b2cclose");
+    }
+  };
+  const CustomerChangeFun = (e) => {
+    if (e.target.value == "b2b") {
+      navigate("/admin/support/b2b");
+    }
+  };
+  const rate = (loop) => {
+    const countArray = [];
+    for (let i = 0; i < Number(loop); i++) {
+      countArray.push("star");
+    }
+    return countArray;
+  };
+  const NewOldFun = (e) => {
+    if (e.target.value?.toString() == "OLDEST") {
+      let AllData = getsettingviewalldata
+        ?.slice(Math?.max(getsettingviewalldata?.length - 5, 0))
+        ?.map((item, id) => {
+          return item;
+        });
+      setGetSettingViewAllData(AllData);
+    } else {
+      setOldNewData(true);
+      setGetSettingViewAllData(PostTicketDetailData?.info);
+    }
+  };
+  useEffect(() => {
+    PostTicketDetailData &&
+      setGetSettingViewAllData(PostTicketDetailData?.info);
+  }, [PostTicketDetailData?.info]);
   const ShowFeedbackDataFun = (e, value) => {
     if (value == "more") {
       setMoreData(true);
@@ -130,49 +138,55 @@ useEffect(() => {
           <div className="content-sec support-page">
             <div className="title">
               <h2>Tickets</h2>
-              <select className=" form-select" onChange={(e)=>CustomerChangeFun(e)}>
-              <option value="b2c">B2C</option>
-                <option value="b2b">B2B</option>
+              <select
+                className=" form-select"
+                onChange={(e) => CustomerChangeFun(e)}
+              >
+               {PermissionData()?.VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"?<option value="b2c">B2C</option>:""}
+               {PermissionData()?.VIEW_SUPPORT_B2C_PAGE == "VIEW_SUPPORT_B2C_PAGE"? <option value="b2b">B2B</option>:""}
               </select>
             </div>
 
             <div className="sptitle">
-
               <div className="select-box">
-              <span>SORT BY : </span>
+                <span>SORT BY : </span>
 
-                <select className=" form-select" onChange={(e)=>TicketChangeFunn(e)}>
-                  <option value="new" className="px-3">New Tickets</option>
-                  <option value="close"  className="px-3">Close Tickets</option>
-                 </select>
+                <select
+                  className=" form-select"
+                  onChange={(e) => TicketChangeFunn(e)}
+                >
+                 {PermissionData()?.VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"?<option value="new" className="px-3">
+                    New Tickets
+                  </option>:""}
+                  {PermissionData()?.VIEW_SUPPORT_B2C_RESOLVE_PAGE == "VIEW_SUPPORT_B2C_RESOLVE_PAGE"?<option value="close" className="px-3">
+                    Close Tickets
+                  </option>:""}
+                </select>
               </div>
               <div className="select-box">
                 <span>SORT BY : </span>
-                <select className=" form-select"
-                  onChange={(e) => NewOldFun(e)}>
-                  <option className="px-3" >NEWEST </option>
+                <select className=" form-select" onChange={(e) => NewOldFun(e)}>
+                  <option className="px-3">NEWEST </option>
                   <option className="px-3">OLDEST</option>
-
                 </select>
               </div>
             </div>
-
-            {isAdmin_Role =="true"?<ul className="support-list">
-              {PermissionData()?.VIEW_B2C_TICKETS == "VIEW_B2C_TICKETS" ?
-              PostTicketDetailData &&
-                PostTicketDetailData?.info?.map((item, id) => {
-                  return (
-                    <li>
-                      <div className="left-part">
-                        <img src="/images/user.png" alt="img" />
-                        <div>
-                          <h4>{item.username}</h4>
-                          <h3>{item.company_name}</h3>
-                          <p>#{item.product_order_id}</p>
-                        </div>
-                      </div>
-                      <div className="right-part">
-                        {/* <button className="btn dot-btn" type="button">
+              <ul className="support-list">
+                {PermissionData()?.VIEW_B2C_TICKETS == "VIEW_B2C_TICKETS"
+                  ? getsettingviewalldata &&
+                    getsettingviewalldata?.map((item, id) => {
+                      return (
+                        <li>
+                          <div className="left-part">
+                            <img src="/images/user.png" alt="img" />
+                            <div>
+                              <h4>{item.username}</h4>
+                              <h3>{item.company_name}</h3>
+                              <p>#{item.product_order_id}</p>
+                            </div>
+                          </div>
+                          <div className="right-part">
+                            {/* <button className="btn dot-btn" type="button">
                           <svg
                             viewBox="0 0 16 4"
                             fill="none"
@@ -186,7 +200,7 @@ useEffect(() => {
                             />
                           </svg>
                         </button> */}
-                        {/* <span className=" star-svg me-2"> 
+                            {/* <span className=" star-svg me-2"> 
                           {rate(item?.rating).map((item, id) => { 
                             return <svg
                               viewBox="0 0 10 10"
@@ -215,40 +229,40 @@ useEffect(() => {
                             </svg>
                           })}
                         </span> */}
-                        <p className="mt-2 mb-0">{item.title}</p>
-                        <span className="date-text">{item.date}</span>
-                        {/* <p className="mt-2">
+                            <p className="mt-2 mb-0">{item.title}</p>
+                            <span className="date-text">{item.date}</span>
+                            {/* <p className="mt-2">
                          {item.description}
                         </p> */}
-                        {item.description.length <= 30 ||
-                          (moredata == true &&
-                            morepopupid == item?.feedback_id) ? (
-                          <p className="ticket-description">
-                            {item.description}
-                          </p>
-                        ) : (
-                          <p className="ticket-description">
-                            {item?.description?.substring(0, 150)}
-                            <span
-                              onClick={(e) => ShowFeedbackDataFun(e, "more")}
-                            >
-                              {" "}
-                              ....
-                              <span
-                                className="text-primary"
-                                role="button"
-                                onClick={(e) => Readmore(item?.feedback_id)}
-                              >
-                                Read More
-                              </span>
-                            </span>
-                          </p>
-                        )}
-                        <div className="d-flex flex-wrap justify-content-between">
-                          <div className="">
-                            
-                          </div>
-                          {/* <div className="">
+                            {item.description.length <= 40 ||
+                            (moredata == true &&
+                              morepopupid == item?.feedback_id) ? (
+                              <p className="ticket-description">
+                                {item.description}
+                              </p>
+                            ) : (
+                              <p className="ticket-description">
+                                {item?.description?.substring(0, 40)}
+                                <span
+                                  onClick={(e) =>
+                                    ShowFeedbackDataFun(e, "more")
+                                  }
+                                >
+                                  {" "}
+                                  ....
+                                  <span
+                                    className="text-warning"
+                                    role="button"
+                                    onClick={(e) => Readmore(item?.feedback_id)}
+                                  >
+                                    Read More
+                                  </span>
+                                </span>
+                              </p>
+                            )}
+                            <div className="d-flex flex-wrap justify-content-between">
+                              <div className=""></div>
+                              {/* <div className="">
                             <button className="btn mail-btn" type="button">
                               <svg
                                 viewBox="0 0 10 7"
@@ -281,69 +295,84 @@ useEffect(() => {
                               Chat
                             </button>
                           </div> */}
-                          <button className={`${PermissionData()?.DISMISS_B2B_TICKETS == "DISMISS_B2B_TICKETS" ? "btn dismiss-btn" : "permission_blur"} `}type="button"
-                           onClick={(e) => PermissionData()?.DISMISS_B2C_TICKETS == "DISMISS_B2C_TICKETS" ?DeleteTicket(e, item):""}>
-                            Resolve
-                          </button>
-                        </div>
-                      </div>
-                       {moredataid == item?.feedback_id ? (
-                        <Popup
-                          open={pickuppopup}
-                          position=""
-                          model
-                          className="sign_up_loader"
-                        >
-                          <div className="container">
-                            <div className="loader-sec">
-                              <div className=" data_picker rounded bg-white">
-                                <div className="py-1 text-warning">
-                                  <h4
-                                    className="text-danger calender_popup_cancel"
-                                    onClick={(e) => {
-                                      ReadmoreFun(item?.id);
-                                      setPickUpPopup(false);
-                                    }}
-                                  >
-                                    {" "}
-                                    X{" "}
-                                  </h4>
-                                </div>
-                                <div className="data_picker_btn">
-                                  <span
-                                    className="readmore-popup"
-                                    onClick={(e) =>
-                                      ShowFeedbackDataFun(e, "less")
-                                    }
-                                  >
-                                    <p className="ticket-description">
-                                      {item.description}
-                                    </p>
-                                    <span
-                                      className="text-primary"
-                                      role="button"
-                                      onClick={(e) => ReadmoreFun(item?.id)}
-                                    >
-                                      Read Less
-                                    </span>
-                                  </span>
-                                </div>
-                              </div>
+                              <button
+                                className={`${
+                                  PermissionData()?.DISMISS_B2B_TICKETS ==
+                                  "DISMISS_B2B_TICKETS"
+                                    ? "btn dismiss-btn"
+                                    : "permission_blur_resolve"
+                                } `}
+                                type="button"
+                                onClick={(e) =>
+                                  PermissionData()?.DISMISS_B2C_TICKETS ==
+                                  "DISMISS_B2C_TICKETS"
+                                    ? DeleteTicket(e, item)
+                                    : ""
+                                }
+                              >
+                                Resolve
+                              </button>
                             </div>
                           </div>
-                        </Popup>
-                      ) : (
-                        ""
-                      )}
-                    </li>
-                  );
-                }):""}
-            </ul>:""}
+                          {moredataid == item?.feedback_id ? (
+                            <Popup
+                              open={pickuppopup}
+                              position=""
+                              model
+                              className="sign_up_loader"
+                            >
+                              <div className="container">
+                                <div className="loader-sec">
+                                  <div className=" data_picker rounded bg-white">
+                                    <div className="py-1 text-warning">
+                                      <h4
+                                        className="text-dark calender_popup_cancel"
+                                        onClick={(e) => {
+                                          ReadmoreFun(item?.id);
+                                          setPickUpPopup(false);
+                                        }}
+                                      >
+                                        {" "}
+                                        X{" "}
+                                      </h4>
+                                    </div>
+                                    <div className="data_picker_btn">
+                                      <span
+                                        className="readmore-popup"
+                                        onClick={(e) =>
+                                          ShowFeedbackDataFun(e, "less")
+                                        }
+                                      >
+                                        <p className="ticket-description">
+                                          {item.description}
+                                        </p>
+                                        <span
+                                          className="text-warning"
+                                          role="button"
+                                          onClick={(e) => ReadmoreFun(item?.id)}
+                                        >
+                                          Read Less
+                                        </span>
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Popup>
+                          ) : (
+                            ""
+                          )}
+                        </li>
+                      );
+                    })
+                  : ""}
+              </ul>
           </div>
         </div>
+        <LodingSpiner loadspiner={OrderPagesLoaderTrueFalseData} />
       </div>
     </>
   );
-}
+};
 
 export default B2B;

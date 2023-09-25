@@ -18,6 +18,7 @@ import {
   PatchEditEmployee,
   DeleteAdminSettingDeleteUser,
 } from "../../Redux/action/ApiCollection";
+import LodingSpiner from "../../Components/LodingSpiner";
 const Employee = () => {
   const [adduser, setAddUser] = useState(false);
   const [showpassword, setShowPassword] = useState(false);
@@ -32,6 +33,7 @@ const Employee = () => {
   const [useraccess, setUserAccess] = useState("");
   const [category, setCategory] = useState("");
   const [userid, setuserId] = useState("");
+  const [minDate, setMinDate] = useState("");
 
   const [deliverycontact, setDeliveryContact] = useState("");
   const [countrycodedelivery, setCountryCodeDelivery] = useState("");
@@ -59,7 +61,7 @@ const Employee = () => {
     []
   );
 
-    
+
   const [editcategoryvalue, setEditCategoryValue] = useState("");
 
   const [editcategoryvaluefilterdata, setEditCategoryValueFilterData] = useState("");
@@ -86,9 +88,11 @@ const Employee = () => {
 
   const GetSettingEmployeeInfoData = useSelector(
     (state) =>
-      state.GetSettingEmployeeInfoReducer.GetSettingEmployeeInfoData?.data
+      state.GetSettingEmployeeInfoReducer.GetSettingEmployeeInfoData
   );
-
+  const OrderPagesLoaderTrueFalseData = useSelector(
+    (state) => state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
+  );
   const PatchEditEmployeeData = useSelector(
     (state) => state.PatchEditEmployeeReducer.PatchEditEmployeeData
   );
@@ -96,22 +100,22 @@ const Employee = () => {
   const DeleteAdminSettingDeleteUserData = useSelector(
     (state) =>
       state.DeleteAdminSettingDeleteUserReducer.DeleteAdminSettingDeleteUserData
-  ); 
-  let IsAdminRole=reactLocalStorage.get("Admin_Role",false)
+  );
+  let IsAdminRole = sessionStorage.getItem("Admin_Role", false)
 
   useEffect(() => {
     dispatch(GetCategoryDetails());
     dispatch(GetSettingViewPermission());
 
     if (PatchEditEmployeeData.status == 200) {
-    //    setEditRemovedPermissionData([])
-    //  setOnEditFixedPermissionData([])
-    //  setCancelPermissionData([])
-    //  setSelectedEditPermission([])
-    //  setSelectedEditPermissionData([])
-    //  setEditCategoryValue([])
-    //  setEditCategoryValueFilterData([])
-    //  window.location.reload();
+      //    setEditRemovedPermissionData([])
+      //  setOnEditFixedPermissionData([])
+      //  setCancelPermissionData([])
+      //  setSelectedEditPermission([])
+      //  setSelectedEditPermissionData([])
+      //  setEditCategoryValue([])
+      //  setEditCategoryValueFilterData([])
+      //  window.location.reload();
       SetEditUser((o) => !o);
       window.location.reload(false)
     }
@@ -119,24 +123,23 @@ const Employee = () => {
 
   // window.location.reload(false)
 
-  useEffect(() =>    {
+  useEffect(() => {
 
-    if(GetSettingEmployeeInfoData){
+    if (GetSettingEmployeeInfoData?.data) {
       setEditPermissionData(null)
-    // setEditRemovedPermissionData([null])
-    // setOnEditFixedPermissionData([null])
-    // setCancelPermissionData([null])
-    // setSelectedEditPermission([null])
-    // setSelectedEditPermissionData([null])
-    // setEditCategoryValue([null])
-    // setEditCategoryValueFilterData([null])
-  }
+      // setEditRemovedPermissionData([null])
+      // setOnEditFixedPermissionData([null])
+      // setCancelPermissionData([null])
+      // setSelectedEditPermission([null])
+      // setSelectedEditPermissionData([null])
+      // setEditCategoryValue([null])
+      // setEditCategoryValueFilterData([null])
+    }
 
-    
-  }, [GetSettingEmployeeInfoData]);
+
+  }, [GetSettingEmployeeInfoData?.data]);
 
   useEffect(() => {
-    setSelectedValuePermission(permissionListSelected);
     dispatch(GetSettingEmployeeInfo());
     if (PostAdminSettingAddEmployeeData?.status == 200) {
       setAddUser((o) => !o);
@@ -144,9 +147,11 @@ const Employee = () => {
     }
   }, [PostAdminSettingAddEmployeeData]);
 
-  
+
 
   const AddUser = (e) => {
+
+
     let payload = {
       name: name,
       phone_number: `${countrycodedelivery}-${deliverycontact}`,
@@ -159,18 +164,56 @@ const Employee = () => {
       category_id: category,
     };
 
-    name && deliverycontact.length !== 10
-      ? toast.warn("Mobile number is invalid")
-      : deliverycontact &&
-        email &&
-        password &&
-        confirmpassword &&
-        category.length === 0
-      ? toast.warn("Please Select Category")
-      : category
-      ? dispatch(PostAdminSettingAddEmployee(payload))
-      : //  && setAddUser((o) => !o)
-        toast.warn("please fill all the fields currectly");
+
+  if(!name && !email && !password && !deliverycontact && !confirmpassword && !fromdate && !todate ){
+    toast.warn("Please Enter All Input Fields")
+  }
+  else if(name.length == 0){
+    toast.warn("Please Select Name")
+  }
+  else if(deliverycontact.length == 0 ){
+    toast.warn("Please Enter Mobile Number")
+  }
+  else if(deliverycontact.length !== 10){
+     toast.warn("Mobile number is invalid")
+   }
+   else if(email.length == 0){
+      toast.warn("Please Enter Email")
+   }
+   else if(password.length == 0){
+    toast.warn("Please Enter Password")
+   }
+   else if(confirmpassword.length== 0 ){
+    toast.warn("Please Enter Confirm Password")
+   }
+   else if( fromdate.length== 0){
+    toast.warn("Please Select Duration")
+   }
+   else if(todate.length== 0){
+    toast.warn("Please Select Duration")
+   }
+   else if(category.length==0 && permissiondata.length==0){
+    toast.warn("Please Select Category Or Permission")
+   }
+   else{
+     dispatch(PostAdminSettingAddEmployee(payload))
+   }
+   
+  
+    // name && deliverycontact.length !== 10
+    //   ? toast.warn("Mobile number is invalid")
+    //   : deliverycontact &&
+    //     email &&
+    //     password &&
+    //     confirmpassword 
+    //     // &&
+    //     // category.length === 0
+    //     // ? toast.warn("Please Select Category")
+    //     // : category
+    //       ? toast.warn("Please Select field")
+    //       // dispatch(PostAdminSettingAddEmployee(payload))
+    //       :
+    //       toast.warn("please fill all the fields");
   };
 
   const InputCountryCodeDeliveryFun = (
@@ -192,7 +235,6 @@ const Employee = () => {
   };
 
   const EditUserFun = (e, data) => {
-    
 
     setName(data?.name);
     setUserPermission(data?.user_permission);
@@ -210,22 +252,6 @@ const Employee = () => {
     setEditPermissionData(array);
   };
 
-  const EditSaveBtn = (e) => {
-
-    let payload = {
-      user_name: name,
-      user_permission: selectededitpermissiondata,
-      delete_permission: editcategoryvaluefilterdata,
-      from_date: fromdate,
-      to_date: todate,
-      user_id: userid,
-      category_id: editcategoryvalue,
-    };
-
-    
-    dispatch(PatchEditEmployee(payload));
-  };
-
   const onSelect = (selectedList, selectedItem) => {
     let array = [];
     selectedList.map((item, id) => {
@@ -235,12 +261,9 @@ const Employee = () => {
     setPermissionData(array);
   };
 
-  useEffect(() => {}, [removedpermissiondata]);
 
   const onRemove = (selectedList, removedItem) => {
     setRemovedPermissionData([...removedpermissiondata, removedItem]);
-
-    // const withoutDuplicates = [...new Set(removedpermissiondata)];
 
     let array = [];
     selectedList.map((item, id) => {
@@ -249,96 +272,137 @@ const Employee = () => {
 
     setPermissionData(array);
   };
-  const onSelectAccess = (selectedList, selectedItem) => {
-    // ...
 
-    setUserAccess(selectedList);
+
+  // const onSelect = (selectedList, selectedItem) => {
+  //   setSelectedEditPermission([...selectededitpermission, selectedItem])
+  //   setSelectedEditPermissionData(selectedList)
+  //   // setSelectedEditPermission(selectedList)
+  // };
+  // const onRemove = (selectedList, removedItem) => {
+  //   setEditRemovedPermissionData([...editremovedpermissiondata, removedItem])
+  //   let array = [];
+  //   selectedList.map((item, id) => {
+  //     array.push(item?.permission);
+  //   });
+  //   setEditPermissionData(array);
+  // };
+
+  //---------------- Start edit Employe Permisiion
+
+
+
+  const EditSaveBtn = (e) => {
+
+    const selected = new Date(todate);
+    const selected1 = new Date(fromdate)
+    const maxDate = new Date();
+    maxDate.setHours(0, 0, 0, 0);
+
+
+
+    //------------------------------- Seletected ------------------------------//////////////////
+
+    function SelectedDataFun(array1, array2) {
+      return array1?.filter(object1 => {
+        return array2?.some(object2 => {
+          return object1?.permission === object2?.permission;
+        });
+      });
+    }
+
+
+    SelectedDataFun(selectededitpermission, selectededitpermissiondata)
+
+    let user_permission = SelectedDataFun(selectededitpermission, selectededitpermissiondata)
+
+    let SelectedUniqeData = [...new Set(user_permission)];
+
+    let SeletedArray = [];
+    SelectedUniqeData.map((item, id) => {
+      SeletedArray.push(item?.permission);
+    });
+
+    //--------------------------- Removed ------------------------------- //////////////////
+
+    let RemovedUniqeData = [...new Set(editremovedpermissiondata)];
+
+    function RemovedDataFun(array1, array2) {
+      return array1?.filter(object1 => {
+        return array2?.some(object2 => {
+          return object1?.permission === object2?.permission;
+        });
+      });
+    }
+
+    RemovedDataFun(userpermission, RemovedUniqeData)
+
+
+    let Removed_permission = SelectedDataFun(userpermission, RemovedUniqeData)
+    let RemovedArray = [];
+    Removed_permission.map((item, id) => {
+      RemovedArray.push(item?.permission);
+    });
+
+
+    let payload = {
+      user_name: name,
+      user_permission: SeletedArray,
+      delete_permission: RemovedArray,
+      from_date: fromdate,
+      to_date: todate,
+      user_id: userid,
+      category_id: category ==""?editcategoryvalue:category,
+    };
+
+    if(fromdate != null && fromdate != "" && todate !=null && todate != ""){
+      if (selected <= maxDate || selected1 <= maxDate) {
+        toast.warn("Please select valid Date")
+      }
+      else {
+        dispatch(PatchEditEmployee(payload));
+        setFromDate("")
+        setToDate("")
+      }
+    }
+    else{
+      toast.warn("Please select valid Date")
+    }
   };
 
-  const onRemoveAccess = (selectedList, removedItem) => {
-    setUserAccess(selectedList);
-    // ...
-  };
 
-  // const onPermission = { ...onSelect };
-  // GetSettingViewPermissionData?.user_permissions.forEach((selectedList) => {
-  //   if (onRemove[selectedList])
-  //     onPermission[selectedList] = onRemove[selectedList];
-  // });
-
-  // useEffect=(()=>{
-
-  // },[])
-
-
-
-  let permissionList = [
-    {
-      user_name: "Edit",
-    },
-    {
-      user_name: "Update",
-    },
-    {
-      user_name: "Get",
-    },
-    {
-      user_name: "Delete",
-    },
-  ];
-
-  let permissionListSelected = [
-    {
-      user_name: "Edit",
-    },
-
-    {
-      user_name: "Delete",
-    },
-  ];
-
-  // useEffect(() => {
-  //   let array1 =[]
-  //   if(permissiondata){
-  //     permissiondata.map((item,id)=>{
-
-  //       array1.push(item.user_name)
-
-  //     })
-  //     // setPermissionData(array1)
-  //   }
-  // }, [permissiondata]);
 
   const ShowPermissionDataFun = (e, data) => {
     setShowPermissionObjectData(data);
     setShowPermissionDataTrueFalse((o) => !o);
   };
 
-  const onSelectEdit = (selectedList, selectedItem) => {
-    setSelectedEditPermission([...selectededitpermission, selectedItem]);
 
-    let array = [];
-    selectedList.map((item, id) => {
-      array.push(item?.permission);
-    });
+  // const onSelectEdit = (selectedList, selectedItem) => {
+  //   setSelectedEditPermission([...selectededitpermission, selectedItem]);
 
-    setEditPermissionData(array);
-  };
+  //   let array = [];
+  //   selectedList.map((item, id) => {
+  //     array.push(item?.permission);
+  //   });
 
-  useEffect(() => {}, [removedpermissiondata]);
+  //   setEditPermissionData(array);
+  // };
 
-  const onRemoveEdit = (selectedList, removedItem) => {
-    setEditRemovedPermissionData([...editremovedpermissiondata, removedItem]); 
-   
-    
 
-    let array = [];
-    selectedList.map((item, id) => {
-      array.push(item?.permission);
-    });
+  // const onRemoveEdit = (selectedList, removedItem) => {
+  //   setEditRemovedPermissionData([...editremovedpermissiondata, removedItem]); 
 
-    setEditPermissionData(array);
-  };
+
+
+  //   let array = [];
+  //   selectedList.map((item, id) => {
+  //     array.push(item?.permission);
+  //   });
+
+  //   setEditPermissionData(array);
+  // };
+
 
   useEffect(() => {
     let arrayData = [];
@@ -357,27 +421,56 @@ const Employee = () => {
       setEditCategoryValueFilterData(filterData)
     }
   }, [cancelpermissiondata])
-  useEffect(() => {
-    if (selectededitpermission) {
-      let arrayData = [];
-      const uniqueAddresses = Array.from(
-        new Set(selectededitpermission.map((a) => a.permission))
-      ).map((id) => {
-        return selectededitpermission.find((a) => a.permission === id);
-      });
-      uniqueAddresses.map((item, id) => {
-        arrayData.push(item.permission);
-      });
-      setSelectedEditPermissionData(arrayData);
-    }
-  }, [selectededitpermission]);
+
+
+
+
+
   const DeleteEmployee = (e, item) => {
     let payload = {
       user_id: item?.employee_id,
     };
     dispatch(DeleteAdminSettingDeleteUser(payload));
   };
-  
+
+
+  const onSearchMultiSelectFun = () => {
+    setShowPermissionDataTrueFalse(true)
+  }
+
+
+
+
+
+
+  const onSelectEdit = (selectedList, selectedItem) => {
+    setSelectedEditPermission([...selectededitpermission, selectedItem])
+    setSelectedEditPermissionData(selectedList)
+    // setSelectedEditPermission(selectedList)
+  };
+  const onRemoveEdit = (selectedList, removedItem) => {
+    setEditRemovedPermissionData([...editremovedpermissiondata, removedItem])
+    let array = [];
+    selectedList.map((item, id) => {
+      array.push(item?.permission);
+    });
+    setEditPermissionData(array);
+  };
+
+  //---------------- End edit Employe Permisiion
+
+
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    setMinDate(today);
+    setName("")
+    setDeliveryContact("")
+    setEmail("")
+    setPassword("")
+    setConfirmPassword("")
+    setFromDate("")
+    setToDate("")
+  }, [adduser]);
 
   return (
     <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -398,47 +491,48 @@ const Employee = () => {
                 {" "}
                 Back{" "}
               </button>
-             { IsAdminRole=="true"?<button
+              {IsAdminRole == "true" ? <button
                 type="button"
                 className={`btn  ${PermissionData()?.CREATE_EMPLOYEE == "CREATE_EMPLOYEE" ? " " : "permission_blur"}`}
                 onClick={(e) => PermissionData()?.CREATE_EMPLOYEE == "CREATE_EMPLOYEE" ? setAddUser((o) => !o) : ""}
               >
                 {" "}
                 + Add Employee{" "}
-              </button>:""}
+              </button> : ""}
             </div>
           </div>
 
-         { IsAdminRole=="true"?<div className="employe-table">
+       <div className="employe-table">
             <table>
               <tr>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Permission</th>
-                {/* <th>Duration</th> */}
+                <th>Category Name</th>
+                <th>Permission</th>  
                 <th>Action</th>
               </tr>
               {
                 PermissionData()?.VIEW_EMPLOYEE == "VIEW_EMPLOYEE" ?
-                 GetSettingEmployeeInfoData &&
-                  GetSettingEmployeeInfoData?.employee_info.map((item, id) => {
+                  GetSettingEmployeeInfoData?.data &&
+                  GetSettingEmployeeInfoData?.data?.employee_info.map((item, id) => {
                     return (
                       <tr>
                         <td>{item.name}</td>
                         <td>{item.email}</td>
+                        <td>{item?.catgory_details?.category_name}</td>
                         <td>{item?.user_permission[0]?.permission}
                           <span onClick={(e) => ShowPermissionDataFun(e, item)}
                             className="order-btn text-primary" role="button" >
                             ....
-                            {item?.employee_id == showpermissionobjectdata?.employee_id && showpermissiondatatruefalse == true 
-                            && <div className="dropdown"> 
-                            <ul className=" permission_all ">
-                              {GetSettingEmployeeInfoData &&
-                                item?.user_permission?.map((item, id) => {
-                                  return <li className="text-dark text-nowrap">{id + 1}.  {item.permission}</li>
-                                })}
-                            </ul>
-                            </div>}
+                            {item?.employee_id == showpermissionobjectdata?.employee_id && showpermissiondatatruefalse == true
+                              && <div className="dropdown">
+                                <ul className=" permission_all ">
+                                  {GetSettingEmployeeInfoData?.data &&
+                                    item?.user_permission?.map((item, id) => {
+                                      return <li className="text-dark text-nowrap">{id + 1}.  {item.permission}</li>
+                                    })}
+                                </ul>
+                              </div>}
                           </span>
                         </td>
                         <td>
@@ -446,7 +540,7 @@ const Employee = () => {
                             <button
                               type="button "
                               className={`btn svg-btn  ${PermissionData()?.DELETE_EMPLOYEE == "DELETE_EMPLOYEE" ? " " : "permission_blur"}`}
-                              onClick={(e) =>PermissionData()?.DELETE_EMPLOYEE == "DELETE_EMPLOYEE" ? DeleteEmployee(e, item):""}
+                              onClick={(e) => PermissionData()?.DELETE_EMPLOYEE == "DELETE_EMPLOYEE" ? DeleteEmployee(e, item) : ""}
                             >
                               <svg
                                 width="15"
@@ -508,9 +602,9 @@ const Employee = () => {
                       </tr>
                     );
                   })
-                : "" }
+                  : ""}
             </table>
-          </div>:<h3 className="text-center">Only Admin Can Access This Page</h3>}
+          </div> 
         </div>
       </div>
       {/* ===================== Add user poup========================== */}
@@ -540,6 +634,7 @@ const Employee = () => {
                 <div className="col-sm-6">
                   <label>User Name</label>
                   <input
+                    maxLength={40}
                     type="text"
                     className={`form-control  ${name ? "" : ""} `}
                     placeholder="Enter Name"
@@ -657,6 +752,7 @@ const Employee = () => {
 
                   <div className="input_filed text-center">
                     <input
+                      maxLength={15}
                       type={conformpassword ? "text" : "password"}
                       value={confirmpassword}
                       placeholder="Confirm Password"
@@ -745,30 +841,54 @@ const Employee = () => {
                   )}
                 </div>
                 <div className="col-12">
-                      <label>Duration</label>
-                    </div>
-                    <div className="col-md-6">
-                      <input
-                        type="date"
-                        className={`form-control  ${fromdate ? "" : ""} `}
-                        placeholder="From date"
-                        value={fromdate}
-                        onChange={(e) => setFromDate(e.target.value)}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <input
-                        type="date"
-                        className={`form-control  ${todate ? "" : ""} `}
-                        placeholder="To date"
-                        value={todate}
-                        onChange={(e) => setToDate(e.target.value)}
-                      />
-                    </div>
+                  <label>Duration</label>
+                </div>
+                <div className="col-md-6">
+                  <input
+                    type="date"
+                    className={`form-control  ${fromdate ? "" : ""} `}
+                    placeholder="From date"
+                    value={fromdate}
+                    min={minDate}
+                    onChange={(e) => setFromDate(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-6">
+                  <input
+                    type="date"
+                    className={`form-control  ${todate ? "" : ""} `}
+                    placeholder="To date"
+                    value={todate}
+                    min={minDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                  />
+                </div>
+                <div className="col-12 mt-3  ">
+                <label>Category</label>
+
+                <select                           
+                  className={`form-select  `}
+                  placeholder="Category"
+                  onChange={(e) => setCategory(e.target.value)}
+                  value={category}
+                >
+                  <option value="" selected="selected">
+                    Select Category
+                  </option>
+                  {GetCategoryDetailsData?.category_details_list.map(
+                    (item, id) => {
+                      return (
+                        <option value={item.id}>{item.category_name}</option>
+                      );
+                    }
+                  )}
+                </select>
+              </div>
                 <div className="col-md-6">
                   <label>Permissions</label>
                 </div>
-                <div className="col-md-12">
+                
+                <div className="col-md-12  multiselectblockclass ">
 
                   <Multiselect
                     options={GetSettingViewPermissionData?.user_permissions}
@@ -782,46 +902,25 @@ const Employee = () => {
 
 
                 </div>
-
-                <div className="col-12">
-                  <label>Category</label>
-
-                  <select
-                    className={`form-select  `}
-                    placeholder="Category"
-                    onChange={(e) => setCategory(e.target.value)}
-                    value={category}
-                  >
-                    <option value="" selected="selected">
-                      Select Category
-                    </option>
-                    {GetCategoryDetailsData?.category_details_list.map(
-                      (item, id) => {
-                        return (
-                          <option value={item.id}>{item.category_name}</option>
-                        );
-                      }
-                    )}
-                  </select>
-                </div>
-                <div className="btngroups text-end my-3 col-12">
-                  <button
-                    type="button"
-                    className="btn save-btn"
-                    onClick={(e) => AddUser(e)}
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    className="btn cancel-btn"
-                    onClick={(e) => setAddUser((o) => !o)}
-                  >
-                    Cancel
-                  </button>
-                </div>
               </div>
+              
             </div>
+            <div className="btngroups text-end my-3 col-12">
+                <button
+                  type="button"
+                  className="btn save-btn"
+                  onClick={(e) => AddUser(e)}
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  className="btn cancel-btn"
+                  onClick={(e) => setAddUser((o) => !o)}
+                >
+                  Cancel
+                </button>
+              </div>
           </div>
         </div>
       )}
@@ -829,7 +928,7 @@ const Employee = () => {
       {/* ===============================Edit employee========================================== */}
 
       {edituser && (
-        <div className="popupouter ">
+        <div className="popupouter editb2b-popup ">
           <div className="popupinner">
             <h2>Edit Employee</h2>
             <div
@@ -853,6 +952,7 @@ const Employee = () => {
                 <div className="col-12 mb-2">
                   <label>User Name</label>
                   <input
+                    maxLength={40}
                     type="text"
                     className="form-control"
                     placeholder="Enter Name"
@@ -861,30 +961,53 @@ const Employee = () => {
                   />
                 </div>
                 <div className="col-12">
-                      <label>Duration</label>
-                    </div>
-                    <div className="col-md-6">
-                      <input
-                        type="date"
-                        className={`form-control  ${fromdate ? "" : ""} `}
-                        placeholder="From date"
-                        value={fromdate}
-                        onChange={(e) => setFromDate(e.target.value)}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <input
-                        type="date"
-                        className={`form-control  ${todate ? "" : ""} `}
-                        placeholder="To date"
-                        value={todate}
-                        onChange={(e) => setToDate(e.target.value)}
-                      />
-                    </div>
+                  <label>Category</label>
+                  <select
+                    className={`form-select  `}
+                    placeholder="Category"
+                    onChange={(e) => {
+                      setCategory(e.target.value)}}
+                    value={category}
+                  >
+                    <option value="" selected="selected">
+                      Select Category
+                    </option>
+                    {GetCategoryDetailsData?.category_details_list.map(
+                      (item, id) => {
+                        return (
+                          <option value={item.id}>{item.category_name}</option>
+                        );
+                      }
+                    )}
+                  </select>
+                </div>
+                <div className="col-12">
+                  <label>Duration</label>
+                </div>
+                <div className="col-md-6">
+                  <input
+                    type="date"
+                    className={`form-control  ${fromdate ? "" : ""} `}
+                    placeholder="From date"
+                    value={fromdate}
+                    min={minDate}
+                    onChange={(e) => setFromDate(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-6">
+                  <input
+                    type="date"
+                    className={`form-control  ${todate ? "" : ""} `}
+                    placeholder="To date"
+                    value={todate}
+                    min={minDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                  />
+                </div>
                 <div className="col-md-6 ">
                   <label>Permissions</label>
                 </div>
-                <div className="col-md-12 mb-4">
+                <div className="col-md-12 multiselectblockclass">
                   <Multiselect
                     options={GetSettingViewPermissionData?.user_permissions}
                     // Options to display in the dropdown
@@ -893,6 +1016,7 @@ const Employee = () => {
                     onRemove={onRemoveEdit} // Function will trigger on remove event
                     displayValue="permission" // Property name to display in the dropdown options
                     selectedValues={userpermission}
+                    onSearch={onSearchMultiSelectFun}
                     showCheckbox
                   />
                 </div>
@@ -917,27 +1041,28 @@ const Employee = () => {
                     )}
                   </select>
                 </div>
-                <div className="btngroups text-end my-3">
-                  <button
-                    type="button"
-                    className="btn save-btn"
-                    onClick={(e) => EditSaveBtn(e)}
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    className="btn cancel-btn"
-                    onClick={(e) => SetEditUser((o) => !o)}
-                  >
-                    Cancel
-                  </button>
-                </div>
               </div>
+            </div>
+            <div className="btngroups text-end my-3">
+              <button
+                type="button"
+                className="btn save-btn"
+                onClick={(e) => EditSaveBtn(e)}
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                className="btn cancel-btn"
+                onClick={(e) => SetEditUser((o) => !o)}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
       )}
+      <LodingSpiner loadspiner={OrderPagesLoaderTrueFalseData} />
     </div>
   );
 };

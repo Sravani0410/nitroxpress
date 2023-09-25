@@ -7,7 +7,7 @@ import { reactLocalStorage } from 'reactjs-localstorage';
 
 
 const OrderSelection = () => {
-  let BearerToken = reactLocalStorage.get("token", false);
+  let BearerToken = sessionStorage.getItem("token", false);
    
   const navigate = useNavigate();
   const ToggleFunData = useSelector(

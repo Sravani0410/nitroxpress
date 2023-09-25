@@ -5,7 +5,7 @@ import { reactLocalStorage } from "reactjs-localstorage";
 
 function Footer() {
     const navigate = useNavigate();
-    let Token = reactLocalStorage.get("token", false)
+    let Token = sessionStorage.getItem("token", false)
 
 
 

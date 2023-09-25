@@ -12,6 +12,7 @@ import { GetBillingInvoiceDetail, GetBillingAmountCount, PostOrderDownloadInvoic
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { PermissionData } from "../../Permission";
+import LodingSpiner from "../../Components/LodingSpiner";
 
 function Cod() {
 
@@ -35,6 +36,7 @@ function Cod() {
     const [last30dayscheckbox, setLast30daysCheckBox] = useState(false);
     const [currentmonthcheckbox, setCurrentMonthCheckBox] = useState(false);
     const [customcheckbox, setCustomCheckBox] = useState(false);
+    const [downloadInvoiceTrue,setDownloadInvoiceTrue]= useState(false)
     const [datapicker, setDataPicker] = useState([{
         startDate: new Date(),
         endDate: addDays(new Date(), 0),
@@ -70,8 +72,11 @@ function Cod() {
     );
 
     const PostBillingCodRemittanceDetailsData = useSelector(
-        (state) => state.PostBillingCodRemittanceDetailsReducer.PostBillingCodRemittanceDetailsData?.data
+        (state) => state.PostBillingCodRemittanceDetailsReducer.PostBillingCodRemittanceDetailsData
     );
+    const OrderPagesLoaderTrueFalseData = useSelector(
+    (state) => state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
+  );
     const PostBillingCodRemittanceCountData = useSelector(
         (state) => state.PostBillingCodRemittanceCountReducer.PostBillingCodRemittanceCountData?.data
     );
@@ -110,7 +115,7 @@ function Cod() {
 
     const Invoice = (e, item) => {
 
-        setDownloadInvoiceShow(true)
+        // setDownloadInvoiceShow(true)
 
         let payload = {
             "product_order_id": item.product_order_id,
@@ -118,18 +123,18 @@ function Cod() {
         }
         dispatch(PostOrderDownloadInvoiceFile(payload))
 
+        // setDownloadInvoiceTrue(true)
     }
-
+    // useEffect(()=>{
+    //     window.open(PostOrderDownloadInvoiceFileData?.data?.name)
+    // },[PostOrderDownloadInvoiceFileData])
     // const LabelGeneration = (e, item) => {
-
     //     setDownloadLabelGenerationShow(true)
-
     //     let payload = {
     //         "product_order_id": item.product_order_id,
     //         "request_type": "get"
     //     }
     //     dispatch(PostOrderDownloadLabelGenerationFile(payload))
-
     // }
 
 
@@ -155,12 +160,11 @@ function Cod() {
         }
 
         dispatch(PostBillingCodRemittanceCount(Alldata))
-        dispatch(PostBillingCodRemittanceDetails(Alldata))
-
-
+        dispatch(PostBillingCodRemittanceDetails(Alldata)) 
+       
         // dispatch(GetB2bCompanyInfo())
 
-    }, [])
+    }, [PostBillingCodRemittanceDetailsData?.status])
 
 
     const FilterShowHideBtnFun = () => {
@@ -345,7 +349,14 @@ function Cod() {
             key: 'selection'
         }])
     }
+  useEffect(()=>{
+    if(PostOrderDownloadInvoiceFileData.status==200 && downloadInvoiceTrue==true){
+      window.open(`${PostOrderDownloadInvoiceFileData?.data?.name}`)
+      setDownloadInvoiceTrue(false)
 
+    }
+
+  },[PostOrderDownloadInvoiceFileData,downloadInvoiceTrue])
 
     return (
         <>
@@ -430,7 +441,7 @@ function Cod() {
 
                                     <h4>Filter</h4>
 
-                                    <div className="search-box">
+                                    {/* <div className="search-box">
                                         <input type='' className='form-control' placeholder='Search'
                                             onChange={(e) => SearchPage(e)}
                                         />
@@ -440,7 +451,7 @@ function Cod() {
                                             </svg>
 
                                         </span>
-                                    </div>
+                                    </div> */}
 
                                     <h5>Sort By</h5>
                                     <div className="row">
@@ -548,16 +559,16 @@ function Cod() {
 
 
                             <ul className="nav nav-tabs" id="myTab" role="tablist">
-                                <li className="nav-item" role="presentation" onClick={(e) => { navigate("#pending") }}>
+                               {PermissionData()?.VIEW_COD_REMITTANCE_PAGE== "VIEW_COD_REMITTANCE_PAGE" ?<li className="nav-item" role="presentation" onClick={(e) => { navigate("#pending") }}>
                                     <button className="nav-link active" id="cod-tab" data-bs-toggle="tab" data-bs-target="#cod-tab-pane" type="button" role="tab" aria-controls="cod-tab-pane" aria-selected="true">COD Remittance</button>
-                                </li>
-                                <li className="nav-item" role="presentation" onClick={(e) => { navigate("#hd") }}>
+                                </li>:""}
+                                {PermissionData()?.VIEW_INVOICE_PAGE== "VIEW_INVOICE_PAGE"?<li className="nav-item" role="presentation" onClick={(e) => { navigate("#hd") }}>
                                     <button className="nav-link" id="invoice-tab" data-bs-toggle="tab" data-bs-target="#invoice-tab-pane" type="button" role="tab" aria-controls="invoice-tab-pane" aria-selected="false">Invoices</button>
-                                </li>
+                                </li>:""}
                             </ul>
 
                             <div className="tab-content" id="myTabContent">
-                                <div className="tab-pane fade show active" id="cod-tab-pane" role="tabpanel" aria-labelledby="cod-tab" tabindex="0">
+                               { PermissionData()?.VIEW_COD_REMITTANCE_PAGE== "VIEW_COD_REMITTANCE_PAGE"?<div className="tab-pane fade show active" id="cod-tab-pane" role="tabpanel" aria-labelledby="cod-tab" tabindex="0">
                                     <ul>
                                         <li className=
                                             {`${PermissionData()?.VIEW_COD_REMITTANCE_COUNT == "VIEW_COD_REMITTANCE_COUNT" ? " " : "permission_blur"}`}>
@@ -600,7 +611,7 @@ function Cod() {
 
                                             {PermissionData()?.VIEW_COD_REMITTANCE == "VIEW_COD_REMITTANCE" ?
 
-                                                PostBillingCodRemittanceDetailsData && PostBillingCodRemittanceDetailsData.map((item, id) => {
+                                            PostBillingCodRemittanceDetailsData?.data && PostBillingCodRemittanceDetailsData?.data.map((item, id) => {
 
                                                     return <tr>
                                                         <td>{item?.remittance_id}</td>
@@ -620,9 +631,9 @@ function Cod() {
 
                                         </table>
                                     </div>
-                                </div>
+                                </div>:""}
 
-                                <div className="tab-pane fade" id="invoice-tab-pane" role="tabpanel" aria-labelledby="invoice-tab" tabindex="0">
+                               {PermissionData()?.VIEW_INVOICE_PAGE== "VIEW_INVOICE_PAGE"? <div className="tab-pane fade" id="invoice-tab-pane" role="tabpanel" aria-labelledby="invoice-tab" tabindex="0">
                                     <ul>
                                         {
                                         PermissionData()?.VIEW_INVOICES == "VIEW_INVOICES" ?
@@ -697,7 +708,7 @@ function Cod() {
                                         </table>
                                     </div>
 
-                                </div>
+                                </div>:""}
                             </div>
                         </div>
 
@@ -726,6 +737,7 @@ function Cod() {
                     </div>
                 </div>
             </Popup>
+            <LodingSpiner loadspiner={OrderPagesLoaderTrueFalseData} />
         </>
     )
 }

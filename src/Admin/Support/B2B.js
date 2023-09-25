@@ -12,6 +12,7 @@ import { isTomorrow } from "date-fns";
 import { PermissionData } from "../../Permission";
 import { reactLocalStorage } from "reactjs-localstorage";
 import Popup from "reactjs-popup";
+import LodingSpiner from "../../Components/LodingSpiner";
 
 function B2B() {
   const navigate = useNavigate();
@@ -36,14 +37,18 @@ function B2B() {
   );
 
   const PostTicketDetailData = useSelector(
-    (state) => state.PostTicketDetailReducer.PostTicketDetailData?.data
+    (state) => state.PostTicketDetailReducer.PostTicketDetailData
+  );
+  const OrderPagesLoaderTrueFalseData = useSelector(
+    (state) =>
+      state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
   );
   const HeaderToggleClassAddData = useSelector(
-    (state) =>
-      state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
+    (state) => state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
   );
 
-  let isAdmin_Role = reactLocalStorage.get("Admin_Role", false);
+  let isAdmin_Role = sessionStorage.getItem("Admin_Role", false);
+  let isEmploye_Role = sessionStorage.getItem("isEmploye", false);
   useEffect(() => {
     let payload = {
       user_type: "b2b",
@@ -61,10 +66,8 @@ function B2B() {
     //   ticket_type: "active_ticket",
     // };
     // dispatch(PostTicketDetail(payloadd))
-    // ; 
+    // ;
   };
-
-  console.log("djshfgds", DeleteSupportTicketData)
 
   useEffect(() => {
     if (DeleteSupportTicketData?.message == "ticket closed") {
@@ -74,7 +77,7 @@ function B2B() {
       };
       dispatch(PostTicketDetail(payloadd));
     }
-  }, [DeleteSupportTicketData])
+  }, [DeleteSupportTicketData]);
 
   const TicketChangeFun = (e) => {
     if (e.target.value == "close") {
@@ -95,21 +98,22 @@ function B2B() {
     return countArray;
   };
   const NewOldFun = (e) => {
-    if (e.target.value.toString() == "OLDEST") {
-      let AllData = getsettingviewalldata?.slice(Math?.max(getsettingviewalldata?.length - 5, 0))?.map((item, id) => {
-
-        return item;
-      });
+    if (e.target.value?.toString() == "OLDEST") {
+      let AllData = getsettingviewalldata
+        ?.slice(Math?.max(getsettingviewalldata?.length - 5, 0))
+        ?.map((item, id) => {
+          return item;
+        });
       setGetSettingViewAllData(AllData);
     } else {
       setOldNewData(true);
-      setGetSettingViewAllData(PostTicketDetailData?.info);
+      setGetSettingViewAllData(PostTicketDetailData?.data?.info);
     }
   };
   useEffect(() => {
-    PostTicketDetailData &&
-      setGetSettingViewAllData(PostTicketDetailData?.info);
-  }, [PostTicketDetailData]);
+    PostTicketDetailData?.data &&
+      setGetSettingViewAllData(PostTicketDetailData?.data?.info);
+  }, [PostTicketDetailData?.data]);
   const ShowFeedbackDataFun = (e, value) => {
     if (value == "more") {
       setMoreData(true);
@@ -141,24 +145,28 @@ function B2B() {
                 className=" form-select"
                 onChange={(e) => CustomerChangeFun(e)}
               >
-                <option value="b2b">B2B</option>
-                {isAdmin_Role == "true" ? <option value="b2c">B2C</option> : ""}
+                {PermissionData()?.VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"?<option value="b2b">B2B</option>:""}
+                {isAdmin_Role == "true" || isEmploye_Role == "true" || PermissionData()?.VIEW_SUPPORT_B2C_PAGE == "VIEW_SUPPORT_B2C_PAGE"? (
+                  <option value="b2c">B2C</option>
+                ) : (
+                  ""
+                )}
               </select>
             </div>
 
             <div className="sptitle">
               <div className="select-box">
-              <span>SORT BY : </span>
+                <span>SORT BY : </span>
                 <select
                   className=" form-select"
                   onChange={(e) => TicketChangeFun(e)}
                 >
-                  <option value="new" className="px-3">
+                 {PermissionData()?.VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"? <option value="new" className="px-3">
                     New Tickets
-                  </option>
-                  <option value="close" className="px-3">
+                  </option>:""}
+                  {PermissionData()?.VIEW_SUPPORT_B2B_RESOLVE_PAGE == "VIEW_SUPPORT_B2B_RESOLVE_PAGE"?<option value="close" className="px-3">
                     Close Tickets
-                  </option>
+                  </option>:""}
                 </select>
               </div>
               <div className="select-box">
@@ -171,21 +179,20 @@ function B2B() {
             </div>
 
             <ul className="support-list">
-              {PermissionData()?.VIEW_B2B_TICKETS == "VIEW_B2B_TICKETS" ?
-                getsettingviewalldata &&
-                getsettingviewalldata?.map((item, id) => {
-                  return (
-                    <li>
-                      <div className="left-part">
-                        <img src="/images/user.png" alt="img" />
-                        <div>
-                          <h4>{item.username}</h4>
-                          <h3>{item.company_name}</h3>
-                          <p>#{item.product_order_id}</p>
+              {PermissionData()?.VIEW_B2B_TICKETS == "VIEW_B2B_TICKETS"
+                ? getsettingviewalldata &&
+                  getsettingviewalldata?.map((item, id) => {  
+                     return <li>
+                        <div className="left-part">
+                          <img src="/images/user.png" alt="img" />
+                          <div>
+                            <h4>{item.username}</h4>
+                            <h3>{item.company_name}</h3>
+                            <p>#{item.product_order_id}</p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="right-part">
-                        {/* <button className="btn dot-btn" type="button">
+                        <div className="right-part">
+                          {/* <button className="btn dot-btn" type="button">
                           <svg
                             viewBox="0 0 16 4"
                             xmlns="http://www.w3.org/2000/svg"
@@ -198,7 +205,7 @@ function B2B() {
                             />
                           </svg>
                         </button> */}
-                        {/* <span className=" star-svg me-2">
+                          {/* <span className=" star-svg me-2">
                           {rate(item?.rating).map((item, id) => {
                             return (
                               <svg
@@ -231,39 +238,39 @@ function B2B() {
                             );
                           })}
                         </span> */}
-                        {/* <span className="date-text">{item.date}</span> */}
-                        <p className="mt-2 mb-0">{item.title}</p>
-                        <span className="date-text">{item.date}</span>
+                          {/* <span className="date-text">{item.date}</span> */}
+                          <p className="mt-2 mb-0">{item.title}</p>
+                          <span className="date-text">{item.date}</span>
 
-                        {/* <p className="mt-2">{item.description}</p> */}
-                        {item.description.length <= 30 ||
+                          {/* <p className="mt-2">{item.description}</p> */}
+                          {item.description.length <= 40 ||
                           (moredata == true &&
                             morepopupid == item?.feedback_id) ? (
-                          <p className="ticket-description">
-                            {item.description}
-                          </p>
-                        ) : (
-                          <p className="ticket-description">
-                            {item?.description?.substring(0, 150)}
-                            <span
-                              onClick={(e) => ShowFeedbackDataFun(e, "more")}
-                            >
-                              {" "}
-                              ....
+                            <p className="ticket-description">
+                              {item.description}
+                            </p>
+                          ) : (
+                            <p className="ticket-description">
+                              {item?.description?.substring(0, 40)}
                               <span
-                                className="text-primary"
-                                role="button"
-                                onClick={(e) => Readmore(item?.feedback_id)}
+                                onClick={(e) => ShowFeedbackDataFun(e, "more")}
                               >
-                                Read More
+                                {" "}
+                                ....
+                                <span
+                                  className="text-warning"
+                                  role="button"
+                                  onClick={(e) => Readmore(item?.feedback_id)}
+                                >
+                                  Read More
+                                </span>
                               </span>
-                            </span>
-                          </p>
-                        )}
+                            </p>
+                          )}
 
-                        <div className="d-flex flex-wrap justify-content-between">
-                          <div className="">
-                            {/* <button
+                          <div className="d-flex flex-wrap justify-content-between">
+                            <div className="">
+                              {/* <button
                               className="btn mail-btn"
                               type="button"
                               value={item.email}
@@ -282,7 +289,7 @@ function B2B() {
                               Mail
                             </button> */}
 
-                            {/* <button className="btn chat-btn" type="button">
+                              {/* <button className="btn chat-btn" type="button">
                               <svg
                                 viewBox="0 0 9 8"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -296,67 +303,78 @@ function B2B() {
                               </svg>{" "}
                               Chat
                             </button> */}
+                            </div>
+                            <button
+                              className={`${
+                                PermissionData()?.DISMISS_B2B_TICKETS ==
+                                "DISMISS_B2B_TICKETS"
+                                  ? "btn dismiss-btn"
+                                  : "permission_blur_resolve"
+                              } `}
+                              type="button"
+                              onClick={(e) =>
+                                PermissionData()?.DISMISS_B2B_TICKETS ==
+                                "DISMISS_B2B_TICKETS"
+                                  ? DeleteTicket(e, item)
+                                  : ""
+                              }
+                            >
+                              Resolve
+                            </button>
                           </div>
-                          <button
-                            className={`${PermissionData()?.DISMISS_B2B_TICKETS == "DISMISS_B2B_TICKETS" ? "btn dismiss-btn" : "permission_blur"} `}
-                            type="button"
-                            onClick={(e) => PermissionData()?.DISMISS_B2B_TICKETS == "DISMISS_B2B_TICKETS" ? DeleteTicket(e, item) : ""}
-                          >
-                            Resolve
-                          </button>
                         </div>
-                      </div>
-                      {moredataid == item?.feedback_id ? (
-                        <Popup
-                          open={pickuppopup}
-                          position=""
-                          model
-                          className="sign_up_loader"
-                        >
-                          <div className="container">
-                            <div className="loader-sec">
-                              <div className=" data_picker rounded bg-white">
-                                <div className="py-1 text-warning">
-                                  <h4
-                                    className="text-danger calender_popup_cancel"
-                                    onClick={(e) => {
-                                      ReadmoreFun(item?.id);
-                                      setPickUpPopup(false);
-                                    }}
-                                  >
-                                    {" "}
-                                    X{" "}
-                                  </h4>
-                                </div>
-                                <div className="data_picker_btn">
-                                  <span
-                                    className="readmore-popup"
-                                    onClick={(e) =>
-                                      ShowFeedbackDataFun(e, "less")
-                                    }
-                                  >
-                                    <p className="ticket-description">
-                                      {item.description}
-                                    </p>
-                                    <span
-                                      className="text-primary"
-                                      role="button"
-                                      onClick={(e) => ReadmoreFun(item?.id)}
+                        {moredataid == item?.feedback_id ? (
+                          <Popup
+                            open={pickuppopup}
+                            position=""
+                            model
+                            className="sign_up_loader"
+                          >
+                            <div className="container">
+                              <div className="loader-sec">
+                                <div className=" data_picker rounded bg-white">
+                                  <div className="py-1 text-warning">
+                                    <h4
+                                      className="text-dark calender_popup_cancel"
+                                      onClick={(e) => {
+                                        ReadmoreFun(item?.id);
+                                        setPickUpPopup(false);
+                                      }}
                                     >
-                                      Read Less
+                                      {" "}
+                                      X{" "}
+                                    </h4>
+                                  </div>
+                                  <div className="data_picker_btn">
+                                    <span
+                                      className="readmore-popup"
+                                      onClick={(e) =>
+                                        ShowFeedbackDataFun(e, "less")
+                                      }
+                                    >
+                                      <p className="ticket-description">
+                                        {item.description}
+                                      </p>
+                                      <span
+                                        className="text-warning"
+                                        role="button"
+                                        onClick={(e) => ReadmoreFun(item?.id)}
+                                      >
+                                        Read Less
+                                      </span>
                                     </span>
-                                  </span>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        </Popup>
-                      ) : (
-                        ""
-                      )}
-                    </li>
-                  );
-                }) : ""}
+                          </Popup>
+                        ) : (
+                          ""
+                        )}
+                      </li>
+                    
+                  })
+                : ""}
             </ul>
 
             {/* {*****************************POPUP*************************} */}
@@ -389,6 +407,7 @@ function B2B() {
             </div> */}
           </div>
         </div>
+        <LodingSpiner loadspiner={OrderPagesLoaderTrueFalseData} />
       </div>
     </>
   );

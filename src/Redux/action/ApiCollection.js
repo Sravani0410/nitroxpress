@@ -6,25 +6,26 @@ import { toast } from "react-toastify";
 import fileDownload from "js-file-download";
 import { TokenDataValidCheck1 } from "../../Authanticate";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 var fs = require("fs");
 
-let BearerToken = reactLocalStorage.get("token", false);
-
+let BearerToken = sessionStorage.getItem("token", false);
+let Is_delivery_boy=sessionStorage.getItem("Is_delivery_boy",false)
 axios.interceptors.response.use(
   (response) => {
-    reactLocalStorage.set("Authorized", "Authorized");
     return response;
   },
   (error) => {
     if (error?.response?.status == 401) {
-      reactLocalStorage.clear();
-      sessionStorage.clear();
-      reactLocalStorage.set("Authorized", "unAuthorized");
+      const myTimeout = setTimeout(sessionStorageClearFun, 2000);
     }
-
     return Promise.reject(error);
   }
 );
+
+function sessionStorageClearFun(error) {
+  sessionStorage.clear();
+}
 
 export const getViewProfile = () => {
   return async (dispatch, getState) => {
@@ -60,7 +61,163 @@ export const getViewProfile = () => {
     });
   };
 };
+// lat and log delivery boy
+// export const latandlog=()=>{
+//   return async (dispatch)=>{
+//     const response = await axios
+//     .post(`${process.env.REACT_APP_BASE_URL}/signin`, {
+//       email: emailSpaceCancelation,
+//       password: passwordSpaceCancelation,
+//     })
+//     .then((Response) => {
+//       setLoadSpiner((o) => !o);
 
+//       if (Response?.data?.user_type == "as_individual") {
+//         sessionStorage.setItem("as_individual", true);
+//         sessionStorage.setItem("Admin_Role", false);
+//         sessionStorage.setItem("isEmploye", false);
+//         sessionStorage.setItem("Is_Business", false);
+//         sessionStorage.setItem("Is_delivery_boy", false);
+//       } else {
+//         sessionStorage.setItem(
+//           "as_individual",
+//           Response?.data?.Role?.as_individual
+//         );
+//         sessionStorage.setItem(
+//           "Admin_Role",
+//           Response?.data?.Role?.is_admin
+//         );
+//         sessionStorage.setItem(
+//           "isEmploye",
+//           JSON.stringify(Response?.data?.Role?.employee)
+//         );
+//         sessionStorage.setItem(
+//           "Is_Business",
+//           Response?.data?.Role?.as_business
+//         );
+//         sessionStorage.setItem(
+//           "Is_delivery_boy",
+//           Response?.data?.Role?.is_delivery_boy
+//         );
+//       }
+//       if(Response?.data?.Role?.is_delivery_boy != true) {
+//         sessionStorage.setItem("token", Response.data.Token);
+//       }
+//       // sessionStorage.setItem("token", Response.data.Token);
+
+//       // sessionStorage.setItem("token", Response.data.Token);
+//       // sessionStorage.setItem("Admin_Role", Response?.data?.Role?.is_admin);
+//       // sessionStorage.setItem("as_individual", Response?.data?.Role?.as_individual);
+//       let Permission = JSON.stringify(Response?.data?.permission);
+//       sessionStorage.setItem("Permission_Data", Permission);
+//       // sessionStorage.setItem("isEmploye", JSON.stringify(Response?.data?.Role?.employee));
+//       // sessionStorage.setItem("Is_Business", Response?.data?.Role?.as_business)
+
+//       sessionStorage.setItem("user_right", Response?.data?.user_type);
+//       if (Response?.data?.Role?.is_admin === true) {
+//         navigate("/admin/dashboard");
+//         toast.success("Login SuccessFully");
+//         window.location.reload(true);
+//       } else if (
+//         Response?.data?.Role?.as_business === true ||
+//         Response?.data?.Role?.employee === true
+//       ) {
+//         if (Permission.length !== 2) {
+//           navigate("/admin/dashboard");
+//           window.location.reload(true);
+//           toast.success("Login SuccessFully");
+//         } else {
+//           toast.warn(
+//             " Your account is under verification, Once it will verify we will inform you on E-mail ! "
+//           );
+//           sessionStorage.clear();
+//         }
+//       } else if (Response?.data?.Role?.is_delivery_boy === true) {
+//         if ("geolocation" in navigator) {
+//           navigator.geolocation.getCurrentPosition(
+//             function (position) {
+//               const latitude = position.coords.latitude;
+//               const longitude = position.coords.longitude;
+//               // Do something with the latitude and longitude
+//             },
+//             function (error) {
+//               // Handle any errors that occur during location retrieval
+//               switch (error.code) {
+//                 case error.PERMISSION_DENIED:
+//                   console.error("User denied the request for geolocation.");
+//                   break;
+//                 case error.POSITION_UNAVAILABLE:
+//                   console.error("Location information is unavailable.");
+//                   break;
+//                 case error.TIMEOUT:
+//                   console.error(
+//                     "The request to get user location timed out."
+//                   );
+//                   break;
+//                 default:
+//                   console.error("An unknown error occurred.");
+//               }
+//             }
+//           );
+//         }
+//         sessionStorage.setItem("token", Response.data.Token);
+//          // navigate("/admin/order");
+
+//         toast.success("Login Successfully");
+//       } else if (Response?.data?.Role?.as_individual === true) {
+//         navigate("/profile");
+//         dispatch(getViewProfile());
+//         window.location.reload(true);
+//         toast.success("Login SuccessFully");
+//       } else if (Response?.data?.message == "Documents Not Uploaded") {
+//         sessionStorage.setItem("User_Mail", email);
+
+//         navigate("/page/kyc");
+
+//         toast.warn("Please Complete Your KYC Verification");
+//       } else if (Response?.data?.message === "Check your email") {
+//         navigate("/verifyemail");
+//       }
+//     })
+//     .catch((err) => {
+//       setLoadSpiner((o) => !o);
+//       if (err.response.data.message === "Verify Phone Number ,Check sms ") {
+//         navigate("/veryfiyphone");
+//       }
+
+//       toast.warn(err.response.data.message);
+//     });
+//   }
+// }
+
+export const latAndLogAttendence = (payload, Token) => {
+  // const navigate = useNavigate();
+  return async (dispatch, getState) => {
+    const response = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/add_attendence_info`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${Token}`,
+          },
+        }
+      )
+      .then((res) => {
+        window.location.reload(true);
+        return res;
+        // navigate("/admin/dashboard");
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    dispatch({
+      type: actionType.ViewOrderDetails_Type,
+      payload: response,
+    });
+  };
+};
 export const getOrderAddress = (payload) => {
   return async (dispatch, getState) => {
     const response = await axios
@@ -119,7 +276,7 @@ export const PatchUserDetails = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(userPatchadata());
@@ -141,12 +298,13 @@ export const DeleteUserAddress = (payload) => {
         },
       })
       .then((res) => {
-        // dispatch(GetSettingUserInfo());
+        // window.location.reload(false)
+        dispatch(getOrderAddress());
         toast.success("Address Deleted successfully");
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(DeleteAddressData(response));
@@ -176,7 +334,7 @@ export const ResetPatchPassword = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(ResetPasswordPatch(responce));
@@ -210,7 +368,7 @@ export const PostPincodesAvailability = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err.response;
       });
     dispatch(PostPincodesAvailabilityDispatch(responce));
@@ -266,7 +424,7 @@ export const PostPickupAddress = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostPickupAddressDispatch(responce));
@@ -295,7 +453,7 @@ export const PatchPickupAddress = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PatchPickupAddressDispatch(responce));
@@ -318,12 +476,12 @@ export const PostDeliveryAddress = (payload) => {
         }
       )
       .then((res) => {
-        toast.success("address added successfully");
+        // toast.success("address added successfully");
 
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostDeliveryAddressDispatch(responce));
@@ -362,13 +520,17 @@ export const PostShipmentDetails = (
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostShipmentDetailsDispatch(responce));
   };
 };
 
+// const GetShipmentDetailsDispatch=(data)=>({
+//   type: actionType.GetShipmentDetailsDispatch_Type,
+//   payload: data,
+// })
 export const GetShipmentDetails = (payload) => {
   return async (dispatch, getState) => {
     let bodyContent = JSON.stringify(payload);
@@ -383,13 +545,25 @@ export const GetShipmentDetails = (payload) => {
         }
       )
       .then((res) => {
-        toast.success(res.data.message);
+        toast.success(res?.data?.message);
         return res;
       })
       .catch((err) => {
         // toast.warn(err.response.data.message);
+        if (
+          err?.response?.data?.message ==
+          "Zone is not provided for particular pincode"
+        ) {
+          toast.warn(
+            "Price quotation has not been uploaded by admin,so please contact nitroxpress customer service"
+          );
+        } else {
+          toast.warn(err?.response?.data?.message);
+        }
+        // toast.warn("Quotation has not been uploaded by admin,so please contact nitroxpress customer service");
         return err;
       });
+    // dispatch(GetShipmentDetailsDispatch(responce));
     dispatch({
       type: actionType.GetShipmentDetailsDispatch_Type,
       payload: responce,
@@ -406,6 +580,7 @@ const GetAdminDashboardViewOrderDispatch = (data) => ({
 export const GetAdminDashboardViewOrder = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/dashboard/view_order`,
@@ -417,11 +592,15 @@ export const GetAdminDashboardViewOrder = (payload) => {
         }
       )
       .then((res) => {
+        if (res.status == 200) {
+          dispatch(OrderPagesLoaderTrueFalse(false));
+        }
         // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetAdminDashboardViewOrderDispatch(responce));
@@ -435,6 +614,7 @@ const PostAdminDashboardTransactionDispatch = (data) => ({
 export const PostAdminDashboardTransaction = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    // dispatch(OrderPagesLoaderTrueFalse(true))
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/dashboard/transaction_data`,
@@ -446,12 +626,15 @@ export const PostAdminDashboardTransaction = (payload) => {
         }
       )
       .then((res) => {
+        // dispatch(OrderPagesLoaderTrueFalse(false))
         // toast.success(res.data.message);
 
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        // dispatch(OrderPagesLoaderTrueFalse(false))
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostAdminDashboardTransactionDispatch(responce));
@@ -495,6 +678,7 @@ const GetAdminOrderIntransitDispatch = (data) => ({
 export const GetAdminOrderIntransit = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .get(`${process.env.REACT_APP_BASE_URL}/admin_panel/orders/in_transit`, {
         headers: {
@@ -502,13 +686,16 @@ export const GetAdminOrderIntransit = (payload) => {
         },
       })
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         // toast.success(res.data.message);
-        dispatch(GetAdminOrderDelivered());
+        // dispatch(GetAdminOrderDelivered());
 
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -536,6 +723,7 @@ const GetAdminOrderDeliveredDispatch = (data) => ({
 });
 export const GetAdminOrderDelivered = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .get(`${process.env.REACT_APP_BASE_URL}/admin_panel/orders/delivered`, {
         headers: {
@@ -543,12 +731,15 @@ export const GetAdminOrderDelivered = (payload) => {
         },
       })
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         // toast.success(res.data.message);
-        dispatch(GetAdminOrderReturn());
+        // dispatch(GetAdminOrderReturn()); my commented
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -562,9 +753,10 @@ const GetAdminOutForDeliveryDispatch = (data) => ({
 });
 export const GetAdminOutForDelivery = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/outfor_delivery_details`,
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/out_for_delivery_details`,
         {
           headers: {
             Authorization: `Bearer ${BearerToken}`,
@@ -572,12 +764,15 @@ export const GetAdminOutForDelivery = (payload) => {
         }
       )
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         // toast.success(res.data.message);
-        dispatch(GetAdminOrderReturn());
+        // dispatch(GetAdminOrderReturn());  my commented
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -592,6 +787,7 @@ const GetAdminOrderPendingDispatch = (data) => ({
 
 export const GetAdminOrderPending = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .get(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/pending_order_details`,
@@ -602,10 +798,15 @@ export const GetAdminOrderPending = (payload) => {
         }
       )
       .then((res) => {
+        if (res.status == 200) {
+          dispatch(OrderPagesLoaderTrueFalse(false));
+        }
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -626,12 +827,44 @@ export const GetAdminOrderPending = (payload) => {
   };
 };
 
+const PostViewOrderDetailsDispatch = (data) => ({
+  type: actionType.PostViewOrderDetailsDispatch_Type,
+  payload: data,
+});
+export const PostViewOrderDetails = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/view_order_details`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        // toast.success(res.data.message);
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostViewOrderDetailsDispatch(responce));
+  };
+};
+
 const GetAdminOrderReturnDispatch = (data) => ({
   type: actionType.GetAdminOrderReturnDispatch_Type,
   payload: data,
 });
 export const GetAdminOrderReturn = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .get(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/return_order`,
@@ -642,12 +875,15 @@ export const GetAdminOrderReturn = (payload) => {
         }
       )
       .then((res) => {
-        dispatch(GetAdminOrderRTODelivered());
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        // dispatch(GetAdminOrderRTODelivered());  my commented
         // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -661,6 +897,7 @@ const GetAdminOrderRTODeliveredDispatch = (data) => ({
 });
 export const GetAdminOrderRTODelivered = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .get(`${process.env.REACT_APP_BASE_URL}/admin_panel/orders/rto_details`, {
         headers: {
@@ -668,11 +905,14 @@ export const GetAdminOrderRTODelivered = (payload) => {
         },
       })
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -704,7 +944,7 @@ export const PostAdminOrderRebook = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -712,6 +952,34 @@ export const PostAdminOrderRebook = (payload) => {
   };
 };
 
+const PostTrackLocationDetailsDispatch = (data) => ({
+  type: actionType.PostTrackLocationDetailsDispatch_Type,
+  payload: data,
+});
+export const PostTrackLocationDetails = (payload) => {
+  return async (dispatch, getState) => {
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/track_location_details`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        toast.success("Upload successfully");
+
+        return res;
+      })
+      .catch((err) => {
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostTrackLocationDetailsDispatch(responce));
+  };
+};
 const GetAdminOrderSummaryDispatch = (data) => ({
   type: actionType.GetAdminOrderSummaryDispatch_Type,
   payload: data,
@@ -734,7 +1002,7 @@ export const GetAdminOrderSummary = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetAdminOrderSummaryDispatch(responce));
@@ -747,6 +1015,7 @@ const GetAdminOrderBookedDispatch = (data) => ({
 });
 export const GetAdminOrderBooked = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .get(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/booked_order`,
@@ -758,11 +1027,13 @@ export const GetAdminOrderBooked = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-
+        dispatch(OrderPagesLoaderTrueFalse(false));
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -781,6 +1052,97 @@ export const GetAdminOrderBooked = (payload) => {
     //  let response = await axios.request(reqOptions);
     //  dispatch(GetAdminOrderBooked());
     dispatch(GetAdminOrderBookedDispatch(response));
+  };
+};
+
+const GetAdminOrderPickedUpDispatch = (data) => ({
+  type: actionType.GetAdminOrderPickedUpDispatch_Type,
+  payload: data,
+});
+export const GetAdminOrderPickedUp = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const response = await axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/pickedup_order_details`,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(GetAdminOrderPickedUpDispatch(response));
+  };
+};
+
+const GetAdminOrderReadyForPickupDispatch = (data) => ({
+  type: actionType.GetAdminOrderReadyForPickupDispatch_Type,
+  payload: data,
+});
+export const GetAdminOrderReadyForPickup = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const response = await axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/ready_for_pickup_details`,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        // dispatch(GetAdminOrderPickedUp())
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(GetAdminOrderReadyForPickupDispatch(response));
+  };
+};
+
+const GetAdminOrderReceivedAtHubDispatch = (data) => ({
+  type: actionType.GetAdminOrderReceivedAtHubDispatch_Type,
+  payload: data,
+});
+export const GetAdminOrderReceivedAtHub = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const response = await axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/received_at_hub_details`,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(GetAdminOrderReceivedAtHubDispatch(response));
   };
 };
 
@@ -824,6 +1186,12 @@ const PostAdminOrderFilterationDispatch = (data) => ({
   type: actionType.PostAdminOrderFilterationDispatch_Type,
   payload: data,
 });
+
+export const OrderPagesLoaderTrueFalse = (data) => ({
+  type: actionType.OrderPagesLoaderTrueFalse_Type,
+  payload: data,
+});
+
 export const PostAdminOrderFilteration = (payload) => {
   return async (dispatch, getState) => {
     const responce = await axios
@@ -841,7 +1209,7 @@ export const PostAdminOrderFilteration = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostAdminOrderFilterationDispatch(responce));
@@ -871,7 +1239,7 @@ export const GetAdminOrderCustomer = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetAdminOrderCustomerDispatch(responce));
@@ -885,6 +1253,12 @@ const PatchAdminOrderEditDispatch = (data) => ({
 
 export const PatchAdminOrderEdit = (payload) => {
   return async (dispatch, getState) => {
+    let InvoicePayLoad = {
+      product_order_id: payload?.product_order_id,
+      request_type: "create",
+    };
+
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .patch(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/edit_order_details`,
@@ -897,16 +1271,17 @@ export const PatchAdminOrderEdit = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-        // dispatch(GetAdminOrderSummary())
-        if (res.status == 200) {
-          // GetAdminOrderBooked()
-        }
+
+        dispatch(OrderPagesLoaderTrueFalse(false));
         toast.success("Order Edited successfully");
+
+        // dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
 
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PatchAdminOrderEditDispatch(responce));
@@ -935,7 +1310,8 @@ export const GetAdminOrderCallBuyer = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetAdminOrderCallBuyerDispatch(responce));
@@ -963,7 +1339,7 @@ export const GetAdminOrderGenerateOrderId = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetAdminOrderGenerateOrderIdDispatch(responce));
@@ -993,11 +1369,11 @@ export const GetAdminOrderPaymentOrder = (payload) => {
           pickup_id: res?.data?.pickup_id,
           product_order_id: res?.data?.order_id,
         });
-        reactLocalStorage.set("OrderDetailsId", data);
+        sessionStorage.setItem("OrderDetailsId", data);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetAdminOrderPaymentOrderDispatch(responce));
@@ -1010,16 +1386,18 @@ const PostAdminOrderPaymentOrderDispatch = (data) => ({
 });
 export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
   return async (dispatch, getState) => {
-    let OrderDetailsIdData = reactLocalStorage.get("OrderDetailsId", false);
+    let OrderDetailsIdData = sessionStorage.getItem("OrderDetailsId", false);
     let OrderDetailsIdDataObject = JSON.parse(OrderDetailsIdData);
 
     let newPayload = [];
 
     if (OrderDetailsIdDataObject?.product_order_id) {
-      newPayload.push({ ...payload, "order_id": OrderDetailsIdDataObject?.product_order_id })
-    }
-    else {
-      newPayload.push(payload)
+      newPayload.push({
+        ...payload,
+        order_id: OrderDetailsIdDataObject?.product_order_id,
+      });
+    } else {
+      newPayload.push(payload);
     }
     const responce = await axios
       .post(
@@ -1032,21 +1410,25 @@ export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
         }
       )
       .then((res) => {
-        toast.success(res.data.message);
+        toast.success(res?.data?.message);
 
         let data = JSON.stringify({
           deliverd_id: res?.data?.deliverd_id,
           pickup_id: res?.data?.pickup_id,
           product_order_id: res?.data?.order_id,
         });
-        reactLocalStorage.set("OrderDetailsId", data);
-        let totalPriceValue = reactLocalStorage.get("totalPriceValue", false);
+        sessionStorage.setItem("OrderDetailsId", data);
+        let totalPriceValue = sessionStorage.getItem("totalPriceValue", false);
         if (res?.data?.order_id) {
-          let ItemDetailPayload = { ...ItemDetailPayloadData, "product_order_id": res?.data?.order_id, "total_price": totalPriceValue }
-          dispatch(PostAdminOrderAddShipment(ItemDetailPayload))
+          let ItemDetailPayload = {
+            ...ItemDetailPayloadData,
+            product_order_id: res?.data?.order_id,
+            total_price: totalPriceValue,
+          };
+          dispatch(PostAdminOrderAddShipment(ItemDetailPayload));
         }
 
-        const TagOrderData = reactLocalStorage.get("add_order_tag", false);
+        const TagOrderData = sessionStorage.getItem("add_order_tag", false);
         const PayloadTagOrderData = JSON.parse(TagOrderData);
         if (PayloadTagOrderData?.add_order.length != 0) {
           dispatch(
@@ -1060,7 +1442,7 @@ export const PostAdminOrderPaymentOrder = (payload, ItemDetailPayloadData) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostAdminOrderPaymentOrderDispatch(responce));
@@ -1091,14 +1473,14 @@ export const PostAdminOrderEwayBill = (payload) => {
         },
       })
       .then((res) => {
-        reactLocalStorage.set("Eway_bill_id", res?.data?.id);
+        sessionStorage.setItem("Eway_bill_id", res?.data?.id);
 
-        reactLocalStorage.set("Eway_bill_URL", String(res?.data?.name));
+        sessionStorage.setItem("Eway_bill_URL", String(res?.data?.name));
 
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostAdminOrderEwayBillDispatch(responce));
@@ -1110,6 +1492,7 @@ const PostAdminOrderPaymentCalDispatch = (data) => ({
   payload: data,
 });
 export const PostAdminOrderPaymentCal = (payload) => {
+  let as_bussiness = sessionStorage.getItem("Is_Business", false);
   return async (dispatch, getState) => {
     const responce = await axios
       .post(
@@ -1126,7 +1509,17 @@ export const PostAdminOrderPaymentCal = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        if (
+          as_bussiness == "true" &&
+          err?.response?.data?.message ==
+            "Zone is not provided for particular pincode"
+        ) {
+          toast.warn(
+            "Price quotation has not been uploaded by admin,so please contact nitroxpress customer service"
+          );
+        } else {
+          toast.warn(err?.response?.data?.message);
+        }
         return err;
       });
     dispatch(PostAdminOrderPaymentCalDispatch(responce));
@@ -1150,7 +1543,7 @@ export const PostAdminOrderAddShipment = (payload) => {
         }
       )
       .then((res) => {
-        reactLocalStorage.set("ShipmentId", res?.data?.shipment_id);
+        sessionStorage.setItem("ShipmentId", res?.data?.shipment_id);
 
         // toast.success(res.dat.message);
 
@@ -1158,7 +1551,7 @@ export const PostAdminOrderAddShipment = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostAdminOrderAddShipmentDispatch(responce));
@@ -1186,7 +1579,7 @@ export const PostViewAdminOrder = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostViewAdminOrderDispatch(responce));
@@ -1214,7 +1607,7 @@ export const GetDeliveryPriceDetail = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetDeliveryPriceDetailDispatch(responce));
@@ -1256,7 +1649,14 @@ const PostAdminPendingOrderActionDispatch = (data) => ({
 });
 export const PostAdminPendingOrderAction = (payload) => {
   let data = JSON.stringify(payload);
+
+  let InvoicePayLoad = {
+    product_order_id: payload?.product_order_id,
+    request_type: "create",
+  };
+
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .patch(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/pending_action`,
@@ -1268,25 +1668,22 @@ export const PostAdminPendingOrderAction = (payload) => {
         }
       )
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         toast.success(res.data.message);
-        // let payloadd ={
-        //   product_order_id: payload?.product_order_id,
-        //   request_type:"create"
-        // }
-
-        // // if(res.data.message=="Updated"){
-        //   dispatch(PostOrderDownloadLabelGenerationFile(payloadd))
-
+        // dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
+        dispatch(GetAdminOrderReceivedAtHub());
         dispatch(GetAdminOrderBooked());
         dispatch(GetAdminOrderPending());
         // dispatch(GetCancelOrderDetail());
-        toast.success(response.data.message);
+        toast.success(response?.data?.message);
 
         toast.success("Order Added successfully");
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+
+        toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -1340,7 +1737,7 @@ export const DeleteAdminPendingOrderAction = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(DeleteAdminPendingOrderActionDispatch(responce));
@@ -1369,10 +1766,127 @@ export const PostAdminSettingAddEmployee = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostAdminSettingAddEmployeeDispatch(responce));
+  };
+};
+
+const PostAdminSettingAddDeliveryboyDispatch = (data) => ({
+  type: actionType.PostAdminSettingAddDeliveryboyDispatch_Type,
+  payload: data,
+});
+export const PostAdminSettingAddDeliveryboy = (payload) => {
+  var fs = require("fs");
+  let formdata = new FormData();
+  formdata.append("name", payload.name);
+  formdata.append("phone_number", payload.phone_number);
+  formdata.append("email", payload.email);
+  formdata.append("password", payload.password);
+  formdata.append("confirm_pass", payload.confirm_pass);
+  formdata.append("from_date", payload.from_date);
+  formdata.append("to_date", payload.to_date);
+  payload.user_permision != null &&
+    formdata.append("user_permision", payload.user_permision);
+  formdata.append("category_id", payload.category_id);
+  formdata.append("aadhar_card", payload.aadhar_card);
+  formdata.append("driving_licence", payload.driving_licence);
+  payload.cheque_book != null &&
+    formdata.append("cheque_book", payload.cheque_book);
+  payload.passbook != null && formdata.append("passbook", payload.passbook);
+  payload.photo_one != null && formdata.append("photo_one", payload.photo_one);
+  payload.photo_two != null && formdata.append("photo_two", payload.photo_two);
+  let data = formdata;
+  return async (dispatch, getState) => {
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/add_delivery_boy`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        toast.success(res.data.message);
+        return res;
+      })
+      .catch((err) => {
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostAdminSettingAddDeliveryboyDispatch(responce));
+  };
+};
+// admin_panel/setting/delivery_boy_info
+
+const GetSettingDeliveryboyInfoDispatch = (data) => ({
+  type: actionType.GetSettingDeliveryboyInfoDispatch_Type,
+  payload: data,
+});
+export const GetSettingDeliveryboyInfo = (payload) => {
+  let data = JSON.stringify(payload);
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const response = await axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/delivery_boy_info`,
+
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        // toast.success(res.data.message);
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(GetSettingDeliveryboyInfoDispatch(response));
+  };
+};
+
+// admin_panel/orders/assign_delivery_partner
+const PostAssignDeliveryBoyPartnerDispatch = (data) => ({
+  type: actionType.PostAssignDeliveryBoyPartnerDispatch_Type,
+  payload: data,
+});
+export const PostAssignDeliveryBoyPartner = (payload) => {
+  let data = JSON.stringify(payload);
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/assign_delivery_partner`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.success(res?.data?.message);
+        dispatch(GetAdminOrderPending());
+        // dispatch(GetAdminOrderReadyForPickup());
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostAssignDeliveryBoyPartnerDispatch(responce));
   };
 };
 
@@ -1399,7 +1913,8 @@ export const GetCategoryDetails = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -1427,6 +1942,7 @@ const GetSettingViewPermissionDispatch = (data) => ({
 export const GetSettingViewPermission = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    // dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .get(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/view_permissions_details`,
@@ -1438,11 +1954,14 @@ export const GetSettingViewPermission = (payload) => {
         }
       )
       .then((res) => {
+        // dispatch(OrderPagesLoaderTrueFalse(false));
         // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -1470,6 +1989,7 @@ const GetSettingEmployeeInfoDispatch = (data) => ({
 export const GetSettingEmployeeInfo = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .get(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/employee_info`,
@@ -1481,11 +2001,14 @@ export const GetSettingEmployeeInfo = (payload) => {
         }
       )
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -1530,7 +2053,7 @@ export const PostAdminSettingAddCategory = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostAdminSettingAddCategoryDispatch(responce));
@@ -1544,6 +2067,7 @@ const GetSettingUserInfoDispatch = (data) => ({
 export const GetSettingUserInfo = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/user_info`,
@@ -1556,11 +2080,13 @@ export const GetSettingUserInfo = (payload) => {
         }
       )
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -1588,6 +2114,7 @@ const DeleteAdminSettingDeleteUserDispatch = (data) => ({
 export const DeleteAdminSettingDeleteUser = (payload) => {
   // let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .delete(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/delete_user`,
@@ -1601,14 +2128,17 @@ export const DeleteAdminSettingDeleteUser = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
         dispatch(getOrderAddress());
         dispatch(GetSettingEmployeeInfo());
+        dispatch(GetSettingDeliveryboyInfo());
         toast.success("User Deleted successfully");
         dispatch(GetSettingEmployeeInfo());
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(DeleteAdminSettingDeleteUserDispatch(responce));
@@ -1622,6 +2152,7 @@ const PatchEditUserPermissionDispatch = (data) => ({
 
 export const PatchEditUserPermission = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .patch(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/edit_user_permission`,
@@ -1633,15 +2164,77 @@ export const PatchEditUserPermission = (payload) => {
         }
       )
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         toast.success("Profile updated successfully");
         // window.location.reload(false)
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PatchEditUserPermissionDispatch(responce));
+  };
+};
+
+// delivery boy
+// admin_panel/setting/edit_delivery_boy
+const PatchEditDeliveryboyDispatch = (data) => ({
+  type: actionType.PatchEditDeliveryboyDispatch_Type,
+  payload: data,
+});
+
+export const PatchEditDeliveryboy = (payload) => {
+  var fs = require("fs");
+  let formdata = new FormData();
+  formdata.append("user_name", payload.user_name);
+  formdata.append("phone_number", payload.phone_number);
+  formdata.append("email", payload.email);
+  formdata.append("user_id", payload.user_id);
+  formdata.append("from_date", payload.from_date);
+  formdata.append("to_date", payload.to_date);
+  payload?.user_permission?.arrayPermission != null &&
+    formdata.append("user_permision", payload.user_permission?.arrayPermission);
+  payload?.delete_permission?.arrayRemovePermission != null &&
+    formdata.append(
+      "delete_permission",
+      payload?.delete_permission?.arrayRemovePermission
+    );
+  formdata.append("category_id", payload.category_id);
+  payload.aadhar_card != null &&
+    formdata.append("aadhar_card", payload.aadhar_card);
+  payload.driving_licence != null &&
+    formdata.append("driving_licence", payload.driving_licence);
+  payload.cheque_book != null &&
+    formdata.append("cheque_book", payload.cheque_book);
+  payload.passbook != null && formdata.append("passbook", payload.passbook);
+  payload.photo_one != null && formdata.append("photo_one", payload.photo_one);
+  payload.photo_two != null && formdata.append("photo_two", payload.photo_two);
+
+  let data = formdata;
+
+  return async (dispatch, getState) => {
+    const responce = await axios
+      .patch(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/edit_delivery_boy`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        toast.success("Profile updated successfully");
+        dispatch(GetSettingDeliveryboyInfo());
+        return res;
+      })
+      .catch((err) => {
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PatchEditDeliveryboyDispatch(responce));
   };
 };
 
@@ -1818,7 +2411,7 @@ export const PatchEditCategoryDetails = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PatchEditCategoryDetailsDispatch(responce));
@@ -1850,7 +2443,7 @@ export const DeleteCategoryDetails = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(DeleteCategoryDetailsDispatch(responce));
@@ -1866,7 +2459,7 @@ export const GetAdminProfile = (payload) => {
   return async (dispatch, getState) => {
     const response = await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/admin_panel/viewprofile`,
+        `${process.env.REACT_APP_BASE_URL}/viewprofile`,
 
         {
           headers: {
@@ -1879,7 +2472,8 @@ export const GetAdminProfile = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -1908,28 +2502,53 @@ const PatchEditProfileDispatch = (data) => ({
 export const PatchEditProfile = (payload) => {
   return async (dispatch, getState) => {
     const responce = await axios
-      .patch(
-        `${process.env.REACT_APP_BASE_URL}/address/resetpassword`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${BearerToken}`,
-          },
-        }
-      )
+      .patch(`${process.env.REACT_APP_BASE_URL}/resetpassword`, payload, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
       .then((res) => {
         toast.success("Profile updated successfully");
 
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PatchEditProfileDispatch(responce));
   };
 };
 
+// const PatchAdminEditProfileDispatch = (data) => ({
+//   type: actionType.PatchAdminEditProfileDispatch_Type,
+//   payload: data,
+// });
+
+// export const PatchAdminEditProfile = (payload) => {
+//   return async (dispatch, getState) => {
+//     const responce = await axios
+//       .patch(
+//         `${process.env.REACT_APP_BASE_URL}/editprofile`,
+//         payload,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${BearerToken}`,
+//           },
+//         }
+//       )
+//       .then((res) => {
+//         toast.success("Profile updated successfully");
+
+//         return res;
+//       })
+//       .catch((err) => {
+//         toast.warn(err.response.data.message);
+//         return err;
+//       });
+//     dispatch(PatchAdminEditProfileDispatch(responce));
+//   };
+// };
 const PostAdminOrderCsvFileDispatch = (data) => ({
   type: actionType.PostAdminOrderCsvFileDispatch_Type,
   payload: data,
@@ -1938,7 +2557,7 @@ export const PostAdminOrderCsvFile = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
     const responce = await axios
-      .post(`${process.env.REACT_APP_BASE_URL}/bill/pending.csv`, payload, {
+      .post(`${process.env.REACT_APP_BASE_URL}/bill/csv`, payload, {
         headers: {
           Authorization: `Bearer ${BearerToken}`,
         },
@@ -1992,6 +2611,7 @@ const PostOrderDownloadInvoiceFileDispatch = (data) => ({
 export const PostOrderDownloadInvoiceFile = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    // dispatch(OrderPagesLoaderTrueFalse(true))
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/bill/invoice`,
@@ -2007,13 +2627,14 @@ export const PostOrderDownloadInvoiceFile = (payload) => {
         }
       )
       .then((res) => {
-        window.open(`${res?.data?.name}`);
-        // window.location.reload(false)
+        // dispatch(OrderPagesLoaderTrueFalse(false))
 
+        window.open(`${res?.data?.name}`);
         // toast.success("Invoice Generated successfully");
         return res;
       })
       .catch((err) => {
+        // dispatch(OrderPagesLoaderTrueFalse(false))
         toast.error(err.response.data.message);
         return err;
       });
@@ -2028,6 +2649,7 @@ const GetOrderDownloadInvoiceDispatch = (data) => ({
 export const GetOrderDownloadInvoice = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .get(
         `${process.env.REACT_APP_BASE_URL}/bill/invoice`,
@@ -2039,11 +2661,13 @@ export const GetOrderDownloadInvoice = (payload) => {
         }
       )
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetOrderDownloadInvoiceDispatch(responce));
@@ -2059,6 +2683,7 @@ export const PostOrderDownloadLabelGenerationFile = (payload) => {
   let data = JSON.stringify(payload);
 
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/bill/label`,
@@ -2076,7 +2701,9 @@ export const PostOrderDownloadLabelGenerationFile = (payload) => {
       .then((res) => {
         // toast.success(res.data.message);
         // window.open(`${res?.data?.name}`)
+
         if (res.status == 200) {
+          dispatch(OrderPagesLoaderTrueFalse(false));
           if (payload.request_type !== "create") {
             window.open(`${res?.data?.name}`);
             // window.location.reload(false)
@@ -2088,8 +2715,9 @@ export const PostOrderDownloadLabelGenerationFile = (payload) => {
         return res;
       })
       .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         // toast.warn(err.response.data.message);
-        toast.error(err.response.data.message);
+        toast.error(err?.response?.data?.message);
         return err;
       });
     dispatch(PostOrderDownloadLabelGenerationFileDispatch(responce));
@@ -2103,6 +2731,7 @@ const GetOrderDownloadLabelGenerationDispatch = (data) => ({
 export const GetOrderDownloadLabelGeneration = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .get(
         `${process.env.REACT_APP_BASE_URL}/bill/invoice`,
@@ -2114,11 +2743,13 @@ export const GetOrderDownloadLabelGeneration = (payload) => {
         }
       )
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetOrderDownloadLabelGenerationDispatch(responce));
@@ -2157,7 +2788,7 @@ export const DeleteAdminOrder = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(DeleteAdminOrderDispatch(responce));
@@ -2187,7 +2818,7 @@ export const PatchEditEmployee = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PatchEditEmployeeDispatch(responce));
@@ -2216,7 +2847,8 @@ export const GetBillingInvoiceDetail = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetBillingInvoiceDetailDispatch(responce));
@@ -2245,7 +2877,8 @@ export const GetBillingAmountCount = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetBillingAmountCountDispatch(responce));
@@ -2259,10 +2892,11 @@ const GetDashboardNotificationDispatch = (data) => ({
 export const GetDashboardNotification = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    let CompanyDetails = sessionStorage.getItem("UserDetailsPayload", false);
+    let OrderComapnyData = JSON.parse(CompanyDetails);
     const response = await axios
       .get(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/dashboard/notification`,
-
         {
           headers: {
             Authorization: `Bearer ${BearerToken}`,
@@ -2270,11 +2904,16 @@ export const GetDashboardNotification = (payload) => {
         }
       )
       .then((res) => {
+        if (OrderComapnyData?.company_name == "false") {
+          // dispatch(GetWalletBalance());
+        }
+
         // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -2295,6 +2934,64 @@ export const GetDashboardNotification = (payload) => {
   };
 };
 
+const GetDeliveryBoyNotificationDispatch = (data) => ({
+  type: actionType.GetDeliveryBoyNotificationDispatch_Type,
+  payload: data,
+});
+export const GetDeliveryBoyNotification = (payload) => {
+  let data = JSON.stringify(payload);
+  return async (dispatch, getState) => {
+    const response = await axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/dashboard/delivery_boy_notification`,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        // toast.success(res.data.message);
+        return res;
+      })
+      .catch((err) => {
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(GetDeliveryBoyNotificationDispatch(response));
+  };
+};
+
+// refresh notification
+const PostDeliveryBoyNotificationDispatch = (data) => ({
+  type: actionType.PostDeliveryBoyNotificationDispatch_Type,
+  payload: data,
+});
+export const PostDeliveryBoyNotification = (payload) => {
+  let data = JSON.stringify(payload);
+  return async (dispatch, getState) => {
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/dashboard/delivery_boy_refresh_notify`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(GetDeliveryBoyNotification());
+        return res;
+      })
+      .catch((err) => {
+        // toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostDeliveryBoyNotificationDispatch(responce));
+  };
+};
 const PostAddOrderTagDispatch = (data) => ({
   type: actionType.PostAddOrderTagDispatch_Type,
   payload: data,
@@ -2322,7 +3019,7 @@ export const PostAddOrderTag = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostAddOrderTagDispatch(responce));
@@ -2362,7 +3059,7 @@ export const PostUploadFile = (payload) => {
       .catch((err) => {
         let errorData = `${err.response.data.errors[0].order_id} ${err.response.data.errors[0].error_msg}`;
         toast.warn(errorData);
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
 
         // toast.success(err.data.message);
         return err;
@@ -2394,7 +3091,7 @@ export const PostCompanyFile = (payload) => {
     let bodyContent = formdata;
 
     let reqOptions = {
-      url: `${process.env.REACT_APP_BASE_URL}/company_info"`,
+      url: `${process.env.REACT_APP_BASE_URL}/company_info`,
       method: "POST",
 
       data: bodyContent,
@@ -2419,6 +3116,7 @@ export const PostPincodeUploadFile = (payload) => {
   // bill/PincodeUploadPincodeFile
 
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/bill/UploadPincodeFile`,
@@ -2430,14 +3128,20 @@ export const PostPincodeUploadFile = (payload) => {
         }
       )
       .then((res) => {
-        toast.success("Pincode Uploaded Successfully");
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        if (res?.data?.message == "Missing details") {
+          toast.warn(res.data.message);
+        } else {
+          toast.success(res?.data?.message);
+        }
         // toast.success(res.data.message);
 
         return res;
       })
       .catch((err) => {
-        // toast.warn(err.error[0].error_msg);
-        toast.warn(err?.response?.data?.error[0]?.error_msg);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
+        // toast.warn(err?.response?.data?.error[0]?.error_msg);
 
         return err;
       });
@@ -2467,7 +3171,8 @@ export const PostDashboardRevenue = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostDashboardRevenueDispatch(responce));
@@ -2492,7 +3197,7 @@ export const PostDashboardViewOrder = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostDashboardViewOrderDispatch(responce));
@@ -2520,7 +3225,7 @@ export const GetCodRemittance = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetCodRemittanceDispatch(responce));
@@ -2576,7 +3281,7 @@ export const GetB2bCompanyInfo = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
 
@@ -2621,13 +3326,128 @@ export const PostUploadBillRemittanceFile = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostUploadBillRemittanceFileDispatch(responce));
   };
 };
+const PostUploadTariffFileDispatch = (data) => ({
+  type: actionType.PostUploadTariffFileDispatch_Type,
+  payload: data,
+});
+export const PostUploadTariffFile = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const formData = new FormData();
+    if (payload.type == "b2b") {
+      formData.append("price_file", payload.price_file);
+      formData.append("user_id", payload.user_id);
+    } else {
+      formData.append("price_file", payload.price_file);
+    }
 
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/bill/UploadTariffData`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.success("Upload successfully");
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostUploadTariffFileDispatch(responce));
+  };
+};
+
+const PostUploadInsuranceFileDispatch = (data) => ({
+  type: actionType.PostUploadInsuranceFileDispatch_Type,
+  payload: data,
+});
+export const PostUploadInsuranceFile = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const formData = new FormData();
+    if (payload.type == "b2b") {
+      formData.append("price_file", payload.price_file);
+      formData.append("user_id", payload.user_id);
+    } else {
+      formData.append("price_file", payload.price_file);
+    }
+
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/bill/UploadInsuranceData`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.success("Upload successfully");
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostUploadInsuranceFileDispatch(responce));
+  };
+};
+
+const PostUploadPackagingFileDispatch = (data) => ({
+  type: actionType.PostUploadPackagingFileDispatch_Type,
+  payload: data,
+});
+export const PostUploadPackagingFile = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const formData = new FormData();
+    if (payload.type == "b2b") {
+      formData.append("price_file", payload.price_file);
+      formData.append("user_id", payload.user_id);
+    } else {
+      formData.append("price_file", payload.price_file);
+    }
+
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/bill/UploadPackagingData`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.success("Upload successfully");
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostUploadPackagingFileDispatch(responce));
+  };
+};
 const GetWalletHistoryDispatch = (data) => ({
   type: actionType.GetWalletHistoryDispatch_Type,
   payload: data,
@@ -2661,7 +3481,6 @@ export const GetWalletHistory = (payload) => {
     //     return res;
     //   })
     //   .catch((err) => {
-
     //     return err;
     //   });
     dispatch(GetWalletHistoryDispatch(responce));
@@ -2674,6 +3493,9 @@ const GetWalletBalanceDispatch = (data) => ({
 });
 export const GetWalletBalance = (payload) => {
   return async (dispatch, getState) => {
+    let companyname = sessionStorage.getItem("UserDetailsPayload", false);
+
+    // dispatch(OrderPagesLoaderTrueFalse(true));
     //     let headersList = {
     //       Accept: "*/*",
     //       Authorization: `Bearer ${BearerToken}`,
@@ -2690,7 +3512,6 @@ export const GetWalletBalance = (payload) => {
     //       dispatch(GetWalletHistory());
     //     }
     const response = await axios
-
       .post(`${process.env.REACT_APP_BASE_URL}/wallet/balance`, payload, {
         headers: {
           Authorization: `Bearer ${BearerToken}`,
@@ -2699,13 +3520,21 @@ export const GetWalletBalance = (payload) => {
       .then((res) => {
         toast.success(res.data.message);
         if (res.status == 200) {
-          dispatch(GetWalletHistory());
-          dispatch(GetAdminOrderPending());
+          // dispatch(OrderPagesLoaderTrueFalse(false));
+          if(Is_delivery_boy!="true"){
+            dispatch(GetWalletHistory());
+          }
+          
         }
-
+        // if (res.status == 200) {
+        //   dispatch(GetWalletHistory());
+        //   dispatch(OrderPagesLoaderTrueFalse(false));
+        //   // dispatch(GetAdminOrderPending());  my commented
+        // }
         return res;
       })
       .catch((err) => {
+        // dispatch(OrderPagesLoaderTrueFalse(false));
         toast.warn(err?.response?.data?.message);
         return err;
       });
@@ -2734,7 +3563,7 @@ export const PostWalletAddMoney = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostWalletAddMoneyDispatch(responce));
@@ -2747,7 +3576,7 @@ const PostDebitBalanceDispatch = (data) => ({
 });
 export const PostDebitBalance = (payload) => {
   return async (dispatch, getState) => {
-    let orderIdData = payload?.order_id.toString();
+    let orderIdData = payload?.order_id?.toString();
     let InvoicePayLoad = {
       product_order_id: orderIdData,
       request_type: "create",
@@ -2764,22 +3593,26 @@ export const PostDebitBalance = (payload) => {
       })
       .then((res) => {
         toast.success("Order Placed Successfully");
-        reactLocalStorage.remove("UserDetailsPayload");
-        reactLocalStorage.remove("Eway_bill_URL");
-        reactLocalStorage.remove("PayloadOrderData");
-        reactLocalStorage.remove("Eway_bill_id");
-        reactLocalStorage.remove("OrderDetailsId");
-        reactLocalStorage.remove("add_order_tag");
-        dispatch(GetWalletBalance());
-        dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
-        dispatch(PostOrderDownloadLabelGenerationFile(Labelpayload));
+        sessionStorage.removeItem("UserDetailsPayload");
+        sessionStorage.removeItem("Eway_bill_URL");
+        sessionStorage.removeItem("PayloadOrderData");
+        sessionStorage.removeItem("Eway_bill_id");
+        sessionStorage.removeItem("OrderDetailsId");
+        sessionStorage.removeItem("add_order_tag");
+
+        if(Is_delivery_boy != "true"){
+          dispatch(GetWalletBalance());
+         }
+        
+        // dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
+        // dispatch(PostOrderDownloadLabelGenerationFile(Labelpayload))
         dispatch(GetCancelOrderDetail());
         dispatch(GetCancelOrderDetail());
 
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostDebitBalanceDispatch(responce));
@@ -2808,7 +3641,7 @@ export const PostTrackingOrderDetails = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostTrackingOrderDetailsDispatch(responce));
@@ -2839,7 +3672,8 @@ export const PostBillingCodRemittanceCount = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostBillingCodRemittanceCountDispatch(responce));
@@ -2853,6 +3687,7 @@ const PostBillingCodRemittanceDetailsDispatch = (data) => ({
 export const PostBillingCodRemittanceDetails = (payload) => {
   let data = JSON.stringify(payload);
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/billing/cod_remittance_details`,
@@ -2865,12 +3700,14 @@ export const PostBillingCodRemittanceDetails = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
         toast.warn(res.data.message);
-
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostBillingCodRemittanceDetailsDispatch(responce));
@@ -2903,7 +3740,7 @@ export const PostCreateTicket = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostCreateTicketDispatch(responce));
@@ -2916,6 +3753,7 @@ const PostTicketDetailDispatch = (data) => ({
 });
 export const PostTicketDetail = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/ticket_detail`,
@@ -2927,11 +3765,14 @@ export const PostTicketDetail = (payload) => {
         }
       )
       .then((res) => {
-        toast.warn(res.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(res?.data?.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostTicketDetailDispatch(responce));
@@ -2960,7 +3801,7 @@ export const DeleteSupportTicket = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(DeleteSupportTicketData(response));
@@ -2984,7 +3825,7 @@ export const PostCreateFeedback = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.error(err.response.data.message);
+        toast.error(err?.response?.data?.message);
         return err;
       });
     dispatch(PostCreateFeedbackDispatch(responce));
@@ -2998,6 +3839,7 @@ const PatchTrackData = (data) => ({
 
 export const PatchTrackDetails = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .patch(
         `${process.env.REACT_APP_BASE_URL}/tracking/update_order`,
@@ -3009,7 +3851,11 @@ export const PatchTrackDetails = (payload) => {
         }
       )
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         toast.success("Updated Status Successfully");
+        dispatch(GetAdminOrderPickedUp());
+        dispatch(GetAdminOrderReadyForPickup());
+        dispatch(GetAdminOrderReceivedAtHub());
         dispatch(GetAdminOrderBooked());
         dispatch(GetAdminOrderIntransit());
         dispatch(GetAdminOrderDelivered());
@@ -3019,7 +3865,8 @@ export const PatchTrackDetails = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.error(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.error(err?.response?.data?.message);
         return err;
       });
     dispatch(PatchTrackData(responce));
@@ -3046,7 +3893,7 @@ export const GetCustomerOrderDetail = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetCustomerOrderDetailDispatch(response));
@@ -3059,18 +3906,25 @@ const PostRaiseContactUSDispatch = (data) => ({
 });
 export const PostRaiseContactUS = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
-      .post(`${process.env.REACT_APP_BASE_URL}/shipping/contanct_us`, payload, {
-        headers: {
-          Authorization: `Bearer ${BearerToken}`,
-        },
-      })
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/shipping/contanct_us`,
+        payload
+        //  {
+        //   headers: {
+        //     Authorization: `Bearer ${BearerToken}`,
+        //   },
+        // }
+      )
       .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostRaiseContactUSDispatch(responce));
@@ -3093,13 +3947,13 @@ export const PostOrderTrack = (payload) => {
         if (res?.data?.current_status == "PENDING") {
           toast.warn("This Order Id Can't Track Because It Is In Pending");
         } else {
-          toast.warn(res.data.message);
+          toast.warn(res?.data?.message);
         }
 
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostOrderTrackDispatch(responce));
@@ -3112,6 +3966,7 @@ const PostGetFeedbackDispatch = (data) => ({
 });
 export const PostGetFeedback = (payload) => {
   return async (dispatch, getState) => {
+    // dispatch(OrderPagesLoaderTrueFalse(true))
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/order/response_details`,
@@ -3124,11 +3979,12 @@ export const PostGetFeedback = (payload) => {
       )
       .then((res) => {
         toast.warn(res.data.message);
-
+        // dispatch(OrderPagesLoaderTrueFalse(false))
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
+        // dispatch(OrderPagesLoaderTrueFalse(false))
         return err;
       });
     dispatch(PostGetFeedbackDispatch(responce));
@@ -3158,7 +4014,7 @@ export const PostClearNotification = (payload) => {
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostClearNotificationDispatch(responce));
@@ -3182,12 +4038,12 @@ export const PostKYCdetail = (payload) => {
         }
       )
       .then((res) => {
-        toast.warn(res.data.message);
+        toast.warn(res?.data?.message);
 
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostKYCdetailDispatch(responce));
@@ -3210,12 +4066,13 @@ export const GetUserNotification = (payload) => {
         }
       )
       .then((res) => {
-        toast.warn(res.data.message);
+        toast.warn(res?.data?.message);
 
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetUserNotificationDispatch(responce));
@@ -3236,11 +4093,11 @@ export const GetAuthDetails = (payload) => {
         },
       })
       .then((res) => {
-        toast.warn(res.data.message);
+        toast.warn(res?.data?.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetAuthDetailsDispatch(responce));
@@ -3263,11 +4120,11 @@ export const GetPermission = (payload) => {
         }
       )
       .then((res) => {
-        toast.warn(res.data.message);
+        toast.warn(res?.data?.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetPermissionDispatch(responce));
@@ -3282,7 +4139,7 @@ export const GetGoogleCityState = (payload) => {
   return async (dispatch, getState) => {
     const response = await axios
       .get(
-        ` https://maps.googleapis.com/maps/api/geocode/json?address=${payload}&key=${process.env.REACT_APP_BASE_GOOGLE_API_KEY}`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${payload}&key=${process.env.REACT_APP_BASE_GOOGLE_API_KEY}`
       )
       .then((res) => {
         return res?.data?.results;
@@ -3312,12 +4169,12 @@ export const PostTransactionHistory = (payload) => {
         }
       )
       .then((res) => {
-        toast.warn(res.data.message);
+        toast.warn(res?.data?.message);
 
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(PostTransactionHistoryDispatch(responce));
@@ -3330,6 +4187,7 @@ const GetCancelOrderDetailDispatch = (data) => ({
 });
 export const GetCancelOrderDetail = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .get(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/cancelled_order_details`,
@@ -3340,11 +4198,14 @@ export const GetCancelOrderDetail = (payload) => {
         }
       )
       .then((res) => {
-        toast.warn(res.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(res?.data?.message);
         return res;
       })
       .catch((err) => {
-        toast.warn(err.response.data.message);
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
         return err;
       });
     dispatch(GetCancelOrderDetailDispatch(responce));
@@ -3368,15 +4229,156 @@ export const PostTrackingOtp = (payload) => {
         }
       )
       .then((res) => {
-        toast.success(res.data.message);
+        toast.success(res?.data?.message);
 
         return res;
       })
       .catch((err) => {
-        toast.error(err.response.data.message);
+        toast.error(err?.response?.data?.message);
         return err;
       });
     dispatch(PostTrackingOtpDispatch(responce));
+  };
+};
+
+const PostQrDetailsDispatch = (data) => ({
+  type: actionType.PostQrDetailsDispatch_Type,
+  payload: data,
+});
+export const PostQrDetails = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const responce = await axios
+      .post(`${process.env.REACT_APP_BASE_URL}/qr/qr_details`, payload, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.success(res?.data?.message);
+
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.error(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostQrDetailsDispatch(responce));
+  };
+};
+
+const PostPaymentApprovalDispatch = (data) => ({
+  type: actionType.PostPaymentApprovalDispatch_Type,
+  payload: data,
+});
+export const PostPaymentApproval = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const responce = await axios
+      .post(`${process.env.REACT_APP_BASE_URL}/qr/qr_chat`, payload, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.success(res?.data?.message);
+
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.error(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostPaymentApprovalDispatch(responce));
+  };
+};
+
+const PostPaymentChatDispatch = (data) => ({
+  type: actionType.PostPaymentChatDispatch_Type,
+  payload: data,
+});
+export const PostPaymentChat = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const responce = await axios
+      .post(`${process.env.REACT_APP_BASE_URL}/qr/qr_commets`, payload, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.success(res?.data?.message);
+
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.error(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostPaymentChatDispatch(responce));
+  };
+};
+
+const PatchPaymentApprovalActionDispatch = (data) => ({
+  type: actionType.PatchPaymentApprovalActionDispatch_Type,
+  payload: data,
+});
+
+export const PatchPaymentApprovalAction = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const responce = await axios
+      .patch(`${process.env.REACT_APP_BASE_URL}/qr/close_chat`, payload, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.success(res?.data?.message);
+        // dispatch(GetSettingEmployeeInfo());
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PatchPaymentApprovalActionDispatch(responce));
+  };
+};
+
+const PostPaymentAddAmountDispatch = (data) => ({
+  type: actionType.PostPaymentAddAmountDispatch_Type,
+  payload: data,
+});
+export const PostPaymentAddAmount = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const responce = await axios
+      .patch(`${process.env.REACT_APP_BASE_URL}/add_amount`, payload, {
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+        },
+      })
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.success(res?.data?.message);
+
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.error(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostPaymentAddAmountDispatch(responce));
   };
 };
 

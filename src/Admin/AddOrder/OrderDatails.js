@@ -31,9 +31,11 @@ const OrderDatails = () => {
   const [ewayPdf, setEwayPdf] = useState("")
   const [ewayPdfLocalName, setEwayPdfLocalName] = useState("")
   const [addtagvalue, setAddTagValue] = useState("")
+  const [minDate, setMinDate] = useState("");
+
   const navigate = useNavigate();
   const dispatch = useDispatch()
-
+  const  productRef = useRef();
   const WeightRef = useRef(null);
   const LengthRef = useRef(null);
 
@@ -48,11 +50,17 @@ const OrderDatails = () => {
   const PostAdminOrderEwayBillData = useSelector(state => state.PostAdminOrderEwayBillReducer.PostAdminOrderEwayBillData)
   //   const url =
   //   PostAdminOrderEwayBillData?.data
-  const storedEwaybillUrl = reactLocalStorage.get('Eway_bill_URL', false)
+  const storedEwaybillUrl = sessionStorage.getItem('Eway_bill_URL', false)
+  let UserDetailsPayloadParse = sessionStorage.getItem("UserDetailsPayload", false);
+  let UserDetailsPayloadParseData = JSON.parse(UserDetailsPayloadParse)
+  let ZoneData = sessionStorage.getItem("ZoneData", false);
+
+
   useEffect(() => {
-    let ProductOrderId = reactLocalStorage.get("product_order_id", false);
-    let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
+    let ProductOrderId = sessionStorage.getItem("product_order_id", false);
+    let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
     let OrderDetailsIdData = JSON.parse(OrderDetailsId)
+
     let PayloadData = {
       // "product_order_id": OrderDetailsIdData.product_order_id,
       "product_type": selectedproduct,
@@ -66,51 +74,85 @@ const OrderDatails = () => {
       "quantity": Number(quentity),
       "packaging": shippingprice,
       "insurance": yesnoactivebuttonInsurance,
+      "product_price": productpricevalue,
+      "company_name": UserDetailsPayloadParseData?.company_name,
+      "zone": ZoneData,
+      "method": UserDetailsPayloadParseData?.method,
     }
 
 
 
     if (deliveryproduct && selectedproduct && quentity && weight &&
-      breadth && length && height) {
+      breadth && length && height && productpricevalue) {
       if (selectedproduct !== null && selectedproduct !== "none" &&
         deliveryproduct !== null && deliveryproduct !== "none") {
+        if (yesnoactivebutton == true) {
+          if (shippingprice != null) {
+            dispatch(PostAdminOrderPaymentCal(PayloadData))
+          }
+          else {
+            toast.warn("Please Select Package Shipping");
+          }
+
+        }
+        else {
+          dispatch(PostAdminOrderPaymentCal(PayloadData))
+        }
+
         setProductTypeErorr(false)
-        dispatch(PostAdminOrderPaymentCal(PayloadData))
+        // dispatch(PostAdminOrderPaymentCal(PayloadData))
       }
       else {
-        toast.warn("please select all fields ");
+        toast.warn("Please select all fields ");
         // setProductTypeErorr(true)
       }
     }
     // deliveryproduct && selectedproduct == null || "none" ? setProductTypeErorr(true) : selectedproduct && quentity && weight && date && yesnoactivebutton && breadth && length && height &&
     //   dispatch(PostAdminOrderPaymentCal(PayloadData))
-  }, [deliveryproduct, breadth, length, height, selectedproduct, quentity, weight, date, yesnoactivebutton, shippingprice, yesnoactivebuttonInsurance])
+  }, [deliveryproduct, breadth, length, height, selectedproduct, quentity, weight, date, yesnoactivebutton, shippingprice, yesnoactivebuttonInsurance, productpricevalue])
+
+
+  useEffect(() => {
+    if (yesnoactivebutton == false) {
+      setShippingPrice("null")
+    }
+  }, [yesnoactivebutton])
 
 
   const CurrentDateFun = (e) => {
     const selected = new Date(e.target.value);
-    console.log("bvcchsgdvhd", e.target.value)
     const maxDate = new Date();
     maxDate.setHours(0, 0, 0, 0);
-    console.log("sdchgcdhvd", selected)
     // if (selected >= maxDate) {
     // let spliteData = selected?.toISOString()?.split("T")
-    // console.log("bvsdhv",spliteData)
     // setDate(spliteData[0])
     setDate(e.target.value)
     // }
     // else {
-    //   toast.warn("please select validDate ");
+    //   toast.warn("Please select validDate ");
     //   setDate("")
     // }
   }
   useEffect(() => {
-    PostAdminOrderPaymentCalReducerData &&
-      setTax(PostAdminOrderPaymentCalReducerData?.data?.gst)
-    setPrice(PostAdminOrderPaymentCalReducerData?.data?.price)
-    setDiscount("0")
-    reactLocalStorage.set('totalPriceValue', PostAdminOrderPaymentCalReducerData?.data?.total_price)
-    setTotal(PostAdminOrderPaymentCalReducerData?.data?.total_price)
+
+
+    if (PostAdminOrderPaymentCalReducerData.status == 200) {
+      PostAdminOrderPaymentCalReducerData &&
+        setTax(PostAdminOrderPaymentCalReducerData?.data?.gst)
+      setPrice(PostAdminOrderPaymentCalReducerData?.data?.price)
+      setDiscount("0")
+      sessionStorage.setItem('totalPriceValue', PostAdminOrderPaymentCalReducerData?.data?.total_price)
+      setTotal(PostAdminOrderPaymentCalReducerData?.data?.total_price)
+
+    }
+    else {
+      setTax("")
+      setPrice("")
+      setDiscount("0")
+      sessionStorage.setItem('totalPriceValue', "")
+      setTotal("")
+
+    }
     if (PostAdminOrderAddShipmentReducerData?.status == 200) {
       navigate("/admin/order/ordersummary");
     }
@@ -120,7 +162,7 @@ const OrderDatails = () => {
     // window.location.reload(true)
   }
   useEffect(() => {
-    const storedDefaultValue = reactLocalStorage.get('PayloadOrderData')
+    const storedDefaultValue = sessionStorage.getItem('PayloadOrderData')
     const PayloadOrderData = storedDefaultValue ? JSON.parse(storedDefaultValue) : null
     if (PayloadOrderData) {
       setDefaultValue(PayloadOrderData)
@@ -130,10 +172,12 @@ const OrderDatails = () => {
     }
   }, [])
 
+   let UserDetailsPayload = sessionStorage.getItem("UserDetailsPayload", false);
 
   const ItemDetailsNextBtnFun = () => {
-    // let ProductOrderId = reactLocalStorage.get("product_order_id", false); 
-    let OrderDetailsId = reactLocalStorage.get("OrderDetailsId", false);
+    // let ProductOrderId = sessionStorage.getItem("product_order_id", false); 
+    let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
+    
     let OrderDetailsIdData = JSON.parse(OrderDetailsId)
     // "company_name":"DemoTest",
     // "amount":"1234",
@@ -154,6 +198,8 @@ const OrderDatails = () => {
       // "Eway_Bill":ewayPdf,
       // "Eway_price": productpricevalue,
       "product_price": productpricevalue,
+
+       
     }
     let AddOrderTag = {
       "add_order": addtagvalue
@@ -162,94 +208,129 @@ const OrderDatails = () => {
     const selected = new Date(date);
     const maxDate = new Date();
     maxDate.setHours(0, 0, 0, 0);
-    // console.log("jdhvjsv",selected,"dfefsfsf",maxDate)
-    // selected == "Invalid Date"?toast.warn("please select validDate")
-    // :selected <= maxDate?toast.warn("please select validDate"): date
+    // selected == "Invalid Date"?toast.warn("Please select validDate")
+    // :selected <= maxDate?toast.warn("Please select validDate"): date
 
-    let AddOrder = reactLocalStorage.set("add_order_tag", JSON.stringify(AddOrderTag))
-    let EwayBill = reactLocalStorage.get("Eway_bill_URL", false)
-    if (deliveryproduct && breadth && length && height && selectedproduct && quentity && weight
+    let AddOrder = sessionStorage.setItem("add_order_tag", JSON.stringify(AddOrderTag))
+    let EwayBill = sessionStorage.getItem("Eway_bill_URL", false)
+    if (deliveryproduct && breadth && length && height && selectedproduct && quentity && weight && productpricevalue
 
 
     ) {
-      if (selectedproduct !== null && selectedproduct !== "none"
+      if (selectedproduct !== null && selectedproduct !== "none" && tax != ""
         && deliveryproduct !== null && deliveryproduct !== "none") {
         setProductTypeErorr(false)
         if (yesnoactivebutton == true) {
-          if (shippingprice !== null) {
+          if (shippingprice !== "null") {
+
             if (productpricevalue >= 50000) {
               if (EwayBill !== false && EwayBill !== "Upload E-way Bill") {
-                reactLocalStorage.set("PayloadOrderData", JSON.stringify(PayloadData))
-                selected == "Invalid Date" ? toast.warn("please select validDate")
-                  : selected <= maxDate ? toast.warn("please select validDate") : date
+                sessionStorage.setItem("PayloadOrderData", JSON.stringify(PayloadData))
+                selected == "Invalid Date" ? toast.warn("Please select valid Date")
+                  : selected <= maxDate ? toast.warn("Please select valid Date") : date
                     && navigate("/admin/order/ordersummary")
               }
               else {
-                toast.warn("please Upload E-way Bill");
+                toast.warn("Please Upload E-way Bill");
               }
             }
             else {
-              reactLocalStorage.set("Eway_bill_URL", "Upload E-way Bill")
-              reactLocalStorage.set("Eway_bill_id", "")
-              reactLocalStorage.set("PayloadOrderData", JSON.stringify(PayloadData))
-              selected == "Invalid Date" ? toast.warn("please select validDate")
-                : selected <= maxDate ? toast.warn("please select validDate") : date
+              sessionStorage.setItem("Eway_bill_URL", "Upload E-way Bill")
+              sessionStorage.setItem("Eway_bill_id", "")
+              sessionStorage.setItem("PayloadOrderData", JSON.stringify(PayloadData))
+              selected == "Invalid Date" ? toast.warn("Please select valid Date")
+                : selected <= maxDate ? toast.warn("Please select valid Date") : date
                   && navigate("/admin/order/ordersummary")
             }
           }
           else {
-            toast.warn("please select Package Shipping");
+            toast.warn("Please Select Package Shipping");
           }
+
         }
         else {
           if (productpricevalue >= 50000) {
             if (EwayBill !== false && EwayBill !== "Upload E-way Bill") {
-              reactLocalStorage.set("PayloadOrderData", JSON.stringify(PayloadData))
-              selected == "Invalid Date" ? toast.warn("please select validDate")
-                : selected <= maxDate ? toast.warn("please select validDate") : date
+              sessionStorage.setItem("PayloadOrderData", JSON.stringify(PayloadData))
+              selected == "Invalid Date" ? toast.warn("Please select valid Date")
+                : selected <= maxDate ? toast.warn("Please select validDate") : date
                   && navigate("/admin/order/ordersummary")
             }
+
             else {
-              toast.warn("please Upload E-way Bill");
+              toast.warn("Please Upload E-way Bill");
             }
           }
           else {
             if (productpricevalue) {
-              reactLocalStorage.set("Eway_bill_URL", "Upload E-way Bill")
-              reactLocalStorage.set("Eway_bill_id", "")
-              reactLocalStorage.set("PayloadOrderData", JSON.stringify(PayloadData))
-              selected == "Invalid Date" ? toast.warn("please select validDate")
-                : selected <= maxDate ? toast.warn("please select validDate") : date
+              sessionStorage.setItem("Eway_bill_URL", "Upload E-way Bill")
+              sessionStorage.setItem("Eway_bill_id", "")
+              sessionStorage.setItem("PayloadOrderData", JSON.stringify(PayloadData))
+              selected == "Invalid Date" ? toast.warn("Please select validDate")
+                : selected <= maxDate ? toast.warn("Please select validDate") : date
                   && navigate("/admin/order/ordersummary")
             }
             else {
-              toast.warn("please Add  Product Price");
+              toast.warn("Please Add  Product Price");
             }
           }
         }
       }
       else {
-        toast.warn("please select all fields ");
+        toast.warn("Please Fill All The Fields ");
 
       }
 
     }
     else {
-      toast.warn("please select all fields ");
+      toast.warn("Please Fill All The Fields ");
     }
+
+  //  let data= "amount_format": {
+  //     "base_price": PostAdminOrderPaymentCalReducerData?.data?.base_price,
+  //     "packaging_percent": PostAdminOrderPaymentCalReducerData?.data?.packaging_cost,
+  //     "fuel_charge": PostAdminOrderPaymentCalReducerData?.data?.fuel_charge,
+  //     "fuel_charge_price": PostAdminOrderPaymentCalReducerData?.data?.fuel_charge_price,
+  //     "cod_percent": PostAdminOrderPaymentCalReducerData?.data?.cod_percent,
+  //     "cod_percent_price": PostAdminOrderPaymentCalReducerData?.data?.cod_percent_price,
+  //     "gst": PostAdminOrderPaymentCalReducerData?.data?.gst,
+  //     "insurance": PostAdminOrderPaymentCalReducerData?.data?.insurance,
+  //     "packaging_price": PostAdminOrderPaymentCalReducerData?.data?.packaging_price,
+  //     "insurance_price": PostAdminOrderPaymentCalReducerData?.data?.insurance_price
+  //   }
+
+   let UserDetailsAmountFormateObjectAdded= JSON.parse(UserDetailsPayload) 
+    UserDetailsAmountFormateObjectAdded.amount_format={
+      "base_price": PostAdminOrderPaymentCalReducerData?.data?.base_price,
+      "packaging_percent": PostAdminOrderPaymentCalReducerData?.data?.packaging_percent,
+      "fuel_charge": PostAdminOrderPaymentCalReducerData?.data?.fuel_charge,
+      "fuel_charge_price": PostAdminOrderPaymentCalReducerData?.data?.fuel_charge_price,
+      "cod_percent": PostAdminOrderPaymentCalReducerData?.data?.cod_percent,
+      "cod_percent_price": PostAdminOrderPaymentCalReducerData?.data?.cod_percent_price,
+      "gst": PostAdminOrderPaymentCalReducerData?.data?.gst,
+      "insurance": PostAdminOrderPaymentCalReducerData?.data?.insurance,
+      "packaging_price": PostAdminOrderPaymentCalReducerData?.data?.packaging_price,
+      "insurance_price": PostAdminOrderPaymentCalReducerData?.data?.insurance_price,
+      "price_without_gst":PostAdminOrderPaymentCalReducerData?.data?.price_without_gst,
+      "total_price":PostAdminOrderPaymentCalReducerData?.data?.total_price,
+    }
+
+     sessionStorage.setItem("UserDetailsPayload", JSON.stringify(UserDetailsAmountFormateObjectAdded))
+      // sessionStorage.setItem("UserDetailsPayload", false);
+
   }
 
 
   // Don't delete this comment 
   //  this is for edit order
   // useEffect(() => {
-  //   let BearerToken = reactLocalStorage.get("token", false);
+  //   let BearerToken = sessionStorage.getItem("token", false);
   //   if (!BearerToken) {
   //     navigate("/login");
   //   } else {
   //     navigate("#pending");
   //   }
-  //   let OrderId = reactLocalStorage.get("order_id", false);
+  //   let OrderId = sessionStorage.getItem("order_id", false);
   //   let objectData = {
   //     product_order_id: OrderId,
   //   };
@@ -266,7 +347,7 @@ const OrderDatails = () => {
   //   setDate(GetAdminCloneOrderData?.shipment_details?.pickup_date)
   // }, [GetAdminCloneOrderData])
   const SelectDeliveryType = (e) => {
-    let ConsignerPinCode = reactLocalStorage.get("ConsignerPinCode", false);
+    let ConsignerPinCode = sessionStorage.getItem("ConsignerPinCode", false);
     setDeliveryProduct(e.target.value)
     let payload = {
       "pincode": ConsignerPinCode,
@@ -278,7 +359,7 @@ const OrderDatails = () => {
     }
   }
   useEffect(() => {
-    const storedEwaybillUrl = reactLocalStorage.get('Eway_bill_URL', false)
+    const storedEwaybillUrl = sessionStorage.getItem('Eway_bill_URL', false)
     if (storedEwaybillUrl) {
       const parts = storedEwaybillUrl?.split("/");
       const filename = parts[parts?.length - 1];
@@ -287,11 +368,11 @@ const OrderDatails = () => {
   }, [PostAdminOrderEwayBillData,])
   // display
   useEffect(() => {
-    const storedData = reactLocalStorage.get('PayloadOrderData', false)
+    const storedData = sessionStorage.getItem('PayloadOrderData', false)
     const PayloadOrderData = JSON.parse(storedData)
-    const TagOrderData = reactLocalStorage.get("add_order_tag", false)
+    const TagOrderData = sessionStorage.getItem("add_order_tag", false)
     const PayloadTagOrderData = JSON.parse(TagOrderData)
-    const storedEwaybill = reactLocalStorage.get('Eway_bill', false)
+    const storedEwaybill = sessionStorage.getItem('Eway_bill', false)
     if (storedEwaybill) {
       let getpayloadEwayBill = {
         "type": "get",
@@ -330,7 +411,7 @@ const OrderDatails = () => {
     ]
   const handleeway = (e) => {
     setEwayPdf(e?.target?.files[0])
-    reactLocalStorage.set("Eway_bill_URL", String(e?.target?.files[0].name))
+    sessionStorage.setItem("Eway_bill_URL", String(e?.target?.files[0].name))
     let payloadEwayBill = {
       "eway_bill": e?.target?.files[0],
       "type": "create"
@@ -339,14 +420,17 @@ const OrderDatails = () => {
   }
   const OtherProductTypeFun = (e) => {
     // setOtherProductType(e.target.value)
-    setSelectedProduct(e.target.value)
+    setSelectedProduct(e.target.value.length > 0 ? e.target.value : "")
   }
   const weightFun = (e) => {
     setWeight(e.target.value > 0 ? e.target.value : "")
   }
 
 
-
+  const handleOnWheel = (e) => {
+    e.preventDefault();
+    productRef.current.blur();
+  };
   const WeightonWheelFun = (e) => {
     WeightRef.current.blur();
     setTimeout(() => WeightRef.current.focus(), 100);
@@ -369,6 +453,11 @@ const OrderDatails = () => {
   useEffect(() => {
     document.getElementsByTagName('div')[0].focus();
   })
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    setMinDate(today);
+  }, []);
+
   return (
     <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
       <Header />
@@ -418,7 +507,7 @@ const OrderDatails = () => {
                     <div className="form-box mt-1" tabindex="1">
                       <input
                         tabindex="1"
-                        type="text"
+                        type="number"
                         className="form-control "
                         placeholder="Weight"
                         value={weight}
@@ -435,7 +524,7 @@ const OrderDatails = () => {
                     <div className="form-box mt-1"  >
                       <input
                         tabindex="2"
-                        type="text"
+                        type="number"
                         className="form-control "
                         placeholder="L"
                         value={length}
@@ -451,7 +540,7 @@ const OrderDatails = () => {
                     <div className="form-box mt-1"  >
                       <input
                         tabindex="3"
-                        type="text"
+                        type="number"
                         className="form-control "
                         placeholder="B"
                         value={breadth}
@@ -465,7 +554,7 @@ const OrderDatails = () => {
                     <div className="form-box mt-1">
                       <input
                         tabindex="4"
-                        type="text"
+                        type="number"
                         className="form-control "
                         placeholder="H"
                         value={height}
@@ -482,9 +571,9 @@ const OrderDatails = () => {
                       value={deliveryproduct}>
                       <option value="none" selected >Select Delivery Type</option>
                       <option value="SAME_DAY_DELIVERY">Same day delivery</option>
-                      <option value="EXPRESS_DELIERY">Express delivery</option>
+                      <option value="EXPRESS_DELIVERY">Express delivery</option>
                       <option value="AIR_DELIVERY">Air delivery</option>
-                      <option value="SURFACE">Surface delivery</option>
+                      <option value="SURFACE_DELIVERY">Surface delivery</option>
                       {/* <option value="SAME_DAY_PICKUP_AND_DROP">Same day pickup and drop</option> */}
                       {/* <option value="CASH_ON_DELIVERY">Cash on delivery</option> */}
                       {/* <option value="INTERSTATE_PRIVATE_DELIVERY">Interstate private delivery</option> */}
@@ -502,6 +591,7 @@ const OrderDatails = () => {
                       placeholder="Choose From Calendar"
                       tabindex="6"
                       value={date}
+                      min={minDate}
                       onChange={(e) => CurrentDateFun(e)} />
                     <span className='date-img'>
                     </span>
@@ -520,13 +610,13 @@ const OrderDatails = () => {
                       onChange={(e) => { setShippingPrice(e.target.value) }}
                     // onChange={(e) => { handleChange(e) }}
                     >
-                      <option value="null"   >Select Package Type...</option>
+                      <option value="null" >Select Package Type</option>
                       {
                         packageShipping?.map((item) => {
                           return (
                             <option value={item.name}
                               selected={item.name == shippingprice} >
-                              {item.key} - {item.price}/-
+                              {item.key}
                               {/* {item.name} */}
                             </option>
                           )
@@ -538,12 +628,14 @@ const OrderDatails = () => {
                     <label className='form-label'>Product Price</label>
                     {/* <input className={`form-control`} type="number" id="price-text" onChange={(e)=>Ewaybill(e.target.value)}></input> */}
                     <input
-                     tabindex="12"
+                      tabindex="12"
                       className="form-control" placeholder="Product Price"
-                      type="text" id="price-text"
+                      type="number" id="price-text"
                       value={productpricevalue}
+                      onWheel={handleOnWheel}
+                      ref={productRef}
                       // var newStr = e.target.value.replace(/  +/g, ' ');
-                      onChange={(e) => setProductPriceValue(e.target.value)?.replace(/  +/g, ' ')} />
+                      onChange={(e) => setProductPriceValue(e.target.value > 0 ? e.target.value : "")?.replace(/  +/g, ' ')} />
                     {productpricevalue >= 50000 ? <div className="input_filed input_file  mt-3">
                       <label className="button" for="uploaddd">
                         {" "}
@@ -579,7 +671,7 @@ const OrderDatails = () => {
                         )
                       }
                       <input
-                       
+
                         id="uploaddd"
                         type="file"
                         className="form-control"
@@ -596,7 +688,7 @@ const OrderDatails = () => {
                   <div className="col-sm-6">
                     <label >Product Type</label>
                     <select className='form-control' placeholder="Select"
-                     tabindex="13"
+                      tabindex="13"
                       onChange={(e) => { setSelectedProduct(e.target.value == "OTHERS" ? "" : e.target.value); setOtherProductType(e.target.value) }}
                       value={selectedproduct}>
                       <option value="none" selected >{otherProductType == "OTHERS" ? "Others" : 'Select Product Type'}</option>
@@ -605,7 +697,7 @@ const OrderDatails = () => {
                       <option value="OTHERS">Others</option>
                     </select>
                     {otherProductType === "OTHERS" ? <div className="mt-2">
-                      <label >Add coustom Product Type</label>
+                      <label >Add Custom Product Type</label>
                       <input type="search" onChange={(e) => OtherProductTypeFun(e)}
                         className='form-control col-12  mb-3' id="text" placeholder='Write Product'
                         value={selectedproduct} />
@@ -622,7 +714,7 @@ const OrderDatails = () => {
                       <div className="col-sm-6">
                         <label>Quantity</label>
                         <input
-                        tabindex="14"
+                          tabindex="14"
                           type="text"
                           className="form-control mt-1"
                           placeholder="Quantity "
@@ -633,9 +725,9 @@ const OrderDatails = () => {
                       <div className="col-sm-6">
                         <label>Tax (%)</label>
                         <input
-                        
+                          disabled
                           type="text"
-                          className="form-control mt-1"
+                          className="form-control mt-1 input_filed_block"
                           placeholder="Tax"
                           value={tax}
                         />
@@ -648,7 +740,8 @@ const OrderDatails = () => {
                         <label>Price</label>
                         <input
                           type="text"
-                          className="form-control mt-1"
+                          className="form-control mt-1 input_filed_block"
+                          disabled
                           placeholder="Price "
                           value={price}
                         />
@@ -657,7 +750,8 @@ const OrderDatails = () => {
                         <label>Discount</label>
                         <input
                           type="number"
-                          className="form-control mt-1"
+                          className="form-control mt-1 input_filed_block"
+                          disabled
                           placeholder="Discount"
                           value={discount}
                         />
@@ -668,7 +762,8 @@ const OrderDatails = () => {
                     <label>Total</label>
                     <input
                       type="text"
-                      className="form-control mt-1"
+                      className="form-control mt-1 input_filed_block"
+                      disabled
                       placeholder="Total (auto-generated)"
                       value={total}
                     />

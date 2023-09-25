@@ -18,13 +18,14 @@ const VeryfiyCode = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
-  let emaildata = reactLocalStorage.get("userDetails", true);
+  let emaildata = sessionStorage.getItem("userDetails", true);
   let localStorageDetails = JSON.parse(emaildata);
 
-  let mail = reactLocalStorage.get("User_Mail");
-  let user_right = reactLocalStorage.get("user_right");
+  let mail = sessionStorage.getItem("User_Mail");
+  let user_right = sessionStorage.getItem("user_right");
 
   // as_business
+
 
   const VerifyOtp = () => {
     setLoadSpiner((o) => !o);
@@ -35,10 +36,10 @@ const VeryfiyCode = () => {
       })
       .then((response) => {
         setLoadSpiner((o) => !o);
-        reactLocalStorage.set("token", response.data.Token);
+        sessionStorage.setItem("token", response.data.Token);
         if (user_right == "as_business") {
           navigate("/login");
-          reactLocalStorage.clear();
+          sessionStorage.clear();
           toast.warn(
             " Your account is under verification, Once it will verify we will inform you on E-mail ! "
           );
@@ -68,7 +69,7 @@ const VeryfiyCode = () => {
       .then((response) => {
         setLoadSpiner((o) => !o);
         setOtpValue("")
-        toast.success("Please check your email");
+        toast.success("Please Check Your Email. OTP Send Successfully");
 
       })
       .catch((err) => {
@@ -89,9 +90,9 @@ const VeryfiyCode = () => {
           <div className="right_part signup-part">
             <div className="sign_up ">Verification Code</div>
             <div className="sign_up_ ">
-              Please type verification code send to
+              Please Type Verification Code,Send To Your Email
             </div>
-            <div className="email_number">{localStorageDetails.email}</div>
+            <div className="email_number">{localStorageDetails?.email}</div>
             <div className="otp_container">
               <OtpInput
                 value={otpvalue}

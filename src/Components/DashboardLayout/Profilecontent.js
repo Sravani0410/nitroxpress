@@ -23,7 +23,7 @@ import { set } from "date-fns";
 
 const OrderDetails = () => {
 
-  let BearerToken = reactLocalStorage.get("token", false);
+  let BearerToken = sessionStorage.getItem("token", false);
 
 
   const [getinvoice, setGetInvoice]= useState("")
@@ -107,7 +107,7 @@ const OrderDetails = () => {
     }
 
     if (ResetPasswordPatchData.status === 200) {
-      // reactLocalStorage.remove('token')
+      // sessionStorage.removeItem('token')
       // navigate("/login")
       // dispatch(ResetPasswordPatchData([]))
     } else {
@@ -145,7 +145,7 @@ const OrderDetails = () => {
   };
   const Logoutfun = () => {
     // if(ResetPasswordPatchData.status === 200){
-    //     reactLocalStorage.remove('token')
+    //     sessionStorage.removeItem('token')
     //     navigate("/login")
     // }else{
     //     navigate("/profile")
@@ -245,7 +245,7 @@ const LabelGeneration=(e,item)=>{
     };
     orderidd && rating && fedescription
       ? dispatch(PostCreateFeedback(payload))
-      : toast.warn("Please Fill all the fields Correctly");
+      : toast.warn("Please Fill all the fields");
   };
 
   useEffect(() => {
@@ -302,6 +302,7 @@ const LabelGeneration=(e,item)=>{
                   >
                     <label>User Name</label>
                     <input
+                    maxLength={40}
                       type="text"
                       placeholder="User Name"
                       className="form-control"
@@ -385,6 +386,7 @@ const LabelGeneration=(e,item)=>{
                         <div className="form-box d-flex">
                           <label>Current Password</label>
                           <input
+                          maxLength={15}
                             type={changepassword ? "text" : "password"}
                             placeholder="Enter Current Password"
                             className="form-control"
@@ -469,6 +471,7 @@ const LabelGeneration=(e,item)=>{
                         <div className="form-box d-flex">
                           <label>New Password</label>
                           <input
+                          maxLength={15}
                             type={showpassword ? "text" : "password"}
                             placeholder="Enter New Password"
                             className="form-control"
@@ -554,6 +557,7 @@ const LabelGeneration=(e,item)=>{
                         <div className="form-box d-flex">
                           <label>Confrim New Password</label>
                           <input
+                          maxLength={15}
                             type={confirmshowpassword ? "text" : "password"}
                             placeholder="Enter Confrim   New Password"
                             className="form-control"

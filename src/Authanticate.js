@@ -7,13 +7,13 @@ export const TokenDataValidCheck = () => {
 
     const tokenData = () => {
 
-        let BearerToken = reactLocalStorage.get("token", false);
+        let BearerToken = sessionStorage.getItem("token", false);
 
         if (!BearerToken) {
             return ("#/login")
         }
         else {
-            return ("#/")
+            // return ("#/")
         }
 
     }

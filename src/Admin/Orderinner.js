@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import PhoneInput from "react-phone-input-2";
@@ -27,14 +27,16 @@ import {
   PostAddOrderTag,
   PostPincodesAvailability,
   PostOrderDownloadLabelGenerationFile,
-  
+  PostAdminOrderPaymentCal
+
 } from "../Redux/action/ApiCollection";
 import { PermissionData } from "../Permission";
-
+import LodingSpiner from "../Components/LodingSpiner";
 
 import { Document, Page } from "react-pdf";
 
 const Orderinner = () => {
+  const  pickUpPincodeRef = useRef();
   const [editslidebar, setEditSlideBar] = useState(false);
   const [addordertag, setAddOrderTag] = useState(false);
   const [filterpincodedata, setFilterPincodeData] = useState("");
@@ -54,6 +56,7 @@ const Orderinner = () => {
   const [deliverstate, setDeliverState] = useState('')
   const [pickupcity, setPickupCity] = useState('')
   const [pickupstate, setPickupState] = useState('')
+  const [packaging, setPackaging] = useState('')
   const [pincode, setPineCode] = useState("");
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
@@ -66,37 +69,51 @@ const Orderinner = () => {
   const [countrypincode, setCountryPinCode] = useState("");
   const [deliveryaddress, setDeliveryAddress] = useState("");
   const [companyname, setCompanyName] = useState("");
+  const [zone, setZone] = useState('')
   const [weight, setWeight] = useState("");
   const [city, setCity] = useState("");
   const [length, setLength] = useState("");
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
+  const [packShipmentPrice, setPackShipmentPrice] = useState('')
   const [landmark, setLandMark] = useState("");
   const [pickuppincode, setPickupCodee] = useState('')
-
+  const [OrderTypeData, setOrderTypeData] = useState("")
+  const [yesnoactivebuttonInsurance, setYesNoActiveButtonInsurance] = useState(false)
   const [paymentmethod, setPaymentMethod] = useState("");
   const [pickuppincodeactive, setPickUpPinCodeActive] = useState(false)
   const [pickupaddress, setPickupAddress] = useState('')
-
+  const [quantity, setQuantity] = useState('')
   const [pickupaddressactive, setPickupAddressActive] = useState(false);
   const [deliverypincodeactive, setDeliveryPinCodeActive] = useState(false);
   const [weighterror, setWeightError] = useState(false);
   const [ordertag, setOrderTag] = useState("");
-
+  const [packShipment, setPackShipment] = useState("")
+  const [amount, setAmount] = useState("")
+  const [baseprice, setBasePrice] = useState("")
+  const [TotalOrderEnable, setTotalOrderEnable] = useState(false);
+  const [ZoneValue, setZoneValue] = useState(null);
   const [downloadinvoiceshow, setDownloadInvoiceShow] = useState(false);
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [deliverylogo, setDeliveryLogo] = useState("");
+  const [productType, setProductType] = useState('')
+  const [deliveryType, setDeliveryType] = useState('')
+  const [productPrice, setProductPrice] = useState('')
+  const [downloadInvoiceTrue,setDownloadInvoiceTrue]= useState(false)
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   let param = useParams();
   let paramHash = useLocation();
-  const GetAdminOrderReturnData = useSelector(
-    (state) => state.GetAdminOrderSummaryReducer.GetAdminOrderSummaryData?.data
+  const GetAdminOrderReturnData= useSelector(
+    (state) => state.GetAdminOrderSummaryReducer.GetAdminOrderSummaryData
   );
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
+  const PostAdminOrderPaymentCalReducerData = useSelector(state => state.PostAdminOrderPaymentCalReducer?.PostAdminOrderPaymentCalReducerData)
+
   const PostPincodesDeliveredReducer = useSelector(
     (state) => state.PostPincodesDeliveredReducer.PostPincodesDeliveredData
   );
@@ -125,7 +142,6 @@ const Orderinner = () => {
   const PatchAdminOrderEditData = useSelector(
     (state) => state.PatchAdminOrderEditReducer.PatchAdminOrderEditData
   );
-
   const GetAdminOrderCallBuyerData = useSelector(
     (state) =>
       state.GetAdminOrderCallBuyerReducer.GetAdminOrderCallBuyerData?.data
@@ -143,7 +159,10 @@ const Orderinner = () => {
     (state) =>
       state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
   );
-  let deliverypartnerdata = reactLocalStorage.get("Is_Business");
+  const OrderPagesLoaderTrueFalseData = useSelector(
+    (state) => state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
+  );
+  let deliverypartnerdata = sessionStorage.getItem("Is_Business");
   // const ToggleSideBarTrueFalse =useSelector((state)=>state.ToggleSideBarTrueFalseReducer.ToggleSideBarTrueFalseData)
 
   //  let Pending_Set = {
@@ -198,32 +217,48 @@ const Orderinner = () => {
       dispatch(GetAdminOrderSummary(objectData));
     }
   }, [PatchAdminOrderEditData]);
-
-
+  
   useEffect(() => {
-    setPickupCodee(GetAdminOrderReturnData?.delivered_address?.pincode);
-    setPickupState(GetAdminOrderReturnData?.customer_details?.address?.state);
-    setCountry(GetAdminOrderReturnData?.delivered_address?.country);
-    setPickupCity(GetAdminOrderReturnData?.customer_details?.address?.city);
-    setName(GetAdminOrderReturnData?.customer_details?.name);
-    setEmail(GetAdminOrderReturnData?.customer_details?.email);
-    setNumber(GetAdminOrderReturnData?.customer_details?.phone_number);
-    setDeliveryAddress(GetAdminOrderReturnData?.customer_details?.address);
-    setCompanyName(GetAdminOrderReturnData?.Item_summary?.name);
-    setWeight(GetAdminOrderReturnData?.Item_summary?.weight);
-    setLandMark(GetAdminOrderReturnData?.delivered_address?.landmark);
-    setCountryPinCode(GetAdminOrderReturnData?.delivered_address?.country_code);
-    setPhone(GetAdminOrderReturnData?.delivered_address?.phone)
+    setPickupCodee(GetAdminOrderReturnData?.data?.delivered_address?.pincode);
+    setPickupState(GetAdminOrderReturnData?.data?.delivered_address?.state);
+    setCountry(GetAdminOrderReturnData?.data?.delivered_address?.country);
+    setPickupCity(GetAdminOrderReturnData?.data?.delivered_address?.city);
+    setName(GetAdminOrderReturnData?.data?.delivered_address?.name);
+    setEmail(GetAdminOrderReturnData?.data?.customer_details?.email);
+    setNumber(GetAdminOrderReturnData?.data?.delivered_address?.phone);
+    setDeliveryAddress(GetAdminOrderReturnData?.data?.customer_details?.address);
+    setCompanyName(GetAdminOrderReturnData?.data?.customer_details?.company_name);
+    setZone(GetAdminOrderReturnData?.data?.delivered_address?.zone);
+    setWeight(Number(GetAdminOrderReturnData?.data?.Item_summary?.weight));
+
+    setHeight(GetAdminOrderReturnData?.data?.Item_summary?.height==null?0:GetAdminOrderReturnData?.data?.Item_summary?.height);
+    setWidth(GetAdminOrderReturnData?.data?.Item_summary?.breadth==null?0:GetAdminOrderReturnData?.data?.Item_summary?.breadth);
+    setLength(GetAdminOrderReturnData?.data?.Item_summary?.length==null?0:GetAdminOrderReturnData?.data?.Item_summary?.length);
+    
+    setLandMark(GetAdminOrderReturnData?.data?.delivered_address?.landmark);
+    setCountryPinCode(GetAdminOrderReturnData?.data?.delivered_address?.country_code);
+    setPhone(GetAdminOrderReturnData?.data?.delivered_address?.phone)
+    setQuantity(GetAdminOrderReturnData?.data?.Item_summary?.quantity==null?0:GetAdminOrderReturnData?.data?.Item_summary?.quantity);
+    setProductType(GetAdminOrderReturnData?.data?.Item_summary?.product_type)
+    setDeliveryType(GetAdminOrderReturnData?.data?.Item_summary?.delivery_type)
+    setProductPrice(GetAdminOrderReturnData?.data?.Item_summary?.product_price)
+    setPackaging(GetAdminOrderReturnData?.data?.Item_summary?.packaging)
     setPickupAddress(
-      GetAdminOrderReturnData?.delivered_address?.address +
-      "," +
-      GetAdminOrderReturnData?.delivered_address?.city +
-      "," +
-      GetAdminOrderReturnData?.delivered_address?.state
+      GetAdminOrderReturnData?.data?.delivered_address?.address 
+      // +
+      // "," +
+      // GetAdminOrderReturnData?.data?.delivered_address?.city +
+      // "," +
+      // GetAdminOrderReturnData?.data?.delivered_address?.state
 
     );
-    setPaymentMethod(GetAdminOrderReturnData?.method);
-  }, [GetAdminOrderReturnData]);
+    setPaymentMethod(GetAdminOrderReturnData?.data?.method);
+    setOrderTypeData(GetAdminOrderReturnData?.data?.user_type)
+    setYesNoActiveButtonInsurance(Boolean(GetAdminOrderReturnData?.data?.Item_summary?.insurance))
+    setPackShipment(GetAdminOrderReturnData?.data?.Item_summary?.pack_shipment)
+    setAmount(Number(GetAdminOrderReturnData?.data?.order_summary?.total_amount))
+    setBasePrice(Number(GetAdminOrderReturnData?.data?.order_summary?.base_price))
+  }, [GetAdminOrderReturnData?.data]);
 
   const UpdateFun = (e) => {
     let data = paymentmethod;
@@ -242,14 +277,29 @@ const Orderinner = () => {
         country: country,
         landmark: landmark,
         contry_code: countrypincode,
-        phone: phone
+        phone: phone,
+        zone: zone,
+        amount_format:{
+          "base_price": PostAdminOrderPaymentCalReducerData?.data?.base_price,
+          "packaging_percent": PostAdminOrderPaymentCalReducerData?.data?.packaging_percent,
+          "fuel_charge": PostAdminOrderPaymentCalReducerData?.data?.fuel_charge,
+          "fuel_charge_price": PostAdminOrderPaymentCalReducerData?.data?.fuel_charge_price,
+          "cod_percent": PostAdminOrderPaymentCalReducerData?.data?.cod_percent,
+          "cod_percent_price": PostAdminOrderPaymentCalReducerData?.data?.cod_percent_price,
+          "gst": PostAdminOrderPaymentCalReducerData?.data?.gst,
+          "insurance": PostAdminOrderPaymentCalReducerData?.data?.insurance,
+          "packaging_price": PostAdminOrderPaymentCalReducerData?.data?.packaging_price,
+          "insurance_price": PostAdminOrderPaymentCalReducerData?.data?.insurance_price,
+          "price_without_gst":PostAdminOrderPaymentCalReducerData?.data?.price_without_gst,
+          "total_price":PostAdminOrderPaymentCalReducerData?.data?.total_price,
+        }
       };
 
 
       // !deliverypincodeactive && pincode && !pickupaddressactive && !weighterror
       //   ? 
       dispatch(PatchAdminOrderEdit(payloadData))
-      // : toast.warn("please fill all the fields correctly");
+      // : toast.warn("please fill all the fields");
     } else {
       let payloadData = {
         product_order_id: param.id,
@@ -267,16 +317,78 @@ const Orderinner = () => {
         country: country,
         landmark: landmark,
         contry_code: countrypincode,
-        phone: phone
+        phone: phone,
+        insurance: yesnoactivebuttonInsurance,
+        pack_shipment: packShipment,
+        zone: zone,
+        total_amount: PostAdminOrderPaymentCalReducerData?.data?.total_price ?PostAdminOrderPaymentCalReducerData?.data?.total_price :amount,
+        amount_format:{
+          "base_price": PostAdminOrderPaymentCalReducerData?.data?.base_price,
+          "packaging_percent": PostAdminOrderPaymentCalReducerData?.data?.packaging_percent,
+          "fuel_charge": PostAdminOrderPaymentCalReducerData?.data?.fuel_charge,
+          "fuel_charge_price": PostAdminOrderPaymentCalReducerData?.data?.fuel_charge_price,
+          "cod_percent": PostAdminOrderPaymentCalReducerData?.data?.cod_percent,
+          "cod_percent_price": PostAdminOrderPaymentCalReducerData?.data?.cod_percent_price,
+          "gst": PostAdminOrderPaymentCalReducerData?.data?.gst,
+          "insurance": PostAdminOrderPaymentCalReducerData?.data?.insurance,
+          "packaging_price": PostAdminOrderPaymentCalReducerData?.data?.packaging_price,
+          "insurance_price": PostAdminOrderPaymentCalReducerData?.data?.insurance_price,
+          "price_without_gst":PostAdminOrderPaymentCalReducerData?.data?.price_without_gst,
+          "total_price":PostAdminOrderPaymentCalReducerData?.data?.total_price,
+        }
       };
 
       // !deliverypincodeactive && pincode && !pickupaddressactive && !weighterror
       //   ? 
       dispatch(PatchAdminOrderEdit(payloadData))
-      // : toast.warn("please fill all the fields correctly");
+      // : toast.warn("please fill all the fields");
     }
     setEditSlideBar((o) => !o);
   };
+
+  useEffect(() => {
+    if (editslidebar == true) {
+      // if (packShipmentPrice != "") {
+      //   setPackaging("OTHER")
+      //   setPackShipment(true)
+      // } else {
+      //   setPackaging(GetAdminOrderReturnData?.Item_summary?.packaging)
+
+      //   setPackShipment(GetAdminOrderReturnData?.Item_summary?.pack_shipment)
+      // }
+
+      let PayloadData = {
+        "product_order_id": param.id,
+        "product_type": productType,
+        "delivery_type": deliveryType,
+        "weight": Number(weight),
+        "pack_shipment": packShipment,
+        "length": Number(length),
+        "breadth": Number(width),
+        "height": Number(height),
+        "quantity": Number(quantity),
+        "packaging":packShipmentPrice != ""? "OTHER":GetAdminOrderReturnData?.data?.Item_summary?.packaging,
+        "pack_shipment": packShipmentPrice != ""?true:GetAdminOrderReturnData?.data?.Item_summary?.pack_shipment,
+        "pack_shipment_price": packShipmentPrice,
+        "insurance": yesnoactivebuttonInsurance,
+        "product_price": productPrice,
+        "company_name": companyname,
+        "zone": zone,
+        "method":GetAdminOrderReturnData?.data?.user_type=="B2B"?GetAdminOrderReturnData?.data?.method:"",
+        "base_price":  zone != "OTHER" ? 0 : Number(baseprice) 
+      }
+
+     
+      if(GetAdminOrderReturnData?.data?.delivered_address?.zone != "OTHER"){
+      dispatch(PostAdminOrderPaymentCal(PayloadData))
+      }   
+      else if(GetAdminOrderReturnData?.data?.delivered_address?.zone == "OTHER"  ){
+        dispatch(PostAdminOrderPaymentCal(PayloadData))
+      }  
+    }
+
+  }, [weight, length, width, height, yesnoactivebuttonInsurance, packShipmentPrice,zone,baseprice])
+
 
   const InputCountryCodePickupFun = (
     currentValue,
@@ -372,6 +484,208 @@ const Orderinner = () => {
   //     setDeliveryPinCodeActive(true);
   //   }
   // };
+  useEffect(() => {
+    if (PostPincodesAvailabilityData) {
+      if (PostPincodesAvailabilityData?.data?.message == "Available") {
+        setDeliveryPinCodeActive(false);
+      } else {
+        // PickupAddressFun();
+        setDeliveryPinCodeActive(true);
+      }
+      //PostPincodesDeliveredReducer && PostPincodesDeliveredReducer == "Pincode Available" ? setDeliveryPinCodeActive(false) : setDeliveryPinCodeActive(true)
+    }
+  }, [PostPincodesAvailabilityData]);
+  useEffect(() => {
+    if (GetAdminOrderReturnData?.data?.delivery_partner === "SKYKING") {
+      setDeliveryLogo("/images/SKYYKING.png")
+    } else if (GetAdminOrderReturnData?.data?.delivery_partner === "DTDC") {
+      setDeliveryLogo("/images/DTDC.png")
+    } else if (GetAdminOrderReturnData?.data?.delivery_partner === "ANJANI") {
+      setDeliveryLogo("/images/ANJANI.png")
+    } else if (GetAdminOrderReturnData?.data?.delivery_partner === "DHL") {
+      setDeliveryLogo("/images/DHL.png")
+    } else if (GetAdminOrderReturnData?.data?.delivery_partner === "XPRESSBEES") {
+      setDeliveryLogo("/images/XPRESS.png")
+    } else if (GetAdminOrderReturnData?.data?.delivery_partner === "DELHIVERY") {
+      setDeliveryLogo("/images/DELHIVERY.png")
+    } else if (GetAdminOrderReturnData?.data?.delivery_partner === "NITRO") {
+      setDeliveryLogo("/images/NITRO.png")
+    }
+
+  }, [GetAdminOrderReturnData?.data])
+
+  const WeightFun = (e) => {
+    if (e.target.value > 0) {
+      setWeight(e.target.value);
+      setWeightError(false);
+    } else {
+      setWeight("");
+      setWeightError(true);
+    }
+  };
+
+  // const Invoice = (e) => {
+  //   if(PostOrderDownloadInvoiceFileData?.status !==200){
+
+  //   setDownloadInvoiceShow(true);
+
+  //   let payload = {
+  //     product_order_id: param.id,
+  //     request_type: "get",
+  //   };
+
+  //   dispatch(PostOrderDownloadInvoiceFile(payload));
+  //   }
+  //   else{
+  //     setDownloadInvoiceShow(false)
+  //   }
+
+  //   // setDownloadInvoiceShow(true);
+
+  //   // let payload = {
+  //   //   product_order_id: param.id,
+  //   //   request_type: "get",
+  //   // };
+
+  //   // dispatch(PostOrderDownloadInvoiceFile(payload));
+  // };
+
+  const Invoice = async (e) => { 
+    setDownloadInvoiceShow(true); 
+    let payload = {
+      product_order_id: param.id,
+      request_type: "get",
+    }; 
+    dispatch(PostOrderDownloadInvoiceFile(payload)); 
+    setDownloadInvoiceTrue(true)
+
+  };
+
+  useEffect(()=>{
+    if(PostOrderDownloadInvoiceFileData.status==200 && downloadInvoiceTrue==true){
+      window.open(`${PostOrderDownloadInvoiceFileData?.data?.name}`)
+      setDownloadInvoiceTrue(false)
+
+    }
+
+  },[PostOrderDownloadInvoiceFileData,downloadInvoiceTrue])
+
+  const GetLabel = (e) => {
+    setDownloadInvoiceShow(true);
+
+    let payload = {
+      product_order_id: param.id,
+      request_type: "get",
+    };
+
+    dispatch(PostOrderDownloadLabelGenerationFile(payload));
+  };
+  const CancelOrder = (e) => {
+    let payload = {
+      product_order_id: param.id,
+    };
+    dispatch(DeleteAdminOrder(payload));
+    navigate("/admin/order");
+    dispatch(OrderPageBookNavigate(paramHash?.hash));
+  };
+
+  const AddTag = (e) => {
+    let payload = {
+      product_order_id: param.id,
+      order_tag: ordertag,
+    };
+    dispatch(PostAddOrderTag(payload));
+    setAddOrderTag((o) => !o);
+
+  };
+
+  function onDocumentLoadSuccess({ numPages }) {
+    setNumPages(numPages);
+
+  }
+
+  const date = new Date(GetAdminOrderReturnData?.data?.order_summary?.order_created)
+  const callDate = new Date(GetAdminOrderCallBuyerData?.order_date)
+  const timepart = new Date(GetAdminOrderReturnData?.data?.order_summary?.order_created).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+  // useEffect(() => {
+
+
+  //   if (PostOrderDownloadInvoiceFileData?.data?.name) { 
+  //     setDownloadInvoiceShow(false)
+  //     window.open(`${PostOrderDownloadInvoiceFileData?.data?.name}`);
+  //     // setDownloadInvoiceShow(false) 
+  //   };
+  //   let payload = {
+  //     product_order_id:"param.id",
+  //     request_type: "get",
+  //   };
+  //   dispatch(PostOrderDownloadInvoiceFile(payload)); 
+
+  // }, [PostOrderDownloadInvoiceFileData?.data?.name])
+
+  // useEffect(() => {
+  //   if (PostOrderDownloadLabelGenerationFileData?.name) { 
+  //     window.open(`${PostOrderDownloadLabelGenerationFileData.name}`); 
+  //   }
+  //   let payload = {
+  //     product_order_id: "param.id",
+  //     request_type: "get",
+  //   };
+  //   dispatch(PostOrderDownloadLabelGenerationFile(payload));
+  // },[PostOrderDownloadLabelGenerationFileData])
+
+
+  const handleOnWheel = (e) => {
+    e.preventDefault();
+    pickUpPincodeRef.current.blur();
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault();
+    }
+  };
+  const PickUpPincodeFun = (e) => {
+
+
+    // if(e.target.value.length==1){
+    let payload1 = {
+      "page_type": "delivered"
+    }
+    dispatch(getOrderAddress(payload1))
+    // dispatch(PostOrderAddress(payload))
+
+    // }
+
+    if (e.target.value.length == 7) return false;
+    setPickupCodee(e.target.value)
+
+    let payload = {
+      "pincode": e.target.value,
+      "check_type": "DELIVERED"
+    }
+
+    setPickUpModalStatus(true)
+
+    let arrayData = []
+    arrayData = OrderDetails?.data?.filter((item) => {
+      if (item?.pincode == e.target.value) {
+        setPickUpPopup(true)//when pincode is availabe then only it will open
+        return item
+      }
+    })
+    setFilterPincodeData(arrayData)
+
+    PickupAddressFunn()
+    if (e.target.value.length === 6) {
+      // dispatch(PostPincodesDelivered(payload))
+      dispatch(GetGoogleCityState(e.target.value))
+      dispatch(PostPincodesAvailability(payload))
+    }
+    else {
+      setPickUpPinCodeActive(true)
+    }
+  }
+
 
   useEffect(() => {
 
@@ -415,12 +729,13 @@ const Orderinner = () => {
       }
       else if (PostPincodesAvailabilityReducer?.type === "delivered") {
         if (PostPincodesAvailabilityReducer?.message !== "Pin code is not available") {
-          setDeliverPinCodeActive(false)
+          setPickUpPinCodeActive(false)
+          setPickupCity(PostPincodesAvailabilityReducer?.city)
+          setPickupState(PostPincodesAvailabilityReducer?.state)
+          setZone(PostPincodesAvailabilityReducer?.zone)
 
-          setDeliverCity(PostPincodesAvailabilityReducer?.city)
-          setDeliverState(PostPincodesAvailabilityReducer?.state)
         } else {
-          setDeliverPinCodeActive(true)
+          setPickUpPinCodeActive(true)
 
           setDeliverCity("")
           setDeliverState("")
@@ -437,197 +752,9 @@ const Orderinner = () => {
 
 
 
-  }, [PostPincodesDeliveredReducer, PostPincodesAvailabilityReducer,])
 
+  }, [PostPincodesDeliveredReducer, PostPincodesAvailabilityReducer])
 
-  useEffect(() => {
-    if (PostPincodesAvailabilityData) {
-      if (PostPincodesAvailabilityData?.data?.message == "Available") {
-        setDeliveryPinCodeActive(false);
-      } else {
-        // PickupAddressFun();
-        setDeliveryPinCodeActive(true);
-      }
-      //PostPincodesDeliveredReducer && PostPincodesDeliveredReducer == "Pincode Available" ? setDeliveryPinCodeActive(false) : setDeliveryPinCodeActive(true)
-    }
-  }, [PostPincodesAvailabilityData]);
-  useEffect(() => {
-    if (GetAdminOrderReturnData?.delivery_partner === "SKYKING") {
-      setDeliveryLogo("/images/SKYYKING.png")
-    } else if (GetAdminOrderReturnData?.delivery_partner === "DTDC") {
-      setDeliveryLogo("/images/DTDC.png")
-    } else if (GetAdminOrderReturnData?.delivery_partner === "ANJANI") {
-      setDeliveryLogo("/images/ANJANI.png")
-    } else if (GetAdminOrderReturnData?.delivery_partner === "DHL") {
-      setDeliveryLogo("/images/DHL.png")
-    } else if (GetAdminOrderReturnData?.delivery_partner === "XPRESSBEES") {
-      setDeliveryLogo("/images/XPRESS.png")
-    } else if (GetAdminOrderReturnData?.delivery_partner === "DELHIVERY") {
-      setDeliveryLogo("/images/DELHIVERY.png")
-    } else if (GetAdminOrderReturnData?.delivery_partner === "NITRO") {
-      setDeliveryLogo("/images/NITRO.png")
-    }
-
-  }, [GetAdminOrderReturnData])
-
-  const WeightFun = (e) => {
-    if (e.target.value > 0) {
-      setWeight(e.target.value);
-      setWeightError(false);
-    } else {
-      setWeight("");
-      setWeightError(true);
-    }
-  };
-
-  // const Invoice = (e) => {
-  //   if(PostOrderDownloadInvoiceFileData?.status !==200){
-
-  //   setDownloadInvoiceShow(true);
-
-  //   let payload = {
-  //     product_order_id: param.id,
-  //     request_type: "get",
-  //   };
-
-  //   dispatch(PostOrderDownloadInvoiceFile(payload));
-  //   }
-  //   else{
-  //     setDownloadInvoiceShow(false)
-  //   }
-
-  //   // setDownloadInvoiceShow(true);
-
-  //   // let payload = {
-  //   //   product_order_id: param.id,
-  //   //   request_type: "get",
-  //   // };
-
-  //   // dispatch(PostOrderDownloadInvoiceFile(payload));
-  // };
-
-
-  const Invoice = async (e) => {
-
-
-    setDownloadInvoiceShow(true);
-
-    let payload = {
-      product_order_id: param.id,
-      request_type: "get",
-    };
-
-    dispatch(PostOrderDownloadInvoiceFile(payload));
-  };
-
-  const GetLabel = (e) => {
-    setDownloadInvoiceShow(true);
-
-    let payload = {
-      product_order_id: param.id,
-      request_type: "get",
-    };
-
-    dispatch(PostOrderDownloadLabelGenerationFile(payload));
-  };
-  const CancelOrder = (e) => {
-    let payload = {
-      product_order_id: param.id,
-    };
-    dispatch(DeleteAdminOrder(payload));
-    navigate("/admin/order");
-    dispatch(OrderPageBookNavigate(paramHash?.hash));
-  };
-
-  const AddTag = (e) => {
-    let payload = {
-      product_order_id: param.id,
-      order_tag: ordertag,
-    };
-    dispatch(PostAddOrderTag(payload));
-    setAddOrderTag((o) => !o);
-
-  };
-
-  function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
-
-  }
-
-  const date = new Date(GetAdminOrderReturnData?.order_summary?.order_created)
-  const callDate = new Date(GetAdminOrderCallBuyerData?.order_date)
-  const timepart = new Date(GetAdminOrderReturnData?.order_summary?.order_created).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
-  // useEffect(() => {
-
-
-  //   if (PostOrderDownloadInvoiceFileData?.data?.name) { 
-  //     setDownloadInvoiceShow(false)
-  //     window.open(`${PostOrderDownloadInvoiceFileData?.data?.name}`);
-  //     // setDownloadInvoiceShow(false) 
-  //   };
-  //   let payload = {
-  //     product_order_id:"param.id",
-  //     request_type: "get",
-  //   };
-  //   dispatch(PostOrderDownloadInvoiceFile(payload)); 
-
-  // }, [PostOrderDownloadInvoiceFileData?.data?.name])
-
-  // useEffect(() => {
-  //   if (PostOrderDownloadLabelGenerationFileData?.name) { 
-  //     window.open(`${PostOrderDownloadLabelGenerationFileData.name}`); 
-  //   }
-  //   let payload = {
-  //     product_order_id: "param.id",
-  //     request_type: "get",
-  //   };
-  //   dispatch(PostOrderDownloadLabelGenerationFile(payload));
-  // },[PostOrderDownloadLabelGenerationFileData])
-
-
-
-  const PickUpPincodeFun = (e) => {
-
-
-    // if(e.target.value.length==1){
-    let payload1 = {
-      "page_type": "pickup"
-    }
-    dispatch(getOrderAddress(payload1))
-    // dispatch(PostOrderAddress(payload))
-
-    // }
-
-    if (e.target.value.length == 7) return false;
-    setPickupCodee(e.target.value)
-
-    let payload = {
-      "pincode": e.target.value,
-      "check_type": "PICKUP"
-    }
-
-    setPickUpModalStatus(true)
-
-
-    let arrayData = []
-    arrayData = OrderDetails?.data?.filter((item) => {
-      if (item?.pincode == e.target.value) {
-        setPickUpPopup(true)//when pincode is availabe then only it will open
-        return item
-      }
-    })
-    setFilterPincodeData(arrayData)
-
-    PickupAddressFunn()
-    if (e.target.value.length === 6) {
-      // dispatch(PostPincodesDelivered(payload))
-      dispatch(GetGoogleCityState(e.target.value))
-      dispatch(PostPincodesAvailability(payload))
-    }
-    else {
-      setPickUpPinCodeActive(true)
-    }
-  }
 
   const PickupAddressFunn = async (address, id) => {
     // please don't remove the id (parameter) it's important for address (parameter) 
@@ -677,10 +804,23 @@ const Orderinner = () => {
     setDeliverState(objectId.state)
     setPickUpPopup(false)
   }
-const TrackOrder=()=>{
-  navigate(`/admin/ordertrack/${param?.id}${paramHash.hash}`)
-  dispatch(OrderPageBookNavigate(paramHash?.hash));
-}
+  const TrackOrder = () => {
+    navigate(`/admin/ordertrack/${param?.id}${paramHash.hash}`)
+    dispatch(OrderPageBookNavigate(paramHash?.hash));
+  }
+
+  useEffect(() => {
+
+  }, [])
+
+  const EditOrderBtn=()=>{
+    setEditSlideBar((o) => !o) ;
+    let objectData = {
+      product_order_id: param.id,
+    };
+    dispatch(GetAdminOrderSummary(objectData))
+  }
+
   return (
     <>
 
@@ -698,7 +838,7 @@ const TrackOrder=()=>{
                   type="button"
                   className="btn back-btn"
                   onClick={(e) => {
-                    navigate("/admin/order");
+                    navigate(`/admin/order${paramHash?.hash}`);
                     dispatch(OrderPageBookNavigate(paramHash?.hash));
                   }}
                 >
@@ -740,12 +880,12 @@ const TrackOrder=()=>{
                       {/* </a> */}
                     </li>
 
-                    <li onClick={(e) =>
-                      PermissionData()?.EDIT_ORDER == "EDIT_ORDER" ? setEditSlideBar((o) => !o) : ""}
+                    {paramHash?.hash == "#booked" && <li onClick={(e) =>
+                      PermissionData()?.EDIT_ORDER == "EDIT_ORDER" ? EditOrderBtn() : ""}
                       className={`${PermissionData()?.EDIT_ORDER == "EDIT_ORDER" ? " " : "permission_blur"}`}
                     >
                       Edit Order
-                    </li>
+                    </li>}
                     <li onClick={(e) =>
                       PermissionData()?.VIEW_CALL_BUYER == "VIEW_CALL_BUYER" ? setCallBuyer((o) => !o) : ""}
                       className={`${PermissionData()?.VIEW_CALL_BUYER == "VIEW_CALL_BUYER" ? " " : "permission_blur"}`}
@@ -771,12 +911,16 @@ const TrackOrder=()=>{
               </div>
             </div>
 
-            {editslidebar && (
+            {paramHash?.hash == "#booked" && editslidebar && (
               <div className="editpopup-outer">
                 <div className="editpopup popup-box">
                   <h2>
-                    Edit Order Details <span> {param.id}</span>{" "}
+                    Edit Order Details ({OrderTypeData}) - <span> {param.id}</span>{" "}  
+                     
+                     {/* <h2>User Type  {OrderTypeData} </h2> */}
+                     
                   </h2>
+                  
                   <button
                     type="button"
                     className="close-btn"
@@ -801,23 +945,26 @@ const TrackOrder=()=>{
                   <div className="editpopup-body">
                     <h3>Payment Mode</h3>
                     <div className="row mt-3">
-                      <div className="col-6">
-                        <label className="prepad-box">
+                      <div className="col-6  ">
+                        <label className="prepad-box input_filed_block">
                           Prepaid
                           <input
+                          disabled
                             type="radio"
                             name="radio"
                             value={"1"}
                             onChange={(e) => PaymentMethodFun(e, "PREPAID")}
                             checked={paymentmethod !== "COD" ? "checked" : ""}
+                             
                           />
                           <span className="checkmark"></span>
                         </label>
                       </div>
                       <div className="col-6">
-                        <label className="prepad-box">
+                        <label className="prepad-box input_filed_block">
                           COD
                           <input
+                          disabled
                             type="radio"
                             name="radio"
                             value={"2"}
@@ -844,7 +991,7 @@ const TrackOrder=()=>{
                                 }`}
                               onChange={(e) => WeightFun(e)}
                             />
-                            <span> KG</span>
+                            <span> g</span>
                             {weighterror ? (
                               <div className="text-danger ">
                                 <small> please add the waight </small>
@@ -854,41 +1001,94 @@ const TrackOrder=()=>{
                             )}
                           </div>
                         </div>
-                        <div className="col-12">
-                          <label className="mt-4">Package Dimesnsions</label>
+                        
+                        <div className="col-12 mt-3">
+                          {/* <label className="mt-4 mb-3"><b> Package Dimesnsions</b></label> */}
                         </div>
-                        <div className="col-4">
-                          <div className="pacform-box mt-1">
+
+
+                      {  OrderTypeData == "B2C" ? "":<div className="col-4">
+                          <label>Length</label>
+                          <div className="pacform-box">
+
                             <input
                               type="text"
                               className="form-control"
-                              onChange={(e) => setLength(e.target.value)}
+                              onChange={(e) => OrderTypeData != "B2C" ? setLength(e.target.value) : ""}
                               value={length}
                             />
                             <span> CM</span>
                           </div>
-                        </div>
-                        <div className="col-4">
+                        </div>}
+
+                        {  OrderTypeData == "B2C" ? "":   <div className="col-4">
+                          <label>Breadth</label>
                           <div className="pacform-box">
                             <input
                               type="text"
                               className="form-control"
-                              onChange={(e) => setWidth(e.target.value)}
+                              onChange={(e) => OrderTypeData != "B2C" ? setWidth(e.target.value) : ""}
                               value={width}
                             />
                             <span> CM</span>
                           </div>
-                        </div>
-                        <div className="col-4">
+                        </div>}
+
+
+                       {  OrderTypeData == "B2C" ? "": <div className="col-4">
+
+                          <label>Height</label>
                           <div className="pacform-box">
                             <input
                               type="text"
                               className="form-control"
-                              onChange={(e) => setHeight(e.target.value)}
+                              onChange={(e) => OrderTypeData != "B2C" ? setHeight(e.target.value) : ""}
                               value={height}
                             />
                             <span> CM</span>
                           </div>
+
+
+
+                        </div>}
+
+                         
+                       { GetAdminOrderReturnData?.data?.delivered_address?.zone != "OTHER"&&<div className="mt-3">
+                          <label>Pack shipment Price</label>
+                          <div className="pacform-box">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Pack Shipment Price"
+                              value={packShipmentPrice}
+                              onChange={(e) => setPackShipmentPrice(e.target.value)}
+                            />
+                          </div>
+                        </div>}
+
+                        <div className="mt-3">
+                          <label>Delivery Type</label>
+                          <div className="pacform-box input_filed_zIndex">
+                            <input
+                              type="text"
+                              className="form-control input_filed_block  "
+                              placeholder="Pack Shipment Price"
+                              value={deliveryType}
+                              // disabled
+                              // onChange={(e) => setPackShipmentPrice(e.target.value)}
+                            />
+                          </div>
+                        </div>
+
+
+
+                        <div className='shipment-box pt-3'>
+                          <p>Do you want Insurance ?</p>
+                          <div className='shipment-btn'>
+                            <button type='button' className={yesnoactivebuttonInsurance ? 'active yes-btn' : "yes-btn"} onClick={(e) => setYesNoActiveButtonInsurance(true)}>Yes</button>
+                            <button type='button' className={!yesnoactivebuttonInsurance ? 'active no-btn' : "no-btn"} onClick={(e) => setYesNoActiveButtonInsurance(false)}>No</button>
+                          </div>
+
                         </div>
                       </div>
                     </div>
@@ -926,7 +1126,7 @@ const TrackOrder=()=>{
                     </div>
 
                     <hr className="add-border" />
-                    <h3>Customer Details</h3>
+                    <h3>Delivery Details</h3>
                     <div className="row mt-3">
                       <div className="col-sm-6">
                         <label className="mb-1">Full Name</label>
@@ -937,7 +1137,7 @@ const TrackOrder=()=>{
                           onChange={(e) => setName(e.target.value)}
                         />
                       </div>
-                      <div className="col-sm-6 mt-2 mt-sm-0 input_filed_block">
+                      <div className="col-sm-6 mt-2 mt-sm-0 input_filed_block"  >
                         <label className="mb-1">Mobile Number</label>
 
                         {/* <input type='number' className='form-control'
@@ -949,9 +1149,10 @@ const TrackOrder=()=>{
                           value={countrypincode + number}
                           onChange={InputCountryCodePickupFun}
                           className="input_filed input_filed_zIndex "
+                           
                         />
                       </div>
-                      <div className="col-md-6 mt-3 input_filed_block">
+                      {/* <div className="col-md-6 mt-3 input_filed_block">
                         <label className="mb-1">Email</label>
                         <input
                           type="email"
@@ -959,8 +1160,8 @@ const TrackOrder=()=>{
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                         />
-                      </div>
-                      <div className="col-md-6 mt-3">
+                      </div> */}
+                      {/* <div className="col-md-6 mt-3">
                         <label className="mb-1">Alternate Contact Number</label>
 
                         <PhoneInput
@@ -969,8 +1170,8 @@ const TrackOrder=()=>{
                           onChange={InputCountryCodePickupFunAlt}
                           className="input_filed"
                         />
-                      </div>
-                      <div className="col-md-6 mt-3 input_filed_block">
+                      </div> */}
+                      {/* <div className="col-md-6 mt-3 input_filed_block">
                         <label className="mb-1">Company Name</label>
                         <input
                           type="text"
@@ -978,7 +1179,7 @@ const TrackOrder=()=>{
                           value={companyname}
                           onChange={(e) => setCompanyName(e.target.value)}
                         />
-                      </div>
+                      </div> */}
 
 
 
@@ -1074,9 +1275,11 @@ const TrackOrder=()=>{
 
 
 
-                      <div className="col-md-6 mt-3">
+                      <div className="col-md-12 mt-3">
                         <label>Pincode</label>
-                        <input type="text" className={`form-control check-box ${pickuppincodeactive && pickuppincode ? "alert_border" : ""}`} placeholder="Delivered Pincode"
+                        <input type="number"  onWheel={handleOnWheel}
+                          ref={pickUpPincodeRef}
+                          onKeyDown={handleKeyDown} className={`form-control check-box ${pickuppincodeactive && pickuppincode ? "alert_border" : ""}`} placeholder="Delivered Pincode"
                           value={pickuppincode} onChange={(e) => PickUpPincodeFun(e)} />
                         {pickuppincodeactive && pickuppincode ? <span className='text-danger '>
                           <small> Pincode is not available </small></span> : ""}
@@ -1190,25 +1393,16 @@ const TrackOrder=()=>{
                           value={state}
                         />
                       </div> */}
-                      <div className="col-md-6 mt-3">
+
+
+
+                      <div className="col-md-12 mt-3">
                         <label className="mb-1">Country</label>
                         <input
                           type="text"
                           className="form-control"
                           value={country}
-                        // onChange={(e) => setCountry(e.target.value)}
-                        />
-                      </div>
-
-
-                      <div className="col-md-6 mt-3">
-                        <label className="mb-1">Phone Number</label>
-
-                        <input
-                          type="text"
-                          className="form-control"
-                          onChange={(e) => setPhone(e.target.value)}
-                          value={phone}
+                          onChange = {(e)=>setCountry(e.target.value)}
 
                         />
 
@@ -1219,6 +1413,52 @@ const TrackOrder=()=>{
                           className="input_filed"
                         /> */}
                       </div>
+
+                      <hr className="add-border" />
+                      <h3>Base Price</h3>
+                      <div className="mt-3">
+                      
+                        <input
+                          type="text"
+                          className={`${zone == "OTHER" ? "  form-control" : "form-control input_filed_block"} `} 
+                          placeholder="Basic Price"
+                          // value={`${"Rs."} ${amount} ${"/-"}`}
+                          value={`${PostAdminOrderPaymentCalReducerData?.data?.base_price ? PostAdminOrderPaymentCalReducerData?.data?.base_price : baseprice}`}
+                        // PostAdminOrderPaymentCalReducerData.data.total_price
+                        onChange={(e) =>  zone == "OTHER"?setBasePrice(e.target.value):""}
+                        />
+                      </div>
+                      <h3>Total Amount</h3>
+                      <div className="mt-3">
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Packaging Amount"
+                          // value={`${"Rs."} ${amount} ${"/-"}`}
+                          value={`${PostAdminOrderPaymentCalReducerData?.data?.total_price != undefined ? PostAdminOrderPaymentCalReducerData?.data?.total_price : amount}`}
+                        // PostAdminOrderPaymentCalReducerData.data.total_price
+                        // onChange={(e) => GetAdminOrderReturnData?.data?.delivered_address?.zone == "OTHER"?setAmount(e.target.value):""}
+                        />
+                      </div>
+                      <hr className="add-border" />
+
+                      {/* <div className="col-12 mt-2 ">
+                          <label className="mb-1">Packaging</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Packaging Amount"
+                            value={packaging}
+                            onChange={(e) => setPackaging(e.target.value)}
+                          />
+                        </div>
+                      <div className='shipment-box pt-3'>
+                    <p>Do you want Insurance ?</p>
+                    <div className='shipment-btn'>
+                      <button type='button' className={yesnoactivebuttonInsurance ? 'active yes-btn' : "yes-btn"} onClick={(e) => setYesNoActiveButtonInsurance(true)}>Yes</button>
+                      <button type='button' className={!yesnoactivebuttonInsurance ? 'active no-btn' : "no-btn"} onClick={(e) => setYesNoActiveButtonInsurance(false)}>No</button>
+                    </div>
+                  </div> */}
                       <div className="col-12"></div>
 
                       <div className="col-sm-6 mt-4 mb-md-4">
@@ -1406,22 +1646,22 @@ const TrackOrder=()=>{
                       <th>Product Type</th>
                       <th>Qty</th>
                       <th>Weight</th>
-                      <th>Total Price</th>
+                      {GetAdminOrderReturnData?.data?.method === "COD" ? <th>COD</th> : <th>Prepaid</th>}
                     </tr>
 
                     <tr>
                       <td>
                         {" "}
                         <img src="/images/icon33.svg" alt="img" />{" "}
-                        {GetAdminOrderReturnData?.Item_summary?.name}
+                        {GetAdminOrderReturnData?.data?.Item_summary?.name}
                       </td>
                       <td>
-                        {GetAdminOrderReturnData?.Item_summary?.product_type}
+                        {GetAdminOrderReturnData?.data?.Item_summary?.product_type}
                       </td>
-                      <td>{GetAdminOrderReturnData?.Item_summary?.quantity}</td>
-                      <td>{GetAdminOrderReturnData?.Item_summary?.weight}</td>
+                      <td>{GetAdminOrderReturnData?.data?.Item_summary?.quantity}</td>
+                      <td>{GetAdminOrderReturnData?.data?.Item_summary?.weight}</td>
                       <td>
-                        {GetAdminOrderReturnData?.Item_summary?.total_amount}
+                        {GetAdminOrderReturnData?.data?.method === "COD" ? GetAdminOrderReturnData?.data?.Item_summary?.cod_price : GetAdminOrderReturnData?.data?.Item_summary?.prepaid_price}
                       </td>
                     </tr>
                   </table>
@@ -1432,27 +1672,27 @@ const TrackOrder=()=>{
                   <ul>
                     <li>
                       <h4> Customer Name </h4>
-                      <p> {GetAdminOrderReturnData?.customer_details?.name} </p>
+                      <p> {GetAdminOrderReturnData?.data?.customer_details?.name} </p>
                     </li>
                     <li>
                       <h4> Phone Number </h4>
                       <p>
                         {
-                          GetAdminOrderReturnData?.customer_details?.address?.phone
+                          GetAdminOrderReturnData?.data?.customer_details?.address?.phone
                         }
                       </p>
                     </li>
                     <li>
                       <h4> Email Id </h4>
-                      <p> {GetAdminOrderReturnData?.customer_details?.email}</p>
+                      <p> {GetAdminOrderReturnData?.data?.customer_details?.email}</p>
                     </li>
                     <li>
                       <h4>Pickup Address </h4>
                       <p>
-                        {`${GetAdminOrderReturnData?.customer_details?.address?.address}
-                     ${GetAdminOrderReturnData?.customer_details?.address?.city}
-                     ${GetAdminOrderReturnData?.customer_details?.address?.pincode}
-                     ${GetAdminOrderReturnData?.customer_details?.address?.state}`}{" "}
+                        {`${GetAdminOrderReturnData?.data?.customer_details?.address?.address}
+                     ${GetAdminOrderReturnData?.data?.customer_details?.address?.city}
+                     ${GetAdminOrderReturnData?.data?.customer_details?.address?.pincode}
+                     ${GetAdminOrderReturnData?.data?.customer_details?.address?.state}`}{" "}
                       </p>
                     </li>
                   </ul>
@@ -1467,39 +1707,40 @@ const TrackOrder=()=>{
 
                     {/* <img src={deliverylogo} alt="img"  height={100} width={100}/> */}
                     {deliverypartnerdata == "false" ? <h5 className="px-1">
-                      {GetAdminOrderReturnData?.delivery_partner}
+                      {GetAdminOrderReturnData?.data?.delivery_partner}
                     </h5> : ""}
                     {/* <h5 className="px-1">
-                      {GetAdminOrderReturnData?.delivery_partner}
+                      {GetAdminOrderReturnData?.data?.delivery_partner}
                     </h5> */}
-                    <button type="button" className={`btn btn-ship  ${PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD == "VIEW_TRACK_SEARCH_DASHBOARD" ? " " : "permission_blur"}`} onClick={((e) => PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD == "VIEW_TRACK_SEARCH_DASHBOARD" ?
-                      PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD == "VIEW_TRACK_SEARCH_DASHBOARD" ?TrackOrder(): ""
-                    :"")}>
+                    {PermissionData()?.VIEW_ORDER_TRACK_PAGE == "VIEW_ORDER_TRACK_PAGE"?<button type="button" className={`btn btn-ship  ${PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD == "VIEW_TRACK_SEARCH_DASHBOARD" ? " " : "permission_blur"}`} onClick={((e) => PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD == "VIEW_TRACK_SEARCH_DASHBOARD" ?
+                      PermissionData()?.VIEW_TRACK_SEARCH_DASHBOARD == "VIEW_TRACK_SEARCH_DASHBOARD" ? TrackOrder() : ""
+                      : "")}>
                       Track
-                    </button>
+                    </button>:""}
                   </div>
                 </div>
                 <div className="box order-box mb-3">
                   <ul>
                     <li>
                       <h2>Order Summary</h2>
-                      {/* {GetAdminOrderReturnData?.order_summary?.status == "DELIVERED"  ? "" : <button type="button">On the way</button>} */}
+                      {/* {GetAdminOrderReturnData?.data?.order_summary?.status == "DELIVERED"  ? "" : <button type="button">On the way</button>} */}
                     </li>
                     <li className="mt-4 pt-1">
                       <h5>Order Created</h5>
                       <p>
-                        {date.toUTCString().slice(0, -13)}
+                        {/* {date.toUTCString().slice(0, -13)} */}
+                        {GetAdminOrderReturnData?.data?.order_summary?.order_update_date}
                       </p>
                     </li>
                     <li>
                       <h5>Order Time</h5>
-                      <p>{timepart}</p>
-                      {/* <p>{GetAdminOrderReturnData?.order_summary?.time}</p> */}
+                      {/* <p>{timepart}</p> */}
+                      <p>{GetAdminOrderReturnData?.data?.order_summary?.order_update_time}</p>
                     </li>
                     <li>
-                      <h5>COD Amount</h5>
+                      <h5>Courier Amount</h5>
                       <p>
-                        {GetAdminOrderReturnData?.order_summary?.cod_amount} /-
+                        {GetAdminOrderReturnData?.data?.order_summary?.total_amount} /-{" "}
                       </p>
                     </li>
                   </ul>
@@ -1508,7 +1749,7 @@ const TrackOrder=()=>{
                   <li className="mb-0">
                     <h5>Total</h5>
                     <h5>
-                      {GetAdminOrderReturnData?.order_summary?.total_amount} /-{" "}
+                      {GetAdminOrderReturnData?.data?.order_summary?.total_amount} /-{" "}
                     </h5>
                   </li>
                 </div>
@@ -1521,31 +1762,31 @@ const TrackOrder=()=>{
                     <li>
                       <h5>Name: </h5>
                       <p>
-                        {GetAdminOrderReturnData?.delivered_address?.name}
+                        {GetAdminOrderReturnData?.data?.delivered_address?.name}
                       </p>
                     </li>
 
                     <li>
                       <h5>Address Line: </h5>
                       <p>
-                        {GetAdminOrderReturnData?.delivered_address?.address}
+                        {GetAdminOrderReturnData?.data?.delivered_address?.address}
                       </p>
                     </li>
 
                     <li>
                       <h5>Street Name:</h5>
-                      <p>{`${GetAdminOrderReturnData?.delivered_address?.city}, ${GetAdminOrderReturnData?.delivered_address?.state}`}</p>
+                      <p>{`${GetAdminOrderReturnData?.data?.delivered_address?.city}, ${GetAdminOrderReturnData?.data?.delivered_address?.state}`}</p>
                     </li>
                     <li>
                       <h5>Postcode:</h5>
                       <p>
-                        {GetAdminOrderReturnData?.delivered_address?.pincode}
+                        {GetAdminOrderReturnData?.data?.delivered_address?.pincode}
                       </p>
                     </li>
                     <li>
                       <h5>Phone Number</h5>
                       <p>
-                        {GetAdminOrderReturnData?.delivered_address?.phone}
+                        {GetAdminOrderReturnData?.data?.delivered_address?.phone}
                       </p>
                     </li>
                   </ul>
@@ -1614,6 +1855,7 @@ const TrackOrder=()=>{
             </div>
           </div>
         </Popup>
+        <LodingSpiner loadspiner={OrderPagesLoaderTrueFalseData} />
       </div>
     </>
   );
