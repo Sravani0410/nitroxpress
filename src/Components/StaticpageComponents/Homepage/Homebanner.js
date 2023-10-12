@@ -47,7 +47,7 @@ function Homebanner() {
         if (PostOrderTrackData.status == 200 && param?.pathname == "/" && OrderId1 == true) {
             if (PostOrderTrackData?.data?.current_status !== "PENDING") {
                 navigate(`/profile/trackorder/${orderid}`)
-                window.location.reload(false)
+                // window.location.reload(false)
             }
         }
     }, [PostOrderTrackData])

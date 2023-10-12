@@ -213,7 +213,25 @@ const Shipping = () => {
   const PickupAddressFun = async (address, id) => {
     // please don't remove the id (parameter) it's important for address (parameter)
     setPickUpAddress(address);
-    const results = await geocodeByAddress(address);
+    // const results = await geocodeByAddress(address);
+    // if (results[0]?.address_components.at(-1).long_name === pickuppincode) {
+    //   let splitData = address.split(",");
+    //   // setPickupCity(splitData[splitData.length - 3])
+    //   // setPickupState(splitData[splitData.length - 2])
+    //   setPickupAddressActive(false);
+    // } else {
+    //   setPickupAddressActive(true);
+    //   // setPickupCity(" ")
+    //   // setPickupState(" ")
+    // }
+  };
+  const PickuphandleSelect=async(address)=>{
+    setPickUpAddress(address);
+    if (address == undefined) {
+      setPickUpAddress(" ");
+      setPickupAddressActive(true);
+    }
+    const results = address != undefined && (await geocodeByAddress(address));
     if (results[0]?.address_components.at(-1).long_name === pickuppincode) {
       let splitData = address.split(",");
       // setPickupCity(splitData[splitData.length - 3])
@@ -224,21 +242,21 @@ const Shipping = () => {
       // setPickupCity(" ")
       // setPickupState(" ")
     }
-  };
+  }
 
   const DeliveryAddressFun = async (address, id) => {
     // please don't remove the id (parameter) it's important for address (parameter)
 
     setDeliveryAddress(address);
-    const results = await geocodeByAddress(address);
-    if (results[0]?.address_components.at(-1).long_name === deliveredpincode) {
-      let splitData = address.split(",");
-      // setDeliveryCity(splitData[splitData.length - 3])
-      // setDeliveryState(splitData[splitData.length - 2])
-      setDeliveryAddressActive(false);
-    } else {
-      setDeliveryAddressActive(true);
-    }
+    // const results = await geocodeByAddress(address);
+    // if (results[0]?.address_components.at(-1).long_name === deliveredpincode) {
+    //   let splitData = address.split(",");
+    //   // setDeliveryCity(splitData[splitData.length - 3])
+    //   // setDeliveryState(splitData[splitData.length - 2])
+    //   setDeliveryAddressActive(false);
+    // } else {
+    //   setDeliveryAddressActive(true);
+    // }
   };
 
   const ConfirmDeleverFun = (e) => {
@@ -582,9 +600,11 @@ const Shipping = () => {
           GetShipmentDetailsData?.calculation_details?.amount_format
             ?.total_price,
       },
+      // redirect_url:`http://localhost:3000/shipping`
+      redirect_url:`https://d2ar2bguhc97cc.cloudfront.net/shipping`
     });
     const data = await Axios({
-      url: `${process.env.REACT_APP_BASE_URL}/razorpay`,
+      url: `${process.env.REACT_APP_BASE_URL}/phonepe`,
       method: "POST",
       headers: {
         Authorization: `Bearer ${BearerToken}`,
@@ -593,6 +613,7 @@ const Shipping = () => {
       },
       data: bodyContent,
     }).then((res) => {
+      window.location.replace(`${res?.data?.pay_page_url}`)
       return res;
     });
     // in data we will receive an object from the backend with the information about the payment
@@ -614,8 +635,8 @@ const Shipping = () => {
       },
     };
 
-    var rzp1 = new window.Razorpay(options);
-    rzp1.open();
+    // var rzp1 = new window.Razorpay(options);
+    // rzp1.open();
   };
 
   const InputCountryCodePickupFun = (
@@ -1068,6 +1089,7 @@ const Shipping = () => {
                       <PlacesAutocomplete
                         value={pickupaddress}
                         onChange={(e) => PickupAddressFun(e)}
+                        onSelect={(e) => PickuphandleSelect(e)}
                       >
                         {({
                           getInputProps,

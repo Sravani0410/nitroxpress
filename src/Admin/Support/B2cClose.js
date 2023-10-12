@@ -129,7 +129,7 @@ function B2cClose() {
                   className=" form-select"
                   onChange={(e) => TicketChangeFunn(e)}
                 >
-                 {PermissionData()?.VIEW_SUPPORT_B2C_RESOLVE_PAGE == "VIEW_SUPPORT_B2C_RESOLVE_PAGE"? <option value="close" className="px-3">
+                 {PermissionData()?.VIEW_SUPPORT_B2C_RESOLVED_PAGE == "VIEW_SUPPORT_B2C_RESOLVED_PAGE"? <option value="close" className="px-3">
                     Close Tickets
                   </option>:""}
                  { PermissionData()?.VIEW_SUPPORT_B2C_PAGE == "VIEW_SUPPORT_B2C_PAGE"?<option value="new" className="px-3">

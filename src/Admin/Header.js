@@ -12,6 +12,8 @@ import {
   GetDashboardNotification,
   GetDeliveryBoyNotification,
   PostDeliveryBoyNotification,
+  GetAdminRemarkNotification,
+  PostRemarkNotification,
   PostPincodeUploadFile,
   GetUserNotification,
   GetAuthDetails,
@@ -36,13 +38,11 @@ const Sidebar = () => {
   const [OpenPathSearch, setOpenPathSearch] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedOptionclass, setSelectedOptionClass] = useState("");
-
   const [SearchFiterData, setSearchFiterData] = useState("");
-
   const [HeaderMenu, setHeaderMenu] = useState(false);
-
+  const [deliveryboydata, setDeliveryBoyData] = useState("");
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  let navigate = useNavigate();
   let paramHash = useLocation();
 
   const GetAdminProfileData = useSelector(
@@ -55,6 +55,12 @@ const Sidebar = () => {
   const GetDeliveryBoyNotificationData = useSelector(
     (state) =>
       state.GetDeliveryBoyNotificationReducer.GetDeliveryBoyNotificationData
+        ?.data
+  );
+
+  const GetAdminRemarkNotificationData = useSelector(
+    (state) =>
+      state.GetAdminRemarkNotificationReducer.GetAdminRemarkNotificationData
         ?.data
   );
   const GetUserNotificationData = useSelector(
@@ -76,13 +82,12 @@ const Sidebar = () => {
   const GetAuthDetailsData = useSelector(
     (state) => state.GetAuthDetailsReducer?.GetAuthDetailsData?.data
   );
-  // GetDeliveryBoyNotificationData
   let isEmployeData = sessionStorage.getItem("isEmploye", false);
   let isAdmin_Role = sessionStorage.getItem("Admin_Role", false);
   let isDeliveryboy_Role = sessionStorage.getItem("Is_delivery_boy", false);
   useEffect(() => {
     // navigate(TokenDataValidCheck())
-
+    setDeliveryBoyData(GetDeliveryBoyNotificationData);
     dispatch(GetAdminProfile());
     dispatch(GetUserNotification());
     // dispatch(GetDashboardNotification());
@@ -93,6 +98,7 @@ const Sidebar = () => {
       }, 50000);
     } else {
       dispatch(GetDashboardNotification());
+      dispatch(GetAdminRemarkNotification());
     }
     // VIEW_WALLET_BALANCE
     // if (isEmployeData != "true" || isDeliveryboy_Role != "true") {
@@ -102,9 +108,10 @@ const Sidebar = () => {
 
     // }
 
-    if (isEmployeData != "true") {
-      dispatch(GetWalletBalance());
+    if (isEmployeData == "true" || isDeliveryboy_Role == "true") {
+      // dispatch(GetWalletBalance());
     } else {
+      dispatch(GetWalletBalance());
     }
 
     // dispatch(GetAuthDetails());
@@ -401,11 +408,21 @@ const Sidebar = () => {
       title: title,
       description: description,
     };
-    setRaiseIssue((o) => !o);
-    dispatch(PostCreateTicket(payload));
-    setOrderId("");
-    setTilte("");
-    setDescription("");
+    if (!orderid && !title && !description) {
+      toast.warn("Please Enter All Input Fields");
+    } else if (orderid.length == 0) {
+      toast.warn("Please Select OrderId");
+    } else if (title.length == 0) {
+      toast.warn("Please Enter Issue");
+    } else if (description.length == 0) {
+      toast.warn("Please Enter Remark");
+    } else {
+      dispatch(PostCreateTicket(payload));
+      setRaiseIssue((o) => !o);
+      setOrderId("");
+      setTilte("");
+      setDescription("");
+    }
   };
   const openSearchFun = () => {
     setAllSearchBar((o) => !o);
@@ -416,14 +433,21 @@ const Sidebar = () => {
     let payload = {
       order_id: [item.order_id],
     };
+    let remarkpayload = {
+      id: [item.remark_id],
+    };
     if (isDeliveryboy_Role == "true") {
       dispatch(PostDeliveryBoyNotification(payload));
     } else {
-      dispatch(PostClearNotification(payload));
+      dispatch(PostRemarkNotification(remarkpayload));
     }
     setNotification((o) => !o);
   };
-
+  const openpopupftn = (e) => {
+    //  let state = {
+    //     openpopup:true
+    //   }
+  };
   const ClearNotificationn = (e, item) => {
     let arrayData = [];
     GetDashboardNotificationData?.map((item, id) => {
@@ -435,26 +459,38 @@ const Sidebar = () => {
       array.push(item?.email);
     });
 
-    let deliveryboyarray=[];
-    GetDeliveryBoyNotificationData?.map((item,id)=>{
-      deliveryboyarray.push(item?.order_id)
-    })
+    let deliveryboyarray = [];
+    GetDeliveryBoyNotificationData?.map((item, id) => {
+      deliveryboyarray.push(item?.order_id);
+    });
 
+    let remarkarray = [];
+    GetAdminRemarkNotificationData?.map((item, id) => {
+      remarkarray.push(item?.remark_id);
+    });
     let payload = {
       order_id: arrayData,
     };
 
-    let payloaaad = {
-      email: array,
-    };
+    // let payloaaad = {
+    //   email: array,
+    // };
 
-    let deliveryboypayload={
-      order_id:deliveryboyarray,
-    }
+    let deliveryboypayload = {
+      order_id: deliveryboyarray,
+    };
+    let remarkpayload = {
+      id: remarkarray,
+    };
     setNotification((o) => !o);
-    dispatch(PostClearNotification(payloaaad));
-    dispatch(PostClearNotification(payload));
-    dispatch(PostDeliveryBoyNotification(deliveryboypayload));
+    // dispatch(PostClearNotification(payloaaad));
+    if (GetDeliveryBoyNotificationData != undefined) {
+      dispatch(PostDeliveryBoyNotification(deliveryboypayload));
+    } else if (GetDashboardNotificationData?.length != 0) {
+      dispatch(PostClearNotification(payload));
+    } else if (GetAdminRemarkNotificationData?.length != 0) {
+      dispatch(PostRemarkNotification(remarkpayload));
+    }
   };
 
   const ClearUserNotification = (e, item) => {
@@ -608,8 +644,14 @@ const Sidebar = () => {
                   GetDashboardNotificationData?.length > 0) ||
                 (GetDashboardNotificationData?.data?.length &&
                   GetDashboardNotificationData?.data?.length > 0) ||
-                (GetDeliveryBoyNotificationData?.length &&
-                  GetDeliveryBoyNotificationData?.length >= 0) ? (
+                ( GetDeliveryBoyNotificationData && GetDeliveryBoyNotificationData?.length > 0)||
+                (
+                  deliveryboydata && deliveryboydata?.length > 0 ||
+                  deliveryboydata && deliveryboydata != undefined 
+                ) || (
+                  GetAdminRemarkNotificationData?.length &&
+                    GetAdminRemarkNotificationData?.length >= 0
+                ) ? (
                   <svg
                     width="22"
                     height="22"
@@ -630,6 +672,25 @@ const Sidebar = () => {
                       fill="#FFC900"
                     />
                   </svg>
+                ) : ( GetDeliveryBoyNotificationData && GetDeliveryBoyNotificationData?.length == 0)||
+                ( deliveryboydata&&deliveryboydata?.length == 0 ||
+                deliveryboydata&&deliveryboydata == undefined ||  deliveryboydata&&deliveryboydata == [])? (
+                  <svg
+                    width="19"
+                    height="19"
+                    viewBox="0 0 19 19"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M11.0001 20.949C11.385 20.9401 11.7545 20.7954 12.043 20.5404C12.3315 20.2854 12.5206 19.9366 12.5767 19.5557H9.3623C9.42004 19.947 9.61795 20.304 9.91921 20.5603C10.2205 20.8166 10.6046 20.9547 11.0001 20.949V20.949Z"
+                      fill="#656E7A"
+                    />
+                    <path
+                      d="M19.8676 17.0072C19.2783 16.4819 18.7624 15.8796 18.3337 15.2167C17.8657 14.3016 17.5852 13.3022 17.5087 12.2772V9.25833C17.5062 8.89163 17.4735 8.52576 17.4109 8.16444C16.9299 8.06829 16.4677 7.89494 16.042 7.65111C16.2043 8.17351 16.2867 8.71742 16.2865 9.26444V12.2833C16.3614 13.5337 16.7053 14.7531 17.2948 15.8583C17.7167 16.5269 18.2173 17.1424 18.7859 17.6917H3.13537C3.70395 17.1424 4.20457 16.5269 4.62648 15.8583C5.21597 14.7531 5.55991 13.5337 5.63481 12.2833V9.25833C5.6316 8.55108 5.76792 7.85015 6.03597 7.19566C6.30403 6.54117 6.69855 5.94598 7.19694 5.44418C7.69534 4.94237 8.28783 4.54381 8.94048 4.2713C9.59313 3.9988 10.2931 3.85771 11.0004 3.85611C12.0354 3.85693 13.0473 4.16304 13.9093 4.73611C13.8142 4.38715 13.7609 4.02817 13.7504 3.66666V3.28166C13.1123 2.96777 12.4268 2.76129 11.7215 2.67055V1.90055C11.7215 1.68418 11.6355 1.47667 11.4825 1.32367C11.3295 1.17067 11.122 1.08472 10.9056 1.08472C10.6893 1.08472 10.4818 1.17067 10.3288 1.32367C10.1758 1.47667 10.0898 1.68418 10.0898 1.90055V2.70111C8.51053 2.92389 7.06516 3.7105 6.02056 4.91573C4.97595 6.12096 4.40265 7.66341 4.40648 9.25833V12.2772C4.32994 13.3022 4.04946 14.3016 3.58148 15.2167C3.16035 15.8781 2.65271 16.4803 2.07204 17.0072C2.00685 17.0645 1.95461 17.135 1.91878 17.214C1.88295 17.293 1.86437 17.3788 1.86426 17.4656V18.2967C1.86426 18.4587 1.92864 18.6142 2.04325 18.7288C2.15785 18.8434 2.31329 18.9078 2.47537 18.9078H19.4643C19.6263 18.9078 19.7818 18.8434 19.8964 18.7288C20.011 18.6142 20.0754 18.4587 20.0754 18.2967V17.4656C20.0753 17.3788 20.0567 17.293 20.0208 17.214C19.985 17.135 19.9328 17.0645 19.8676 17.0072V17.0072Z"
+                      fill="#656E7A"
+                    />
+                  </svg>
                 ) : (
                   <svg
                     width="19"
@@ -639,7 +700,11 @@ const Sidebar = () => {
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      d="M18.4784 16.4225C17.8891 15.8972 17.3731 15.2949 16.9445 14.6319C16.4765 13.7168 16.196 12.7175 16.1195 11.6925V8.67361C16.117 8.30691 16.0843 7.94105 16.0217 7.57972L14.6528 7.06639C14.8151 7.58879 14.8975 8.1327 14.8973 8.67972V11.6986C14.9722 12.949 15.3161 14.1684 15.9056 15.2736C16.3275 15.9422 16.8281 16.5577 17.3967 17.1069H1.74615C2.31473 16.5577 2.81535 15.9422 3.23726 15.2736C3.82674 14.1684 4.17069 12.949 4.24559 11.6986V8.67361C4.24238 7.96636 4.3787 7.26543 4.64675 6.61094C4.9148 5.95645 5.30933 5.36126 5.80772 4.85946C6.30612 4.35766 6.89861 3.95909 7.55126 3.68659C8.2039 3.41408 8.90389 3.27299 9.61115 3.27139C10.6462 3.27222 13.811 3.68659 14.6528 7.06639L16.0217 7.57972C16.0217 7.57972 15.6709 5.72861 14.5 4.5C13.3291 3.27139 12.3611 2.69694 12.3611 2.69694C11.7231 2.38305 11.0376 2.17658 10.3323 2.08583V1.31583C10.3323 1.09946 10.2463 0.891951 10.0933 0.738952C9.94031 0.585954 9.7328 0.5 9.51642 0.5C9.30005 0.5 9.09254 0.585954 8.93954 0.738952C8.78654 0.891951 8.70059 1.09946 8.70059 1.31583V2.11639C7.12131 2.33917 5.67594 3.12579 4.63134 4.33101C3.58673 5.53624 3.01343 7.0787 3.01726 8.67361V11.6925C2.94072 12.7175 2.66023 13.7168 2.19226 14.6319C1.77113 15.2934 1.26349 15.8956 0.682814 16.4225C0.617628 16.4798 0.565384 16.5503 0.529558 16.6293C0.493733 16.7083 0.475146 16.7941 0.475037 16.8808V17.7119C0.475037 17.874 0.539421 18.0295 0.654027 18.1441C0.768632 18.2587 0.924071 18.3231 1.08615 18.3231H18.075C18.2371 18.3231 18.3926 18.2587 18.5072 18.1441C18.6218 18.0295 18.6861 17.874 18.6861 17.7119V16.8808C18.686 16.7941 18.6675 16.7083 18.6316 16.6293C18.5958 16.5503 18.5436 16.4798 18.4784 16.4225Z"
+                      d="M11.0001 20.949C11.385 20.9401 11.7545 20.7954 12.043 20.5404C12.3315 20.2854 12.5206 19.9366 12.5767 19.5557H9.3623C9.42004 19.947 9.61795 20.304 9.91921 20.5603C10.2205 20.8166 10.6046 20.9547 11.0001 20.949V20.949Z"
+                      fill="#656E7A"
+                    />
+                    <path
+                      d="M19.8676 17.0072C19.2783 16.4819 18.7624 15.8796 18.3337 15.2167C17.8657 14.3016 17.5852 13.3022 17.5087 12.2772V9.25833C17.5062 8.89163 17.4735 8.52576 17.4109 8.16444C16.9299 8.06829 16.4677 7.89494 16.042 7.65111C16.2043 8.17351 16.2867 8.71742 16.2865 9.26444V12.2833C16.3614 13.5337 16.7053 14.7531 17.2948 15.8583C17.7167 16.5269 18.2173 17.1424 18.7859 17.6917H3.13537C3.70395 17.1424 4.20457 16.5269 4.62648 15.8583C5.21597 14.7531 5.55991 13.5337 5.63481 12.2833V9.25833C5.6316 8.55108 5.76792 7.85015 6.03597 7.19566C6.30403 6.54117 6.69855 5.94598 7.19694 5.44418C7.69534 4.94237 8.28783 4.54381 8.94048 4.2713C9.59313 3.9988 10.2931 3.85771 11.0004 3.85611C12.0354 3.85693 13.0473 4.16304 13.9093 4.73611C13.8142 4.38715 13.7609 4.02817 13.7504 3.66666V3.28166C13.1123 2.96777 12.4268 2.76129 11.7215 2.67055V1.90055C11.7215 1.68418 11.6355 1.47667 11.4825 1.32367C11.3295 1.17067 11.122 1.08472 10.9056 1.08472C10.6893 1.08472 10.4818 1.17067 10.3288 1.32367C10.1758 1.47667 10.0898 1.68418 10.0898 1.90055V2.70111C8.51053 2.92389 7.06516 3.7105 6.02056 4.91573C4.97595 6.12096 4.40265 7.66341 4.40648 9.25833V12.2772C4.32994 13.3022 4.04946 14.3016 3.58148 15.2167C3.16035 15.8781 2.65271 16.4803 2.07204 17.0072C2.00685 17.0645 1.95461 17.135 1.91878 17.214C1.88295 17.293 1.86437 17.3788 1.86426 17.4656V18.2967C1.86426 18.4587 1.92864 18.6142 2.04325 18.7288C2.15785 18.8434 2.31329 18.9078 2.47537 18.9078H19.4643C19.6263 18.9078 19.7818 18.8434 19.8964 18.7288C20.011 18.6142 20.0754 18.4587 20.0754 18.2967V17.4656C20.0753 17.3788 20.0567 17.293 20.0208 17.214C19.985 17.135 19.9328 17.0645 19.8676 17.0072V17.0072Z"
                       fill="#656E7A"
                     />
                   </svg>
@@ -674,7 +739,6 @@ const Sidebar = () => {
             >
               <div className="dropdown-box">
                 <img src="/images/user.png" alt="img" type="button" />
-
                 <ul
                   className={` ${
                     HeaderMenu
@@ -869,7 +933,10 @@ const Sidebar = () => {
             GetUserNotificationData?.data?.length >= 0 ||
             GetDashboardNotificationData.length >= 0 ||
             GetDashboardNotificationData?.data?.length >= 0 ||
-            (GetDeliveryBoyNotificationData&&GetDeliveryBoyNotificationData?.length >= 0 )? (
+            (GetDeliveryBoyNotificationData &&
+              GetDeliveryBoyNotificationData?.length >= 0) ||
+            (GetAdminRemarkNotificationData &&
+              GetAdminRemarkNotificationData?.length >= 0) ? (
               // GetUserNotificationData && GetUserNotificationData?.data?.length || GetDashboardNotificationData && GetDashboardNotificationData?.data?.length !== 0
               <button
                 type="button"
@@ -959,23 +1026,37 @@ const Sidebar = () => {
                     </li>
                   );
                 })
-              : GetUserNotificationData?.data?.map((item, id) => {
+              : ""}
+            {isDeliveryboy_Role != "true"
+              ? GetAdminRemarkNotificationData &&
+                GetAdminRemarkNotificationData?.map((item, id) => {
                   return (
-                    <li onClick={(e) => ClearUserNotification(e, item)}>
+                    <li onClick={(e) => ClearNotification(e, item)}>
                       <p
                         onClick={(e) => {
-                          navigate("/admin/setting/userprofile");
+                          navigate(
+                            `/admin/orderinner/${item.product_order_id}`,
+                            // ,openpopupftn(e)
+                            {
+                              state: {
+                                openpopup: true,
+                                closepopup: false,
+                              },
+                            }
+                          );
                         }}
                       >
-                        {item.notification}
+                        {item.message}
                       </p>
+
                       <div>
                         <span>{item.date}</span> at{" "}
                         <span>{timeConvert(item.time)}</span>{" "}
                       </div>
                     </li>
                   );
-                })}
+                })
+              : ""}
           </ul>
         </div>
       )}

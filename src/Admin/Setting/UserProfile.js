@@ -25,6 +25,7 @@ import LodingSpiner from "../../Components/LodingSpiner";
 const UserProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const params=useLocation();
   const  amountRef = useRef();
   let IsAdminRole = sessionStorage.getItem("Admin_Role", false);
   const [permissiondata, setPermissionData] = useState("");
@@ -645,7 +646,14 @@ const UserProfile = () => {
                   </div>
                   <div className="col-12">
                   <label>Category</label>
-                  <select
+                  <input
+                      type="text"
+                      className="form-control input_filed_block"
+                      disabled
+                      placeholder="516498163"
+                      value={usereditprofile?.category_details[0]?.category_name}
+                    />
+                  {/* <select
                     className={`form-select  `}
                     placeholder="Category"
                     onChange={(e) => {
@@ -662,7 +670,7 @@ const UserProfile = () => {
                         );
                       }
                     )}
-                  </select>
+                  </select> */}
                 </div>
                   <div className="col-12">
                     <label>Duration</label>
@@ -830,12 +838,12 @@ const UserProfile = () => {
                         </div>
                       </div>
                     </div>
-                    {IsAdminRole=="true"?<div className="col-sm-3">
-                      <label className="fw-bold">Balance</label>
-                      <div className="row">
-                        <div className="col-12">Rs. {GetWalletBalanceData?.data?.balance_status == "NEGATIVE" ? `-${GetWalletBalanceData?.data?.balance}` : GetWalletBalanceData?.data?.balance}/-</div>
-                      </div>
-                    </div>:""}
+                      {/* {IsAdminRole=="true"?<div className="col-sm-3">
+                        <label className="fw-bold">Balance</label>
+                        <div className="row">
+                          <div className="col-12">Rs. {GetWalletBalanceData?.data?.balance_status == "NEGATIVE" ? `-${GetWalletBalanceData?.data?.balance}` : GetWalletBalanceData?.data?.balance}/-</div>
+                        </div>
+                      </div>:""} */}
 
                     {/* <div> */}
 
@@ -1054,7 +1062,7 @@ const UserProfile = () => {
                       </div>
                     </div>
 
-                   {IsAdminRole=="true"?<div className="row">
+                   {/* {IsAdminRole=="true"?<div className="row">
                       <div className="col-8">
                         <label className="fw-bold">Amount</label>
                         <input
@@ -1080,7 +1088,7 @@ const UserProfile = () => {
                           </button>
                         </div>
                       </div>
-                    </div>:""}
+                    </div>:""} */}
                   </div>
                 </div>
               </div>

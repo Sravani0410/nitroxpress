@@ -2081,7 +2081,7 @@ hover:bg-black
   border-radius: 6px !important;
 }
 
-.action-btn:hover,
+.action-btn:hover,.add-remark-btn:hover,
 .delivery-box .btn:hover {
   border: 1px solid #FFC900;
   background-color: #FFC900;
@@ -2441,14 +2441,14 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
   margin-top: 50px;
 }
 
-.btngroups button {
+.btngroups button,.remarkgroups button {
   border-radius: 30px;
   padding: 4px 28px;
   font-size: 14px;
   border-radius: 0;
 }
 
-.btngroups button.save-btn {
+.btngroups button.save-btn,.remarkgroups button.save-btn {
   background: #FFDC5A;
   color: #fff;
   border: 1px solid #FFDC5A;
@@ -2456,7 +2456,7 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
 
 }
 
-.btngroups button.cancel-btn {
+.btngroups button.cancel-btn,.remarkgroups button.cancel-btn{
   border: 1px solid #B6B6B6;
   color: #5F5F5F;
   margin-left: 15px;
@@ -2469,7 +2469,7 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
   transform: none;
   top: 0;
   left: 0;
-  max-height: 500px;
+  max-height: 510px;
   height: 90%;
   margin: 35px auto;
   overflow: initial;
@@ -2619,6 +2619,24 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
 
 }
 
+.customer-details-part{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 25px;
+}
+.add-remark-btn{
+  background: #FFFFFF;
+  border: 1px solid #FCC900;
+  box-shadow: 0px 0px 1px 1px rgb(0 0 0 / 5%), 0px 1px 2px -2px rgb(0 0 0 / 6%), 0px 1px 3px rgb(0 0 0 / 7%);
+  border-radius: 4px;
+  padding: 7px 22px;
+  font-size: 14px;
+  font-weight: 400;
+  outline: none;
+  margin-right: 22px;
+  border-radius: 4px;
+}
 .order-box li p {
   word-break: break-word;
 }
@@ -3377,6 +3395,9 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
   margin-right: -15px;
 }
 
+.remark-box .remarkword{
+  word-break: break-all;
+}
 
 /* ===============================  Customer part Part =============================== */
 
@@ -3729,7 +3750,14 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
 .popupinner label {
   font-size: 14px;
   color: #000;
-  font-weight: 500;
+  font-weight:500;
+  margin-bottom: 8px;
+}
+
+.popupinner .remarkname{
+  font-size: 24px;
+  color: #000;
+  font-weight: 700;
   margin-bottom: 8px;
 }
 
@@ -3752,7 +3780,7 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
 /* ==============editb2b-popup =========================== */
 
 .editb2b-popup .popupinner {
-  max-height: 525px;
+  max-height: 700px;
   max-width: 800px;
 }
 
@@ -4852,6 +4880,7 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
 .itemtrackinfo li > p{
   margin-bottom: 0;
   padding-bottom: 5px;
+  word-wrap: break-word;
 }
 .itemtrackinfo li > p > b {
   color: gray;
@@ -5097,6 +5126,10 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
     max-width: 412px;
     text-align: center;
   }
+  .remark-popup .popupinner{
+    max-height: 350px ;
+    max-width: 412px;
+  }
 
   .deliveryaction-popup .popupinner h2 {
     font-size: 22px;
@@ -5117,7 +5150,9 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
     height: calc(100% - 75px);
   }
 
+  /* -------------------- remarkgroups------------*/
 
+  
   .tracking-popup .popup-body  {
     height: calc(100% - 55px);
   }
@@ -5128,12 +5163,15 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
     border: none;
   }
 
-  .tracking-popup .popup-body .btngroups{
+  .tracking-popup .popup-body .btngroups,.remarkgroups{
     margin: 25px 0 0;
     text-align: right;
   }
 
-
+  .remarkgroups{
+    margin: 25px 0 0;
+    text-align: center;
+  }
 
   /* trackorderstatuslogin */
 
@@ -6136,7 +6174,7 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
     margin-right: 10px;
   }
 
-  .action-btn {
+  .action-btn,.add-remark-btn {
     padding: 3px 15px;
     font-size: 12px;
   }

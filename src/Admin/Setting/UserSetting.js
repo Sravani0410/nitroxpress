@@ -43,6 +43,7 @@ const UserSetting = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let IsAdminRole=sessionStorage.getItem("Admin_Role",false)
+  let isEmployeData = sessionStorage.getItem("isEmploye", false);
 
 
   const ToggleFunData = useSelector(
@@ -204,10 +205,9 @@ const UserSetting = () => {
         <Sidebar />
         <div className="content-sec usersetting-sec">
           <div className="title-bar ">
-            {IsAdminRole=="true"?<button type="button"
+            {IsAdminRole=="true" || isEmployeData=="true"?<button type="button"
 
               className={`btn add-btn ${PermissionData()?.CREATE_CATEGORY == "CREATE_CATEGORY" ? " " : "permission_blur"}`}
-
               onClick={(e) =>
                 PermissionData()?.CREATE_CATEGORY == "CREATE_CATEGORY" ?
                   setAddCategory((o) => !o) : ""}>
@@ -343,7 +343,7 @@ const UserSetting = () => {
                   <svg viewBox="0 0 10 9" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z" fill="black" />
                   </svg></div>
-                <div className='popup-body row mx-0'>
+                <div className='popup-body'>
 
                   <div className='col-12'>
                     <label>Category Name</label>

@@ -24,7 +24,9 @@ const Setting = () => {
   );
 
   let Admin_Role = sessionStorage.getItem("Admin_Role", false);
-
+  let isEmployeData = sessionStorage.getItem("isEmploye", false);
+  let IsDeliveryBoyRole = sessionStorage.getItem("Is_delivery_boy", false);
+  let B2BPartner = sessionStorage.getItem("Is_Business",false);
   return (
     <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
       <Header />
@@ -40,7 +42,7 @@ const Setting = () => {
               <img src={warehouse} alt="img" className="w-100" />
               <h3>Warehouse</h3>
             </li>
-            {Admin_Role == "true" || PermissionData()?.VIEW_SETTING_EMPLOYEE_PAGE == "VIEW_SETTING_EMPLOYEE_PAGE"? (
+            {isEmployeData != "true" && PermissionData()?.VIEW_SETTING_EMPLOYEE_PAGE == "VIEW_SETTING_EMPLOYEE_PAGE"? (
               <li
                 onClick={(e) => {
                   navigate("/admin/setting/employee");
@@ -105,7 +107,7 @@ const Setting = () => {
               <img src={feedback} alt="img" className="w-100" />
               <h3>Feedback</h3>
             </li>:""}
-            {Admin_Role == "true" || PermissionData()?.VIEW_SETTING_DELIVERY_BOY_PAGE == "VIEW_SETTING_DELIVERY_BOY_PAGE" ? (
+            {IsDeliveryBoyRole != "true" && B2BPartner != "true" && PermissionData()?.VIEW_SETTING_DELIVERY_BOY_PAGE == "VIEW_SETTING_DELIVERY_BOY_PAGE" ? (
               <li
                 onClick={(e) => {
                   navigate("/admin/setting/deliveryboy");

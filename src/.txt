@@ -35,8 +35,8 @@ path="/admin/setting/usersetting"  =============>  <UserSetting />==============
     path="/admin/ordertrack/:id"  =============>  <Ordertrack />=====================>VIEW_ORDER_TRACK_PAGE 
          path="/admin/support/b2b"  =============>  <B2B />=========================> VIEW_SUPPORT_B2B_PAGE
          path="/admin/support/b2b/b2c"  =============>  <B2C />=========================> VIEW_SUPPORT_B2C_PAGE
-         path="/admin/support/b2b/b2bclose"  =============>  <B2BCLose />=========================>  VIEW_SUPPORT_B2B_RESOLVE_PAGE
-         path="/admin/support/b2b/b2cclose"  =============>  <B2cClose />=========================> VIEW_SUPPORT_B2C_RESOLVE_PAGE
+         path="/admin/support/b2b/b2bclose"  =============>  <B2BCLose />=========================>  VIEW_SUPPORT_B2B_RESOLVED_PAGE
+         path="/admin/support/b2b/b2cclose"  =============>  <B2cClose />=========================> VIEW_SUPPORT_B2C_RESOLVED_PAGE
 
 
          path="/admin/invoices/cod"  =============>  <Cod />=========================>VIEW_COD_REMITTANCE_PAGE, VIEW_INVOICE_PAGE
@@ -78,6 +78,10 @@ Balance Api:
 ===========
 VIEW_WALLET_BALANCE
 
+Remark Api:
+===========
+ALLOW_ADD_REMARK_ACTION
+ALLOW_VIEW_ORDER_REMARK_ACTION
 
 DON'T WANT:
 

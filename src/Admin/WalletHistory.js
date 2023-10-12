@@ -98,8 +98,8 @@ const WalletHistory = () => {
   }
 
   const ProceedToPay = () => {
-    // PaymentFun();
-    setOtpActionPopup(true);
+    PaymentFun();
+    // setOtpActionPopup(true);
   };
 
   const CloseOtp = () => {
@@ -169,6 +169,7 @@ const WalletHistory = () => {
   };
 
   const PaymentFun = async () => {
+    setLoadSpiner((o) => !o);
     const res = await loadScript();
 
     let amountValue = amount;
@@ -180,49 +181,36 @@ const WalletHistory = () => {
 
     let dataa = JSON.parse(OrderDetailsId);
 
-    let bodyContent;
-    if (PostWalletAddMoneyData) {
-      bodyContent = JSON.stringify({
-        amount: parseInt(amountValue),
+    try{
+      let bodyContent;
+      if (PostWalletAddMoneyData) {
+        bodyContent = JSON.stringify({
+          amount: parseFloat(amountValue),
+          // redirect_url:`http://localhost:3000/admin/wallethistory`
+          // redirect_url:`${process.env.REACT_APP_BASE_URL}/admin/wallethistory`
+          redirect_url:`https://d2ar2bguhc97cc.cloudfront.net/admin/wallethistory`
+        });
+      }
+      const data = await Axios({
+        url: `${process.env.REACT_APP_BASE_URL}/wallet/add_money`, //razorpay
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+          Accept: "*/*",
+          "Content-Type": "application/json",
+        },
+        data: bodyContent,
+      }).then((res) => {
+        setLoadSpiner((o) => !o);
+        window.location.replace(`${res?.data?.pay_page_url}`)
+        return res;
       });
+      dispatch(GetWalletHistory());
     }
-
-    const data = await Axios({
-      url: `${process.env.REACT_APP_BASE_URL}/wallet/add_money`, //razorpay
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${BearerToken}`,
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      },
-      data: bodyContent,
-    }).then((res) => {
-      return res;
-    });
-
-    // in data we will receive an object from the backend with the information about the payment
-    //that has been made by the user
-
-    let options = {
-      key_id: "rzp_test_G0kWdsA9toFR0a", // in react your environment variable must start with REACT_APP_
-      key_secret: "qW4iPbrU5Vc84pHzZc4uI5ZA",
-      amount: parseInt(amount),
-      currency: "INR",
-      description: "Test transaction",
-      image: "", // add image url
-      order_id: data?.data?.order_id,
-      handler: function (response) {
-        // we will handle success by calling handlePaymentSuccess method and
-        // will pass the response that we've got from razorpay
-
-        handlePaymentSuccess(response, data);
-      },
-    };
-
-    dispatch(GetWalletHistory());
-
-    let rzp1 = new window.Razorpay(options);
-    rzp1.open();
+    catch(err){
+      setLoadSpiner(false);
+    }
+   
   };
 
   const payment = (e) => {
@@ -316,23 +304,21 @@ const WalletHistory = () => {
                 <div className="amout">
                   <h2>Add Money</h2>
                   <p>Amount in multiples of 100 below</p>
-                  <div className="image-container ">
+                  {/* <div className="image-container ">
                         
                         <img
                           src="/images/QR.png"
                           alt="img"
                           className="image-container img"
                         />
-                      </div>
+                      </div> */}
 
 
                       <span className="text-danger ">
                           <small>Contact administrator after payment !</small>
                         </span>
-                      {/* <div style={{ height: "15px" }}>
-                      
-                    </div> */}
-                  {/* <div className="">
+                       
+                  <div className="">
                     <p>Rs.</p>
 
                     <input
@@ -395,7 +381,7 @@ const WalletHistory = () => {
                     onClick={(e) => ProceedToPay(e)}
                   >
                     Proceed To Add {amount} /-
-                  </button> */}
+                  </button>
                 </div>
               </div>
             </div>

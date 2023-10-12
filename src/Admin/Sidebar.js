@@ -195,7 +195,7 @@ const Sidebar = () => {
                 "VIEW_ORDER_RTO_DELIVERED_PAGE" ||
                 PermissionData()?.VIEW_ORDER_CANCEL_PAGE ==
                 "VIEW_ORDER_CANCEL_PAGE" ? (
-                <li onClick={(e) => orderRouteFun(e)}>
+                <li onClick={(e) => orderRouteFun(e)}>  
                   <NavLink 
                     to="/admin/order#pending"
                     // className={` ${param.pathname === "/admin/order" ? "active" : ""} `}

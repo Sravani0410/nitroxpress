@@ -32,7 +32,6 @@ const Ordertrack = () => {
   const PostOrderTrackData = useSelector(
     (state) => state.PostOrderTrackReducer.PostOrderTrackData
   );
-  console.log("PostOrderTrackData", PostOrderTrackData);
   const HeaderToggleClassAddData = useSelector(
     (state) => state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
   );
@@ -56,7 +55,6 @@ const Ordertrack = () => {
     });
     setintransitData(PostOrderTrackData?.data?.track_details);
     PostOrderTrackData?.data?.track_details?.map((item, index) => {
-      console.log("hsahhs", item);
       if (
         item.order_status == "PENDING" ||
         item?.order_status == "READY_FOR_PICKUP" ||
@@ -275,7 +273,6 @@ const Ordertrack = () => {
                   // ArrInTrnasitOutDelverdValue.length >= 3 ?
 
                   ArrInTrnasitOutDelverdValue?.map((item, id) => {
-                    console.log("sdhhah", item);
                     return (
                       <li
                         className={`${
@@ -363,7 +360,6 @@ const Ordertrack = () => {
                             </a>
                             {id==ViewMoreToggleId && (
                               <ul>
-                                {console.log("faahgsc",item)}
                                 {item?.location_details?.map((items, id) => {
                                   return (
                                     <li>
@@ -547,7 +543,6 @@ const Ordertrack = () => {
                           <path d="M14.1751 5.59516C14.0881 5.68217 14.0946 5.75952 14.2235 6.10435C14.3556 6.44919 14.5039 7.02283 14.5844 7.48046C14.665 7.94776 14.665 9.12084 14.5844 9.60747C14.1526 12.1921 12.4864 14.2482 10.0694 15.1828C9.66974 15.3375 8.94463 15.5244 8.487 15.5921C8.05837 15.6533 6.99487 15.6437 6.54046 15.5728C5.18047 15.3601 3.94294 14.7929 2.91166 13.9034C2.7183 13.7326 2.53138 13.565 2.49593 13.5295C2.43792 13.4619 2.43792 13.4619 2.54427 13.4748C2.8182 13.5134 3.83981 13.6198 3.92682 13.6198C4.0654 13.6198 4.15886 13.5167 4.14597 13.3716C4.12986 13.1654 4.08796 13.1557 2.99223 13.0397C2.45081 12.9849 1.95773 12.9301 1.89327 12.9204C1.80304 12.9076 1.76114 12.9204 1.69347 12.9785C1.60645 13.0558 1.60323 13.0719 1.49366 14.0871C1.43242 14.6543 1.38086 15.1731 1.38086 15.2408C1.38086 15.46 1.60001 15.5663 1.76759 15.431C1.83527 15.3762 1.84816 15.3085 1.9255 14.5963C1.97062 14.1709 2.01896 13.8164 2.02863 13.8099C2.0383 13.8035 2.18654 13.9259 2.35735 14.0839C3.57877 15.2054 5.01933 15.8854 6.59847 16.0852C7.13989 16.1561 8.31619 16.1367 8.79316 16.0562C10.9266 15.6856 12.7023 14.535 13.8915 12.7496C14.1751 12.321 14.5522 11.554 14.7166 11.0738C15.171 9.74283 15.258 8.3506 14.9776 6.97449C14.8938 6.55554 14.6038 5.66928 14.5232 5.58871C14.4426 5.50815 14.2589 5.51137 14.1751 5.59516Z" />
                         </svg>
                       </span>
-                      {console.log("gshg", PostOrderTrackData?.data)}
                       {item?.order_status == "RTO" ? (
                         <div className="trackdate">
                           <span>{item?.order_status} </span>{" "}
@@ -658,7 +653,6 @@ const Ordertrack = () => {
                                 </a>
                                 {id==ViewMoreToggleId && (
                                     <ul>
-                                      {console.log("faahgsc", item)}
                                       {item?.location_details?.map(
                                         (items, id) => {
                                           return (

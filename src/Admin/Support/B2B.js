@@ -164,7 +164,7 @@ function B2B() {
                  {PermissionData()?.VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"? <option value="new" className="px-3">
                     New Tickets
                   </option>:""}
-                  {PermissionData()?.VIEW_SUPPORT_B2B_RESOLVE_PAGE == "VIEW_SUPPORT_B2B_RESOLVE_PAGE"?<option value="close" className="px-3">
+                  {PermissionData()?.VIEW_SUPPORT_B2B_RESOLVED_PAGE == "VIEW_SUPPORT_B2B_RESOLVED_PAGE"?<option value="close" className="px-3">
                     Close Tickets
                   </option>:""}
                 </select>

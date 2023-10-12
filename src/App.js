@@ -101,6 +101,8 @@ function App({ auth }) {
         location.pathname == "/page/kyc" ||
         location.pathname == `${"/profile/trackorder/"}${splitOrderId[3]}` ||
         location.pathname == "/signup"
+        // ||
+        // location.pathname=="/admin/order/orderpayment"
       ) {
         navigate(`${location.pathname}`);
       } else if (
@@ -347,8 +349,8 @@ function App({ auth }) {
         <Route
           path="/admin/support/b2b/b2bclose"
           element={
-            PermissionData()?.VIEW_SUPPORT_B2B_RESOLVE_PAGE ==
-            "VIEW_SUPPORT_B2B_RESOLVE_PAGE" ? (
+            PermissionData()?.VIEW_SUPPORT_B2B_RESOLVED_PAGE ==
+            "VIEW_SUPPORT_B2B_RESOLVED_PAGE" ? (
               <B2BCLose />
             ) : (
               <PageNotFound />
@@ -358,8 +360,8 @@ function App({ auth }) {
         <Route
           path="/admin/support/b2b/b2cclose"
           element={
-            PermissionData()?.VIEW_SUPPORT_B2C_RESOLVE_PAGE ==
-            "VIEW_SUPPORT_B2C_RESOLVE_PAGE" ? (
+            PermissionData()?.VIEW_SUPPORT_B2C_RESOLVED_PAGE ==
+            "VIEW_SUPPORT_B2C_RESOLVED_PAGE" ? (
               <B2cClose />
             ) : (
               <PageNotFound />

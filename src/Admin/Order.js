@@ -12,6 +12,7 @@ import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import OtpInput from "react-otp-input";
 import Popup from "reactjs-popup";
+import Axios from "axios";
 import {
   RotatingLines,
   ColorRing,
@@ -31,7 +32,7 @@ import {
   GetAdminOrderBooked,
   GetAdminOrderSummary,
   PostAdminOrderFilteration,
-  PostAdminPendingOrderAction,
+  PostAdminOrderAction,
   DeleteAdminPendingOrderAction,
   PostAdminOrderCsvFile,
   DeleteAdminOrder,
@@ -162,13 +163,22 @@ const Order = () => {
 
   const [TotalAmountValue, setTotalAmountValue] = useState("");
   const [BasePriceValue, setBasePriceValue] = useState("");
-  const [deliveryboyid, setDeliveryBoyId] = useState("");
+  const [Weight, setWeight] = useState("");
+    const [Length, setLength] = useState("");
+  const [Breadth, setBreadth] = useState("");
+  const [Height, setHeight] = useState("");
+const [UserTypeData,setUserTypeData]=useState("")
   const [ZoneValue, setZoneValue] = useState(null);
   const [TotalOrderEnable, setTotalOrderEnable] = useState(false);
+  const [walletpaypopup, setWalletPayPopup] = useState(false);
+  const [calculatedamount, setCalculatedAmount] = useState(false);
+  const [customcheckbox, setCustomCheckBox] = useState(false);
+  const [pickuppopup, setPickUpPopup] = useState(false);
+  const [amountlessthenwalletpaypopup, setAmountLessThenWalletPayPopup] =
+  useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let param = useLocation();
-
   const GetAdminOrderIntransitDate = useSelector(
     (state) =>
       state.GetAdminOrderIntransitReducer.GetAdminOrderIntransitData?.data
@@ -210,7 +220,7 @@ const Order = () => {
     (state) => state.GetAdminOrderBookedReducer.GetAdminOrderBookedData?.data
   );
   const GetCancelOrderDetailData = useSelector(
-    (state) => state.GetCancelOrderDetailReducer.GetCancelOrderDetailData.data
+    (state) => state.GetCancelOrderDetailReducer.GetCancelOrderDetailData?.data
   );
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
@@ -225,10 +235,8 @@ const Order = () => {
   const PostTrackingOtpData = useSelector(
     (state) => state.PostTrackingOtpReducer.PostTrackingOtpData
   );
-  const PostAdminPendingOrderActionData = useSelector(
-    (state) =>
-      state.PostAdminPendingOrderActionReducer.PostAdminPendingOrderActionData
-        ?.data
+  const PostAdminOrderActionData = useSelector(
+    (state) => state.PostAdminOrderActionReducer.PostAdminOrderActionData?.data
   );
   const DeleteAdminPendingOrderActionData = useSelector(
     (state) =>
@@ -281,11 +289,13 @@ const Order = () => {
       state.PostAssignDeliveryBoyPartnerReducer
         ?.PostAssignDeliveryBoyPartnerData
   );
-
+ console.log("PostViewOrderDetailsData",PostViewOrderDetailsData)
   let Is_delivery_boy = sessionStorage.getItem("Is_delivery_boy", false);
   useEffect(() => {
     if (param.hash == "#pending") {
-      dispatch(GetAdminOrderPending());
+      if(Is_delivery_boy != "true"){
+        dispatch(GetAdminOrderPending());
+      }
     } else if (param.hash == "#ready_for_pickup") {
       dispatch(GetAdminOrderReadyForPickup());
     } else if (param.hash == "#picked_up") {
@@ -379,7 +389,6 @@ const Order = () => {
   useEffect(() => {
     if (param.hash) {
       if ( param.hash == "#pending") {
-         console.log("nsbvcbvsd")
         navigate("#pending");
         setPandingTab({
           activeValue: "active",
@@ -575,27 +584,7 @@ const Order = () => {
       setTransitTab("");
       setCancelTab("");
     }
-  }, [ param.hash]);
-
-  // useEffect(()=>{
-
-  //   if(param.hash =="#pending"){
-  //     console.log("sbdjssbnd")
-  //     navigate("#pending");
-  //     setPandingTab({
-  //       activeValue: "active",
-  //       booleanValue: true,
-  //       tabindex: "-1",
-  //     });
-  //   }
-  //   else{
-
-      
-
-
-  //   }
-
-  // },[param.hash])
+  }, [param.hash]);
 
   const StatusFun = (e, dataParameter) => {
     if (dataParameter === "PendingPartner") {
@@ -860,8 +849,10 @@ const Order = () => {
       });
       if (value === "") {
         setAdminOrderPendingData(GetAdminOrderPendingData);
+        setPayloadDeliveryBoyId("")       
       } else {
         setAdminOrderPendingData(result);
+        setPayloadDeliveryBoyId("")
       }
     }
     if (param.hash === "#ready_for_pickup") {
@@ -1001,28 +992,54 @@ const Order = () => {
       expected_date: expecteddeliverydate,
       zone: ZoneValue,
       total_amount: Number(TotalAmountValue),
+      length:  PostViewOrderDetailsData?.data[0]?.length == null
+      ? 0: Length,
+      breadth:  PostViewOrderDetailsData?.data[0]?.breadth == null
+      ? 0: Breadth,
+      height: PostViewOrderDetailsData?.data[0]?.height == null
+      ? 0: Height,
+      weight: Weight,
       amount_format: {
-        base_price: PostAdminOrderPaymentCalReducerData?.data?.base_price,
+        base_price: PostViewOrderDetailsData?.data[0]?.amount_format?.base_price,
         packaging_percent:
-          PostAdminOrderPaymentCalReducerData?.data?.packaging_percent,
-        fuel_charge: PostAdminOrderPaymentCalReducerData?.data?.fuel_charge,
+          PostViewOrderDetailsData?.data[0]?.amount_format?.packaging_percent,
+        fuel_charge: PostViewOrderDetailsData?.data[0]?.amount_format?.fuel_charge,
         fuel_charge_price:
-          PostAdminOrderPaymentCalReducerData?.data?.fuel_charge_price,
-        cod_percent: PostAdminOrderPaymentCalReducerData?.data?.cod_percent,
+          PostViewOrderDetailsData?.data[0]?.amount_format?.fuel_charge_price,
+        cod_percent: PostViewOrderDetailsData?.data[0]?.amount_format?.cod_percent,
         cod_percent_price:
-          PostAdminOrderPaymentCalReducerData?.data?.cod_percent_price,
-        gst: PostAdminOrderPaymentCalReducerData?.data?.gst,
-        insurance: PostAdminOrderPaymentCalReducerData?.data?.insurance,
+          PostViewOrderDetailsData?.data[0]?.amount_format?.cod_percent_price,
+        gst: PostViewOrderDetailsData?.data[0]?.amount_format?.gst,
+        insurance: PostViewOrderDetailsData?.data[0]?.amount_format?.insurance,
         packaging_price:
-          PostAdminOrderPaymentCalReducerData?.data?.packaging_price,
+          PostViewOrderDetailsData?.data[0]?.amount_format?.packaging_price,
         insurance_price:
-          PostAdminOrderPaymentCalReducerData?.data?.insurance_price,
+          PostViewOrderDetailsData?.data[0]?.amount_format?.insurance_price,
         price_without_gst:
-          PostAdminOrderPaymentCalReducerData?.data?.price_without_gst,
-        total_price: PostAdminOrderPaymentCalReducerData?.data?.total_price,
+          PostViewOrderDetailsData?.data[0]?.amount_format?.price_without_gst,
+        total_price: PostViewOrderDetailsData?.data[0]?.amount_format?.total_price,
       },
+      // amount_format: {
+      //   base_price: PostAdminOrderPaymentCalReducerData?.data?.base_price,
+      //   packaging_percent:
+      //     PostAdminOrderPaymentCalReducerData?.data?.packaging_percent,
+      //   fuel_charge: PostAdminOrderPaymentCalReducerData?.data?.fuel_charge,
+      //   fuel_charge_price:
+      //     PostAdminOrderPaymentCalReducerData?.data?.fuel_charge_price,
+      //   cod_percent: PostAdminOrderPaymentCalReducerData?.data?.cod_percent,
+      //   cod_percent_price:
+      //     PostAdminOrderPaymentCalReducerData?.data?.cod_percent_price,
+      //   gst: PostAdminOrderPaymentCalReducerData?.data?.gst,
+      //   insurance: PostAdminOrderPaymentCalReducerData?.data?.insurance,
+      //   packaging_price:
+      //     PostAdminOrderPaymentCalReducerData?.data?.packaging_price,
+      //   insurance_price:
+      //     PostAdminOrderPaymentCalReducerData?.data?.insurance_price,
+      //   price_without_gst:
+      //     PostAdminOrderPaymentCalReducerData?.data?.price_without_gst,
+      //   total_price: PostAdminOrderPaymentCalReducerData?.data?.total_price,
+      // },
     };
-
     if (
       awbactive == false &&
       awbcode?.length != 0 &&
@@ -1033,7 +1050,7 @@ const Order = () => {
       if (selected <= maxDate) {
         toast.warn("Please select valid Date");
       } else {
-        dispatch(PostAdminPendingOrderAction(payload));
+        dispatch(PostAdminOrderAction(payload));
         setAwbActiveCheck((o) => !o);
         // setPending((o) => !o);
         setReceivedAtHubPopup((o) => !o);
@@ -1053,6 +1070,11 @@ const Order = () => {
     };
     setLoadSpiner(true);
     dispatch(DeleteAdminPendingOrderAction(payload));
+    if(Is_delivery_boy != "true"){
+      dispatch(GetWalletBalance());
+     }
+    // dispatch(GetWalletBalance())
+    setPayloadDeliveryBoyId("")
   };
 
   useEffect(() => {
@@ -1115,7 +1137,9 @@ const Order = () => {
   };
 
   useEffect(() => {
-    dispatch(GetSettingDeliveryboyInfo());
+    if(Is_delivery_boy!="true"){
+      dispatch(GetSettingDeliveryboyInfo());
+    }
     const today = new Date().toISOString().split("T")[0];
     setMinDate(today);
   }, []);
@@ -1370,6 +1394,9 @@ const Order = () => {
     GetAdminOrderRTODeliveredData,
     GetCancelOrderDetailData,
     adminorderpendingdata,
+    adminorderpickupdata,
+    adminorderreadyforpickupdata,
+    adminorderreceivedathubdata,
     adminorderbookeddata,
     adminorderintransitDate,
     adminorderdeliveredData,
@@ -1383,6 +1410,8 @@ const Order = () => {
     setOtpActionPopup(false);
     setReasonActionValue("null");
     setReasonActionPopup(false);
+    setReasonActionInputFieldData("")
+    setRemarkData("");
   };
 
   const SheetFile = (e) => {
@@ -1594,10 +1623,21 @@ const Order = () => {
         setReasonActionPopup(false);
         setReasonActionInputFieldData("");
       }
+      else{
+        setReasonActionInputFieldData("")
+      }
       // dispatch(PostOrderTrack(payload))
     }
   };
-
+const receivedathubFun=()=>{
+  setReceivedAtHubPopup((o) => !o);
+  window.location.reload(false)
+  // dispatch(PostViewOrderDetails())
+  // setWeight("")
+  // setLength("")
+  // setHeight("")
+  // setBreadth("")
+}
   const ConformOtpActionFun = (
     e,
     data //this data is comming from the OutForDevliveryActionFun Function
@@ -1665,6 +1705,8 @@ const Order = () => {
   };
 
   const PaymentPopupFun = () => {
+    setPickUpPopup(false);
+    setCustomCheckBox(false);
     setWalletTab({
       activeValue: "active",
       booleanValue: true,
@@ -1672,19 +1714,111 @@ const Order = () => {
     });
     setPaymentMethodPopup(false);
   };
-
-  const ContinuePaymentFun = () => {
+  const AddPaymentFun = async () => {
     setLoadSpiner((o) => !o);
-    let payLoad = {
-      amount: Number(ReebookObjectDetails?.amount),
-      order_id: ReebookObjectDetails?.product_order_id,
-      company_name: ReebookObjectDetails?.name,
-    };
-
-    dispatch(PostDebitBalance(payLoad));
-    setPaymentMethodPopup(false);
+   
+    try{
+      let amountValue = calculatedamount;
+      let BearerToken = sessionStorage.getItem("token", false);
+      let bodyContent;
+      bodyContent = JSON.stringify({
+        amount: parseFloat(amountValue),
+        // redirect_url:`http://localhost:3000/admin/order/#cancel`
+        // redirect_url:`${process.env.REACT_APP_BASE_URL}/admin/order/#cancel`
+        redirect_url: `https://d2ar2bguhc97cc.cloudfront.net/admin/order/#cancel`,
+      });
+  
+      const data = await Axios({
+        url: `${process.env.REACT_APP_BASE_URL}/wallet/add_money`, //razorpay
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${BearerToken}`,
+          Accept: "*/*",
+          "Content-Type": "application/json",
+        },
+        data: bodyContent,
+      }).then((res) => {
+        setLoadSpiner((o) => !o);
+        window.location.replace(`${res?.data?.pay_page_url}`);
+        return res;
+      });
+    }
+    catch(err){
+      setLoadSpiner((o) => !o);
+    }
+   
   };
+  const ContinuePaymentFun = () => {
+    // setLoadSpiner((o) => !o);
+    try{
+      let payLoad = {
+        amount: Number(ReebookObjectDetails?.amount),
+        order_id: Number(ReebookObjectDetails?.product_order_id),
+        company_name: ReebookObjectDetails?.name,
+        is_true: true,
+      };
+      if (amountlessthenwalletpaypopup) {
+        if (activepaymentrazorpay == "activeWalletPayment") {
+          // PaymentFun() // This function open the RazorPay Popup
+        } else {
+          if (B2BPartner == "true") {
+            if(GetWalletBalanceData?.data?.b2b_negative_limit>0){
+              dispatch(PostDebitBalance(payLoad));
+            }
+            else{   
+              setWalletPayPopup(true);
+            }
+          } else {
+            dispatch(PostDebitBalance(payLoad));
+            setPaymentMethodPopup(false);
+          }
+        }
+      } else if (activepaymentwallet == "activeWalletPayment") {
+        dispatch(PostDebitBalance(payLoad));
+      }
+      // dispatch(PostDebitBalance(payLoad));
+      // setPaymentMethodPopup(false);
+    }
+    catch(err){
+      // setLoadSpiner((o) => !o);
+    }
+   
+  };
+  useEffect(() => {
+    if (PostDebitBalanceData) {
+      if (PostDebitBalanceData.status == 200) {
+        setPaymentMethodPopup(false);
+        // setWalletPayPopup(false);
+        // setLoadSpiner((o) => !o);
+      } else {
+        // setLoadSpiner(false);
+        // setWalletPayPopup(false);
+      }
+    }
+  }, [PostDebitBalanceData]);
+  useEffect(() => {
+    if (GetWalletBalanceData && ReebookObjectDetails?.amount) {
+      if (
+        GetWalletBalanceData?.data?.b2b_balance >=
+        Number(ReebookObjectDetails?.amount)
+      ) {
+        setAmountLessThenWalletPayPopup(false);
+      } else {
+        let calaculated =
+          Number(ReebookObjectDetails?.amount) -
+          GetWalletBalanceData?.data?.b2b_balance;
+        // ?.toFixed(2)
+        setCalculatedAmount(calaculated.toFixed(2));
+        setAmountLessThenWalletPayPopup(true);
+      }
+    }
+  }, [ReebookObjectDetails?.amount, GetWalletBalanceData]);
 
+  const ProceedToPayFun = () => {
+    if (B2BPartner == "true") {
+      AddPaymentFun();
+    }
+  };
   const showAddressFun = (e, item) => {
     if (activeButton === item.product_order_id) {
       setActiveButton(null);
@@ -1701,13 +1835,23 @@ const Order = () => {
           PostViewOrderDetailsData?.data[0]?.base_price ==
           PostViewOrderDetailsData?.data[0]?.base_price
         ) {
+          setWeight(PostViewOrderDetailsData?.data[0]?.weight);
+          setLength(PostViewOrderDetailsData?.data[0]?.length);
+          setBreadth(PostViewOrderDetailsData?.data[0]?.breadth);
+          setHeight(PostViewOrderDetailsData?.data[0]?.height);
+          setUserTypeData(PostViewOrderDetailsData?.data[0]?.user_type);
           setTotalAmountValue(PostViewOrderDetailsData?.data[0]?.total_price);
           setBasePriceValue(PostViewOrderDetailsData?.data[0]?.base_price);
         }
       } else {
         setZoneValue(PostViewOrderDetailsData?.data[0]?.zone);
+        setWeight(PostViewOrderDetailsData?.data[0]?.weight);
+        setLength(PostViewOrderDetailsData?.data[0]?.length);
+        setBreadth(PostViewOrderDetailsData?.data[0]?.breadth);
+        setHeight(PostViewOrderDetailsData?.data[0]?.height);
         setTotalAmountValue(PostViewOrderDetailsData?.data[0]?.total_price);
         setBasePriceValue(PostViewOrderDetailsData?.data[0]?.base_price);
+        setUserTypeData(PostViewOrderDetailsData?.data[0]?.user_type);
       }
     }
   }, [PostViewOrderDetailsData]);
@@ -1761,11 +1905,7 @@ const Order = () => {
         product_order_id: pendingeditobjectdata.product_order_id,
       };
 
-      let PayloadData = {
-        product_type: PostViewOrderDetailsData?.data[0]?.product_type,
-        delivery_type: PostViewOrderDetailsData?.data[0]?.delivery_type,
-        weight: Number(PostViewOrderDetailsData?.data[0]?.weight),
-        pack_shipment: PostViewOrderDetailsData?.data[0]?.pack_shipment,
+      let b2cpayload = {
         length: Number(
           PostViewOrderDetailsData?.data[0]?.length == null
             ? 0
@@ -1781,6 +1921,43 @@ const Order = () => {
             ? 0
             : PostViewOrderDetailsData?.data[0]?.height
         ),
+      };
+      let PayloadData = {
+        product_type: PostViewOrderDetailsData?.data[0]?.product_type,
+        delivery_type: PostViewOrderDetailsData?.data[0]?.delivery_type,
+        // weight: Number(PostViewOrderDetailsData?.data[0]?.weight),
+        weight:
+          Number(Weight) == Number(PostViewOrderDetailsData?.data[0]?.weight)
+            ? Number(PostViewOrderDetailsData?.data[0]?.weight)
+            : Number(Weight),
+        pack_shipment: PostViewOrderDetailsData?.data[0]?.pack_shipment,
+        // length: Number(
+        //   PostViewOrderDetailsData?.data[0]?.length == null
+        //     ? 0
+        //     : PostViewOrderDetailsData?.data[0]?.length
+        // ),
+        // breadth: Number(
+        //   PostViewOrderDetailsData?.data[0]?.breadth == null
+        //     ? 0
+        //     : PostViewOrderDetailsData?.data[0]?.breadth
+        // ),
+        // height: Number(
+        //   PostViewOrderDetailsData?.data[0]?.height == null
+        //     ? 0
+        //     : PostViewOrderDetailsData?.data[0]?.height
+        // )
+        length:
+        Number(Length) == Number(PostViewOrderDetailsData?.data[0]?.length)
+            ? Number(PostViewOrderDetailsData?.data[0]?.length)
+            : Number(Length),
+        breadth:
+        Number(Breadth) == Number(PostViewOrderDetailsData?.data[0]?.breadth)
+            ? Number(PostViewOrderDetailsData?.data[0]?.breadth)
+            : Number(Breadth),
+        height:
+        Number(Height) == Number(PostViewOrderDetailsData?.data[0]?.height)
+            ? Number(PostViewOrderDetailsData?.data[0]?.height)
+            : Number(Height),
         quantity: Number(PostViewOrderDetailsData?.data[0]?.quantity),
         packaging: PostViewOrderDetailsData?.data[0]?.packaging,
         pack_shipment: PostViewOrderDetailsData?.data[0]?.pack_shipment,
@@ -1794,18 +1971,45 @@ const Order = () => {
         method: PostViewOrderDetailsData?.data[0]?.method,
         base_price: ZoneValue != "OTHER" ? 0 : BasePriceValue,
       };
-
+let payloaddata={...PayloadData}
       if (ZoneValue == "OTHER") {
-        if (BasePriceValue != PostViewOrderDetailsData?.data[0]?.base_price) {
+        if (
+          BasePriceValue != PostViewOrderDetailsData?.data[0]?.base_price ||
+          Length != PostViewOrderDetailsData?.data[0]?.length ||
+          Breadth != PostViewOrderDetailsData?.data[0]?.breadth ||
+          Height != PostViewOrderDetailsData?.data[0]?.height
+        ) {
           dispatch(PostAdminOrderPaymentCal(PayloadData));
         } else {
           dispatch(PostViewOrderDetails(ViewOrderDetailsPayload));
         }
       } else if (ZoneValue != "OTHER") {
-        dispatch(PostAdminOrderPaymentCal(PayloadData));
+        if(ZoneValue != PostViewOrderDetailsData?.data[0]?.zone||
+          Length !== PostViewOrderDetailsData?.data[0]?.length ||
+          Breadth !== PostViewOrderDetailsData?.data[0]?.breadth ||
+          Height !== PostViewOrderDetailsData?.data[0]?.height || Weight !== PostViewOrderDetailsData?.data[0]?.weight){
+            dispatch(PostAdminOrderPaymentCal(PayloadData))
+        }
+        else if(ZoneValue == PostViewOrderDetailsData?.data[0]?.zone||
+          Length == PostViewOrderDetailsData?.data[0]?.length ||
+          Breadth == PostViewOrderDetailsData?.data[0]?.breadth ||
+          Height == PostViewOrderDetailsData?.data[0]?.height || Weight == PostViewOrderDetailsData?.data[0]?.weight){
+            setBasePriceValue(PostViewOrderDetailsData?.data[0]?.base_price)
+            setTotalAmountValue(PostViewOrderDetailsData?.data[0]?.total_price);
+          }
+          else{
+            dispatch(PostAdminOrderPaymentCal(PayloadData));
+          }
+        // else{
+        //   setBasePriceValue(PostViewOrderDetailsData?.data[0]?.base_price)
+        //   setTotalAmountValue(PostViewOrderDetailsData?.data[0]?.total_price);
+         
+        //   // dispatch(PostViewOrderDetails(ViewOrderDetailsPayload))
+        // }
+        // dispatch(PostAdminOrderPaymentCal(PayloadData));
       }
     }
-  }, [ZoneValue, pending, BasePriceValue]);
+  }, [ZoneValue, pending, BasePriceValue, Length, Breadth, Height, Weight]);
 
   useEffect(() => {
     let ViewOrderDetailsPayload = {
@@ -1848,6 +2052,7 @@ const Order = () => {
       setRemarkData("");
       setLocationValue("");
       setLocationDate("");
+      setReasonActionInputFieldData("")
     }
   };
 
@@ -1911,14 +2116,15 @@ const Order = () => {
                 </li>
                 {/* Add  order */}
                 {PermissionData()?.VIEW_ORDER_CREATE_PAGE ==
-                  "VIEW_ORDER_CREATE_PAGE" ? (
+                "VIEW_ORDER_CREATE_PAGE" ? (
                   <li onClick={(e) => GoOrderPageFun()}>
                     <div
                       role="button"
-                      className={`add-item d-flex align-items-center justify-content-center ${PermissionData()?.CREATE_ORDER == "CREATE_ORDER"
+                      className={`add-item d-flex align-items-center justify-content-center ${
+                        PermissionData()?.CREATE_ORDER == "CREATE_ORDER"
                           ? " "
                           : "permission_blur"
-                        }`}
+                      }`}
                     >
                       <svg
                         width="18"
@@ -1974,8 +2180,9 @@ const Order = () => {
                       onClick={(e) =>
                         downloadcsvpermission == true ? CsvDownload(e) : ""
                       }
-                      className={`download-item d-flex align-items-center justify-content-center ${downloadcsvpermission ? " " : "permission_blur"
-                        }`}
+                      className={`download-item d-flex align-items-center justify-content-center ${
+                        downloadcsvpermission ? " " : "permission_blur"
+                      }`}
                     >
                       <svg
                         width="18"
@@ -1998,27 +2205,30 @@ const Order = () => {
                 {/* upload csv */}
 
                 <li
-                  className={`form-control  ${PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
+                  className={`form-control  ${
+                    PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
                       ? " "
                       : "permission_blur"
-                    }`}
+                  }`}
                 >
                   <input
                     accept=".csv"
-                    type={`${PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
+                    type={`${
+                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
                         ? "file"
                         : "text"
-                      }`}
+                    }`}
                     onChange={(e) =>
                       PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
                         ? SheetFile(e)
                         : ""
                     }
                     className={`custom-file-input  
-                    ${PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
+                    ${
+                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
                         ? " "
                         : "permission_blur"
-                      }  }`}
+                    }  }`}
                   />
                 </li>
               </ul>
@@ -2028,10 +2238,11 @@ const Order = () => {
               {/* {filter} */}
               <form>
                 <div
-                  className={`filter-part ${PermissionData()?.APPLY_ORDER_FILTER == "APPLY_ORDER_FILTER"
+                  className={`filter-part ${
+                    PermissionData()?.APPLY_ORDER_FILTER == "APPLY_ORDER_FILTER"
                       ? " "
                       : "permission_blur"
-                    }`}
+                  }`}
                 >
                   {/* {tabfilteravailable !== "#pending" ? (
  
@@ -2094,10 +2305,10 @@ const Order = () => {
                     className={`${filteractive ? "bg-warning btn" : " btn"} `}
                     onClick={(e) =>
                       PermissionData()?.APPLY_ORDER_FILTER ==
-                        "APPLY_ORDER_FILTER"
+                      "APPLY_ORDER_FILTER"
                         ? `${setFilterShowHideBtn(
-                          (o) => !o
-                        )} ${e.preventDefault()}`
+                            (o) => !o
+                          )} ${e.preventDefault()}`
                         : e.preventDefault()
                     }
                   >
@@ -2134,15 +2345,17 @@ const Order = () => {
                   </button>
 
                   <div
-                    className={`filter-body  ${filtershowhidebtn ? "BlockFilterFromOrderPage " : "d-none"
-                      } `}
+                    className={`filter-body  ${
+                      filtershowhidebtn ? "BlockFilterFromOrderPage " : "d-none"
+                    } `}
                   >
                     <button
                       type="reset"
-                      className={`  close-btn ${filtershowhidebtn
+                      className={`  close-btn ${
+                        filtershowhidebtn
                           ? "BlockFilterFromOrderPage"
                           : "d-none"
-                        } `}
+                      } `}
                       onClick={(e) => FilterShowHideBtnFun()}
                     >
                       <svg
@@ -2222,18 +2435,20 @@ const Order = () => {
                         <div className="statusbtn-group">
                           <button
                             type="button"
-                            className={`btn ${pendingpartner ? "btn-active" : ""
-                              } 
-                                              ${tabfilteravailable ==
-                                "#return" ||
-                                tabfilteravailable ==
-                                "#rto_delivered" ||
-                                tabfilteravailable ==
-                                "#delivered" ||
-                                tabfilteravailable == "#cancel"
-                                ? "display_opacity"
-                                : ""
-                              }`}
+                            className={`btn ${
+                              pendingpartner ? "btn-active" : ""
+                            } 
+                                              ${
+                                                tabfilteravailable ==
+                                                  "#return" ||
+                                                tabfilteravailable ==
+                                                  "#rto_delivered" ||
+                                                tabfilteravailable ==
+                                                  "#delivered" ||
+                                                tabfilteravailable == "#cancel"
+                                                  ? "display_opacity"
+                                                  : ""
+                                              }`}
                             onClick={(e) =>
                               codcheckBox && StatusFun(e, "PendingPartner")
                             }
@@ -2243,28 +2458,30 @@ const Order = () => {
                           </button>
                           <button
                             type="button"
-                            className={`btn ${recievedpartner ? "btn-active" : ""
-                              }
-                                              ${tabfilteravailable ==
-                                "#ready_for_pickup" ||
-                                tabfilteravailable ==
-                                "#picked_up" ||
-                                tabfilteravailable ==
-                                "#received_at_hub" ||
-                                tabfilteravailable ==
-                                "#booked" ||
-                                tabfilteravailable ==
-                                "#transit" ||
-                                tabfilteravailable ==
-                                "#OUT_FOR_DELIVERY" ||
-                                tabfilteravailable ==
-                                "#return" ||
-                                tabfilteravailable ==
-                                "#rto_delivered" ||
-                                tabfilteravailable == "#cancel"
-                                ? "display_opacity"
-                                : ""
-                              }`}
+                            className={`btn ${
+                              recievedpartner ? "btn-active" : ""
+                            }
+                                              ${
+                                                tabfilteravailable ==
+                                                  "#ready_for_pickup" ||
+                                                tabfilteravailable ==
+                                                  "#picked_up" ||
+                                                tabfilteravailable ==
+                                                  "#received_at_hub" ||
+                                                tabfilteravailable ==
+                                                  "#booked" ||
+                                                tabfilteravailable ==
+                                                  "#transit" ||
+                                                tabfilteravailable ==
+                                                  "#OUT_FOR_DELIVERY" ||
+                                                tabfilteravailable ==
+                                                  "#return" ||
+                                                tabfilteravailable ==
+                                                  "#rto_delivered" ||
+                                                tabfilteravailable == "#cancel"
+                                                  ? "display_opacity"
+                                                  : ""
+                                              }`}
                             onClick={(e) =>
                               codcheckBox && StatusFun(e, "RecievedPartner")
                             }
@@ -2275,28 +2492,29 @@ const Order = () => {
                           <button
                             type="button"
                             className={`btn ${paidcustomer ? "btn-active" : ""} 
-                                              ${tabfilteravailable ==
-                                "#ready_for_pickup" ||
-                                tabfilteravailable ==
-                                "#picked_up" ||
-                                tabfilteravailable ==
-                                "#received_at_hub" ||
-                                tabfilteravailable ==
-                                "#booked" ||
-                                tabfilteravailable ==
-                                "#transit" ||
-                                tabfilteravailable ==
-                                "#OUT_FOR_DELIVERY" ||
-                                tabfilteravailable ==
-                                "#return" ||
-                                tabfilteravailable ==
-                                "#rto_delivered" ||
-                                tabfilteravailable ==
-                                "#delivered" ||
-                                tabfilteravailable == "#cancel"
-                                ? "display_opacity"
-                                : ""
-                              }`}
+                                              ${
+                                                tabfilteravailable ==
+                                                  "#ready_for_pickup" ||
+                                                tabfilteravailable ==
+                                                  "#picked_up" ||
+                                                tabfilteravailable ==
+                                                  "#received_at_hub" ||
+                                                tabfilteravailable ==
+                                                  "#booked" ||
+                                                tabfilteravailable ==
+                                                  "#transit" ||
+                                                tabfilteravailable ==
+                                                  "#OUT_FOR_DELIVERY" ||
+                                                tabfilteravailable ==
+                                                  "#return" ||
+                                                tabfilteravailable ==
+                                                  "#rto_delivered" ||
+                                                tabfilteravailable ==
+                                                  "#delivered" ||
+                                                tabfilteravailable == "#cancel"
+                                                  ? "display_opacity"
+                                                  : ""
+                                              }`}
                             onClick={(e) =>
                               codcheckBox && StatusFun(e, "PaidCustomer")
                             }
@@ -2313,7 +2531,7 @@ const Order = () => {
                     {(param.hash !== "#ready_for_pickup" &&
                       param.hash !== "#picked_up" &&
                       param.hash !== "#received_at_hub") ||
-                      Is_delivery_boy == "true" ? (
+                    Is_delivery_boy == "true" ? (
                       ""
                     ) : (
                       <h5 className="mp-3">Delivery Boy Partner</h5>
@@ -2321,7 +2539,7 @@ const Order = () => {
                     {(param.hash !== "#ready_for_pickup" &&
                       param.hash !== "#picked_up" &&
                       param.hash !== "#received_at_hub") ||
-                      Is_delivery_boy == "true" ? (
+                    Is_delivery_boy == "true" ? (
                       ""
                     ) : (
                       <div className="express-box">
@@ -2355,19 +2573,19 @@ const Order = () => {
                       </div>
                     )}
                     {param.hash !== "#cancel" &&
-                      param.hash !== "#pending" &&
-                      param.hash !== "#ready_for_pickup" &&
-                      param.hash !== "#picked_up" &&
-                      param.hash !== "#received_at_hub" ? (
+                    param.hash !== "#pending" &&
+                    param.hash !== "#ready_for_pickup" &&
+                    param.hash !== "#picked_up" &&
+                    param.hash !== "#received_at_hub" ? (
                       <h5 className="mp-3">Shipping Partner</h5>
                     ) : (
                       ""
                     )}
                     {param.hash !== "#cancel" &&
-                      param.hash !== "#pending" &&
-                      param.hash !== "#ready_for_pickup" &&
-                      param.hash !== "#picked_up" &&
-                      param.hash !== "#received_at_hub" ? (
+                    param.hash !== "#pending" &&
+                    param.hash !== "#ready_for_pickup" &&
+                    param.hash !== "#picked_up" &&
+                    param.hash !== "#received_at_hub" ? (
                       <div className="express-box">
                         <select
                           className="form-select"
@@ -2396,12 +2614,16 @@ const Order = () => {
                       ""
                     )}
 
-                    {param.hash === "#cancel" || Is_delivery_boy == "true" || B2BPartner == "true" ? (
+                    {param.hash === "#cancel" ||
+                    Is_delivery_boy == "true" ||
+                    B2BPartner == "true" ? (
                       ""
                     ) : (
                       <h5 className="pt-4 pb-3"> Customer Type</h5>
                     )}
-                    {param.hash === "#cancel" || Is_delivery_boy == "true" || B2BPartner == "true" ? (
+                    {param.hash === "#cancel" ||
+                    Is_delivery_boy == "true" ||
+                    B2BPartner == "true" ? (
                       ""
                     ) : (
                       <div className="row">
@@ -2473,16 +2695,18 @@ const Order = () => {
               <ul className="nav nav-tabs orderTab " id="myTab" role="tablist">
                 <li className="nav-item" role="presentation">
                   <button
-                    className={`nav-link   ${pandingtab ? pandingtab?.activeValue : ""
-                      }`}
+                    className={`nav-link   ${
+                      pandingtab ? pandingtab?.activeValue : ""
+                    }`}
                     id="pending-tab"
                     data-bs-toggle="tab"
                     data-bs-target="#pending-tab-pane"
                     type="button"
                     role="tab"
                     aria-controls="pending-tab-pane"
-                    aria-selected={`${pandingtab ? pandingtab?.booleanValue : "false"
-                      }`}
+                    aria-selected={`${
+                      pandingtab ? pandingtab?.booleanValue : "false"
+                    }`}
                     onClick={(e) => {
                       navigate("#pending");
                       window.location.reload(false);
@@ -2495,20 +2719,22 @@ const Order = () => {
                 </li>
                 <li className="nav-item" role="presentation">
                   {PermissionData()?.VIEW_ORDER_READY_TO_PICKUP_PAGE ==
-                    "VIEW_ORDER_READY_TO_PICKUP_PAGE" ? (
+                  "VIEW_ORDER_READY_TO_PICKUP_PAGE" ? (
                     <button
-                      className={`nav-link ${readyforpickuptab ? readyforpickuptab?.activeValue : ""
-                        }`}
+                      className={`nav-link ${
+                        readyforpickuptab ? readyforpickuptab?.activeValue : ""
+                      }`}
                       id="readyforpickup-tab"
                       data-bs-toggle="tab"
                       data-bs-target="#readyforpickup-tab-pane"
                       type="button"
                       role="tab"
                       aria-controls="readyforpickup-tab-pane"
-                      aria-selected={`${readyforpickuptab
+                      aria-selected={`${
+                        readyforpickuptab
                           ? readyforpickuptab?.booleanValue
                           : "false"
-                        }`}
+                      }`}
                       onClick={(e) => {
                         navigate("#ready_for_pickup");
                         setDeliveryBoyValue("");
@@ -2522,18 +2748,20 @@ const Order = () => {
                 </li>
                 <li className="nav-item" role="presentation">
                   {PermissionData()?.VIEW_ORDER_PICKUP_PAGE ==
-                    "VIEW_ORDER_PICKUP_PAGE" ? (
+                  "VIEW_ORDER_PICKUP_PAGE" ? (
                     <button
-                      className={`nav-link ${pickuptab ? pickuptab?.activeValue : ""
-                        }`}
+                      className={`nav-link ${
+                        pickuptab ? pickuptab?.activeValue : ""
+                      }`}
                       id="pickup-tab"
                       data-bs-toggle="tab"
                       data-bs-target="#pickup-tab-pane"
                       type="button"
                       role="tab"
                       aria-controls="pickup-tab-pane"
-                      aria-selected={`${pickuptab ? pickuptab?.booleanValue : "false"
-                        }`}
+                      aria-selected={`${
+                        pickuptab ? pickuptab?.booleanValue : "false"
+                      }`}
                       onClick={(e) => {
                         navigate("#picked_up");
                         setDeliveryBoyValue("");
@@ -2547,20 +2775,22 @@ const Order = () => {
                 </li>
                 <li className="nav-item" role="presentation">
                   {PermissionData()?.VIEW_ORDER_RECIEVED_AT_HUB_PAGE ==
-                    "VIEW_ORDER_RECIEVED_AT_HUB_PAGE" ? (
+                  "VIEW_ORDER_RECIEVED_AT_HUB_PAGE" ? (
                     <button
-                      className={`nav-link ${receivedathubtab ? receivedathubtab?.activeValue : ""
-                        }`}
+                      className={`nav-link ${
+                        receivedathubtab ? receivedathubtab?.activeValue : ""
+                      }`}
                       id="receivedathub-tab"
                       data-bs-toggle="tab"
                       data-bs-target="#receivedathub-tab-pane"
                       type="button"
                       role="tab"
                       aria-controls="receivedathub-tab-pane"
-                      aria-selected={`${receivedathubtab
+                      aria-selected={`${
+                        receivedathubtab
                           ? receivedathubtab?.booleanValue
                           : "false"
-                        }`}
+                      }`}
                       onClick={(e) => {
                         navigate("#received_at_hub");
                         setDeliveryBoyValue("");
@@ -2574,18 +2804,20 @@ const Order = () => {
                 </li>
                 <li className="nav-item" role="presentation">
                   {PermissionData()?.VIEW_ORDER_BOOKED_PAGE ==
-                    "VIEW_ORDER_BOOKED_PAGE" ? (
+                  "VIEW_ORDER_BOOKED_PAGE" ? (
                     <button
-                      className={`nav-link ${booktab ? booktab?.activeValue : ""
-                        }`}
+                      className={`nav-link ${
+                        booktab ? booktab?.activeValue : ""
+                      }`}
                       id="booked-tab"
                       data-bs-toggle="tab"
                       data-bs-target="#booked-tab-pane"
                       type="button"
                       role="tab"
                       aria-controls="booked-tab-pane"
-                      aria-selected={`${booktab ? booktab?.booleanValue : "false"
-                        }`}
+                      aria-selected={`${
+                        booktab ? booktab?.booleanValue : "false"
+                      }`}
                       onClick={(e) => {
                         navigate("#booked");
                         setDeliveryBoyValue("");
@@ -2600,18 +2832,20 @@ const Order = () => {
                 </li>
                 <li className="nav-item" role="presentation">
                   {PermissionData()?.VIEW_ORDER_INTRANSIT_PAGE ==
-                    "VIEW_ORDER_INTRANSIT_PAGE" ? (
+                  "VIEW_ORDER_INTRANSIT_PAGE" ? (
                     <button
-                      className={`nav-link ${transittab ? transittab?.activeValue : ""
-                        }`}
+                      className={`nav-link ${
+                        transittab ? transittab?.activeValue : ""
+                      }`}
                       id="transit-tab"
                       data-bs-toggle="tab"
                       data-bs-target="#transit-tab-pane"
                       type="button"
                       role="tab"
                       aria-controls="transit-tab-pane"
-                      aria-selected={`${transittab ? transittab.booleanValue : "false"
-                        }`}
+                      aria-selected={`${
+                        transittab ? transittab.booleanValue : "false"
+                      }`}
                       onClick={(e) => {
                         navigate("#transit");
                         setDeliveryBoyValue("");
@@ -2627,20 +2861,22 @@ const Order = () => {
 
                 <li className="nav-item" role="presentation">
                   {PermissionData()?.VIEW_ORDER_OUT_FOR_DELIVERED_PAGE ==
-                    "VIEW_ORDER_OUT_FOR_DELIVERED_PAGE" ? (
+                  "VIEW_ORDER_OUT_FOR_DELIVERED_PAGE" ? (
                     <button
-                      className={`nav-link ${outfordeliverytab ? outfordeliverytab?.activeValue : ""
-                        }`}
+                      className={`nav-link ${
+                        outfordeliverytab ? outfordeliverytab?.activeValue : ""
+                      }`}
                       id="outfordelivery-tab"
                       data-bs-toggle="tab"
                       data-bs-target="#outfordelivery-tab-pane"
                       type="button"
                       role="tab"
                       aria-controls="outfordelivery-tab-pane"
-                      aria-selected={`${outfordeliverytab
+                      aria-selected={`${
+                        outfordeliverytab
                           ? outfordeliverytab?.booleanValue
                           : "false"
-                        }`}
+                      }`}
                       onClick={(e) => {
                         navigate("#OUT_FOR_DELIVERY");
                         setDeliveryBoyValue("");
@@ -2656,18 +2892,20 @@ const Order = () => {
 
                 <li className="nav-item" role="presentation">
                   {PermissionData()?.VIEW_ORDER_DELIVERED_PAGE ==
-                    "VIEW_ORDER_DELIVERED_PAGE" ? (
+                  "VIEW_ORDER_DELIVERED_PAGE" ? (
                     <button
-                      className={`nav-link ${deliveredtab ? deliveredtab?.activeValue : ""
-                        }`}
+                      className={`nav-link ${
+                        deliveredtab ? deliveredtab?.activeValue : ""
+                      }`}
                       id="delivered-tab"
                       data-bs-toggle="tab"
                       data-bs-target="#delivered-tab-pane"
                       type="button"
                       role="tab"
                       aria-controls="delivered-tab-pane"
-                      aria-selected={`${deliveredtab ? deliveredtab?.booleanValue : "false"
-                        }`}
+                      aria-selected={`${
+                        deliveredtab ? deliveredtab?.booleanValue : "false"
+                      }`}
                       onClick={(e) => {
                         navigate("#delivered");
                         setDeliveryBoyValue("");
@@ -2683,18 +2921,20 @@ const Order = () => {
 
                 <li className="nav-item" role="presentation">
                   {PermissionData()?.VIEW_ORDER_RTO_PAGE ==
-                    "VIEW_ORDER_RTO_PAGE" ? (
+                  "VIEW_ORDER_RTO_PAGE" ? (
                     <button
-                      className={`nav-link ${returntab ? returntab?.activeValue : ""
-                        }`}
+                      className={`nav-link ${
+                        returntab ? returntab?.activeValue : ""
+                      }`}
                       id="returns-tab"
                       data-bs-toggle="tab"
                       data-bs-target="#returns-tab-pane"
                       type="button"
                       role="tab"
                       aria-controls="returns-tab-pane"
-                      aria-selected={`${returntab ? returntab?.booleanValue : "false"
-                        }`}
+                      aria-selected={`${
+                        returntab ? returntab?.booleanValue : "false"
+                      }`}
                       onClick={(e) => {
                         navigate("#return");
                         setDeliveryBoyValue("");
@@ -2710,22 +2950,24 @@ const Order = () => {
 
                 <li className="nav-item" role="presentation">
                   {PermissionData()?.VIEW_ORDER_RTO_DELIVERED_PAGE ==
-                    "VIEW_ORDER_RTO_DELIVERED_PAGE" ? (
+                  "VIEW_ORDER_RTO_DELIVERED_PAGE" ? (
                     <button
-                      className={`nav-link ${returndeliveredtab
+                      className={`nav-link ${
+                        returndeliveredtab
                           ? returndeliveredtab?.activeValue
                           : ""
-                        }`}
+                      }`}
                       id="rto-delivered-tab"
                       data-bs-toggle="tab"
                       data-bs-target="#rto-delivered-tab-pane"
                       type="button"
                       role="tab"
                       aria-controls="rto-delivered-tab"
-                      aria-selected={`${returndeliveredtab
+                      aria-selected={`${
+                        returndeliveredtab
                           ? returndeliveredtab?.booleanValue
                           : "false"
-                        }`}
+                      }`}
                       onClick={(e) => {
                         navigate("#rto_delivered");
                         setDeliveryBoyValue("");
@@ -2741,18 +2983,20 @@ const Order = () => {
 
                 <li className="nav-item" role="presentation">
                   {PermissionData()?.VIEW_ORDER_CANCEL_PAGE ==
-                    "VIEW_ORDER_CANCEL_PAGE" ? (
+                  "VIEW_ORDER_CANCEL_PAGE" ? (
                     <button
-                      className={`nav-link ${canceltab ? canceltab?.activeValue : ""
-                        }`}
+                      className={`nav-link ${
+                        canceltab ? canceltab?.activeValue : ""
+                      }`}
                       id="cancel-tab"
                       data-bs-toggle="tab"
                       data-bs-target="#cancel-tab-pane"
                       type="button"
                       role="tab"
                       aria-controls="cancel-tab-pane"
-                      aria-selected={`${canceltab ? canceltab?.booleanValue : "false"
-                        }`}
+                      aria-selected={`${
+                        canceltab ? canceltab?.booleanValue : "false"
+                      }`}
                       onClick={(e) => {
                         navigate("#cancel");
                         setDeliveryBoyValue("");
@@ -2770,8 +3014,9 @@ const Order = () => {
               <div className="tab-content" id="myTabContent">
                 {/* {pending} */}
                 <div
-                  className={`tab-pane pending-tabpane fade   ${pandingtab ? "show active" : "-1"
-                    }`}
+                  className={`tab-pane pending-tabpane fade   ${
+                    pandingtab ? "show active" : "-1"
+                  }`}
                   id="pending-tab-pane"
                   role="tabpanel"
                   aria-labelledby="pending-tab"
@@ -2790,73 +3035,74 @@ const Order = () => {
                     </tr>
 
                     {PermissionData()?.VIEW_ORDER_PENDING ==
-                      "VIEW_ORDER_PENDING"
+                    "VIEW_ORDER_PENDING"
                       ? adminorderpendingdata &&
-                      adminorderpendingdata?.map((item, id) => {
-                        return (
-                          <tr>
-                            <td>{item.date}</td>
+                        adminorderpendingdata?.map((item, id) => {
+                          return (
+                            <tr>
+                              <td>{item.date}</td>
 
-                            <td>
-                              <b
-                                onClick={(e) =>
-                                  PermissionData()?.VIEW_ORDER_SUMMARY_PAGE ==
+                              <td>
+                                <b
+                                  onClick={(e) =>
+                                    PermissionData()?.VIEW_ORDER_SUMMARY_PAGE ==
                                     "VIEW_ORDER_SUMMARY_PAGE"
-                                    ? IntransitFun(e, item.product_order_id)
-                                    : ""
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                {" "}
-                                {item.product_order_id}
-                              </b>
-                            </td>
+                                      ? IntransitFun(e, item.product_order_id)
+                                      : ""
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  {" "}
+                                  {item.product_order_id}
+                                </b>
+                              </td>
 
-                            {/* <td>{item.product_order_id}</td> */}
-                            <td>{item.name ? item.name : ""}</td>
-                            <td>
-                              {item.receiver_name ? item.receiver_name : ""}
-                            </td>
+                              {/* <td>{item.product_order_id}</td> */}
+                              <td>{item.name ? item.name : ""}</td>
+                              <td>
+                                {item.receiver_name ? item.receiver_name : ""}
+                              </td>
 
-                            <td>{item.method}</td>
-                            <td>{item.product_type}</td>
+                              <td>{item.method}</td>
+                              <td>{item.product_type}</td>
 
-                            <td>
-                              {item.payment_status == "SUCCESSFUL" ? (
-                                <div className="action-btngroup">
-                                  <button
-                                    type="button"
-                                    className={`${PermissionData()?.ALLOW_CANCEL_ACTION ==
+                              <td>
+                                {item.payment_status == "SUCCESSFUL" ? (
+                                  <div className="action-btngroup">
+                                    <button
+                                      type="button"
+                                      className={`${
+                                        PermissionData()?.ALLOW_CANCEL_ACTION ==
                                         "ALLOW_CANCEL_ACTION"
-                                        ? " "
-                                        : "permission_blur"
+                                          ? " "
+                                          : "permission_blur"
                                       }`}
-                                    onClick={(e) =>
-                                      PermissionData()?.ALLOW_CANCEL_ACTION ==
+                                      onClick={(e) =>
+                                        PermissionData()?.ALLOW_CANCEL_ACTION ==
                                         "ALLOW_CANCEL_ACTION"
-                                        ? DeletePending(
-                                          e,
-                                          item.product_order_id
-                                        )
-                                        : ""
-                                    }
-                                  >
-                                    <svg
-                                      width="25"
-                                      height="25"
-                                      viewBox="0 0 25 25"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
+                                          ? DeletePending(
+                                              e,
+                                              item.product_order_id
+                                            )
+                                          : ""
+                                      }
                                     >
-                                      <path
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM6.80954 6.98509L10.4481 12.5137L6.6175 18.2849H10.1146L12.4999 14.4138L14.875 18.2849H18.3822L14.5314 12.5137L18.2104 6.98509H14.7133L12.4999 10.5832L10.3066 6.98509H6.80954Z"
-                                        fill="#F14336"
-                                      />
-                                    </svg>
-                                  </button>
-                                  {/* <button
+                                      <svg
+                                        width="25"
+                                        height="25"
+                                        viewBox="0 0 25 25"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          clipRule="evenodd"
+                                          d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM6.80954 6.98509L10.4481 12.5137L6.6175 18.2849H10.1146L12.4999 14.4138L14.875 18.2849H18.3822L14.5314 12.5137L18.2104 6.98509H14.7133L12.4999 10.5832L10.3066 6.98509H6.80954Z"
+                                          fill="#F14336"
+                                        />
+                                      </svg>
+                                    </button>
+                                    {/* <button
                                     type="button"
                                     className={`${PermissionData()
                                       ?.ALLOW_PENDING_ACTION_APPROVE ==
@@ -2887,42 +3133,43 @@ const Order = () => {
                                       />
                                     </svg>
                                   </button> */}
-                                </div>
-                              ) : (
-                                <div className="action-btngroup">
-                                  <button
-                                    type="button"
-                                    className={`${PermissionData()?.ALLOW_CANCEL_ACTION ==
+                                  </div>
+                                ) : (
+                                  <div className="action-btngroup">
+                                    <button
+                                      type="button"
+                                      className={`${
+                                        PermissionData()?.ALLOW_CANCEL_ACTION ==
                                         "ALLOW_CANCEL_ACTION"
-                                        ? " "
-                                        : "permission_blur"
+                                          ? " "
+                                          : "permission_blur"
                                       }`}
-                                    onClick={(e) =>
-                                      PermissionData()?.ALLOW_CANCEL_ACTION ==
+                                      onClick={(e) =>
+                                        PermissionData()?.ALLOW_CANCEL_ACTION ==
                                         "ALLOW_CANCEL_ACTION"
-                                        ? DeletePending(
-                                          e,
-                                          item.product_order_id
-                                        )
-                                        : ""
-                                    }
-                                  >
-                                    <svg
-                                      width="25"
-                                      height="25"
-                                      viewBox="0 0 25 25"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
+                                          ? DeletePending(
+                                              e,
+                                              item.product_order_id
+                                            )
+                                          : ""
+                                      }
                                     >
-                                      <path
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM6.80954 6.98509L10.4481 12.5137L6.6175 18.2849H10.1146L12.4999 14.4138L14.875 18.2849H18.3822L14.5314 12.5137L18.2104 6.98509H14.7133L12.4999 10.5832L10.3066 6.98509H6.80954Z"
-                                        fill="#F14336"
-                                      />
-                                    </svg>
-                                  </button>
-                                  {/* <button
+                                      <svg
+                                        width="25"
+                                        height="25"
+                                        viewBox="0 0 25 25"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          clipRule="evenodd"
+                                          d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM6.80954 6.98509L10.4481 12.5137L6.6175 18.2849H10.1146L12.4999 14.4138L14.875 18.2849H18.3822L14.5314 12.5137L18.2104 6.98509H14.7133L12.4999 10.5832L10.3066 6.98509H6.80954Z"
+                                          fill="#F14336"
+                                        />
+                                      </svg>
+                                    </button>
+                                    {/* <button
                                       type="button"
                                       className={`btnnn ${pendingconfirmbutton ? "btn-active" : ""
                                         }
@@ -2952,112 +3199,117 @@ const Order = () => {
                                         />
                                       </svg>
                                     </button> */}
-                                </div>
-                              )}
-                            </td>
-                            <td>
-                              {item.payment_status == "SUCCESSFUL" ? (
-                                <select
-                                  className={`${PermissionData()
-                                      ?.ALLOW_PENDING_ACTION_APPROVE ==
+                                  </div>
+                                )}
+                              </td>
+                              <td>
+                                {item.payment_status == "SUCCESSFUL" ? (
+                                  <select
+                                    className={`${
+                                      PermissionData()
+                                        ?.ALLOW_PENDING_ACTION_APPROVE ==
                                       "ALLOW_PENDING_ACTION_APPROVE"
-                                      ? "form-select"
-                                      : "permission_blur"
+                                        ? "form-select"
+                                        : "permission_blur"
                                     }`}
-                                  value={payloaddeliveryboyid[2]}
-                                  // selected={item.product_order_id==payloadorderid.product_order_id?"selected":""}
-                                  selected
-                                  // disabled
-                                  // hidden
+                                    value={payloaddeliveryboyid[2]}
+                                    // selected={item.product_order_id==payloadorderid.product_order_id?"selected":""}
+                                    selected
+                                    // disabled
+                                    // hidden
 
-                                  onChange={(e) =>
-                                    PermissionData()
-                                      ?.ALLOW_PENDING_ACTION_APPROVE ==
+                                    onChange={(e) =>
+                                      PermissionData()
+                                        ?.ALLOW_PENDING_ACTION_APPROVE ==
                                       "ALLOW_PENDING_ACTION_APPROVE"
-                                      ? DeliveryBoy(e, item)
-                                      : ""
-                                  }
-                                >
-                                  <option
-                                    value={payloaddeliveryboyid == "" ? "none" : payloaddeliveryboyid[2]}
-
+                                        ? DeliveryBoy(e, item)
+                                        : ""
+                                    }
                                   >
-                                    {payloaddeliveryboyid == "" ?
-                                      "Select Delivery Boy" : item.product_order_id == payloadorderid.product_order_id ? payloaddeliveryboyid[2] : "Select Delivery Boy"}
-
-                                  </option>
-                                  {PermissionData()
-                                    ?.ALLOW_PENDING_ACTION_APPROVE ==
+                                    <option
+                                      value={
+                                        payloaddeliveryboyid == ""
+                                          ? "none"
+                                          : payloaddeliveryboyid[2]
+                                      }
+                                    >
+                                      {payloaddeliveryboyid == ""
+                                        ? "Select Delivery Boy"
+                                        : item.product_order_id ==
+                                          payloadorderid.product_order_id
+                                        ? payloaddeliveryboyid[2]
+                                        : "Select Delivery Boy"}
+                                    </option>
+                                    {PermissionData()
+                                      ?.ALLOW_PENDING_ACTION_APPROVE ==
                                     "ALLOW_PENDING_ACTION_APPROVE"
-                                    ? GetSettingDeliveryboyInfoData?.data?.delivery_boy_info?.map(
+                                      ? GetSettingDeliveryboyInfoData?.data?.delivery_boy_info?.map(
+                                          (item, id) => {
+                                            return (
+                                              <option
+                                                // selected={
+                                                //   item?.name ==
+                                                //   item.delivery_boy_id
+                                                // }
+                                                value={[
+                                                  item.delivery_boy_id,
+                                                  item?.email,
+                                                  item?.name,
+                                                ]}
+                                              >
+                                                {item?.name}
+                                              </option>
+                                            );
+                                          }
+                                        )
+                                      : ""}
+                                  </select>
+                                ) : (
+                                  <select
+                                    className={`form-select input_filed_block`}
+                                    disabled
+                                    onChange={(e) => DeliveryBoy(e, item)}
+                                  >
+                                    <option
+                                      value="none"
+                                      selected
+                                      disabled
+                                      hidden
+                                    >
+                                      Select Delivery Boy
+                                    </option>
+                                    {GetSettingDeliveryboyInfoData?.data?.delivery_boy_info?.map(
                                       (item, id) => {
                                         return (
                                           <option
                                             selected={
-                                              item?.name ==
-                                              item.delivery_boy_id
+                                              item?.name == item.delivery_boy_id
                                             }
-                                            value={
-                                              [
-                                                item.delivery_boy_id,
-                                                item?.email,
-                                                item?.name,
-                                              ]
-                                            }
+                                            value={[
+                                              item.delivery_boy_id,
+                                              item?.email,
+                                              item?.name,
+                                            ]}
                                           >
                                             {item?.name}
                                           </option>
                                         );
                                       }
-                                    )
-                                    : ""}
-                                </select>
-                              ) : (
-                                <select
-                                  className={`form-select input_filed_block`}
-                                  disabled
-                                  onChange={(e) => DeliveryBoy(e, item)}
-                                >
-                                  <option
-                                    value="none"
-                                    selected
-                                    disabled
-                                    hidden
-                                  >
-                                    Select Delivery Boy
-                                  </option>
-                                  {GetSettingDeliveryboyInfoData?.data?.delivery_boy_info?.map(
-                                    (item, id) => {
-
-                                      return (
-                                        <option
-                                          selected={
-                                            item?.name == item.delivery_boy_id
-                                          }
-                                          value={[
-                                            item.delivery_boy_id,
-                                            item?.email,
-                                            item?.name,
-                                          ]}
-                                        >
-                                          {item?.name}
-                                        </option>
-                                      );
-                                    }
-                                  )}
-                                </select>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })
+                                    )}
+                                  </select>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })
                       : ""}
                   </table>
                 </div>
                 {/* ready for pickup */}
                 <div
-                  className={`tab-pane fade ${readyforpickuptab ? "show active" : "-1"
-                    }`}
+                  className={`tab-pane fade ${
+                    readyforpickuptab ? "show active" : "-1"
+                  }`}
                   id="readyforpickup-tab-pane"
                   role="tabpanel"
                   aria-labelledby="readyforpickup-tab"
@@ -3083,123 +3335,124 @@ const Order = () => {
                       <th>Action</th>
                     </tr>
                     {PermissionData()?.VIEW_ORDER_READY_TO_PICKUP ==
-                      "VIEW_ORDER_READY_TO_PICKUP"
+                    "VIEW_ORDER_READY_TO_PICKUP"
                       ? adminorderreadyforpickupdata &&
-                      adminorderreadyforpickupdata?.map((item, id) => {
-                        console.log("item", item);
-                        return (
-                          <tr>
-                            {Is_delivery_boy !== "true" ? (
-                              ""
-                            ) : (
+                        adminorderreadyforpickupdata?.map((item, id) => {
+                          return (
+                            <tr>
+                              {Is_delivery_boy !== "true" ? (
+                                ""
+                              ) : (
+                                <td>
+                                  {new Date(
+                                    item?.date_time
+                                  )?.toLocaleDateString()}
+                                </td>
+                              )}
                               <td>
-                                {new Date(
-                                  item?.date_time
-                                )?.toLocaleDateString()}
-                              </td>
-                            )}
-                            <td>
-                              <b
-                                type="button"
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                              >
-                                {" "}
-                                {item.product_order_id}
-                              </b>
-                            </td>
-                            {Is_delivery_boy !== "true" ? (
-                              <td>
-                                {item.delivery_boy ? item.delivery_boy : ""}
-                              </td>
-                            ) : (
-                              <td>
-                                {item?.address?.phone_number
-                                  ? item?.address?.phone_number
-                                  : ""}
-                              </td>
-                            )}
-                            <td>{item.name ? item.name : ""}</td>
-
-                            {Is_delivery_boy !== "true" ? (
-                              <td style={{ textAlign: "center" }}>
-                                {item.receiver_name ? item.receiver_name : ""}
-                              </td>
-                            ) : (
-                              <td style={{ textAlign: "center" }}>
-                                {item?.address?.name
-                                  ? item?.address?.name
-                                  : ""}
-                              </td>
-                            )}
-                            <td>{item.method}</td>
-
-                            <td>
-                              {item?.product_order_id != activeButton
-                                ? item?.address?.address.slice(0, 10)
-                                : item?.address?.address.slice(0, 10)}
-                              <span
-                                onClick={(e) => showAddressFun(e, item)}
-                                role="button"
-                                style={{
-                                  color: "#faad14",
-                                  fontWeight: "400",
-                                  fontSize: "13px",
-                                }}
-                              >
-                                {item?.product_order_id != activeButton
-                                  ? "..more"
-                                  : "..less"}
-                              </span>
-
-                              <span
-                                className="order-btn text-primary"
-                                role="button"
-                              >
-                                {item?.product_order_id == activeButton && (
-                                  <div className="dropdown">
-                                    <ul className=" address_all ">
-                                      <li className="text-dark text-nowrap">
-                                        {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                      </li>
-                                    </ul>
-                                  </div>
-                                )}
-                              </span>
-                            </td>
-                            <td>
-                              <div className="action-btngroup">
-                                <button
+                                <b
                                   type="button"
-                                  className={`btn btn-ship ${PermissionData()
-                                      ?.ALLOW_READY_TO_PICKUP_ACTION ==
-                                      "ALLOW_READY_TO_PICKUP_ACTION"
-                                      ? " "
-                                      : "permission_blur"
-                                    }`}
                                   onClick={(e) =>
-                                    PermissionData()
-                                      ?.ALLOW_READY_TO_PICKUP_ACTION ==
-                                      "ALLOW_READY_TO_PICKUP_ACTION"
-                                      ? PickupTrack(e, item.product_order_id)
-                                      : ""
+                                    IntransitFun(e, item.product_order_id)
                                   }
                                 >
-                                  Picked Up
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })
+                                  {" "}
+                                  {item.product_order_id}
+                                </b>
+                              </td>
+                              {Is_delivery_boy !== "true" ? (
+                                <td>
+                                  {item.delivery_boy ? item.delivery_boy : ""}
+                                </td>
+                              ) : (
+                                <td>
+                                  {item?.address?.phone_number
+                                    ? item?.address?.phone_number
+                                    : ""}
+                                </td>
+                              )}
+                              <td>{item.name ? item.name : ""}</td>
+
+                              {Is_delivery_boy !== "true" ? (
+                                <td style={{ textAlign: "center" }}>
+                                  {item.receiver_name ? item.receiver_name : ""}
+                                </td>
+                              ) : (
+                                <td style={{ textAlign: "center" }}>
+                                  {item?.address?.name
+                                    ? item?.address?.name
+                                    : ""}
+                                </td>
+                              )}
+                              <td>{item.method}</td>
+
+                              <td>
+                                {item?.product_order_id != activeButton
+                                  ? item?.address?.address.slice(0, 10)
+                                  : item?.address?.address.slice(0, 10)}
+                                <span
+                                  onClick={(e) => showAddressFun(e, item)}
+                                  role="button"
+                                  style={{
+                                    color: "#faad14",
+                                    fontWeight: "400",
+                                    fontSize: "13px",
+                                  }}
+                                >
+                                  {item?.product_order_id != activeButton
+                                    ? "..more"
+                                    : "..less"}
+                                </span>
+
+                                <span
+                                  className="order-btn text-primary"
+                                  role="button"
+                                >
+                                  {item?.product_order_id == activeButton && (
+                                    <div className="dropdown">
+                                      <ul className=" address_all ">
+                                        <li className="text-dark text-nowrap">
+                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  )}
+                                </span>
+                              </td>
+                              <td>
+                                <div className="action-btngroup">
+                                  <button
+                                    type="button"
+                                    className={`btn btn-ship ${
+                                      PermissionData()
+                                        ?.ALLOW_READY_TO_PICKUP_ACTION ==
+                                      "ALLOW_READY_TO_PICKUP_ACTION"
+                                        ? " "
+                                        : "permission_blur"
+                                    }`}
+                                    onClick={(e) =>
+                                      PermissionData()
+                                        ?.ALLOW_READY_TO_PICKUP_ACTION ==
+                                      "ALLOW_READY_TO_PICKUP_ACTION"
+                                        ? PickupTrack(e, item.product_order_id)
+                                        : ""
+                                    }
+                                  >
+                                    Picked Up
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
                       : ""}
                   </table>
                 </div>
                 {/* pickup */}
                 <div
-                  className={`tab-pane fade ${pickuptab ? "show active" : "-1"
-                    }`}
+                  className={`tab-pane fade ${
+                    pickuptab ? "show active" : "-1"
+                  }`}
                   id="pickup-tab-pane"
                   role="tabpanel"
                   aria-labelledby="pickup-tab"
@@ -3226,120 +3479,122 @@ const Order = () => {
                     </tr>
                     {PermissionData()?.VIEW_ORDER_PICKUP == "VIEW_ORDER_PICKUP"
                       ? adminorderpickupdata &&
-                      adminorderpickupdata?.map((item, id) => {
-                        return (
-                          <tr>
-                            {Is_delivery_boy !== "true" ? (
-                              ""
-                            ) : (
+                        adminorderpickupdata?.map((item, id) => {
+                          return (
+                            <tr>
+                              {Is_delivery_boy !== "true" ? (
+                                ""
+                              ) : (
+                                <td>
+                                  {new Date(
+                                    item?.date_time
+                                  )?.toLocaleDateString()}
+                                </td>
+                              )}
                               <td>
-                                {new Date(
-                                  item?.date_time
-                                )?.toLocaleDateString()}
-                              </td>
-                            )}
-                            <td>
-                              <b
-                                type="button"
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                              >
-                                {" "}
-                                {item.product_order_id}
-                              </b>
-                            </td>
-                            {Is_delivery_boy !== "true" ? (
-                              <td>
-                                {item.delivery_boy ? item.delivery_boy : ""}
-                              </td>
-                            ) : (
-                              <td>
-                                {item?.address?.phone_number
-                                  ? item?.address?.phone_number
-                                  : ""}
-                              </td>
-                            )}
-                            <td>{item.name ? item.name : ""}</td>
-
-                            {Is_delivery_boy !== "true" ? (
-                              <td style={{ textAlign: "center" }}>
-                                {item.receiver_name ? item.receiver_name : ""}
-                              </td>
-                            ) : (
-                              <td style={{ textAlign: "center" }}>
-                                {item.address.name ? item.address.name : ""}
-                              </td>
-                            )}
-                            <td>{item.method}</td>
-
-                            <td>
-                              {item?.product_order_id != activeButton
-                                ? item?.address?.address.slice(0, 10)
-                                : item?.address?.address.slice(0, 10)}
-                              <span
-                                onClick={(e) => showAddressFun(e, item)}
-                                role="button"
-                                style={{
-                                  color: "#faad14",
-                                  fontWeight: "400",
-                                  fontSize: "13px",
-                                }}
-                              >
-                                {item?.product_order_id != activeButton
-                                  ? "..more"
-                                  : "..less"}
-                              </span>
-
-                              <span
-                                className="order-btn text-primary"
-                                role="button"
-                              >
-                                {item?.product_order_id == activeButton && (
-                                  <div className="dropdown">
-                                    <ul className=" address_all ">
-                                      <li className="text-dark text-nowrap">
-                                        {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                      </li>
-                                    </ul>
-                                  </div>
-                                )}
-                              </span>
-                            </td>
-                            <td>
-                              <div className="action-btngroup">
-                                <button
+                                <b
                                   type="button"
-                                  className={`btn btn-ship ${PermissionData()?.ALLOW_PICKUP_ACTION ==
-                                      "ALLOW_PICKUP_ACTION"
-                                      ? " "
-                                      : "permission_blur"
-                                    }`}
                                   onClick={(e) =>
-                                    PermissionData()?.ALLOW_PICKUP_ACTION ==
-                                      "ALLOW_PICKUP_ACTION"
-                                      ? ReceivedAtHubTrack(
-                                        e,
-                                        item.product_order_id
-                                      )
-                                      : ""
+                                    IntransitFun(e, item.product_order_id)
                                   }
                                 >
-                                  Recieved At Hub
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })
+                                  {" "}
+                                  {item.product_order_id}
+                                </b>
+                              </td>
+                              {Is_delivery_boy !== "true" ? (
+                                <td>
+                                  {item.delivery_boy ? item.delivery_boy : ""}
+                                </td>
+                              ) : (
+                                <td>
+                                  {item?.address?.phone_number
+                                    ? item?.address?.phone_number
+                                    : ""}
+                                </td>
+                              )}
+                              <td>{item.name ? item.name : ""}</td>
+
+                              {Is_delivery_boy !== "true" ? (
+                                <td style={{ textAlign: "center" }}>
+                                  {item.receiver_name ? item.receiver_name : ""}
+                                </td>
+                              ) : (
+                                <td style={{ textAlign: "center" }}>
+                                  {item.address.name ? item.address.name : ""}
+                                </td>
+                              )}
+                              <td>{item.method}</td>
+
+                              <td>
+                                {item?.product_order_id != activeButton
+                                  ? item?.address?.address.slice(0, 10)
+                                  : item?.address?.address.slice(0, 10)}
+                                <span
+                                  onClick={(e) => showAddressFun(e, item)}
+                                  role="button"
+                                  style={{
+                                    color: "#faad14",
+                                    fontWeight: "400",
+                                    fontSize: "13px",
+                                  }}
+                                >
+                                  {item?.product_order_id != activeButton
+                                    ? "..more"
+                                    : "..less"}
+                                </span>
+
+                                <span
+                                  className="order-btn text-primary"
+                                  role="button"
+                                >
+                                  {item?.product_order_id == activeButton && (
+                                    <div className="dropdown">
+                                      <ul className=" address_all ">
+                                        <li className="text-dark text-nowrap">
+                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  )}
+                                </span>
+                              </td>
+                              <td>
+                                <div className="action-btngroup">
+                                  <button
+                                    type="button"
+                                    className={`btn btn-ship ${
+                                      PermissionData()?.ALLOW_PICKUP_ACTION ==
+                                      "ALLOW_PICKUP_ACTION"
+                                        ? " "
+                                        : "permission_blur"
+                                    }`}
+                                    onClick={(e) =>
+                                      PermissionData()?.ALLOW_PICKUP_ACTION ==
+                                      "ALLOW_PICKUP_ACTION"
+                                        ? ReceivedAtHubTrack(
+                                            e,
+                                            item.product_order_id
+                                          )
+                                        : ""
+                                    }
+                                  >
+                                    Recieved At Hub
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
                       : ""}
                   </table>
                 </div>
 
                 {/* received at hub */}
                 <div
-                  className={`tab-pane fade ${receivedathubtab ? "show active" : "-1"
-                    }`}
+                  className={`tab-pane fade ${
+                    receivedathubtab ? "show active" : "-1"
+                  }`}
                   id="receivedathub-tab-pane"
                   role="tabpanel"
                   aria-labelledby="receivedathub-tab"
@@ -3356,105 +3611,106 @@ const Order = () => {
                       <th>Action</th>
                     </tr>
                     {PermissionData()?.VIEW_ORDER_RECIEVED_AT_HUB ==
-                      "VIEW_ORDER_RECIEVED_AT_HUB"
+                    "VIEW_ORDER_RECIEVED_AT_HUB"
                       ? adminorderreceivedathubdata &&
-                      adminorderreceivedathubdata?.map((item, id) => {
-                        return (
-                          <tr>
-                            <td>
-                              <b
-                                type="button"
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                              >
-                                {" "}
-                                {item.product_order_id}
-                              </b>
-                            </td>
-                            <td>
-                              {item.delivery_boy ? item.delivery_boy : ""}
-                            </td>
-                            <td>{item.name ? item.name : ""}</td>
+                        adminorderreceivedathubdata?.map((item, id) => {
+                          return (
+                            <tr>
+                              <td>
+                                <b
+                                  type="button"
+                                  onClick={(e) =>
+                                    IntransitFun(e, item.product_order_id)
+                                  }
+                                >
+                                  {" "}
+                                  {item.product_order_id}
+                                </b>
+                              </td>
+                              <td>
+                                {item.delivery_boy ? item.delivery_boy : ""}
+                              </td>
+                              <td>{item.name ? item.name : ""}</td>
 
-                            <td style={{ textAlign: "center" }}>
-                              {item.receiver_name ? item.receiver_name : ""}
-                            </td>
-                            <td>{item.method}</td>
+                              <td style={{ textAlign: "center" }}>
+                                {item.receiver_name ? item.receiver_name : ""}
+                              </td>
+                              <td>{item.method}</td>
 
-                            <td>
-                              {item?.product_order_id != activeButton
-                                ? item?.address?.address.slice(0, 10)
-                                : item?.address?.address.slice(0, 10)}
-                              <span
-                                onClick={(e) => showAddressFun(e, item)}
-                                role="button"
-                                style={{
-                                  color: "#faad14",
-                                  fontWeight: "400",
-                                  fontSize: "13px",
-                                }}
-                              >
+                              <td>
                                 {item?.product_order_id != activeButton
-                                  ? "..more"
-                                  : "..less"}
-                              </span>
+                                  ? item?.address?.address.slice(0, 10)
+                                  : item?.address?.address.slice(0, 10)}
+                                <span
+                                  onClick={(e) => showAddressFun(e, item)}
+                                  role="button"
+                                  style={{
+                                    color: "#faad14",
+                                    fontWeight: "400",
+                                    fontSize: "13px",
+                                  }}
+                                >
+                                  {item?.product_order_id != activeButton
+                                    ? "..more"
+                                    : "..less"}
+                                </span>
 
-                              <span
-                                className="order-btn text-primary"
-                                role="button"
-                              >
-                                {item?.product_order_id == activeButton && (
-                                  <div className="dropdown">
-                                    <ul className=" address_all ">
-                                      <li className="text-dark text-nowrap">
-                                        {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                      </li>
-                                    </ul>
-                                  </div>
-                                )}
-                              </span>
-                            </td>
-                            <td>
-                              {
-                                <div className="action-btngroup">
-                                  <button
-                                    type="button"
-                                    className={`${PermissionData()
-                                        ?.ALLOW_RECIEVED_AT_HUB_ACTION ==
+                                <span
+                                  className="order-btn text-primary"
+                                  role="button"
+                                >
+                                  {item?.product_order_id == activeButton && (
+                                    <div className="dropdown">
+                                      <ul className=" address_all ">
+                                        <li className="text-dark text-nowrap">
+                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  )}
+                                </span>
+                              </td>
+                              <td>
+                                {
+                                  <div className="action-btngroup">
+                                    <button
+                                      type="button"
+                                      className={`${
+                                        PermissionData()
+                                          ?.ALLOW_RECIEVED_AT_HUB_ACTION ==
                                         "ALLOW_RECIEVED_AT_HUB_ACTION"
-                                        ? " "
-                                        : "permission_blur"
+                                          ? " "
+                                          : "permission_blur"
                                       }`}
-                                    onClick={(e) =>
-                                      PermissionData()
-                                        ?.ALLOW_RECIEVED_AT_HUB_ACTION ==
+                                      onClick={(e) =>
+                                        PermissionData()
+                                          ?.ALLOW_RECIEVED_AT_HUB_ACTION ==
                                         "ALLOW_RECIEVED_AT_HUB_ACTION"
-                                        ? ActionCorrectFun(e, item)
-                                        : ""
-                                    }
-                                  >
-                                    <svg
-                                      width="25"
-                                      height="25"
-                                      viewBox="0 0 25 25"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
+                                          ? ActionCorrectFun(e, item)
+                                          : ""
+                                      }
                                     >
-                                      <path
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM18.7793 10.1941C19.4388 9.48749 19.4006 8.38011 18.6941 7.72065C17.9875 7.06119 16.8801 7.09938 16.2207 7.80594L10.4566 13.9817L8.23744 11.7626C7.55402 11.0791 6.44598 11.0791 5.76256 11.7626C5.07915 12.446 5.07915 13.554 5.76256 14.2374L9.26256 17.7374C9.59815 18.073 10.0556 18.2579 10.5302 18.2497C11.0047 18.2416 11.4555 18.041 11.7793 17.6941L18.7793 10.1941Z"
-                                        fill="#4BAE4F"
-                                      />
-                                    </svg>
-                                  </button>
-                                </div>
-                              }
-                            </td>
-                          </tr>
-                        );
-                      })
+                                      <svg
+                                        width="25"
+                                        height="25"
+                                        viewBox="0 0 25 25"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          clipRule="evenodd"
+                                          d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM18.7793 10.1941C19.4388 9.48749 19.4006 8.38011 18.6941 7.72065C17.9875 7.06119 16.8801 7.09938 16.2207 7.80594L10.4566 13.9817L8.23744 11.7626C7.55402 11.0791 6.44598 11.0791 5.76256 11.7626C5.07915 12.446 5.07915 13.554 5.76256 14.2374L9.26256 17.7374C9.59815 18.073 10.0556 18.2579 10.5302 18.2497C11.0047 18.2416 11.4555 18.041 11.7793 17.6941L18.7793 10.1941Z"
+                                          fill="#4BAE4F"
+                                        />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                }
+                              </td>
+                            </tr>
+                          );
+                        })
                       : ""}
                   </table>
                 </div>
@@ -3480,10 +3736,10 @@ const Order = () => {
                     </tr>
                     {PermissionData()?.VIEW_ORDER_BOOKED == "VIEW_ORDER_BOOKED"
                       ? adminorderbookeddata &&
-                      adminorderbookeddata?.map((item, id) => {
-                        return (
-                          <tr>
-                            {/* <td
+                        adminorderbookeddata?.map((item, id) => {
+                          return (
+                            <tr>
+                              {/* <td
                                 onClick={(e) =>
                                   IntransitFun(e, item.product_order_id)
                                 }
@@ -3491,63 +3747,63 @@ const Order = () => {
                               >
                                 <b> {item.product_order_id}</b>
                               </td> */}
-                            <td>
-                              <b
-                                type="button"
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                              >
-                                {" "}
-                                {item.product_order_id}
-                              </b>
-                            </td>
-                            <td>{item.name ? item.name : ""}</td>
-                            <td>
-                              {item.receiver_name ? item.receiver_name : ""}
-                            </td>
+                              <td>
+                                <b
+                                  type="button"
+                                  onClick={(e) =>
+                                    IntransitFun(e, item.product_order_id)
+                                  }
+                                >
+                                  {" "}
+                                  {item.product_order_id}
+                                </b>
+                              </td>
+                              <td>{item.name ? item.name : ""}</td>
+                              <td>
+                                {item.receiver_name ? item.receiver_name : ""}
+                              </td>
 
-                            <td style={{ textAlign: "center" }}>
-                              {item.package_details}
-                            </td>
-                            <td>{item.method}</td>
+                              <td style={{ textAlign: "center" }}>
+                                {item.package_details}
+                              </td>
+                              <td>{item.method}</td>
 
-                            <td>
-                              {item?.product_order_id != activeButton
-                                ? item?.address?.address.slice(0, 10)
-                                : item?.address?.address.slice(0, 10)}
-                              <span
-                                onClick={(e) => showAddressFun(e, item)}
-                                // className="order-btn text-primary"
-                                role="button"
-                                style={{
-                                  color: "#faad14",
-                                  fontWeight: "400",
-                                  fontSize: "13px",
-                                }}
-                              >
+                              <td>
                                 {item?.product_order_id != activeButton
-                                  ? "..more"
-                                  : "..less"}
-                              </span>
+                                  ? item?.address?.address.slice(0, 10)
+                                  : item?.address?.address.slice(0, 10)}
+                                <span
+                                  onClick={(e) => showAddressFun(e, item)}
+                                  // className="order-btn text-primary"
+                                  role="button"
+                                  style={{
+                                    color: "#faad14",
+                                    fontWeight: "400",
+                                    fontSize: "13px",
+                                  }}
+                                >
+                                  {item?.product_order_id != activeButton
+                                    ? "..more"
+                                    : "..less"}
+                                </span>
 
-                              <span
-                                className="order-btn text-primary"
-                                role="button"
-                              >
-                                {item?.product_order_id == activeButton && (
-                                  <div className="dropdown">
-                                    <ul className=" address_all ">
-                                      <li className="text-dark text-nowrap">
-                                        {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                      </li>
-                                    </ul>
-                                  </div>
-                                )}
-                              </span>
-                            </td>
+                                <span
+                                  className="order-btn text-primary"
+                                  role="button"
+                                >
+                                  {item?.product_order_id == activeButton && (
+                                    <div className="dropdown">
+                                      <ul className=" address_all ">
+                                        <li className="text-dark text-nowrap">
+                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  )}
+                                </span>
+                              </td>
 
-                            {/* 
+                              {/* 
                               <td>
                                 {item?.product_order_id != activeButton
                                   ? item?.address?.address.slice(0, 10)
@@ -3591,26 +3847,27 @@ const Order = () => {
 
                               </td> */}
 
-                            {/* <td>{item.cod_status}</td> */}
-                            <td>
-                              <div className="action-btngroup">
-                                <button
-                                  type="button"
-                                  className={`btn btn-ship ${PermissionData()?.ALLOW_BOOKED_ACTION ==
+                              {/* <td>{item.cod_status}</td> */}
+                              <td>
+                                <div className="action-btngroup">
+                                  <button
+                                    type="button"
+                                    className={`btn btn-ship ${
+                                      PermissionData()?.ALLOW_BOOKED_ACTION ==
                                       "ALLOW_BOOKED_ACTION"
-                                      ? " "
-                                      : "permission_blur"
+                                        ? " "
+                                        : "permission_blur"
                                     }`}
-                                  onClick={(e) =>
-                                    PermissionData()?.ALLOW_BOOKED_ACTION ==
+                                    onClick={(e) =>
+                                      PermissionData()?.ALLOW_BOOKED_ACTION ==
                                       "ALLOW_BOOKED_ACTION"
-                                      ? TransitTrack(e, item.product_order_id)
-                                      : ""
-                                  }
-                                >
-                                  In-Transit
-                                </button>
-                                {/* <button type="button" className="btn order-btn">
+                                        ? TransitTrack(e, item.product_order_id)
+                                        : ""
+                                    }
+                                  >
+                                    In-Transit
+                                  </button>
+                                  {/* <button type="button" className="btn order-btn">
                                     <img
                                       src="/images/icon32.png"
                                       alt="img"
@@ -3630,11 +3887,11 @@ const Order = () => {
                                         </ul>
                                       )}
                                   </button> */}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
                       : ""}
                   </table>
                 </div>
@@ -3642,8 +3899,9 @@ const Order = () => {
                 {/* in-transit start */}
 
                 <div
-                  className={`tab-pane fade   ${transittab ? "show active" : ""
-                    }`}
+                  className={`tab-pane fade   ${
+                    transittab ? "show active" : ""
+                  }`}
                   id="transit-tab-pane"
                   role="tabpanel"
                   aria-labelledby="transit-tab"
@@ -3661,12 +3919,12 @@ const Order = () => {
                     </tr>
 
                     {PermissionData()?.VIEW_ORDER_IN_TRANSIT ==
-                      "VIEW_ORDER_IN_TRANSIT"
+                    "VIEW_ORDER_IN_TRANSIT"
                       ? adminorderintransitDate &&
-                      adminorderintransitDate.map((item, id) => {
-                        return (
-                          <tr>
-                            {/* <td
+                        adminorderintransitDate.map((item, id) => {
+                          return (
+                            <tr>
+                              {/* <td
                                 onClick={(e) =>
                                   IntransitFun(e, item.product_order_id)
                                 }
@@ -3674,76 +3932,77 @@ const Order = () => {
                               >
                                 <b> {item.product_order_id}</b>
                               </td> */}
-                            <td>
-                              <b
-                                type="button"
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                              >
-                                {" "}
-                                {item.product_order_id}
-                              </b>
-                            </td>
-                            <td> {item.name ? item.name : ""}</td>
-                            <td>
-                              {" "}
-                              {item.receiver_name ? item.receiver_name : ""}
-                            </td>
-                            <td> {item.product_type} </td>
-                            <td> {item.method} </td>
-                            {B2BPartner == "false" ? (
-                              <td> {item.delivery_partner}</td>
-                            ) : (
-                              ""
-                            )}
-                            <td>
-                              <div className="action-btngroup actionordergroup">
-                                <button
+                              <td>
+                                <b
                                   type="button"
-                                  className={`btn btn-ship ${PermissionData()
-                                      ?.ALLOW_OUT_FOR_DELIVERY_ACTION ==
-                                      "ALLOW_OUT_FOR_DELIVERY_ACTION"
-                                      ? " "
-                                      : "permission_blur"
-                                    }`}
                                   onClick={(e) =>
-                                    PermissionData()
-                                      ?.ALLOW_OUT_FOR_DELIVERY_ACTION ==
-                                      "ALLOW_OUT_FOR_DELIVERY_ACTION"
-                                      ? DeliveredTrack(
-                                        e,
-                                        item.product_order_id
-                                      )
-                                      : ""
+                                    IntransitFun(e, item.product_order_id)
                                   }
                                 >
                                   {" "}
-                                  Out For Delivery
-                                </button>
-                                <div className="actionordergroup">
-                                  {PermissionData()
-                                    ?.ALLOW_TRACKING_INTRANSIT_ACTION ==
+                                  {item.product_order_id}
+                                </b>
+                              </td>
+                              <td> {item.name ? item.name : ""}</td>
+                              <td>
+                                {" "}
+                                {item.receiver_name ? item.receiver_name : ""}
+                              </td>
+                              <td> {item.product_type} </td>
+                              <td> {item.method} </td>
+                              {B2BPartner == "false" ? (
+                                <td> {item.delivery_partner}</td>
+                              ) : (
+                                ""
+                              )}
+                              <td>
+                                <div className="action-btngroup actionordergroup">
+                                  <button
+                                    type="button"
+                                    className={`btn btn-ship ${
+                                      PermissionData()
+                                        ?.ALLOW_OUT_FOR_DELIVERY_ACTION ==
+                                      "ALLOW_OUT_FOR_DELIVERY_ACTION"
+                                        ? " "
+                                        : "permission_blur"
+                                    }`}
+                                    onClick={(e) =>
+                                      PermissionData()
+                                        ?.ALLOW_OUT_FOR_DELIVERY_ACTION ==
+                                      "ALLOW_OUT_FOR_DELIVERY_ACTION"
+                                        ? DeliveredTrack(
+                                            e,
+                                            item.product_order_id
+                                          )
+                                        : ""
+                                    }
+                                  >
+                                    {" "}
+                                    Out For Delivery
+                                  </button>
+                                  <div className="actionordergroup">
+                                    {PermissionData()
+                                      ?.ALLOW_TRACKING_INTRANSIT_ACTION ==
                                     "ALLOW_TRACKING_INTRANSIT_ACTION" ? (
-                                    <button className="actionordermenu">
-                                      <img
-                                        src={dots}
-                                        alt="img"
-                                        onClick={(e) =>
-                                          TrackLocation(e, item)
-                                        }
-                                      />{" "}
-                                    </button>
-                                  ) : (
-                                    ""
-                                  )}
-                                  {/* <ul className="actionorder-menulist">
+                                      <button className="actionordermenu">
+                                        <img
+                                          src={dots}
+                                          alt="img"
+                                          onClick={(e) =>
+                                            TrackLocation(e, item)
+                                          }
+                                        />{" "}
+                                      </button>
+                                    ) : (
+                                      ""
+                                    )}
+                                    {/* <ul className="actionorder-menulist">
                                       <li> <a href="#"> Edit Order </a> </li>
                                       <li> <a href="#"> Cancel Order </a> </li>
                                     </ul> */}
-                                </div>
+                                  </div>
 
-                                {/* <select type="button" className="btn order-btn"
+                                  {/* <select type="button" className="btn order-btn"
                                     onChange={(e) => IntransitActionFun(e, item)}
                                   >
 
@@ -3771,11 +4030,11 @@ const Order = () => {
 
                                   </select>
                              */}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
                       : ""}
                   </table>
                 </div>
@@ -3783,8 +4042,9 @@ const Order = () => {
                 {/* {Delivered} */}
 
                 <div
-                  className={`tab-pane fade ${deliveredtab ? "show active" : ""
-                    }`}
+                  className={`tab-pane fade ${
+                    deliveredtab ? "show active" : ""
+                  }`}
                   id="delivered-tab-pane"
                   role="tabpanel"
                   aria-labelledby="delivered-tab"
@@ -3801,38 +4061,38 @@ const Order = () => {
                     </tr>
 
                     {PermissionData()?.VIEW_ORDER_DELIVERED ==
-                      "VIEW_ORDER_DELIVERED"
+                    "VIEW_ORDER_DELIVERED"
                       ? adminorderdeliveredData &&
-                      adminorderdeliveredData.map((item, id) => {
-                        return (
-                          <tr>
-                            <td>
-                              <b
-                                type="button"
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                              >
-                                {" "}
-                                {item.product_order_id}
-                              </b>
-                            </td>
+                        adminorderdeliveredData.map((item, id) => {
+                          return (
+                            <tr>
+                              <td>
+                                <b
+                                  type="button"
+                                  onClick={(e) =>
+                                    IntransitFun(e, item.product_order_id)
+                                  }
+                                >
+                                  {" "}
+                                  {item.product_order_id}
+                                </b>
+                              </td>
 
-                            <td> {item.name ? item.name : ""}</td>
-                            <td>
-                              {" "}
-                              {item.receiver_name ? item.receiver_name : ""}
-                            </td>
-                            <td> {item.product_type}</td>
-                            <td> {item.method}</td>
-                            {B2BPartner == "false" ? (
-                              <td> {item.delivery_partner}</td>
-                            ) : (
-                              ""
-                            )}
-                            {/* <td>
+                              <td> {item.name ? item.name : ""}</td>
+                              <td>
+                                {" "}
+                                {item.receiver_name ? item.receiver_name : ""}
+                              </td>
+                              <td> {item.product_type}</td>
+                              <td> {item.method}</td>
+                              {B2BPartner == "false" ? (
+                                <td> {item.delivery_partner}</td>
+                              ) : (
+                                ""
+                              )}
+                              {/* <td>
                               <div className="action-btngroup"> */}
-                            {/* <select
+                              {/* <select
                                   type="button"
                                   className={`  btn order-btn ${PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? " " : "permission_blur"}`}
                                   onChange={((e) => PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION"
@@ -3845,7 +4105,7 @@ const Order = () => {
                                     Return
                                   </option>
                                 </select> */}
-                            {/* <button type="button"  
+                              {/* <button type="button"  
 
                                     className={`btn btn-ship ${PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? " " : "permission_blur"}`}
                                    onClick={((e) => PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION"
@@ -3854,7 +4114,7 @@ const Order = () => {
                                  Return{" "}
                                 </button> */}
 
-                            {/* <button type="button" className="btn order-btn">
+                              {/* <button type="button" className="btn order-btn">
                                   <img
                                     src="/images/icon32.png"
                                     alt="img"
@@ -3874,11 +4134,11 @@ const Order = () => {
                                       </ul>
                                     )}
                                 </button> */}
-                            {/* </div>
+                              {/* </div>
                             </td> */}
-                          </tr>
-                        );
-                      })
+                            </tr>
+                          );
+                        })
                       : ""}
                   </table>
                 </div>
@@ -3886,8 +4146,9 @@ const Order = () => {
                 {/* {OUt For Deliviry} */}
 
                 <div
-                  className={`tab-pane fade ${outfordeliverytab ? "show active" : ""
-                    }`}
+                  className={`tab-pane fade ${
+                    outfordeliverytab ? "show active" : ""
+                  }`}
                   id="outfordelivery-tab-pane"
                   role="tabpanel"
                   aria-labelledby="outfordelivery-tab"
@@ -3905,132 +4166,135 @@ const Order = () => {
                     </tr>
 
                     {PermissionData()?.VIEW_ORDER_OUT_FOR_DELIVERED ==
-                      "VIEW_ORDER_OUT_FOR_DELIVERED"
+                    "VIEW_ORDER_OUT_FOR_DELIVERED"
                       ? adminoutfordeliveryData &&
-                      adminoutfordeliveryData.map((item, id) => {
-                        return (
-                          <tr>
-                            <td>
-                              <b
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
+                        adminoutfordeliveryData.map((item, id) => {
+                          return (
+                            <tr>
+                              <td>
+                                <b
+                                  onClick={(e) =>
+                                    IntransitFun(e, item.product_order_id)
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  {" "}
+                                  {item.product_order_id}
+                                </b>
+                              </td>
+                              <td> {item.name ? item.name : " "}</td>
+                              <td>
                                 {" "}
-                                {item.product_order_id}
-                              </b>
-                            </td>
-                            <td> {item.name ? item.name : " "}</td>
-                            <td>
-                              {" "}
-                              {item.receiver_name ? item.receiver_name : " "}
-                            </td>
-                            <td> {item.product_type}</td>
-                            <td> {item.method}</td>
-                            {B2BPartner == "false" ? (
-                              <td> {item.delivery_partner}</td>
-                            ) : (
-                              ""
-                            )}
-                            <td>
-                              <div className="action-btngroup actionordergroup">
-                                <select
-                                  disabled={
-                                    PermissionData()
-                                      ?.ALLOW_DELIVERED_ACTION ==
-                                      "ALLOW_DELIVERED_ACTION" ||
+                                {item.receiver_name ? item.receiver_name : " "}
+                              </td>
+                              <td> {item.product_type}</td>
+                              <td> {item.method}</td>
+                              {B2BPartner == "false" ? (
+                                <td> {item.delivery_partner}</td>
+                              ) : (
+                                ""
+                              )}
+                              <td>
+                                <div className="action-btngroup actionordergroup">
+                                  <select
+                                    disabled={
+                                      PermissionData()
+                                        ?.ALLOW_DELIVERED_ACTION ==
+                                        "ALLOW_DELIVERED_ACTION" ||
                                       PermissionData()
                                         ?.ALLOW_IN_TRANSIT_ACTION ==
-                                      "ALLOW_IN_TRANSIT_ACTION" ||
+                                        "ALLOW_IN_TRANSIT_ACTION" ||
                                       PermissionData()?.ALLOW_RETURN_ACTION ==
-                                      "ALLOW_RETURN_ACTION"
-                                      ? ""
-                                      : "disabled"
-                                  }
-                                  type="button"
-                                  className="btn order-btn"
-                                  onChange={(e) =>
-                                    OutForDevliveryActionFun(e, item)
-                                  }
-                                >
-                                  <option
-                                    selected={reasonActionValue == "null"}
-                                    value="null"
+                                        "ALLOW_RETURN_ACTION"
+                                        ? ""
+                                        : "disabled"
+                                    }
+                                    type="button"
+                                    className="btn order-btn"
+                                    onChange={(e) =>
+                                      OutForDevliveryActionFun(e, item)
+                                    }
                                   >
-                                    Select
-                                  </option>
-                                  {PermissionData()?.ALLOW_DELIVERED_ACTION ==
+                                    <option
+                                      selected={reasonActionValue == "null"}
+                                      value="null"
+                                    >
+                                      Select
+                                    </option>
+                                    {PermissionData()?.ALLOW_DELIVERED_ACTION ==
                                     "ALLOW_DELIVERED_ACTION" ? (
-                                    <option value="DELIVERED">
-                                      Delivered
-                                    </option>
-                                  ) : (
-                                    <option
-                                      value="delivered"
-                                      disabled
-                                      className={`btn ${PermissionData()
-                                          ?.ALLOW_DELIVERED_ACTION ==
+                                      <option value="DELIVERED">
+                                        Delivered
+                                      </option>
+                                    ) : (
+                                      <option
+                                        value="delivered"
+                                        disabled
+                                        className={`btn ${
+                                          PermissionData()
+                                            ?.ALLOW_DELIVERED_ACTION ==
                                           "ALLOW_DELIVERED_ACTION"
-                                          ? "permission_blur"
-                                          : ""
+                                            ? "permission_blur"
+                                            : ""
                                         }`}
-                                    >
-                                      Delivered
-                                    </option>
-                                  )}
-                                  {PermissionData()
-                                    ?.ALLOW_IN_TRANSIT_ACTION ==
+                                      >
+                                        Delivered
+                                      </option>
+                                    )}
+                                    {PermissionData()
+                                      ?.ALLOW_IN_TRANSIT_ACTION ==
                                     "ALLOW_IN_TRANSIT_ACTION" ? (
-                                    <option value="IN_TRANSIT">
-                                      In-Transit
-                                    </option>
-                                  ) : (
-                                    <option
-                                      value="intransit"
-                                      disabled
-                                      className={`btn permission-btn ${PermissionData()
-                                          ?.ALLOW_IN_TRANSIT_ACTION ==
+                                      <option value="IN_TRANSIT">
+                                        In-Transit
+                                      </option>
+                                    ) : (
+                                      <option
+                                        value="intransit"
+                                        disabled
+                                        className={`btn permission-btn ${
+                                          PermissionData()
+                                            ?.ALLOW_IN_TRANSIT_ACTION ==
                                           "ALLOW_IN_TRANSIT_ACTION"
-                                          ? "permission_blur"
-                                          : ""
+                                            ? "permission_blur"
+                                            : ""
                                         }`}
-                                    >
-                                      In-transit
-                                    </option>
-                                  )}
-                                  {PermissionData()?.ALLOW_RETURN_ACTION ==
+                                      >
+                                        In-transit
+                                      </option>
+                                    )}
+                                    {PermissionData()?.ALLOW_RETURN_ACTION ==
                                     "ALLOW_RETURN_ACTION" ? (
-                                    <option value="RTO">RTO</option>
-                                  ) : (
-                                    <option
-                                      disabled
-                                      className={`btn ${PermissionData()
-                                          ?.ALLOW_RETURN_ACTION ==
+                                      <option value="RTO">RTO</option>
+                                    ) : (
+                                      <option
+                                        disabled
+                                        className={`btn ${
+                                          PermissionData()
+                                            ?.ALLOW_RETURN_ACTION ==
                                           "ALLOW_RETURN_ACTION"
-                                          ? "permission_blur"
-                                          : ""
+                                            ? "permission_blur"
+                                            : ""
                                         }`}
-                                      value="rto"
-                                    >
-                                      RTO
-                                    </option>
-                                  )}
+                                        value="rto"
+                                      >
+                                        RTO
+                                      </option>
+                                    )}
 
-                                  {/* <option value="IN_TRANSIT" 
+                                    {/* <option value="IN_TRANSIT" 
                                    className={`btn ${PermissionData()?.ALLOW_IN_TRANSIT_ACTION !== "ALLOW_IN_TRANSIT_ACTION" ? "permission_blur" : "permission_blur"}`} 
                                    onClick={(e) => PermissionData()?.ALLOW_IN_TRANSIT_ACTION !== "ALLOW_IN_TRANSIT_ACTION" ? OutForDevliveryActionFun(e, item) : ""} >
                                     In-transit
                                   </option>  */}
-                                </select>
+                                  </select>
 
-                                {/* <button type="button"
+                                  {/* <button type="button"
                                   className={`btn btn-ship ${PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? " " : "permission_blur"}`}
                                   onClick={((e) => PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? ReturnTrack(e, item.product_order_id) : "")}>
                                   {" "}
                                    
                                 </button> */}
-                                {/* <button type="button" className="btn order-btn">
+                                  {/* <button type="button" className="btn order-btn">
                                   <img
                                     src="/images/icon32.png"
                                     alt="img"
@@ -4050,28 +4314,28 @@ const Order = () => {
                                       </ul>
                                     )}
                                 </button> */}
-                                <div className="actionordergroup ms-2">
-                                  {PermissionData()
-                                    ?.ALLOW_TRACKING_OUT_FOR_DELIVERY_ACTION ==
+                                  <div className="actionordergroup ms-2">
+                                    {PermissionData()
+                                      ?.ALLOW_TRACKING_OUT_FOR_DELIVERY_ACTION ==
                                     "ALLOW_TRACKING_OUT_FOR_DELIVERY_ACTION" ? (
-                                    <button className="actionordermenu">
-                                      <img
-                                        src={dots}
-                                        alt="img"
-                                        onClick={(e) =>
-                                          TrackLocation(e, item)
-                                        }
-                                      />{" "}
-                                    </button>
-                                  ) : (
-                                    ""
-                                  )}
+                                      <button className="actionordermenu">
+                                        <img
+                                          src={dots}
+                                          alt="img"
+                                          onClick={(e) =>
+                                            TrackLocation(e, item)
+                                          }
+                                        />{" "}
+                                      </button>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })
+                              </td>
+                            </tr>
+                          );
+                        })
                       : ""}
                   </table>
                 </div>
@@ -4098,12 +4362,12 @@ const Order = () => {
                       <th>Action</th>
                     </tr>
                     {PermissionData()?.VIEW_ORDER_RETURNS ==
-                      "VIEW_ORDER_RETURNS"
+                    "VIEW_ORDER_RETURNS"
                       ? adminorderreturnData &&
-                      adminorderreturnData?.map((item, id) => {
-                        return (
-                          <tr>
-                            {/* <td
+                        adminorderreturnData?.map((item, id) => {
+                          return (
+                            <tr>
+                              {/* <td
                                 onClick={(e) =>
                                   IntransitFun(e, item.product_order_id)
                                 }
@@ -4112,115 +4376,116 @@ const Order = () => {
                                 <b>{item.product_order_id}</b>
                               </td> */}
 
-                            <td>
-                              <b
-                                type="button"
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                              >
-                                {" "}
-                                {item.product_order_id}
-                              </b>
-                            </td>
-                            <td>{item.name ? item.name : ""}</td>
-                            <td>
-                              {item.receiver_name ? item.receiver_name : ""}
-                            </td>
-                            <td>
-                              {new Date(item.date_time).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  year: "numeric",
-                                  day: "numeric",
-                                }
-                              )}
-                            </td>
-                            <td>{item.product_type}</td>
-                            <td>
-                              {item?.product_order_id != activeButton
-                                ? item?.address?.address.slice(0, 10)
-                                : item?.address?.address.slice(0, 10)}
-                              <span
-                                onClick={(e) => showAddressFun(e, item)}
-                                // className="order-btn text-primary"
-                                role="button"
-                                style={{
-                                  color: "#faad14",
-                                  fontWeight: "400",
-                                  fontSize: "13px",
-                                }}
-                              >
-                                {item?.product_order_id != activeButton
-                                  ? "..more"
-                                  : "..less"}
-                              </span>
-
-                              <span
-                                className="order-btn text-primary"
-                                role="button"
-                              >
-                                {item?.product_order_id == activeButton && (
-                                  <div className="dropdown">
-                                    <ul className=" address_all ">
-                                      <li className="text-dark text-nowrap">
-                                        {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                      </li>
-                                    </ul>
-                                  </div>
-                                )}
-                              </span>
-                            </td>
-                            {B2BPartner == "false" ? (
-                              <td>{item.delivery_partner} </td>
-                            ) : (
-                              ""
-                            )}
-                            <td>
-                              <div className="action-btngroup actionordergroup">
-                                <button
+                              <td>
+                                <b
                                   type="button"
-                                  className={`btn btn-ship ${PermissionData()
-                                      ?.ALLOW_RTO_DELIVERED_ACTION ==
-                                      "ALLOW_RTO_DELIVERED_ACTION"
-                                      ? " "
-                                      : "permission_blur"
-                                    }`}
-                                  onClick={
-                                    (e) =>
-                                      PermissionData()
-                                        ?.ALLOW_RTO_DELIVERED_ACTION ==
-                                        "ALLOW_RTO_DELIVERED_ACTION"
-                                        ? ReturnDeliveredTrack(
-                                          e,
-                                          item.product_order_id
-                                        )
-                                        : ""
-                                    // ReturnDeliveredTrack(e, item.product_order_id)
+                                  onClick={(e) =>
+                                    IntransitFun(e, item.product_order_id)
                                   }
                                 >
-                                  RTO Delivered
-                                </button>
-                                <div className="actionordergroup ms-4">
-                                  {PermissionData()
-                                    ?.ALLOW_TRACKING_RTO_ACTION ==
-                                    "ALLOW_TRACKING_RTO_ACTION" ? (
-                                    <button className="actionordermenu">
-                                      <img
-                                        src={dots}
-                                        alt="img"
-                                        onClick={(e) =>
-                                          TrackLocation(e, item)
-                                        }
-                                      />{" "}
-                                    </button>
-                                  ) : (
-                                    ""
-                                  )}
-                                </div>
+                                  {" "}
+                                  {item.product_order_id}
+                                </b>
+                              </td>
+                              <td>{item.name ? item.name : ""}</td>
+                              <td>
+                                {item.receiver_name ? item.receiver_name : ""}
+                              </td>
+                              <td>
+                                {new Date(item.date_time).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    year: "numeric",
+                                    day: "numeric",
+                                  }
+                                )}
+                              </td>
+                              <td>{item.product_type}</td>
+                              <td>
+                                {item?.product_order_id != activeButton
+                                  ? item?.address?.address.slice(0, 10)
+                                  : item?.address?.address.slice(0, 10)}
+                                <span
+                                  onClick={(e) => showAddressFun(e, item)}
+                                  // className="order-btn text-primary"
+                                  role="button"
+                                  style={{
+                                    color: "#faad14",
+                                    fontWeight: "400",
+                                    fontSize: "13px",
+                                  }}
+                                >
+                                  {item?.product_order_id != activeButton
+                                    ? "..more"
+                                    : "..less"}
+                                </span>
 
-                                {/* <button type="button" className="btn order-btn">
+                                <span
+                                  className="order-btn text-primary"
+                                  role="button"
+                                >
+                                  {item?.product_order_id == activeButton && (
+                                    <div className="dropdown">
+                                      <ul className=" address_all ">
+                                        <li className="text-dark text-nowrap">
+                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  )}
+                                </span>
+                              </td>
+                              {B2BPartner == "false" ? (
+                                <td>{item.delivery_partner} </td>
+                              ) : (
+                                ""
+                              )}
+                              <td>
+                                <div className="action-btngroup actionordergroup">
+                                  <button
+                                    type="button"
+                                    className={`btn btn-ship ${
+                                      PermissionData()
+                                        ?.ALLOW_RTO_DELIVERED_ACTION ==
+                                      "ALLOW_RTO_DELIVERED_ACTION"
+                                        ? " "
+                                        : "permission_blur"
+                                    }`}
+                                    onClick={
+                                      (e) =>
+                                        PermissionData()
+                                          ?.ALLOW_RTO_DELIVERED_ACTION ==
+                                        "ALLOW_RTO_DELIVERED_ACTION"
+                                          ? ReturnDeliveredTrack(
+                                              e,
+                                              item.product_order_id
+                                            )
+                                          : ""
+                                      // ReturnDeliveredTrack(e, item.product_order_id)
+                                    }
+                                  >
+                                    RTO Delivered
+                                  </button>
+                                  <div className="actionordergroup ms-4">
+                                    {PermissionData()
+                                      ?.ALLOW_TRACKING_RTO_ACTION ==
+                                    "ALLOW_TRACKING_RTO_ACTION" ? (
+                                      <button className="actionordermenu">
+                                        <img
+                                          src={dots}
+                                          alt="img"
+                                          onClick={(e) =>
+                                            TrackLocation(e, item)
+                                          }
+                                        />{" "}
+                                      </button>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </div>
+
+                                  {/* <button type="button" className="btn order-btn">
                                     <img
                                       src="/images/icon32.png"
                                       alt="img"
@@ -4240,9 +4505,9 @@ const Order = () => {
                                         </ul>
                                       )}
                                   </button> */}
-                              </div>
-                            </td>
-                            {/*  <td>
+                                </div>
+                              </td>
+                              {/*  <td>
                                 {" "}
                                 <div className="action-btngroup">
                                   <button type="button" className="btn btn-ship">
@@ -4272,9 +4537,9 @@ const Order = () => {
                                   </button>  
                                 </div>
                               </td>*/}
-                          </tr>
-                        );
-                      })
+                            </tr>
+                          );
+                        })
                       : ""}
                   </table>
                 </div>
@@ -4282,8 +4547,9 @@ const Order = () => {
                 {/* return delivered */}
 
                 <div
-                  className={`tab-pane fade ${returndeliveredtab ? "show active" : ""
-                    }`}
+                  className={`tab-pane fade ${
+                    returndeliveredtab ? "show active" : ""
+                  }`}
                   id="rto-delivered-tab-pane"
                   role="tabpanel"
                   aria-labelledby="rto-delivered-tab"
@@ -4303,12 +4569,12 @@ const Order = () => {
                     </tr>
 
                     {PermissionData()?.VIEW_ORDER_RTO_DELIVERED ==
-                      "VIEW_ORDER_RTO_DELIVERED"
+                    "VIEW_ORDER_RTO_DELIVERED"
                       ? adminorderrtodeliveredData &&
-                      adminorderrtodeliveredData?.map((item, id) => {
-                        return (
-                          <tr>
-                            {/* <td
+                        adminorderrtodeliveredData?.map((item, id) => {
+                          return (
+                            <tr>
+                              {/* <td
                                 onClick={(e) =>
                                   IntransitFun(e, item.product_order_id)
                                 }
@@ -4316,74 +4582,74 @@ const Order = () => {
                               >
                                 <b>{item.product_order_id}</b>
                               </td> */}
-                            <td>
-                              <b
-                                type="button"
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                              >
-                                {" "}
-                                {item.product_order_id}
-                              </b>
-                            </td>
-                            <td>{item.name ? item.name : " "}</td>
-                            <td>
-                              {item.receiver_name ? item.receiver_name : " "}
-                            </td>
-                            <td>
-                              {new Date(item.date_time).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  year: "numeric",
-                                  day: "numeric",
-                                }
-                              )}
-                            </td>
-                            <td>{item.product_type}</td>
-                            <td>
-                              {item?.product_order_id != activeButton
-                                ? item?.address?.address.slice(0, 10)
-                                : item?.address?.address.slice(0, 10)}
-                              <span
-                                onClick={(e) => showAddressFun(e, item)}
-                                // className="order-btn text-primary"
-                                role="button"
-                                style={{
-                                  color: "#faad14",
-                                  fontWeight: "400",
-                                  fontSize: "13px",
-                                }}
-                              >
-                                {item?.product_order_id != activeButton
-                                  ? "..more"
-                                  : "..less"}
-                              </span>
-
-                              <span
-                                className="order-btn text-primary"
-                                role="button"
-                              >
-                                {item?.product_order_id == activeButton && (
-                                  <div className="dropdown">
-                                    <ul className=" address_all ">
-                                      <li className="text-dark text-nowrap">
-                                        {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                      </li>
-                                    </ul>
-                                  </div>
+                              <td>
+                                <b
+                                  type="button"
+                                  onClick={(e) =>
+                                    IntransitFun(e, item.product_order_id)
+                                  }
+                                >
+                                  {" "}
+                                  {item.product_order_id}
+                                </b>
+                              </td>
+                              <td>{item.name ? item.name : " "}</td>
+                              <td>
+                                {item.receiver_name ? item.receiver_name : " "}
+                              </td>
+                              <td>
+                                {new Date(item.date_time).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    year: "numeric",
+                                    day: "numeric",
+                                  }
                                 )}
-                              </span>
-                            </td>
+                              </td>
+                              <td>{item.product_type}</td>
+                              <td>
+                                {item?.product_order_id != activeButton
+                                  ? item?.address?.address.slice(0, 10)
+                                  : item?.address?.address.slice(0, 10)}
+                                <span
+                                  onClick={(e) => showAddressFun(e, item)}
+                                  // className="order-btn text-primary"
+                                  role="button"
+                                  style={{
+                                    color: "#faad14",
+                                    fontWeight: "400",
+                                    fontSize: "13px",
+                                  }}
+                                >
+                                  {item?.product_order_id != activeButton
+                                    ? "..more"
+                                    : "..less"}
+                                </span>
 
-                            {B2BPartner == "false" ? (
-                              <td>{item.delivery_partner} </td>
-                            ) : (
-                              ""
-                            )}
+                                <span
+                                  className="order-btn text-primary"
+                                  role="button"
+                                >
+                                  {item?.product_order_id == activeButton && (
+                                    <div className="dropdown">
+                                      <ul className=" address_all ">
+                                        <li className="text-dark text-nowrap">
+                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  )}
+                                </span>
+                              </td>
 
-                            {/*  <td>
+                              {B2BPartner == "false" ? (
+                                <td>{item.delivery_partner} </td>
+                              ) : (
+                                ""
+                              )}
+
+                              {/*  <td>
                                 {" "}
                                 <div className="action-btngroup">
                                   <button type="button" className="btn btn-ship">
@@ -4413,9 +4679,9 @@ const Order = () => {
                                   </button>  
                                 </div>
                               </td>*/}
-                          </tr>
-                        );
-                      })
+                            </tr>
+                          );
+                        })
                       : ""}
                   </table>
                 </div>
@@ -4423,8 +4689,9 @@ const Order = () => {
                 {/* {cancel} */}
 
                 <div
-                  className={`tab-pane fade   ${canceltab ? "show active" : "-1"
-                    }`}
+                  className={`tab-pane fade   ${
+                    canceltab ? "show active" : "-1"
+                  }`}
                   id="cancel-tab-pane"
                   role="tabpanel"
                   aria-labelledby="cancel-tab"
@@ -4443,65 +4710,66 @@ const Order = () => {
                     </tr>
 
                     {PermissionData()?.VIEW_ORDER_CANCEL_DETAILS ==
-                      "VIEW_ORDER_CANCEL_DETAILS"
+                    "VIEW_ORDER_CANCEL_DETAILS"
                       ? adminordercancelData &&
-                      adminordercancelData?.map((item, id) => {
-                        return (
-                          <tr>
-                            <td>
-                              {new Date(item.date_time).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  year: "numeric",
-                                  day: "numeric",
-                                }
-                              )}
-                            </td>
+                        adminordercancelData?.map((item, id) => {
+                          return (
+                            <tr>
+                              <td>
+                                {new Date(item.date_time).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    year: "numeric",
+                                    day: "numeric",
+                                  }
+                                )}
+                              </td>
 
-                            <td>
-                              <b
-                                type="button"
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                              >
-                                {" "}
-                                {item.product_order_id}
-                              </b>
-                            </td>
+                              <td>
+                                <b
+                                  type="button"
+                                  onClick={(e) =>
+                                    IntransitFun(e, item.product_order_id)
+                                  }
+                                >
+                                  {" "}
+                                  {item.product_order_id}
+                                </b>
+                              </td>
 
-                            {/* <td>{item.product_order_id}</td> */}
-                            <td>{item.name ? item.name : " "}</td>
-                            <td>
-                              {item.receiver_name ? item.receiver_name : " "}
-                            </td>
-                            <td>{item.method}</td>
-                            <td>{item.product_type}</td>
-                            <td>
-                              <button
-                                type="button"
-                                className={`btn btn-ship  ${PermissionData()?.ALLOW_REBOOK_ACTION ==
+                              {/* <td>{item.product_order_id}</td> */}
+                              <td>{item.name ? item.name : " "}</td>
+                              <td>
+                                {item.receiver_name ? item.receiver_name : " "}
+                              </td>
+                              <td>{item.method}</td>
+                              <td>{item.product_type}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className={`btn btn-ship  ${
+                                    PermissionData()?.ALLOW_REBOOK_ACTION ==
                                     "ALLOW_REBOOK_ACTION"
-                                    ? " "
-                                    : "permission_blur"
+                                      ? " "
+                                      : "permission_blur"
                                   }`}
-                                onClick={(e) =>
-                                  PermissionData()?.ALLOW_REBOOK_ACTION ==
+                                  onClick={(e) =>
+                                    PermissionData()?.ALLOW_REBOOK_ACTION ==
                                     "ALLOW_REBOOK_ACTION"
-                                    ? RebookFun(e, item)
-                                    : ""
-                                }
-                              // style={{whiteSpace: "nowrap"}}
-                              >
-                                {" "}
-                                Rebook
-                                {/* Delivered{" "} */}
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })
+                                      ? RebookFun(e, item)
+                                      : ""
+                                  }
+                                  // style={{whiteSpace: "nowrap"}}
+                                >
+                                  {" "}
+                                  Rebook
+                                  {/* Delivered{" "} */}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
                       : ""}
                   </table>
                 </div>
@@ -4522,6 +4790,7 @@ const Order = () => {
                 setRemarkData("");
                 setLocationValue("");
                 setLocationDate("");
+                setReasonActionInputFieldData("")
               }}
             >
               <svg
@@ -4563,6 +4832,7 @@ const Order = () => {
                   className="w-100 p-2"
                   rows="5"
                   cols="70"
+                  maxlength="200"
                   placeholder="Add the Remark"
                   value={remarkvalue}
                   onChange={(e) => ReasonTextFun(e)}
@@ -4590,6 +4860,7 @@ const Order = () => {
                     setRemarkData("");
                     setLocationValue("");
                     setLocationDate("");
+                    setReasonActionInputFieldData("")
                   }}
                 >
                   Cancel
@@ -4666,7 +4937,7 @@ const Order = () => {
             <div
               className="close-btn"
               type="button"
-              onClick={(e) => setReceivedAtHubPopup((o) => !o)}
+              onClick={(e) => receivedathubFun()}
             >
               <svg
                 viewBox="0 0 10 9"
@@ -4711,8 +4982,9 @@ const Order = () => {
                 <label>AWB No.</label>
                 <input
                   type="text"
-                  className={`form-control  ${awbactive ? "alert_border" : ""
-                    } `}
+                  className={`form-control  ${
+                    awbactive ? "alert_border" : ""
+                  } `}
                   placeholder="AWB No."
                   value={awbcode}
                   onChange={(e) => AwbFun(e)}
@@ -4727,7 +4999,6 @@ const Order = () => {
               </div>
               <div className="col-sm-6 mt-3">
                 <label>Order Date</label>
-                {console.log("pendingeditobjectdata", pendingeditobjectdata)}
                 <input
                   // type="date"
                   className="form-control input_filed_block"
@@ -4791,6 +5062,78 @@ const Order = () => {
                   })}
                 </select>
               </div>
+              <div className="col-6 mt-3">
+                <label>Weight</label>
+                <div className="pacform-box mt-1">
+                  <input
+                    type="text"
+                    value={Weight}
+                    className="form-control"
+                    onChange={(e) => setWeight(e.target.value)}
+                    // className={`${TotalOrderEnable != true
+                    //   ? "form-control"
+                    //   : "form-control input_filed_block"
+                    // } `}
+
+                    // onChange={(e) =>TotalOrderEnable != true ? setWeight(e.target.value):""}
+                  />
+                  <span> g</span>
+                </div>
+              </div>
+              {UserTypeData == "B2C" ? (
+                ""
+              ) : (
+                <div className="col-6 mt-3">
+                  <label>Length</label>
+                  <div className="pacform-box">
+                    <input
+                      type="text"
+                      className="form-control"
+                      onChange={(e) =>
+                        UserTypeData != "B2C" ? setLength(e.target.value) : ""
+                      }
+                      value={Length}
+                    />
+                    <span> CM</span>
+                  </div>
+                </div>
+              )}
+              {UserTypeData == "B2C" ? (
+                ""
+              ) : (
+                <div className="col-6 mt-3">
+                  <label>Breadth</label>
+                  <div className="pacform-box">
+                    <input
+                      type="text"
+                      className="form-control"
+                      onChange={(e) =>
+                        UserTypeData != "B2C" ? setBreadth(e.target.value) : ""
+                      }
+                      value={Breadth}
+                    />
+                    <span> CM</span>
+                  </div>
+                </div>
+              )}
+              {UserTypeData == "B2C" ? (
+                ""
+              ) : (
+                <div className="col-6 mt-3">
+                  <label>Height</label>
+                  <div className="pacform-box">
+                    <input
+                      type="text"
+                      className="form-control"
+                      onChange={(e) =>
+                        UserTypeData != "B2C" ? setHeight(e.target.value) : ""
+                      }
+                      value={Height}
+                    />
+                    <span> CM</span>
+                  </div>
+                </div>
+              )}
               <div className="col-sm-6 mt-3">
                 <label>Total Amount</label>
                 <input
@@ -4804,10 +5147,11 @@ const Order = () => {
                 <label>Base Price</label>
                 <input
                   type="text"
-                  className={`${TotalOrderEnable == true
+                  className={`${
+                    TotalOrderEnable == true
                       ? "  form-control"
                       : "form-control input_filed_block"
-                    } `}
+                  } `}
                   placeholder="Please enter your amount"
                   value={BasePriceValue}
                   onChange={(e) =>
@@ -4835,7 +5179,6 @@ const Order = () => {
                   value={pendingeditobjectdata?.product_type}
                 />
               </div>
-
               <div className="btngroups">
                 <button
                   type="button"
@@ -4847,7 +5190,7 @@ const Order = () => {
                 <button
                   type="button"
                   className="cancel-btn"
-                  onClick={(e) => setReceivedAtHubPopup((o) => !o)}
+                  onClick={(e) => receivedathubFun()}
                 >
                   Cancel
                 </button>
@@ -5030,8 +5373,9 @@ const Order = () => {
       >
         <div className="wallet-popup">
           <div
-            className={`popupinner  walletpaymement_inner ${wallettab ? "active" : ""
-              }`}
+            className={`popupinner  walletpaymement_inner ${
+              wallettab ? "active" : ""
+            }`}
           >
             <h4
               className="text-danger calender_popup_cancel "
@@ -5059,22 +5403,22 @@ const Order = () => {
                     <img
                       src="/images/wallet.svg"
                       alt="img"
-                    // onClick={(e) => setWallet(o => !o)}
+                      // onClick={(e) => setWallet(o => !o)}
                     />
                   </div>
                   <div
                     className="col-9"
-                  // onClick={(e) => GoTOWalletFun(e)}
+                    // onClick={(e) => GoTOWalletFun(e)}
                   >
                     <p className="mb-1">Wallet</p>
                     <p className="mb-0">
                       Current Balance :
                       <b>
                         {" "}
-                        {GetWalletBalanceData?.data?.balance_status ==
-                          "NEGATIVE"
-                          ? `-${GetWalletBalanceData?.data?.balance}`
-                          : GetWalletBalanceData?.data?.balance}
+                        {GetWalletBalanceData?.data?.b2b_balance_status ==
+                        "NEGATIVE"
+                          ? `-${GetWalletBalanceData?.data?.b2b_balance}`
+                          : GetWalletBalanceData?.data?.b2b_balance}
                         /-
                       </b>
                     </p>
@@ -5111,7 +5455,85 @@ const Order = () => {
           </div>
         </div>
       </Popup>
-
+      <Popup open={walletpaypopup} position="" model className="sign_up_loader">
+        <div className="wallet-popup">
+          <div className="popupinner">
+            <h4
+              className="text-danger calender_popup_cancel"
+              onClick={(e) => {
+                setWalletPayPopup(false);
+                setPaymentMethodPopup(true);
+                // setPickUpPopup(false);
+                // setCustomCheckBox(false);
+                // navigate("#cancel");
+                // navigate("/admin/ordersummary");
+              }}
+            >
+              {" "}
+              X{" "}
+            </h4>
+            {/* ReebookObjectDetails?.amount */}
+            <h2>Recharge your wallet</h2>
+            <p>
+              Current Wallet Amount{" "}
+              <b>{GetWalletBalanceData?.data?.b2b_balance}/-</b>
+            </p>
+            <div className="popup-body">
+              <div className="amout">
+                <p>Enter Amount in multiples of 100 below</p>
+                <div className="">
+                  <p>Rs.</p>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={calculatedamount}
+                    placeholder="500"
+                  />
+                  <span>
+                    <svg
+                      width="10"
+                      height="10"
+                      viewBox="0 0 10 10"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M0.364324 0.0337138C0.166958 0.0965594 -0.00147244 0.347004 1.20969e-05 0.575441C0.0014185 0.791715 0.0178524 0.809816 2.15557 2.94899L4.2052 5L2.15557 7.05101C0.0178524 9.19018 0.0014185 9.20828 1.20969e-05 9.42456C-0.00204543 9.74137 0.258635 10.002 0.575441 9.99999C0.791715 9.99858 0.809816 9.98215 2.94899 7.84443L5 5.7948L7.05101 7.84443C9.19018 9.98215 9.20828 9.99858 9.42456 9.99999C9.74137 10.002 10.002 9.74137 9.99999 9.42456C9.99858 9.20828 9.98215 9.19018 7.84443 7.05101L5.7948 5L7.84443 2.94899C9.98215 0.809816 9.99858 0.791715 9.99999 0.575441C10.002 0.258635 9.74137 -0.00204543 9.42456 1.20969e-05C9.20828 0.0014185 9.19018 0.0178524 7.05101 2.15557L5 4.2052L2.94899 2.15557C1.36511 0.572785 0.871282 0.0939549 0.780777 0.0532732C0.652637 -0.0043374 0.505485 -0.0112652 0.364324 0.0337138Z"
+                        fill="#858585"
+                      />
+                    </svg>
+                  </span>
+                </div>
+                <span>Min. value Rs.100</span>
+              </div>
+              <div className="row recharge">
+                <div className="col-6">
+                  <p>Recharge Amount</p>
+                </div>
+                <div className="col-6  text-end">
+                  <p>Rs. {calculatedamount}</p>
+                </div>
+                <hr />
+                <div className="col-6 ">
+                  <p className="mb-3 dark-text">Recharge Amount</p>
+                </div>
+                <div className="col-6 dark-text text-end">
+                  <p className="mb-3">Rs. {calculatedamount}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn pr-pay"
+                onClick={(e) => ProceedToPayFun()}
+              >
+                Proceed To Pay{" "}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Popup>
       <LodingSpiner loadspiner={loadspiner} />
       <LodingSpiner loadspiner={OrderPagesLoaderTrueFalseData} />
     </>

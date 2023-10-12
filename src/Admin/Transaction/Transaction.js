@@ -15,7 +15,7 @@ import {
   GetAdminOrderBooked,
   GetAdminOrderSummary,
   PostAdminOrderFilteration,
-  PostAdminPendingOrderAction,
+  PostAdminOrderAction,
   DeleteAdminPendingOrderAction,
   PostAdminOrderCsvFile,
   DeleteAdminOrder,
@@ -89,9 +89,9 @@ const Transactions = () => {
     (state) =>
       state.PostAdminOrderFilterationReducer.PostAdminOrderFilterationData?.data
   );
-  const PostAdminPendingOrderActionData = useSelector(
+  const PostAdminOrderActionData = useSelector(
     (state) =>
-      state.PostAdminPendingOrderActionReducer.PostAdminPendingOrderActionData
+      state.PostAdminOrderActionReducer.PostAdminOrderActionData
         ?.data
   );
   const DeleteAdminPendingOrderActionData = useSelector(
@@ -197,7 +197,7 @@ const Transactions = () => {
       awbcode.length !== 0 &&
       partnernameactive == false
     ) {
-      dispatch(PostAdminPendingOrderAction(payload));
+      dispatch(PostAdminOrderAction(payload));
       setAwbActiveCheck((o) => !o);
       setPending((o) => !o);
       setPartner("");
@@ -341,29 +341,27 @@ const Transactions = () => {
             </div>
             <div className="popup-body ">
 
-            <div  className="tab-content">
-              <table>
-                <tr>
-                <th>Order Id</th>
-                  <th >Amount</th>
-                  <th>Source</th>
-                  <th>Status</th>
-                  <th>Method</th>
-                </tr>
-                {!TransactionHistorytData?.data?.length==0?TransactionHistorytData?.data.map((item) => {
-                  return (
-                    <tr>
-                      <td>{item.order_id}</td>
-                      <td>{item.amount}</td>
-                      <td>{item.source}</td>
-                      <td>{item.status}</td>
-                      <td>{item.method}</td>
-                       
-
-                    </tr>
-                  )
-                }):<tr> <td colSpan='5' > <p className="text-center text-muted mt-5">No Transaction are there !</p> </td></tr> }
-                {/* {TransactionHistorytData?.data.map((item) => {
+              <div className="tab-content">
+                <table>
+                  <tr>
+                    <th>Created At</th>
+                    <th>Order Id</th>
+                    <th >Amount</th>
+                    <th>Status</th>
+                    {userType == "b2b" ? <th>Transaction Status</th> : ""}
+                  </tr>
+                  {!TransactionHistorytData?.data?.length == 0 ? TransactionHistorytData?.data.map((item) => {
+                    return (
+                      <tr>
+                        {userType == "b2b" ? <td>{new Date(item?.created_at).toLocaleDateString()}</td> : <td>{new Date(item?.updated_at).toLocaleDateString()}</td>}
+                        <td>{item.order_id}</td>
+                        <td>{item.amount}</td>
+                        <td>{item.status}</td>
+                        {userType == "b2b" ? <td>{item.transaction_status}</td> : ""}
+                      </tr>
+                    )
+                  }) : <tr> <td colSpan='5' > <p className="text-center text-muted mt-5">No Transaction are there !</p> </td></tr>}
+                  {/* {TransactionHistorytData?.data.map((item) => {
                   return (
                     <tr>
                       <td>{item.order_id}</td>

@@ -27,6 +27,7 @@ export const actionType = {
   GetAdminOrderRTODeliveredDispatch_Type:
     "GetAdminOrderRTODeliveredDispatch_Type",
   GetAdminOrderSummaryDispatch_Type: "GetAdminOrderSummaryDispatch_Type",
+  PostAddRemarkDispatch_Type: "PostAddRemarkDispatch_Type",
   GetAdminOrderBookedDispatch_Type: "GetAdminOrderBookedDispatch_Type",
   GetAdminOrderPickedUpDispatch_Type: "GetAdminOrderPickedUpDispatch_Type",
   GetAdminOrderReadyForPickupDispatch_Type: "GetAdminOrderReadyForPickupDispatch_Type",
@@ -53,8 +54,8 @@ export const actionType = {
     "PostAdminOrderPaymentOrderDispatch_Type",
   PostAdminOrderEwayBillDispatch_Type: "PostAdminOrderEwayBillDispatch_Type",
   GetAdminOrderCloneOrderDispatch_Type: "GetAdminOrderCloneOrderDispatch_Type",
-  PostAdminPendingOrderActionDispatch_Type:
-    "PostAdminPendingOrderActionDispatch_Type",
+  PostAdminOrderActionDispatch_Type:
+    "PostAdminOrderActionDispatch_Type",
   DeleteAdminPendingOrderActionDispatch_Type:
     "DeleteAdminPendingOrderActionDispatch_Type",
   PostAdminSettingAddEmployeeDispatch_Type:
@@ -95,12 +96,10 @@ export const actionType = {
   PostOrderDownloadInvoiceFileDispatch_Type:
     "PostOrderDownloadInvoiceFileDispatch_Type",
   GetOrderDownloadInvoiceDispatch_Type: "GetOrderDownloadInvoiceDispatch_Type",
-  // label generation
   PostOrderDownloadLabelGenerationFileDispatch_Type:
     "PostOrderDownloadLabelGenerationFileDispatch_Type",
   GetOrderDownloadLabelGenerationDispatch_Type:
     "GetOrderDownloadLabelGenerationDispatch_Type",
-
   DeleteAdminOrderDispatch_Type: "DeleteAdminOrderDispatch_Type",
   PatchEditEmployeeDispatch_Type: "PatchEditEmployeeDispatch_Type",
   PatchEditDeliveryboyDispatch_Type: "PatchEditDeliveryboyDispatch_Type",
@@ -112,6 +111,10 @@ export const actionType = {
     "PostDeliveryBoyNotificationDispatch_Type",
     GetDeliveryBoyNotificationDispatch_Type:
     "GetDeliveryBoyNotificationDispatch_Type",
+    GetAdminRemarkNotificationDispatch_Type:
+    "GetAdminRemarkNotificationDispatch_Type",
+    PostRemarkNotificationDispatch_Type:
+    "PostRemarkNotificationDispatch_Type",
   PostAddOrderTagDispatch_Type: "PostAddOrderTagDispatch_Type",
   PostUploadFileDispatch_Type: "PostUploadFileDispatch_Type",
   PostDashboardRevenueDispatch_Type: "PostDashboardRevenueDispatch_Type",

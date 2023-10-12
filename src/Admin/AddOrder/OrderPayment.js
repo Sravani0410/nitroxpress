@@ -27,7 +27,7 @@ const OrderPayment = () => {
   const [wallettab, setWalletTab] = useState("");
   const [onlinetab, setOnlineTab] = useState("");
   const [customcheckbox, setCustomCheckBox] = useState(false);
-  const [paymentmethodpopup, setPaymentMethodPopup] = useState(true);
+  const [paymentmethodpopup, setPaymentMethodPopup] = useState(false);
   const [walletpaypopup, setWalletPayPopup] = useState(false);
   const [activepaymentwallet, setActivePaymentWallet] = useState(false);
   const [activepaymentrazorpay, setActivePaymentRazorPay] = useState(false);
@@ -60,6 +60,7 @@ const OrderPayment = () => {
     (state) =>
       state.PostAdminOrderAddShipmentReducer?.PostAdminOrderAddShipmentData
   );
+  let Is_Business = sessionStorage.getItem("Is_Business", false);
   // let BearerToken = sessionStorage.getItem("token", false);
   let totalPriceValue = sessionStorage.getItem("totalPriceValue", false);
   useEffect(() => {
@@ -75,7 +76,7 @@ const OrderPayment = () => {
   }, []);
   useEffect(() => {
     if (paymentmethod == "online" && totalPriceValue) {
-      PaymentFun();
+      // PaymentFun();
     }
   }, [totalPriceValue]);
 
@@ -172,99 +173,114 @@ const OrderPayment = () => {
     document.body.appendChild(script);
   };
 
-  const PaymentFun = async () => {
-    const res = await loadScript();
+  // const PaymentFun = async () => {
+  //   const res = await loadScript();
 
-    let amount = totalPriceValue;
-    let BearerToken = sessionStorage.getItem("token", false);
+  //   let amount = totalPriceValue;
+  //   let BearerToken = sessionStorage.getItem("token", false);
 
-    let getShipmentId = sessionStorage.getItem("ShipmentId", false);
-    let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
-    const ProductOrderId = sessionStorage.getItem("product_order_id", false);
+  //   let getShipmentId = sessionStorage.getItem("ShipmentId", false);
+  //   let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
+  //   const ProductOrderId = sessionStorage.getItem("product_order_id", false);
+  //  let amountformat=JSON.parse(sessionStorage.getItem("amount_format",false))
+  //   let dataa = JSON.parse(OrderDetailsId);
+  //   let deliverdIdData = dataa?.deliverd_id;
+  //   let pickupIdData = dataa?.pickup_id;
 
-    let dataa = JSON.parse(OrderDetailsId);
-    let deliverdIdData = dataa?.deliverd_id;
-    let pickupIdData = dataa?.pickup_id;
+  //   let bodyContent = JSON.stringify({
+  //     amount: Number(amount),
+  //     shipment_details_id: getShipmentId,
+  //     delivered_address_id: deliverdIdData,
+  //     pickup_address_id: pickupIdData,
+  //     product_order_id: dataa?.product_order_id,
+  //     amount_format: {
+  //       gst: amountformat?.gst,
+  //       insurance : amountformat?.insurance ,
+  //       base_price : amountformat?.base_price ,
+  //       cod_percent : amountformat?.cod_percent ,
+  //       fuel_charge : amountformat?.fuel_charge ,
+  //       total_price : amountformat?.total_price ,
+  //       insurance_price : amountformat?.insurance_price ,
+  //       packaging_price : amountformat?.packaging_price ,
+  //       cod_percent_price : amountformat?.cod_percent_price ,
+  //       fuel_charge_price : amountformat?.fuel_charge_price ,
+  //       packaging_percent : amountformat?.packaging_percent ,
+  //       price_without_gst : amountformat?.price_without_gst ,
+  //     },
+  //   });
 
-    let bodyContent = JSON.stringify({
-      amount: Number(amount),
-      shipment_details_id: getShipmentId,
-      delivered_address_id: deliverdIdData,
-      pickup_address_id: pickupIdData,
-      product_order_id: dataa.product_order_id,
-    });
+  //   const data = await Axios({
+  //     url: `${process.env.REACT_APP_BASE_URL}/phonepe`,
+  //     method: "POST",
+  //     headers: {
+  //       Authorization: `Bearer ${BearerToken}`,
+  //       Accept: "*/*",
+  //       "Content-Type": "application/json",
+  //     },
+  //     data: bodyContent,
+  //   }).then((res) => {
+  //     window.open(`${res?.data?.pay_page_url}`);
+  //     return res;
+  //   });
 
-    const data = await Axios({
-      url: `${process.env.REACT_APP_BASE_URL}/razorpay`,
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${BearerToken}`,
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      },
-      data: bodyContent,
-    }).then((res) => {
-      return res;
-    });
+  //   // // in data we will receive an object from the backend with the information about the payment
+  //   // //that has been made by the user
 
-    // // in data we will receive an object from the backend with the information about the payment
-    // //that has been made by the user
+  //   // var axios = require('axios');
 
-    // var axios = require('axios');
+  //   // var data = JSON.stringify({
 
-    // var data = JSON.stringify({
+  //   //   "amount": amount,
 
-    //   "amount": amount,
+  //   //   "shipment_details_id": getShipmentId,
 
-    //   "shipment_details_id": getShipmentId,
+  //   //   "delivered_address_id": deliverdIdData,
 
-    //   "delivered_address_id": deliverdIdData,
+  //   //   "pickup_address_id": pickupIdData,
 
-    //   "pickup_address_id": pickupIdData,
+  //   //   "product_order_id": dataa.product_order_id
 
-    //   "product_order_id": dataa.product_order_id
+  //   // });
 
-    // });
+  //   // var config = {
+  //   //   method: 'post',
+  //   //   url: `${process.env.REACT_APP_BASE_URL}/razorpay`,
+  //   //   headers: {
+  //   //     'Authorization': `Bearer ${BearerToken}`,
+  //   //     'Content-Type': 'application/json'
+  //   //   },
+  //   //   data: data
+  //   // };
 
-    // var config = {
-    //   method: 'post',
-    //   url: `${process.env.REACT_APP_BASE_URL}/razorpay`,
-    //   headers: {
-    //     'Authorization': `Bearer ${BearerToken}`,
-    //     'Content-Type': 'application/json'
-    //   },
-    //   data: data
-    // };
+  //   // axios(config)
+  //   //   .then(function (response) {
+  //   //     return response
+  //   //   })
+  //   //   .catch(function (error) {
+  //   //   });
+  //   //   let productIDget=JSON.parse(config.data)
 
-    // axios(config)
-    //   .then(function (response) {
-    //     return response
-    //   })
-    //   .catch(function (error) {
-    //   });
-    //   let productIDget=JSON.parse(config.data)
+  //   let options = {
+  //     key_id: "rzp_test_G0kWdsA9toFR0a", // in react your environment variable must start with REACT_APP_
+  //     key_secret: "qW4iPbrU5Vc84pHzZc4uI5ZA",
+  //     amount: amount,
+  //     currency: "INR",
+  //     description: "Test transaction",
+  //     image: "", // add image url
+  //     order_id: data?.data?.order_id,
+  //     // order_id: dataa?.product_order_id,
 
-    let options = {
-      key_id: "rzp_test_G0kWdsA9toFR0a", // in react your environment variable must start with REACT_APP_
-      key_secret: "qW4iPbrU5Vc84pHzZc4uI5ZA",
-      amount: amount,
-      currency: "INR",
-      description: "Test transaction",
-      image: "", // add image url
-      order_id: data?.data?.order_id,
-      // order_id: dataa?.product_order_id,
+  //     handler: function (response) {
+  //       // we will handle success by calling handlePaymentSuccess method and
+  //       // will pass the response that we've got from razorpay
 
-      handler: function (response) {
-        // we will handle success by calling handlePaymentSuccess method and
-        // will pass the response that we've got from razorpay
+  //       handlePaymentSuccess(response);
+  //     },
+  //   };
 
-        handlePaymentSuccess(response);
-      },
-    };
-
-    var rzp1 = new window.Razorpay(options);
-    rzp1.open();
-  };
+  //   // var rzp1 = new window.Razorpay(options);
+  //   // rzp1.open();
+  // };
 
   const BackBtn = () => {
     navigate("/admin/order/User#pending");
@@ -288,21 +304,24 @@ const OrderPayment = () => {
   //
   useEffect(() => {
     if (GetWalletBalanceData && totalPriceValue) {
-      if (GetWalletBalanceData?.data?.balance >= Number(totalPriceValue)) {
+      if (GetWalletBalanceData?.data?.b2b_balance >= Number(totalPriceValue)) {
+        setWalletPayPopup(false);
+        setAmountLessThenWalletPayPopup(false);
       } else {
         let calaculated =
-          Number(totalPriceValue) - GetWalletBalanceData?.data?.balance;
+          Number(totalPriceValue) - GetWalletBalanceData?.data?.b2b_balance;
         // ?.toFixed(2)
         setCalculatedAmount(calaculated.toFixed(2));
         setAmountLessThenWalletPayPopup(true);
       }
+    } else {
     }
   }, [totalPriceValue, GetWalletBalanceData]);
 
   // orderpayment
 
   const ContinuePaymentFun = () => {
-    setLoadSpiner((o) => !o);
+    // setLoadSpiner((o) => !o);
     let OrderDetailsId = sessionStorage.getItem("OrderDetailsId", false);
     let OrderDetailsIdData = JSON.parse(OrderDetailsId);
     let CompanyDetails = sessionStorage.getItem("UserDetailsPayload", false);
@@ -318,20 +337,50 @@ const OrderPayment = () => {
 
     // PostDebitBalance
     //when Total amount is less then wallet amount the If condition will run
-    // if (amountlessthenwalletpaypopup) {
-
-    //   if (activepaymentrazorpay == "activeWalletPayment") {
-    //     PaymentFun() // This function open the RazorPay Popup
-    //   }
-    //   else {
-    //     setWalletPayPopup(true)
-    //   }
-
-    // } else if (activepaymentwallet == "activeWalletPayment") {
-    dispatch(PostDebitBalance(payLoad)); //Total amount will be debit by this api from the wallet
-
-    // } else if (activepaymentrazorpay == "activeWalletPayment") {
+    if (amountlessthenwalletpaypopup) {
+      if (activepaymentrazorpay == "activeWalletPayment") {
+        // PaymentFun() // This function open the RazorPay Popup
+      } else {
+        if (Is_Business == "true") {
+          if (GetWalletBalanceData?.data?.b2b_negative_limit > 0) {
+            dispatch(PostDebitBalance(payLoad));
+            sessionStorage.removeItem("totalPriceValue", false);
+            sessionStorage.removeItem("UserDetailsPayload");
+            sessionStorage.removeItem("Eway_bill_URL");
+            sessionStorage.removeItem("PayloadOrderData");
+            sessionStorage.removeItem("Eway_bill_id");
+            sessionStorage.removeItem("add_order_tag");
+            setPaymentMethodPopup(false);
+          } else {
+            setWalletPayPopup(true);
+          }
+        } else {
+          dispatch(PostDebitBalance(payLoad));
+          sessionStorage.removeItem("totalPriceValue", false);
+          sessionStorage.removeItem("UserDetailsPayload");
+          sessionStorage.removeItem("Eway_bill_URL");
+          sessionStorage.removeItem("PayloadOrderData");
+          sessionStorage.removeItem("Eway_bill_id");
+          sessionStorage.removeItem("add_order_tag");
+          setPaymentMethodPopup(false);
+        }
+      }
+    } else if (activepaymentwallet == "activeWalletPayment") {
+      dispatch(PostDebitBalance(payLoad));
+      sessionStorage.removeItem("totalPriceValue", false);
+      sessionStorage.removeItem("UserDetailsPayload");
+      sessionStorage.removeItem("Eway_bill_URL");
+      sessionStorage.removeItem("PayloadOrderData");
+      sessionStorage.removeItem("Eway_bill_id");
+      sessionStorage.removeItem("add_order_tag");
+      setPaymentMethodPopup(false);
+      // dispatch(PostDebitBalance(payLoad)); //Total amount will be debit by this api from the wallet
+    }
+    //  else if (activepaymentrazorpay == "activeWalletPayment") {
     //   PaymentFun() // This function open the RazorPay Popup
+    // }
+    //  if (activepaymentrazorpay == "activeWalletPayment") {
+    //   PaymentFun() // This function open the Phonepay Popup
     // }
   };
   // PostWalletAddMoney
@@ -341,9 +390,10 @@ const OrderPayment = () => {
       if (PostDebitBalanceData.status == 200) {
         setPaymentMethodPopup(false);
         setWalletPayPopup(false);
-        setLoadSpiner((o) => !o);
+        // setLoadSpiner((o) => !o);
       } else {
-        setLoadSpiner(false);
+        // setLoadSpiner(false);
+        setWalletPayPopup(false);
       }
     }
   }, [PostDebitBalanceData]);
@@ -369,7 +419,9 @@ const OrderPayment = () => {
   }, [PostAdminOrderAddShipmentData]);
 
   const ProceedToPayFun = () => {
-    AddPaymentFun();
+    if (Is_Business == "true") {
+      AddPaymentFun();
+    }
   };
 
   const handlePaymentSuccess_addmoney = async (response, PaymentFunResData) => {
@@ -462,6 +514,9 @@ const OrderPayment = () => {
     let bodyContent;
     bodyContent = JSON.stringify({
       amount: parseFloat(amountValue),
+      // redirect_url: `http://localhost:3000/admin/order/orderpayment`,
+      // redirect_url:`${process.env.REACT_APP_BASE_URL}/admin/order/orderpayment`
+      redirect_url:`https://d2ar2bguhc97cc.cloudfront.net/admin/order/orderpayment`
     });
 
     const data = await Axios({
@@ -474,28 +529,29 @@ const OrderPayment = () => {
       },
       data: bodyContent,
     }).then((res) => {
+      window.location.replace(`${res?.data?.pay_page_url}`);
       return res;
     });
     // in data we will receive an object from the backend with the information about the payment
     //that has been made by the user
 
-    let options = {
-      key_id: "rzp_test_G0kWdsA9toFR0a", // in react your environment variable must start with REACT_APP_
-      key_secret: "qW4iPbrU5Vc84pHzZc4uI5ZA",
-      amount: parseInt(calculatedamount),
-      currency: "INR",
-      description: "Test transaction",
-      image: "", // add image url
-      order_id: data?.data?.order_id,
-      handler: function (response) {
-        // we will handle success by calling handlePaymentSuccess method and
-        // will pass the response that we've got from razorpay
-        handlePaymentSuccess_addmoney(response, data);
-      },
-    };
+    // let options = {
+    //   key_id: "rzp_test_G0kWdsA9toFR0a", // in react your environment variable must start with REACT_APP_
+    //   key_secret: "qW4iPbrU5Vc84pHzZc4uI5ZA",
+    //   amount: parseInt(calculatedamount),
+    //   currency: "INR",
+    //   description: "Test transaction",
+    //   image: "", // add image url
+    //   order_id: data?.data?.order_id,
+    //   handler: function (response) {
+    //     // we will handle success by calling handlePaymentSuccess method and
+    //     // will pass the response that we've got from razorpay
+    //     handlePaymentSuccess_addmoney(response, data);
+    //   },
+    // };
 
-    let rzp1 = new window.Razorpay(options);
-    rzp1.open();
+    // let rzp1 = new window.Razorpay(options);
+    // rzp1.open();
   };
 
   const PaymentPopupFun = () => {
@@ -629,7 +685,7 @@ const OrderPayment = () => {
             <h4
               className="text-danger calender_popup_cancel"
               onClick={(e) => {
-                setPickUpPopup(false);
+                // setPickUpPopup(false);
                 setCustomCheckBox(false);
 
                 navigate("/admin/order/ordersummary");
@@ -641,7 +697,7 @@ const OrderPayment = () => {
             <h2>Recharge your wallet</h2>
             <p>
               Current Wallet Amount{" "}
-              <b>{GetWalletBalanceData?.data?.balance}/-</b>
+              <b>{GetWalletBalanceData?.data?.b2b_balance}/-</b>
             </p>
             <div className="popup-body">
               <div className="amout">
@@ -717,7 +773,7 @@ const OrderPayment = () => {
               aria-selected={`${wallettab ? "true" : "false"}`}
               onClick={(e) => {
                 PaymentPopupFun(e);
-                // setPaymentMethodPopup((o) => !o);
+                setPaymentMethodPopup((o) => !o);
               }}
             >
               {" "}
@@ -750,10 +806,10 @@ const OrderPayment = () => {
                       Current Balance :
                       <b>
                         {" "}
-                        {GetWalletBalanceData?.data?.balance_status ==
+                        {GetWalletBalanceData?.data?.b2b_balance_status ==
                         "NEGATIVE"
-                          ? `-${GetWalletBalanceData?.data?.balance}`
-                          : GetWalletBalanceData?.data?.balance}
+                          ? `-${GetWalletBalanceData?.data?.b2b_balance}`
+                          : GetWalletBalanceData?.data?.b2b_balance}
                         /-
                       </b>
                     </p>
@@ -763,8 +819,14 @@ const OrderPayment = () => {
                     <b> &gt; </b>{" "}
                   </div>
                 </li>
-                {/* <li className={`row mx-0 ${activepaymentrazorpay}`}
-                  onClick={(e) => { setActivePaymentWallet("activeRazorPayment"); setActivePaymentRazorPay("activeWalletPayment") }}>
+                {/* <li
+                  className={`row mx-0 ${activepaymentrazorpay}`}
+                  onClick={(e) => {
+                    setActivePaymentWallet("activeRazorPayment");
+                    setActivePaymentRazorPay("activeWalletPayment");
+                    
+                  }}
+                >
                   <div className="col-2">
                     <img src="/images/online.svg" alt="img" />
                   </div>

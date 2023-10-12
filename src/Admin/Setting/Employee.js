@@ -117,7 +117,7 @@ const Employee = () => {
       //  setEditCategoryValueFilterData([])
       //  window.location.reload();
       SetEditUser((o) => !o);
-      window.location.reload(false)
+      // window.location.reload(false)
     }
   }, [PatchEditEmployeeData]);
 

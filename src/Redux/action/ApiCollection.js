@@ -11,6 +11,7 @@ var fs = require("fs");
 
 let BearerToken = sessionStorage.getItem("token", false);
 let Is_delivery_boy=sessionStorage.getItem("Is_delivery_boy",false)
+ let isEmployeData = sessionStorage.getItem("isEmploye", false);
 axios.interceptors.response.use(
   (response) => {
     return response;
@@ -833,7 +834,7 @@ const PostViewOrderDetailsDispatch = (data) => ({
 });
 export const PostViewOrderDetails = (payload) => {
   return async (dispatch, getState) => {
-    dispatch(OrderPagesLoaderTrueFalse(true));
+    // dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/view_order_details`,
@@ -845,12 +846,12 @@ export const PostViewOrderDetails = (payload) => {
         }
       )
       .then((res) => {
-        dispatch(OrderPagesLoaderTrueFalse(false));
+        // dispatch(OrderPagesLoaderTrueFalse(false));
         // toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
-        dispatch(OrderPagesLoaderTrueFalse(false));
+        // dispatch(OrderPagesLoaderTrueFalse(false));
         toast.warn(err?.response?.data?.message);
         return err;
       });
@@ -986,6 +987,7 @@ const GetAdminOrderSummaryDispatch = (data) => ({
 });
 export const GetAdminOrderSummary = (payload) => {
   return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/order_summary`,
@@ -998,10 +1000,11 @@ export const GetAdminOrderSummary = (payload) => {
       )
       .then((res) => {
         // toast.success(res.data.message);
-
+        dispatch(OrderPagesLoaderTrueFalse(false));
         return res;
       })
       .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
         toast.warn(err?.response?.data?.message);
         return err;
       });
@@ -1009,6 +1012,38 @@ export const GetAdminOrderSummary = (payload) => {
   };
 };
 
+const PostAddRemarkDispatch = (data) => ({
+  type: actionType.PostAddRemarkDispatch_Type,
+  payload: data,
+});
+export const PostAddRemark = (payload) => {
+  let summarypayload={
+"product_order_id":payload.order_id
+  }
+  return async (dispatch, getState) => {
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/order/add_remark`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        // toast.success(res.data.message);
+      dispatch(GetAdminOrderSummary(summarypayload))
+      dispatch(GetAdminRemarkNotification())
+        return res;
+      })
+      .catch((err) => {
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostAddRemarkDispatch(responce));
+  };
+};
 const GetAdminOrderBookedDispatch = (data) => ({
   type: actionType.GetAdminOrderBookedDispatch_Type,
   payload: data,
@@ -1643,13 +1678,13 @@ export const GetAdminOrderCloneOrder = (payload) => {
   };
 };
 
-const PostAdminPendingOrderActionDispatch = (data) => ({
-  type: actionType.PostAdminPendingOrderActionDispatch_Type,
+const PostAdminOrderActionDispatch = (data) => ({
+  type: actionType.PostAdminOrderActionDispatch_Type,
   payload: data,
 });
-export const PostAdminPendingOrderAction = (payload) => {
+export const PostAdminOrderAction = (payload) => {
   let data = JSON.stringify(payload);
-
+let newdata={...payload}
   let InvoicePayLoad = {
     product_order_id: payload?.product_order_id,
     request_type: "create",
@@ -1659,8 +1694,8 @@ export const PostAdminPendingOrderAction = (payload) => {
     dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
       .patch(
-        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/pending_action`,
-        data,
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/order_action`,
+        newdata,
         {
           headers: {
             Authorization: `Bearer ${BearerToken}`,
@@ -1670,6 +1705,10 @@ export const PostAdminPendingOrderAction = (payload) => {
       .then((res) => {
         dispatch(OrderPagesLoaderTrueFalse(false));
         toast.success(res.data.message);
+        if(Is_delivery_boy != "true"){
+          dispatch(GetWalletBalance());
+        }
+        // dispatch(GetWalletBalance());
         // dispatch(PostOrderDownloadInvoiceFile(InvoicePayLoad));
         dispatch(GetAdminOrderReceivedAtHub());
         dispatch(GetAdminOrderBooked());
@@ -1703,7 +1742,7 @@ export const PostAdminPendingOrderAction = (payload) => {
 
     // let response = await axios.request(reqOptions);
 
-    dispatch(PostAdminPendingOrderActionDispatch(response));
+    dispatch(PostAdminOrderActionDispatch(response));
   };
 };
 
@@ -1762,7 +1801,7 @@ export const PostAdminSettingAddEmployee = (payload) => {
         }
       )
       .then((res) => {
-        // toast.success(res.data.message);
+        toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
@@ -2427,7 +2466,7 @@ export const DeleteCategoryDetails = (payload) => {
   return async (dispatch, getState) => {
     const responce = await axios
       .delete(
-        `${process.env.REACT_APP_BASE_URL}/aadmin_panel/setting/delete_category`,
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/delete_category`,
         {
           data: payload,
 
@@ -2437,9 +2476,9 @@ export const DeleteCategoryDetails = (payload) => {
         }
       )
       .then((res) => {
-        // toast.success(res.data.message);
+        toast.success(res.data.message);
         dispatch(GetCategoryDetails());
-        toast.success("Category deleted successfully");
+        // toast.success("Category deleted successfully");
         return res;
       })
       .catch((err) => {
@@ -2933,6 +2972,35 @@ export const GetDashboardNotification = (payload) => {
     dispatch(GetDashboardNotificationDispatch(response));
   };
 };
+const PostClearNotificationDispatch = (data) => ({
+  type: actionType.PostClearNotificationDispatch_Type,
+  payload: data,
+});
+export const PostClearNotification = (payload) => {
+  return async (dispatch, getState) => {
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/dashboard/notify_true`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        // toast.warn(res.data.message);
+        dispatch(GetUserNotification());
+        dispatch(GetDashboardNotification());
+        return res;
+      })
+      .catch((err) => {
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostClearNotificationDispatch(responce));
+  };
+};
 
 const GetDeliveryBoyNotificationDispatch = (data) => ({
   type: actionType.GetDeliveryBoyNotificationDispatch_Type,
@@ -2951,7 +3019,7 @@ export const GetDeliveryBoyNotification = (payload) => {
         }
       )
       .then((res) => {
-        // toast.success(res.data.message);
+        toast.success(res.data.message);
         return res;
       })
       .catch((err) => {
@@ -2963,7 +3031,7 @@ export const GetDeliveryBoyNotification = (payload) => {
   };
 };
 
-// refresh notification
+//  notification
 const PostDeliveryBoyNotificationDispatch = (data) => ({
   type: actionType.PostDeliveryBoyNotificationDispatch_Type,
   payload: data,
@@ -2992,6 +3060,66 @@ export const PostDeliveryBoyNotification = (payload) => {
     dispatch(PostDeliveryBoyNotificationDispatch(responce));
   };
 };
+
+// remark api
+const GetAdminRemarkNotificationDispatch = (data) => ({
+  type: actionType.GetAdminRemarkNotificationDispatch_Type,
+  payload: data,
+});
+export const GetAdminRemarkNotification = (payload) => {
+  return async (dispatch, getState) => {
+    const response = await axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/dashboard/get_remark_with_notification`,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        // toast.success(res.data.message);
+        return res;
+      })
+      .catch((err) => {
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(GetAdminRemarkNotificationDispatch(response));
+  };
+};
+
+const PostRemarkNotificationDispatch = (data) => ({
+  type: actionType.PostRemarkNotificationDispatch_Type,
+  payload: data,
+});
+export const PostRemarkNotification = (payload) => {
+  let data = JSON.stringify(payload);
+  return async (dispatch, getState) => {
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/dashboard/refresh_notifications`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        toast.success(res.data.message);
+        dispatch(GetAdminRemarkNotification());
+        return res;
+      })
+      .catch((err) => {
+        // toast.warn(err?.response?.data?.message);+
+        return err;
+      });
+    dispatch(PostRemarkNotificationDispatch(responce));
+  };
+};
+
 const PostAddOrderTagDispatch = (data) => ({
   type: actionType.PostAddOrderTagDispatch_Type,
   payload: data,
@@ -3080,13 +3208,13 @@ export const PostCompanyFile = (payload) => {
   return async (dispatch, getState) => {
     var fs = require("fs");
     let formdata = new FormData();
-    formdata.append("email", payload.email);
-    formdata.append("company_id", payload.company_id);
-    formdata.append("gstin_number", payload.gstin_number);
-    formdata.append("registration_pdf", payload.registration_pdf);
-    formdata.append("gstin_pdf", payload.gstin_pdf);
-    formdata.append("pan_card", payload.pan_card);
-    formdata.append("aadhar_card", payload.aadhar_card);
+    formdata.append("email", payload?.email);
+    formdata.append("company_id", payload?.company_id);
+    formdata.append("gstin_number", payload?.gstin_number);
+    formdata.append("registration_pdf", payload?.registration_pdf);
+    formdata.append("gstin_pdf", payload?.gstin_pdf);
+    formdata.append("pan_card", payload?.pan_card);
+    formdata.append("aadhar_card", payload?.aadhar_card);
 
     let bodyContent = formdata;
 
@@ -3097,7 +3225,7 @@ export const PostCompanyFile = (payload) => {
       data: bodyContent,
     };
 
-    let response = await axios.request(reqOptions);
+    let response = await axios?.request(reqOptions);
     toast.success("Documents Uploaded Successfuly");
     dispatch(PostCompanyFileDispatch(response));
   };
@@ -3521,7 +3649,7 @@ export const GetWalletBalance = (payload) => {
         toast.success(res.data.message);
         if (res.status == 200) {
           // dispatch(OrderPagesLoaderTrueFalse(false));
-          if(Is_delivery_boy!="true"){
+          if(Is_delivery_boy!="true" || isEmployeData !== "true"){
             dispatch(GetWalletHistory());
           }
           
@@ -3988,36 +4116,6 @@ export const PostGetFeedback = (payload) => {
         return err;
       });
     dispatch(PostGetFeedbackDispatch(responce));
-  };
-};
-
-const PostClearNotificationDispatch = (data) => ({
-  type: actionType.PostClearNotificationDispatch_Type,
-  payload: data,
-});
-export const PostClearNotification = (payload) => {
-  return async (dispatch, getState) => {
-    const responce = await axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}/admin_panel/dashboard/notify_true`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${BearerToken}`,
-          },
-        }
-      )
-      .then((res) => {
-        // toast.warn(res.data.message);
-        dispatch(GetUserNotification());
-        dispatch(GetDashboardNotification());
-        return res;
-      })
-      .catch((err) => {
-        toast.warn(err?.response?.data?.message);
-        return err;
-      });
-    dispatch(PostClearNotificationDispatch(responce));
   };
 };
 

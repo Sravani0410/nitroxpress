@@ -156,6 +156,21 @@ const OrderDatails = () => {
     if (PostAdminOrderAddShipmentReducerData?.status == 200) {
       navigate("/admin/order/ordersummary");
     }
+    let amountformat= {
+      gst: PostAdminOrderPaymentCalReducerData?.data?.gst,
+      insurance: PostAdminOrderPaymentCalReducerData?.data?.insurance ,
+      base_price: PostAdminOrderPaymentCalReducerData?.data?.base_price,
+      cod_percent: PostAdminOrderPaymentCalReducerData?.data?.cod_percent ,
+      fuel_charge: PostAdminOrderPaymentCalReducerData?.data?.fuel_charge ,
+      total_price: PostAdminOrderPaymentCalReducerData?.data?.total_price ,
+      insurance_price: PostAdminOrderPaymentCalReducerData?.data?.insurance_price ,
+      packaging_price: PostAdminOrderPaymentCalReducerData?.data?.packaging_price ,
+      cod_percent_price: PostAdminOrderPaymentCalReducerData?.data?.cod_percent_price ,
+      fuel_charge_price: PostAdminOrderPaymentCalReducerData?.data?.fuel_charge_price ,
+      packaging_percent: PostAdminOrderPaymentCalReducerData?.data?.packaging_percent ,
+      price_without_gst: PostAdminOrderPaymentCalReducerData?.data?.price_without_gst 
+    }
+  sessionStorage.setItem("amount_format", JSON.stringify(amountformat))
   }, [PostAdminOrderPaymentCalReducerData, PostAdminOrderAddShipmentReducerData])
   const ItemDetailsPrevousBtnFun = () => {
     navigate("/admin/order/User")
