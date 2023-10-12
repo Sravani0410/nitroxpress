@@ -22,11 +22,9 @@ import {
 import { set } from "date-fns";
 
 const OrderDetails = () => {
-
   let BearerToken = sessionStorage.getItem("token", false);
 
-
-  const [getinvoice, setGetInvoice]= useState("")
+  const [getinvoice, setGetInvoice] = useState("");
   const [downloadinvoice, setDownloadInvoice] = useState(false);
   const [raiseissue, setRaiseIssue] = useState(false);
   const [feedback, setFeedback] = useState(false);
@@ -50,7 +48,7 @@ const OrderDetails = () => {
   const [emailaddress, setEmailAddress] = useState("");
 
   // label-generation
-  const [getlabelgeneration, setLabelGeneration]= useState("")
+  const [getlabelgeneration, setLabelGeneration] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const UserData = useSelector((state) => state.productReducer.userDetails);
@@ -70,7 +68,7 @@ const OrderDetails = () => {
     (state) => state.PostCreateFeedbackReducer?.PostCreateFeedbackData
   );
 
- let GetCustomerOrderDetailData = useSelector(
+  let GetCustomerOrderDetailData = useSelector(
     (state) =>
       state.GetCustomerOrderDetailReducer?.GetCustomerOrderDetailData?.data
   );
@@ -82,11 +80,13 @@ const OrderDetails = () => {
 
   const PostOrderDownloadLabelGenerationFileData = useSelector(
     (state) =>
-      state.PostOrderDownloadLabelGenerationFileReducer.PostOrderDownloadLabelGenerationFileData
+      state.PostOrderDownloadLabelGenerationFileReducer
+        .PostOrderDownloadLabelGenerationFileData
   );
 
-  GetCustomerOrderDetailData?.sort((a,b)=>{return new Date(b.pickupdate) - new Date(a.pickupdate)})
-
+  GetCustomerOrderDetailData?.sort((a, b) => {
+    return new Date(b.pickupdate) - new Date(a.pickupdate);
+  });
 
   useEffect(() => {
     if (PostCreateTicketData?.data?.message === "Raised an issue") {
@@ -115,12 +115,12 @@ const OrderDetails = () => {
     }
   }, [ResetPasswordPatchData]);
   useEffect(() => {
-    UserData?.data && 
-    UserData?.data?.map((items, id) => {
-      setUserName(items?.username);
-      setContactNumber(items?.phone_number);
-      setEmailAddress(items?.email);
-    });
+    UserData?.data &&
+      UserData?.data?.map((items, id) => {
+        setUserName(items?.username);
+        setContactNumber(items?.phone_number);
+        setEmailAddress(items?.email);
+      });
     if (DeleteUserAddressData.status == 200) {
       dispatch(getOrderAddress());
     }
@@ -152,9 +152,9 @@ const OrderDetails = () => {
     // }
   };
   useEffect(() => {
-    let payload ={
-        "page_type":"pickup"
-    }
+    let payload = {
+      page_type: "pickup",
+    };
     dispatch(getOrderAddress(payload));
     dispatch(GetCustomerOrderDetail());
   }, [PostOrderDownloadInvoiceFileData]);
@@ -162,18 +162,23 @@ const OrderDetails = () => {
     let payload = {
       id: itemID,
     };
+    let pagepayload = {
+      page_type: "pickup",
+    };
     dispatch(DeleteUserAddress(payload));
+    window.location.reload(false)
+    // dispatch(getOrderAddress(pagepayload));
   };
-  const orderStatusBackground = status => {
+  const orderStatusBackground = (status) => {
     switch (status) {
-      case 'PENDING':
-        return '#FFA500'
-      case 'BOOKED':
-        return '#20A253';
-      case 'DELIVERED':
-        return '#20A253';
+      case "PENDING":
+        return "#FFA500";
+      case "BOOKED":
+        return "#20A253";
+      case "DELIVERED":
+        return "#20A253";
       default:
-        return '#6F7FBC';
+        return "#6F7FBC";
     }
   };
   const RaiseTicket = () => {
@@ -193,7 +198,7 @@ const OrderDetails = () => {
       product_order_id: item.product_order_id,
       request_type: "get",
     };
-    setGetInvoice(item.product_order_id,)
+    setGetInvoice(item.product_order_id);
     dispatch(PostOrderDownloadInvoiceFile(payload));
   };
   // useEffect(()=>{
@@ -205,23 +210,21 @@ const OrderDetails = () => {
   //     dispatch(PostOrderDownloadInvoiceFile(payloadd));
   //   }
   // },[PostOrderDownloadInvoiceFileData])
-// label generation
-const LabelGeneration=(e,item)=>{
-  let payload = {
-    product_order_id: item.product_order_id,
-    request_type: "get",
+  // label generation
+  const LabelGeneration = (e, item) => {
+    let payload = {
+      product_order_id: item.product_order_id,
+      request_type: "get",
+    };
+    setLabelGeneration(item.product_order_id);
+    dispatch(PostOrderDownloadLabelGenerationFile(payload));
+    // if(!item.status==200){
+    //   toast.warn("label is downloaded after booking the order");
+    // }
+    // else if(item.status=='IN_TRANSIT'){
+    //   toast.warn("label is downloaded after booking the status");
+    // }
   };
-  setLabelGeneration(item.product_order_id)
-  dispatch(PostOrderDownloadLabelGenerationFile(payload))
-  // if(!item.status==200){
-  //   toast.warn("label is downloaded after booking the order");
-  // }
-  // else if(item.status=='IN_TRANSIT'){
-  //   toast.warn("label is downloaded after booking the status");
-  // }
-}
-
-
 
   const RaiseIssue = (e, item) => {
     setOrderId(item.product_order_id);
@@ -257,18 +260,16 @@ const LabelGeneration=(e,item)=>{
     }
   }, [PostCreateFeedbackData]);
 
-
   // useEffect(() => {
-  //   if (PostOrderDownloadInvoiceFileData?.data?.name) { 
-  //     window.open(`${PostOrderDownloadInvoiceFileData?.data?.name}`); 
+  //   if (PostOrderDownloadInvoiceFileData?.data?.name) {
+  //     window.open(`${PostOrderDownloadInvoiceFileData?.data?.name}`);
   //   }
 
   // }, [PostOrderDownloadInvoiceFileData])
 
-  
   // useEffect(() => {
-  //   if (PostOrderDownloadLabelGenerationFileData?.data?.name) { 
-  //     window.open(`${PostOrderDownloadLabelGenerationFileData?.data?.name}`); 
+  //   if (PostOrderDownloadLabelGenerationFileData?.data?.name) {
+  //     window.open(`${PostOrderDownloadLabelGenerationFileData?.data?.name}`);
   //   }
 
   // }, [PostOrderDownloadLabelGenerationFileData])
@@ -302,7 +303,7 @@ const LabelGeneration=(e,item)=>{
                   >
                     <label>User Name</label>
                     <input
-                    maxLength={40}
+                      maxLength={40}
                       type="text"
                       placeholder="User Name"
                       className="form-control"
@@ -386,7 +387,7 @@ const LabelGeneration=(e,item)=>{
                         <div className="form-box d-flex">
                           <label>Current Password</label>
                           <input
-                          maxLength={15}
+                            maxLength={15}
                             type={changepassword ? "text" : "password"}
                             placeholder="Enter Current Password"
                             className="form-control"
@@ -471,7 +472,7 @@ const LabelGeneration=(e,item)=>{
                         <div className="form-box d-flex">
                           <label>New Password</label>
                           <input
-                          maxLength={15}
+                            maxLength={15}
                             type={showpassword ? "text" : "password"}
                             placeholder="Enter New Password"
                             className="form-control"
@@ -557,7 +558,7 @@ const LabelGeneration=(e,item)=>{
                         <div className="form-box d-flex">
                           <label>Confrim New Password</label>
                           <input
-                          maxLength={15}
+                            maxLength={15}
                             type={confirmshowpassword ? "text" : "password"}
                             placeholder="Enter Confrim   New Password"
                             className="form-control"
@@ -794,7 +795,7 @@ const LabelGeneration=(e,item)=>{
                   >
                     All Orders
                   </button>
-                </li> 
+                </li>
                 <li className="nav-item" role="presentation">
                   <button
                     className="nav-link"
@@ -909,11 +910,21 @@ const LabelGeneration=(e,item)=>{
                           </div>
                           <div className="d-flex space-between">
                             <div className="d-flex">
-
                               <p> Status : </p>
-                              <p style={{backgroundColor:`${orderStatusBackground(item.status)}`,padding:"2px 6px",borderRadius:"4px"}}> {item.status}</p>
-                              </div>
-                              <div className="d-flex px-2 download_icon_profile" >
+                              <p
+                                style={{
+                                  backgroundColor: `${orderStatusBackground(
+                                    item.status
+                                  )}`,
+                                  padding: "2px 6px",
+                                  borderRadius: "4px",
+                                }}
+                              >
+                                {" "}
+                                {item.status}
+                              </p>
+                            </div>
+                            <div className="d-flex px-2 download_icon_profile">
                               {/* <div  className="level-generation">
                                   {" "}
                                   <svg
@@ -932,84 +943,86 @@ const LabelGeneration=(e,item)=>{
                                     />
                                   </svg>
                                 </div> */}
-                            
-                                <div  className="label-generation">
-                                  {" "}
-                                  <svg
-                                    width="33"
-                                    height="25"
-                                    viewBox="0 0 19 17"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    onClick={(e) => LabelGeneration(e, item)}
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      clipRule="evenodd"
-                                      d="M10.7751 16.4426C9.65576 16.2739 8.77539 15.8202 7.94874 14.9865C7.60748 14.6425 7.25418 14.2541 7.16344 14.1234C7.0184 13.9145 6.97688 13.8974 6.81923 13.9818C6.25186 14.2854 5.16495 14.2465 4.4821 13.8981C3.67224 13.485 3.02133 12.5645 2.9048 11.6676C2.85468 11.2817 2.81864 11.2265 2.44348 10.9623C1.70609 10.4429 1.11702 9.60511 0.77347 8.58731C0.548913 7.92183 0.569387 6.59684 0.815318 5.88476C1.07206 5.14132 1.46958 4.51957 2.025 3.99249C2.9749 3.09123 4.04437 2.69084 5.50211 2.69084H6.30796V3.26411V3.83738H5.54715C5.12875 3.83738 4.5726 3.89307 4.31135 3.96112C2.48001 4.43808 1.32938 6.41496 1.85367 8.1834C2.13662 9.13781 2.60768 9.74851 3.49133 10.3065L4.01489 10.6372V11.1589C4.01489 12.2426 4.74925 13.0518 5.72609 13.0445C6.08946 13.0417 6.30837 12.9781 6.77681 12.7387C7.10226 12.5724 7.40135 12.4364 7.44139 12.4364C7.48152 12.4364 7.68962 12.7381 7.90386 13.107C8.4234 14.0011 9.01329 14.5792 9.77533 14.9411C11.3501 15.689 13.0518 15.4236 14.2869 14.2376C15.1422 13.4163 15.5584 12.4086 15.5609 11.1524L15.5621 10.5647L16.0404 10.2741C18.1215 9.00997 18.4562 6.35943 16.7396 4.73602C16.0059 4.04212 15.1797 3.75548 13.9131 3.75548H13.2691V3.17018V2.58487L14.2313 2.63253C15.7674 2.7087 16.6781 3.07682 17.617 4.00117C19.0407 5.40281 19.3863 7.59687 18.4686 9.40782C18.198 9.94186 17.61 10.6267 17.1339 10.9623C16.7348 11.2436 16.7262 11.2588 16.6685 11.7798C16.5897 12.4913 16.3444 13.2704 16.0078 13.8784C15.0113 15.6786 12.8221 16.7515 10.7751 16.4426ZM8.09058 8.48691L6.40476 6.25329L7.50183 6.23053L8.5989 6.20776L8.62044 3.32324L8.64198 0.43872H9.78852H10.9351L10.9566 3.32324L10.9781 6.20776L12.0788 6.23053L13.1794 6.25329L11.5389 8.42352C10.6366 9.61715 9.8709 10.6223 9.83733 10.6571C9.80375 10.692 9.01772 9.71542 8.09058 8.48691Z"
-                                      fill="black"
-                                    />
-                                  </svg>
-                                </div>
-                            
-                                <span role="button" className="invoice">
-                                  {" "}
-                                  <svg
-                                    width="33"
-                                    height="25"
-                                    viewBox="0 0 19 17"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    onClick={(e) => Invoice(e, item)}
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      clipRule="evenodd"
-                                      d="M10.7751 16.4426C9.65576 16.2739 8.77539 15.8202 7.94874 14.9865C7.60748 14.6425 7.25418 14.2541 7.16344 14.1234C7.0184 13.9145 6.97688 13.8974 6.81923 13.9818C6.25186 14.2854 5.16495 14.2465 4.4821 13.8981C3.67224 13.485 3.02133 12.5645 2.9048 11.6676C2.85468 11.2817 2.81864 11.2265 2.44348 10.9623C1.70609 10.4429 1.11702 9.60511 0.77347 8.58731C0.548913 7.92183 0.569387 6.59684 0.815318 5.88476C1.07206 5.14132 1.46958 4.51957 2.025 3.99249C2.9749 3.09123 4.04437 2.69084 5.50211 2.69084H6.30796V3.26411V3.83738H5.54715C5.12875 3.83738 4.5726 3.89307 4.31135 3.96112C2.48001 4.43808 1.32938 6.41496 1.85367 8.1834C2.13662 9.13781 2.60768 9.74851 3.49133 10.3065L4.01489 10.6372V11.1589C4.01489 12.2426 4.74925 13.0518 5.72609 13.0445C6.08946 13.0417 6.30837 12.9781 6.77681 12.7387C7.10226 12.5724 7.40135 12.4364 7.44139 12.4364C7.48152 12.4364 7.68962 12.7381 7.90386 13.107C8.4234 14.0011 9.01329 14.5792 9.77533 14.9411C11.3501 15.689 13.0518 15.4236 14.2869 14.2376C15.1422 13.4163 15.5584 12.4086 15.5609 11.1524L15.5621 10.5647L16.0404 10.2741C18.1215 9.00997 18.4562 6.35943 16.7396 4.73602C16.0059 4.04212 15.1797 3.75548 13.9131 3.75548H13.2691V3.17018V2.58487L14.2313 2.63253C15.7674 2.7087 16.6781 3.07682 17.617 4.00117C19.0407 5.40281 19.3863 7.59687 18.4686 9.40782C18.198 9.94186 17.61 10.6267 17.1339 10.9623C16.7348 11.2436 16.7262 11.2588 16.6685 11.7798C16.5897 12.4913 16.3444 13.2704 16.0078 13.8784C15.0113 15.6786 12.8221 16.7515 10.7751 16.4426ZM8.09058 8.48691L6.40476 6.25329L7.50183 6.23053L8.5989 6.20776L8.62044 3.32324L8.64198 0.43872H9.78852H10.9351L10.9566 3.32324L10.9781 6.20776L12.0788 6.23053L13.1794 6.25329L11.5389 8.42352C10.6366 9.61715 9.8709 10.6223 9.83733 10.6571C9.80375 10.692 9.01772 9.71542 8.09058 8.48691Z"
-                                      fill="black"
-                                    />
-                                  </svg>
-                                </span>
-                                <span role="button" className="query">
 
-                                  <svg
-                                    width="35"
-                                    height="25"
-                                    viewBox="0 0 16 17"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    onClick={(e) => RaiseIssue(e, item)}
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      clipRule="evenodd"
-                                      d="M7.26122 0.0195602C4.13227 0.343208 1.45513 2.57904 0.43759 5.71826C-0.432557 8.40281 0.00997402 11.3437 1.63167 13.6538C1.92171 14.067 2.77263 14.9712 3.164 15.2823C4.27872 16.168 5.49913 16.708 6.90699 16.9382C7.41071 17.0206 8.592 17.0206 9.09572 16.9382C10.0061 16.7893 10.7209 16.553 11.519 16.1368C13.0768 15.3245 14.3028 14.051 15.0992 12.418C15.7409 11.1022 16.0464 9.66328 15.9943 8.2016C15.9162 6.01074 15.104 4.02445 13.6567 2.48477C12.4236 1.17302 10.8878 0.354185 9.12699 0.0697872C8.7363 0.00668743 7.66467 -0.0221515 7.26122 0.0195602ZM8.65798 3.54543C9.68468 3.71407 10.4849 4.27362 10.8572 5.08321C11.0484 5.49896 11.1102 5.81605 11.0881 6.26913C11.0693 6.65391 11.007 6.89005 10.8423 7.20052C10.6595 7.54506 10.494 7.73775 9.77933 8.43794C9.38632 8.82295 9.01577 9.20162 8.95586 9.27939C8.81344 9.4643 8.71513 9.70878 8.62693 10.0976C8.58747 10.2714 8.5299 10.4674 8.49901 10.5332C8.28783 10.9824 7.64434 11.0588 7.30922 10.6744C7.13768 10.4777 7.11007 10.3783 7.11217 9.96454C7.11439 9.52207 7.16773 9.26695 7.33217 8.9126C7.49129 8.56962 7.706 8.31177 8.36744 7.66916C9.24499 6.81664 9.38063 6.61513 9.38232 6.16132C9.38367 5.79104 9.29211 5.55215 9.0502 5.29479C8.79859 5.02712 8.49248 4.90937 8.04826 4.90937C7.28123 4.90937 6.8896 5.26389 6.55207 6.26377C6.39751 6.7217 6.2625 6.91356 6.01867 7.02174C5.85208 7.09568 5.56545 7.08989 5.39382 7.00913C5.21541 6.92517 5.01761 6.70707 4.9506 6.52043C4.87709 6.31563 4.90255 5.9361 5.01298 5.59096C5.28636 4.73651 5.96733 4.04487 6.86856 3.70629C7.32157 3.53608 8.14853 3.46174 8.65798 3.54543ZM8.2636 11.5959C8.59297 11.727 8.81256 12.045 8.83845 12.4285C8.86722 12.8551 8.70882 13.1767 8.37216 13.3751C8.22101 13.4641 8.17699 13.4737 7.92319 13.4735C7.6792 13.4732 7.62098 13.4614 7.48544 13.385C7.16873 13.2063 6.99957 12.9176 6.99704 12.5515C6.99513 12.2805 7.01983 12.1769 7.1314 11.9878C7.36559 11.5909 7.83917 11.4269 8.2636 11.5959Z"
-                                      fill="black"
-                                    />
-                                  </svg>
-                                </span>
-
-                                <div role="button" className="feedback">
-                                  <p className="feedback-text">Feedback</p>
-                                
-                                  <svg
-                                  style={{height:"28px",marginTop:"-1.5px"}}
-                                    className="w-9 h-9"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    onClick={(e) => Rating(e, item)}
-                                  >
-                                    <path
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                                    ></path>
-                                  </svg>
-                                </div>
+                              <div className="label-generation">
+                                {" "}
+                                <svg
+                                  width="33"
+                                  height="25"
+                                  viewBox="0 0 19 17"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  onClick={(e) => LabelGeneration(e, item)}
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
+                                    d="M10.7751 16.4426C9.65576 16.2739 8.77539 15.8202 7.94874 14.9865C7.60748 14.6425 7.25418 14.2541 7.16344 14.1234C7.0184 13.9145 6.97688 13.8974 6.81923 13.9818C6.25186 14.2854 5.16495 14.2465 4.4821 13.8981C3.67224 13.485 3.02133 12.5645 2.9048 11.6676C2.85468 11.2817 2.81864 11.2265 2.44348 10.9623C1.70609 10.4429 1.11702 9.60511 0.77347 8.58731C0.548913 7.92183 0.569387 6.59684 0.815318 5.88476C1.07206 5.14132 1.46958 4.51957 2.025 3.99249C2.9749 3.09123 4.04437 2.69084 5.50211 2.69084H6.30796V3.26411V3.83738H5.54715C5.12875 3.83738 4.5726 3.89307 4.31135 3.96112C2.48001 4.43808 1.32938 6.41496 1.85367 8.1834C2.13662 9.13781 2.60768 9.74851 3.49133 10.3065L4.01489 10.6372V11.1589C4.01489 12.2426 4.74925 13.0518 5.72609 13.0445C6.08946 13.0417 6.30837 12.9781 6.77681 12.7387C7.10226 12.5724 7.40135 12.4364 7.44139 12.4364C7.48152 12.4364 7.68962 12.7381 7.90386 13.107C8.4234 14.0011 9.01329 14.5792 9.77533 14.9411C11.3501 15.689 13.0518 15.4236 14.2869 14.2376C15.1422 13.4163 15.5584 12.4086 15.5609 11.1524L15.5621 10.5647L16.0404 10.2741C18.1215 9.00997 18.4562 6.35943 16.7396 4.73602C16.0059 4.04212 15.1797 3.75548 13.9131 3.75548H13.2691V3.17018V2.58487L14.2313 2.63253C15.7674 2.7087 16.6781 3.07682 17.617 4.00117C19.0407 5.40281 19.3863 7.59687 18.4686 9.40782C18.198 9.94186 17.61 10.6267 17.1339 10.9623C16.7348 11.2436 16.7262 11.2588 16.6685 11.7798C16.5897 12.4913 16.3444 13.2704 16.0078 13.8784C15.0113 15.6786 12.8221 16.7515 10.7751 16.4426ZM8.09058 8.48691L6.40476 6.25329L7.50183 6.23053L8.5989 6.20776L8.62044 3.32324L8.64198 0.43872H9.78852H10.9351L10.9566 3.32324L10.9781 6.20776L12.0788 6.23053L13.1794 6.25329L11.5389 8.42352C10.6366 9.61715 9.8709 10.6223 9.83733 10.6571C9.80375 10.692 9.01772 9.71542 8.09058 8.48691Z"
+                                    fill="black"
+                                  />
+                                </svg>
                               </div>
+
+                              <span role="button" className="invoice">
+                                {" "}
+                                <svg
+                                  width="33"
+                                  height="25"
+                                  viewBox="0 0 19 17"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  onClick={(e) => Invoice(e, item)}
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
+                                    d="M10.7751 16.4426C9.65576 16.2739 8.77539 15.8202 7.94874 14.9865C7.60748 14.6425 7.25418 14.2541 7.16344 14.1234C7.0184 13.9145 6.97688 13.8974 6.81923 13.9818C6.25186 14.2854 5.16495 14.2465 4.4821 13.8981C3.67224 13.485 3.02133 12.5645 2.9048 11.6676C2.85468 11.2817 2.81864 11.2265 2.44348 10.9623C1.70609 10.4429 1.11702 9.60511 0.77347 8.58731C0.548913 7.92183 0.569387 6.59684 0.815318 5.88476C1.07206 5.14132 1.46958 4.51957 2.025 3.99249C2.9749 3.09123 4.04437 2.69084 5.50211 2.69084H6.30796V3.26411V3.83738H5.54715C5.12875 3.83738 4.5726 3.89307 4.31135 3.96112C2.48001 4.43808 1.32938 6.41496 1.85367 8.1834C2.13662 9.13781 2.60768 9.74851 3.49133 10.3065L4.01489 10.6372V11.1589C4.01489 12.2426 4.74925 13.0518 5.72609 13.0445C6.08946 13.0417 6.30837 12.9781 6.77681 12.7387C7.10226 12.5724 7.40135 12.4364 7.44139 12.4364C7.48152 12.4364 7.68962 12.7381 7.90386 13.107C8.4234 14.0011 9.01329 14.5792 9.77533 14.9411C11.3501 15.689 13.0518 15.4236 14.2869 14.2376C15.1422 13.4163 15.5584 12.4086 15.5609 11.1524L15.5621 10.5647L16.0404 10.2741C18.1215 9.00997 18.4562 6.35943 16.7396 4.73602C16.0059 4.04212 15.1797 3.75548 13.9131 3.75548H13.2691V3.17018V2.58487L14.2313 2.63253C15.7674 2.7087 16.6781 3.07682 17.617 4.00117C19.0407 5.40281 19.3863 7.59687 18.4686 9.40782C18.198 9.94186 17.61 10.6267 17.1339 10.9623C16.7348 11.2436 16.7262 11.2588 16.6685 11.7798C16.5897 12.4913 16.3444 13.2704 16.0078 13.8784C15.0113 15.6786 12.8221 16.7515 10.7751 16.4426ZM8.09058 8.48691L6.40476 6.25329L7.50183 6.23053L8.5989 6.20776L8.62044 3.32324L8.64198 0.43872H9.78852H10.9351L10.9566 3.32324L10.9781 6.20776L12.0788 6.23053L13.1794 6.25329L11.5389 8.42352C10.6366 9.61715 9.8709 10.6223 9.83733 10.6571C9.80375 10.692 9.01772 9.71542 8.09058 8.48691Z"
+                                    fill="black"
+                                  />
+                                </svg>
+                              </span>
+                              <span role="button" className="query">
+                                <svg
+                                  width="35"
+                                  height="25"
+                                  viewBox="0 0 16 17"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  onClick={(e) => RaiseIssue(e, item)}
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
+                                    d="M7.26122 0.0195602C4.13227 0.343208 1.45513 2.57904 0.43759 5.71826C-0.432557 8.40281 0.00997402 11.3437 1.63167 13.6538C1.92171 14.067 2.77263 14.9712 3.164 15.2823C4.27872 16.168 5.49913 16.708 6.90699 16.9382C7.41071 17.0206 8.592 17.0206 9.09572 16.9382C10.0061 16.7893 10.7209 16.553 11.519 16.1368C13.0768 15.3245 14.3028 14.051 15.0992 12.418C15.7409 11.1022 16.0464 9.66328 15.9943 8.2016C15.9162 6.01074 15.104 4.02445 13.6567 2.48477C12.4236 1.17302 10.8878 0.354185 9.12699 0.0697872C8.7363 0.00668743 7.66467 -0.0221515 7.26122 0.0195602ZM8.65798 3.54543C9.68468 3.71407 10.4849 4.27362 10.8572 5.08321C11.0484 5.49896 11.1102 5.81605 11.0881 6.26913C11.0693 6.65391 11.007 6.89005 10.8423 7.20052C10.6595 7.54506 10.494 7.73775 9.77933 8.43794C9.38632 8.82295 9.01577 9.20162 8.95586 9.27939C8.81344 9.4643 8.71513 9.70878 8.62693 10.0976C8.58747 10.2714 8.5299 10.4674 8.49901 10.5332C8.28783 10.9824 7.64434 11.0588 7.30922 10.6744C7.13768 10.4777 7.11007 10.3783 7.11217 9.96454C7.11439 9.52207 7.16773 9.26695 7.33217 8.9126C7.49129 8.56962 7.706 8.31177 8.36744 7.66916C9.24499 6.81664 9.38063 6.61513 9.38232 6.16132C9.38367 5.79104 9.29211 5.55215 9.0502 5.29479C8.79859 5.02712 8.49248 4.90937 8.04826 4.90937C7.28123 4.90937 6.8896 5.26389 6.55207 6.26377C6.39751 6.7217 6.2625 6.91356 6.01867 7.02174C5.85208 7.09568 5.56545 7.08989 5.39382 7.00913C5.21541 6.92517 5.01761 6.70707 4.9506 6.52043C4.87709 6.31563 4.90255 5.9361 5.01298 5.59096C5.28636 4.73651 5.96733 4.04487 6.86856 3.70629C7.32157 3.53608 8.14853 3.46174 8.65798 3.54543ZM8.2636 11.5959C8.59297 11.727 8.81256 12.045 8.83845 12.4285C8.86722 12.8551 8.70882 13.1767 8.37216 13.3751C8.22101 13.4641 8.17699 13.4737 7.92319 13.4735C7.6792 13.4732 7.62098 13.4614 7.48544 13.385C7.16873 13.2063 6.99957 12.9176 6.99704 12.5515C6.99513 12.2805 7.01983 12.1769 7.1314 11.9878C7.36559 11.5909 7.83917 11.4269 8.2636 11.5959Z"
+                                    fill="black"
+                                  />
+                                </svg>
+                              </span>
+
+                              <div role="button" className="feedback">
+                                <p className="feedback-text">Feedback</p>
+
+                                <svg
+                                  style={{
+                                    height: "28px",
+                                    marginTop: "-1.5px",
+                                  }}
+                                  className="w-9 h-9"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  onClick={(e) => Rating(e, item)}
+                                >
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                                  ></path>
+                                </svg>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       );

@@ -60,7 +60,7 @@ const OrderPayment = () => {
     (state) =>
       state.PostAdminOrderAddShipmentReducer?.PostAdminOrderAddShipmentData
   );
-  let Is_Business = sessionStorage.getItem("Is_Business", false);
+  let Is_Business=sessionStorage.getItem("Is_Business",false)
   // let BearerToken = sessionStorage.getItem("token", false);
   let totalPriceValue = sessionStorage.getItem("totalPriceValue", false);
   useEffect(() => {
@@ -305,7 +305,7 @@ const OrderPayment = () => {
   useEffect(() => {
     if (GetWalletBalanceData && totalPriceValue) {
       if (GetWalletBalanceData?.data?.b2b_balance >= Number(totalPriceValue)) {
-        setWalletPayPopup(false);
+        setWalletPayPopup(false)
         setAmountLessThenWalletPayPopup(false);
       } else {
         let calaculated =
@@ -314,7 +314,9 @@ const OrderPayment = () => {
         setCalculatedAmount(calaculated.toFixed(2));
         setAmountLessThenWalletPayPopup(true);
       }
-    } else {
+    }
+    else{
+    
     }
   }, [totalPriceValue, GetWalletBalanceData]);
 
@@ -340,48 +342,35 @@ const OrderPayment = () => {
     if (amountlessthenwalletpaypopup) {
       if (activepaymentrazorpay == "activeWalletPayment") {
         // PaymentFun() // This function open the RazorPay Popup
-      } else {
-        if (Is_Business == "true") {
-          if (GetWalletBalanceData?.data?.b2b_negative_limit > 0) {
+      }
+      else {
+        if(Is_Business=="true"){
+          if(GetWalletBalanceData?.data?.b2b_negative_limit>0){
             dispatch(PostDebitBalance(payLoad));
-            sessionStorage.removeItem("totalPriceValue", false);
-            sessionStorage.removeItem("UserDetailsPayload");
-            sessionStorage.removeItem("Eway_bill_URL");
-            sessionStorage.removeItem("PayloadOrderData");
-            sessionStorage.removeItem("Eway_bill_id");
-            sessionStorage.removeItem("add_order_tag");
-            setPaymentMethodPopup(false);
-          } else {
-            setWalletPayPopup(true);
           }
-        } else {
+          else{
+            setWalletPayPopup(true)
+          }
+        }
+        else{
           dispatch(PostDebitBalance(payLoad));
-          sessionStorage.removeItem("totalPriceValue", false);
-          sessionStorage.removeItem("UserDetailsPayload");
-          sessionStorage.removeItem("Eway_bill_URL");
-          sessionStorage.removeItem("PayloadOrderData");
-          sessionStorage.removeItem("Eway_bill_id");
-          sessionStorage.removeItem("add_order_tag");
           setPaymentMethodPopup(false);
         }
       }
-    } else if (activepaymentwallet == "activeWalletPayment") {
-      dispatch(PostDebitBalance(payLoad));
-      sessionStorage.removeItem("totalPriceValue", false);
-      sessionStorage.removeItem("UserDetailsPayload");
-      sessionStorage.removeItem("Eway_bill_URL");
-      sessionStorage.removeItem("PayloadOrderData");
-      sessionStorage.removeItem("Eway_bill_id");
-      sessionStorage.removeItem("add_order_tag");
-      setPaymentMethodPopup(false);
-      // dispatch(PostDebitBalance(payLoad)); //Total amount will be debit by this api from the wallet
+
+    } 
+     else if (activepaymentwallet == "activeWalletPayment") {
+        dispatch(PostDebitBalance(payLoad));
+      
+    // dispatch(PostDebitBalance(payLoad)); //Total amount will be debit by this api from the wallet
+
     }
     //  else if (activepaymentrazorpay == "activeWalletPayment") {
     //   PaymentFun() // This function open the RazorPay Popup
     // }
-    //  if (activepaymentrazorpay == "activeWalletPayment") {
-    //   PaymentFun() // This function open the Phonepay Popup
-    // }
+  //  if (activepaymentrazorpay == "activeWalletPayment") {
+  //   PaymentFun() // This function open the Phonepay Popup
+  // }
   };
   // PostWalletAddMoney
 
@@ -419,7 +408,7 @@ const OrderPayment = () => {
   }, [PostAdminOrderAddShipmentData]);
 
   const ProceedToPayFun = () => {
-    if (Is_Business == "true") {
+    if(Is_Business=="true"){
       AddPaymentFun();
     }
   };
@@ -514,7 +503,7 @@ const OrderPayment = () => {
     let bodyContent;
     bodyContent = JSON.stringify({
       amount: parseFloat(amountValue),
-      // redirect_url: `http://localhost:3000/admin/order/orderpayment`,
+      // redirect_url:`http://localhost:3000/admin/order/orderpayment`
       // redirect_url:`${process.env.REACT_APP_BASE_URL}/admin/order/orderpayment`
       redirect_url:`https://d2ar2bguhc97cc.cloudfront.net/admin/order/orderpayment`
     });
@@ -529,7 +518,7 @@ const OrderPayment = () => {
       },
       data: bodyContent,
     }).then((res) => {
-      window.location.replace(`${res?.data?.pay_page_url}`);
+      window.location.replace(`${res?.data?.pay_page_url}`)
       return res;
     });
     // in data we will receive an object from the backend with the information about the payment

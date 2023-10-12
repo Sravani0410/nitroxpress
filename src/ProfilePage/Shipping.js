@@ -29,8 +29,8 @@ import { reactLocalStorage } from "reactjs-localstorage";
 
 const Shipping = () => {
   const navigate = useNavigate();
-  const  pickUpPincodeRef = useRef();
-  const  deliverPincodeRef = useRef();
+  const pickUpPincodeRef = useRef();
+  const deliverPincodeRef = useRef();
   let BearerToken = sessionStorage.getItem("token", false);
 
   let Admin_Role = sessionStorage.getItem("Admin_Role", false);
@@ -225,7 +225,7 @@ const Shipping = () => {
     //   // setPickupState(" ")
     // }
   };
-  const PickuphandleSelect=async(address)=>{
+  const PickuphandleSelect = async (address) => {
     setPickUpAddress(address);
     if (address == undefined) {
       setPickUpAddress(" ");
@@ -242,7 +242,7 @@ const Shipping = () => {
       // setPickupCity(" ")
       // setPickupState(" ")
     }
-  }
+  };
 
   const DeliveryAddressFun = async (address, id) => {
     // please don't remove the id (parameter) it's important for address (parameter)
@@ -490,7 +490,7 @@ const Shipping = () => {
     deliverPincodeRef.current.blur();
   };
   const handleKeyDown = (event) => {
-    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
       event.preventDefault();
     }
   };
@@ -558,7 +558,7 @@ const Shipping = () => {
     document.body.appendChild(script);
   };
   const PaymentFun = async (e, amount) => {
-    const res = await loadScript();
+    // const res = await loadScript();
     let bodyContent = JSON.stringify({
       amount: amount,
       shipment_details_id: GetShipmentDetailsData?.user_shipment_details[0]?.id,
@@ -600,8 +600,8 @@ const Shipping = () => {
           GetShipmentDetailsData?.calculation_details?.amount_format
             ?.total_price,
       },
-      // redirect_url:`http://localhost:3000/shipping`
-      redirect_url:`https://d2ar2bguhc97cc.cloudfront.net/shipping`
+      redirect_url: `http://localhost:3000/shipping`,
+      // redirect_url:`https://d2ar2bguhc97cc.cloudfront.net/shipping`
     });
     const data = await Axios({
       url: `${process.env.REACT_APP_BASE_URL}/phonepe`,
@@ -613,27 +613,27 @@ const Shipping = () => {
       },
       data: bodyContent,
     }).then((res) => {
-      window.location.replace(`${res?.data?.pay_page_url}`)
+      window.location.replace(`${res?.data?.pay_page_url}`);
       return res;
     });
     // in data we will receive an object from the backend with the information about the payment
     //that has been made by the user
-    let orderId = data?.data?.product_order_id;
-    let options = {
-      key_id: "rzp_test_G0kWdsA9toFR0a", // in react your environment variable must start with REACT_APP_
-      key_secret: "qW4iPbrU5Vc84pHzZc4uI5ZA",
-      amount: amount,
-      currency: "INR",
-      description: "Test teansaction",
-      image: "", // add image url
-      order_id: data?.data?.order_id,
-      // callback_url: "https://eneqd3r9zrjok.x.pipedream.net/",
-      handler: function (response) {
-        // we will handle success by calling handlePaymentSuccess method and
-        // will pass the response that we've got from razorpay
-        handlePaymentSuccess(response, orderId);
-      },
-    };
+    // let orderId = data?.data?.product_order_id;
+    // let options = {
+    //   key_id: "rzp_test_G0kWdsA9toFR0a", // in react your environment variable must start with REACT_APP_
+    //   key_secret: "qW4iPbrU5Vc84pHzZc4uI5ZA",
+    //   amount: amount,
+    //   currency: "INR",
+    //   description: "Test teansaction",
+    //   image: "", // add image url
+    //   order_id: data?.data?.order_id,
+    //   // callback_url: "https://eneqd3r9zrjok.x.pipedream.net/",
+    //   handler: function (response) {
+    //     // we will handle success by calling handlePaymentSuccess method and
+    //     // will pass the response that we've got from razorpay
+    //     handlePaymentSuccess(response, orderId);
+    //   },
+    // };
 
     // var rzp1 = new window.Razorpay(options);
     // rzp1.open();

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../Sidebar";
 import Header from "../Header";
+import Select from "react-select";
 import { reactLocalStorage } from "reactjs-localstorage";
 import Multiselect from "multiselect-react-dropdown";
 import { useNavigate, NavLink, useLocation, useParams } from "react-router-dom";
@@ -9,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import {
   GetSettingUserInfo,
+  PostUserOrderIdList,
+  PostAddAmountDebit,
   DeleteAdminSettingDeleteUser,
   PatchEditUserPermission,
   GetSettingViewPermission,
@@ -25,12 +28,17 @@ import LodingSpiner from "../../Components/LodingSpiner";
 const UserProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const params=useLocation();
-  const  amountRef = useRef();
+  const dropdownRef = useRef(null);
+  const params = useLocation();
+  const amountRef = useRef();
   let IsAdminRole = sessionStorage.getItem("Admin_Role", false);
   const [permissiondata, setPermissionData] = useState("");
   const [email, setEmail] = useState("");
   const [downloadpdf, setDownloadPdf] = useState(false);
+  const [addamountwallet, setAddamountWallet] = useState(false);
+  const [PaymentType, setPaymentType] = useState(false);
+  const [selectedProductIdOption, setSelectedProductIdOption] = useState(null);
+  const [OpenPathSearch, setOpenPathSearch] = useState(false);
   const [useredit, setUserEdit] = useState(false);
   const [usereditprofile, setUserEditProfile] = useState("");
   const [useraccess, setUserAccess] = useState("");
@@ -38,7 +46,8 @@ const UserProfile = () => {
   const [todate, setToDate] = useState(null);
   const [mindate, setMindate] = useState("");
   const [priceuserid, setPriceUserId] = useState("");
-  const [category,setCategory]=useState("")
+  const [addamount, setAddAmount] = useState("");
+  const [category, setCategory] = useState("");
   const [editcategoryvalue, setEditCategoryValue] = useState("");
   const [userpermission, setUserPermission] = useState("");
 
@@ -65,6 +74,17 @@ const UserProfile = () => {
 
   const [loadspiner, setLoadSpiner] = useState(false);
 
+  // search
+  const [selectedOptionclass, setSelectedOptionClass] = useState("");
+  const [EnteredValueError, setEnteredValueError] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [value, setValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [ProductId, setProductId] = useState(null);
+  const [ProductIdFilterData, setProductIdFilterData] = useState([]);
+  const [EnteredValue, setEnteredValue] = useState("");
+  const [remarkvalue, setRemarkValue] = useState("");
   let isEmploye_Role = sessionStorage.getItem("isEmploye", false);
 
   let as_Business = sessionStorage.getItem("Is_Business", false);
@@ -95,6 +115,10 @@ const UserProfile = () => {
   const PostKYCdetailData = useSelector(
     (state) => state.PostKYCdetailReducer.PostKYCdetailData?.data
   );
+  const PostUserOrderIdListData = useSelector(
+    (state) => state.PostUserOrderIdListReducer.PostUserOrderIdListData
+  );
+  console.log("PostUserOrderIdListData", PostUserOrderIdListData);
   const OrderPagesLoaderTrueFalseData = useSelector(
     (state) =>
       state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
@@ -137,7 +161,11 @@ const UserProfile = () => {
     //   // setLoadSpiner(true);
     // }
     dispatch(GetSettingUserInfo(payload));
-  }, [PatchEditUserPermissionData, GetSettingUserInfoData?.status,GetSettingUserInfo]);
+  }, [
+    PatchEditUserPermissionData,
+    GetSettingUserInfoData?.status,
+    GetSettingUserInfo,
+  ]);
 
   useEffect(() => {
     if (DeleteAdminSettingDeleteUserData?.message === "User Deleted") {
@@ -152,7 +180,7 @@ const UserProfile = () => {
     amountRef.current.blur();
   };
   const handleKeyDown = (event) => {
-    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
       event.preventDefault();
     }
   };
@@ -212,7 +240,7 @@ const UserProfile = () => {
     setCategory(data?.catgory_details?.category_id);
     setNegativeLimit(data?.negative_limit);
     setUserEdit((o) => !o);
-    setEditCategoryValue(data?.catgory_details?.category_id)
+    setEditCategoryValue(data?.catgory_details?.category_id);
     let array = [];
     let arrayobject = [];
 
@@ -296,7 +324,7 @@ const UserProfile = () => {
     let edit = {
       user_id: usereditprofile.user_id,
       user_permission: SeletedArray,
-      category_id:category==""?editcategoryvalue:category,
+      category_id: category == "" ? editcategoryvalue : category,
       delete_permission: RemovedArray,
       from_date: fromdate,
       to_date: todate,
@@ -379,23 +407,27 @@ const UserProfile = () => {
   }, []);
 
   const ConformOtpActionFun = () => {
+    setAddamountWallet(true);
     let Payload = {
       user_id: priceuserid?.user_id,
-      amount: transactionAmount,
     };
-    if (!transactionAmount) {
-      toast.warn("Please Enter Amount");
-    } else {
-      dispatch(PostPaymentAddAmount(Payload));
-    }
+    dispatch(PostUserOrderIdList(Payload));
+    // let Payload = {
+    //   user_id: priceuserid?.user_id,
+    //   amount: transactionAmount,
+    // };
+    // if (!transactionAmount) {
+    //   toast.warn("Please Enter Amount");
+    // } else {
+    //   dispatch(PostPaymentAddAmount(Payload));
+    // }
   };
 
-  useEffect(()=>{
-    if(downloadpdf == false){
+  useEffect(() => {
+    if (downloadpdf == false) {
       setTransactionAmount("");
     }
-
-  },[downloadpdf])
+  }, [downloadpdf]);
 
   useEffect(() => {
     if (PostPaymentAddAmountData?.message == " Wallet Successfully updated") {
@@ -406,19 +438,210 @@ const UserProfile = () => {
       // if (!isEmploye_Role) {
       //   dispatch(GetWalletBalance(payload))
       // }
-      dispatch(GetWalletBalance(payload))
+      dispatch(GetWalletBalance(payload));
     }
   }, [PostPaymentAddAmountData]);
 
-  useEffect(()=>{
+  useEffect(() => {
     let payload = {
       company_name: priceuserid?.company_name,
     };
     // if (!isEmploye_Role) {
     //   dispatch(GetWalletBalance(payload))
     // }
-    dispatch(GetWalletBalance(payload))
-  },[priceuserid])
+    dispatch(GetWalletBalance(payload));
+  }, [priceuserid]);
+  let options = [
+    {
+      product_order_id: "107888278233",
+    },
+
+    {
+      product_order_id: "107888278231",
+    },
+
+    {
+      product_order_id: "107888278229",
+    },
+
+    {
+      product_order_id: "107888278223",
+    },
+
+    {
+      product_order_id: "107888278224",
+    },
+
+    {
+      product_order_id: "107888278212",
+    },
+
+    {
+      product_order_id: "10766",
+    },
+
+    {
+      product_order_id: "8998900",
+    },
+
+    {
+      product_order_id: "107888278225",
+    },
+
+    {
+      product_order_id: "107888278226",
+    },
+
+    {
+      product_order_id: "107888278230",
+    },
+
+    {
+      product_order_id: "107888278228",
+    },
+
+    {
+      product_order_id: "8998901",
+    },
+
+    {
+      product_order_id: "8998902",
+    },
+
+    {
+      product_order_id: "8998904",
+    },
+  ];
+  // const productorderOptions = options.map((option) => ({
+  //   value: option.product_order_id,
+  //   label: option.product_order_id,
+  // }));
+  const productorderOptions = [
+    { value: "None", label: "None" },
+    ...options.map((option) => ({
+      value: option.product_order_id,
+      label: option.product_order_id,
+    })),
+  ];
+  const customFilter = (option, inputValue) => {
+    if (option.value.toString().includes(inputValue)) {
+      return true;
+    }
+    return false;
+  };
+  const ReasonTextFun = (e) => {
+    var newStr = e.target.value.replace(/  +/g, " ");
+    // setReasonActionInputFieldData(newStr);
+    setRemarkValue(newStr);
+  };
+  const ConformAmountDebitFun = (e) => {
+    let payload = {
+      amount: Number(addamount),
+      user_id: priceuserid?.user_id,
+      wallet_type: PaymentType,
+      remark: remarkvalue,
+      order_id: Number(selectedProductIdOption?.value),
+    };
+    console.log("jdhsj", payload);
+    if(addamount.length==0 || PaymentType.length==0 || remarkvalue.length==0 || selectedProductIdOption?.value?.length==0){
+      toast.warn("please fill all the fields")
+    }
+    else{
+      dispatch(PostAddAmountDebit(payload));
+    }
+  };
+  const AddAmountCancelFun = (e) => {
+    setAddamountWallet((o) => !o);
+    setAddAmount("");
+    setPaymentType("");
+    setRemarkValue("");
+    setSelectedProductIdOption("");
+  };
+  let GetB2bCompanyInfoData = [
+    { value: 1111111, label: 1111111, product_id: 1111111 },
+    { value: 122222, label: 122222, product_id: 122222 },
+    { value: 333333, label: 333333, product_id: 333333 },
+  ];
+  const SearchFilterPathFun = (e) => {
+    if (e.length == 0) {
+      setOpenPathSearch(false);
+    } else {
+      setOpenPathSearch(true);
+    }
+    // setSelectedOption(e)
+  };
+  const filteredData = GetB2bCompanyInfoData?.filter((item) => {
+    const searchTerm = value;
+    const name = item.product_id;
+    return searchTerm && name?.includes(searchTerm);
+  });
+  const onChange = (e) => {
+    setEnteredValueError(false);
+    setValue(e.target.value);
+    setIsOpen(true);
+    setProductId(null);
+    setHighlightedIndex(-1);
+    let array = [];
+    GetB2bCompanyInfoData?.filter((item) => {
+      const searchTerm = e.target.value;
+      const name = item.product_id;
+      return searchTerm && name.includes(searchTerm);
+    }).map((items) => {
+      array.push(items);
+    });
+    setProductIdFilterData(array);
+  };
+  const onSearch = (searchTerm) => {
+    setValue(searchTerm);
+    setIsOpen(false);
+  };
+
+  const onKeyDown = (e) => {
+    if (e.key === "Enter") {
+      onSearch(value);
+
+      let EnteredValueFilterData = ProductIdFilterData.filter(function (items) {
+        return (
+          items.product_id?.toString() == value?.toString() ||
+          items?.product_id?.toString() == ProductId?.toString()
+        );
+      });
+
+      if (EnteredValueFilterData.length != 0) {
+        setEnteredValueError(false);
+      } else {
+        setEnteredValueError(true);
+      }
+
+      setEnteredValue(value);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prevIndex) => (prevIndex + 1) % filteredData.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault(); // prevent cursor from moving to start of input
+      setSelectedIndex((prevIndex) =>
+        prevIndex === 0 ? filteredData.length - 1 : prevIndex - 1
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (highlightedIndex !== -1 && dropdownRef.current) {
+      const selectedItem = dropdownRef.current.children[highlightedIndex];
+      if (selectedItem) {
+        selectedItem.scrollIntoView({
+          block: "nearest",
+          inline: "start",
+        });
+      }
+    }
+  }, [highlightedIndex]);
+  useEffect(() => {
+    if (selectedIndex !== -1) {
+      setProductId(filteredData[selectedIndex]?.product_id || null);
+      setHighlightedIndex(selectedIndex);
+    }
+  }, [selectedIndex]);
   return (
     <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
       <Header />
@@ -645,15 +868,17 @@ const UserProfile = () => {
                     />
                   </div>
                   <div className="col-12">
-                  <label>Category</label>
-                  <input
+                    <label>Category</label>
+                    <input
                       type="text"
                       className="form-control input_filed_block"
                       disabled
                       placeholder="516498163"
-                      value={usereditprofile?.category_details[0]?.category_name}
+                      value={
+                        usereditprofile?.category_details[0]?.category_name
+                      }
                     />
-                  {/* <select
+                    {/* <select
                     className={`form-select  `}
                     placeholder="Category"
                     onChange={(e) => {
@@ -671,7 +896,7 @@ const UserProfile = () => {
                       }
                     )}
                   </select> */}
-                </div>
+                  </div>
                   <div className="col-12">
                     <label>Duration</label>
                   </div>
@@ -761,7 +986,7 @@ const UserProfile = () => {
 
                 <div className="popup-body row mx-0">
                   <div className="row">
-                    <div className="col-sm-3  mb-3 mb-sm-0">
+                    <div className="col-sm-3 mb-3 mb-sm-0">
                       <svg
                         width="111"
                         height="107"
@@ -792,7 +1017,7 @@ const UserProfile = () => {
                         </defs>
                       </svg>
                     </div>
-                    <div className="col-sm-6">
+                    <div className="col-sm-5">
                       <h5>
                         <b>{PostKYCdetailData?.company_name}</b>
                       </h5>
@@ -838,16 +1063,37 @@ const UserProfile = () => {
                         </div>
                       </div>
                     </div>
-                      {/* {IsAdminRole=="true"?<div className="col-sm-3">
-                        <label className="fw-bold">Balance</label>
-                        <div className="row">
-                          <div className="col-12">Rs. {GetWalletBalanceData?.data?.balance_status == "NEGATIVE" ? `-${GetWalletBalanceData?.data?.balance}` : GetWalletBalanceData?.data?.balance}/-</div>
+                    {IsAdminRole == "true" ? (
+                      <div className="col-sm-4">
+                        <div className="col-12">
+                          <div className="mb-2">
+                            <b>Balance : </b>
+                            <span>
+                              {" "}
+                              Rs.{" "}
+                              {GetWalletBalanceData?.data?.b2b_balance_status ==
+                              "NEGATIVE"
+                                ? `-${GetWalletBalanceData?.data?.b2b_balance}`
+                                : GetWalletBalanceData?.data?.b2b_balance}
+                              /-
+                            </span>
+                          </div>
                         </div>
-                      </div>:""} */}
-
-                    {/* <div> */}
-
-                    {/* <div className="row"> */}
+                        <div className="col-12">
+                          <div className="btngroups">
+                            <button
+                              type="button"
+                              className="save-btn"
+                              onClick={(e) => ConformOtpActionFun(e)}
+                            >
+                              Add Wallet Amount
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
 
                     <div className=" col-md-4 my-3">
                       <div className=" mb-2">
@@ -859,10 +1105,6 @@ const UserProfile = () => {
                         <span>{PostKYCdetailData?.gstin_number}</span>
                       </div>
                     </div>
-                    {/* <div className="col-sm-4">
-                   
-                      </div> */}
-
                     {as_Business == "true" ? (
                       ""
                     ) : (
@@ -965,10 +1207,6 @@ const UserProfile = () => {
                       </div>
                     )}
 
-                    {/* </div> */}
-
-                    {/* </div> */}
-
                     {/* <div>
                       <div className="row my-3">
                         <div className="col-sm-6 mb-2">
@@ -1062,7 +1300,7 @@ const UserProfile = () => {
                       </div>
                     </div>
 
-                   {/* {IsAdminRole=="true"?<div className="row">
+                    {/* {IsAdminRole=="true"?<div className="row">
                       <div className="col-8">
                         <label className="fw-bold">Amount</label>
                         <input
@@ -1089,6 +1327,206 @@ const UserProfile = () => {
                         </div>
                       </div>
                     </div>:""} */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* *******************Add Wallet ******************** */}
+          {addamountwallet && (
+            <div className="popupouter tracking-popup">
+              <div className="popupinner">
+                <h2>Add Wallet</h2>
+                <div
+                  className="close-btn"
+                  type="button"
+                  onClick={(e) => AddAmountCancelFun(e)}
+                >
+                  <svg
+                    viewBox="0 0 10 9"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z"
+                      fill="black"
+                    />
+                  </svg>
+                </div>
+                <div className="popup-body row ">
+                  <div className="col-sm-12">
+                    <label>User ID</label>
+                    <input
+                      type="text"
+                      className="form-control input_filed_block"
+                      disabled
+                      placeholder="128924833"
+                      value={priceuserid?.user_id}
+                    />
+                  </div>
+                  <div className="col-sm-12">
+                    <label>Enter Amount</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Amount"
+                      value={addamount}
+                      onChange={(e) => setAddAmount(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-sm-12">
+                    <label>Payment Method</label>
+                    <select
+                      className="form-control mt-1"
+                      placeholder="Select"
+                      value={PaymentType}
+                      onChange={(e) => setPaymentType(e.target.value)}
+                      tabindex="5"
+                    >
+                      <option value="none" selected>
+                        Select Payment Type
+                      </option>
+                      <option value="Credit_Card">Credit Card</option>
+                      <option value="Debit_card">Debit Card</option>
+                    </select>
+                  </div>
+                  <div className="col-sm-12">
+                    <label>Product Order Type</label>
+
+                    <Select
+                      defaultValue={selectedProductIdOption}
+                      onChange={setSelectedProductIdOption}
+                      options={productorderOptions}
+                      // filterOption={customFilter}
+                      isClearable={true}
+                      placeholder="Select Order Id ..."
+                      styles={{
+                        control: (baseStyles, state) => ({
+                          ...baseStyles,
+                          outline: "none !important",
+                          border: "none !important",
+                          borderRadius: "14px !important",
+                          backgroundColor: "#f6f7f8 !important",
+                          boxShadow: "none !important",
+                        }),
+                      }}
+                      theme={(theme) => ({
+                        ...theme,
+                        borderRadius: 0,
+                        colors: {
+                          ...theme.colors,
+                          primary25: "#FFDC5A",
+                          // primary: 'white',
+                        },
+                      })}
+                    />
+                  </div>
+                  {/* <div
+                    className={`form-group 
+                        ${selectedOptionclass}
+                        `}
+                  >
+                    <label>Product Order Type</label>
+                    <input
+                      className="form-control check-box"
+                      type="text"
+                      value={ProductId ?? value}
+                      onChange={onChange}
+                      placeholder={"Search"}
+                      onKeyDown={onKeyDown}
+                      // onInputCapture={SearchFilterPathFun}
+                      // onInputChange={SearchFilterPathFun}
+                    />
+                    {isOpen ? (
+                      <div
+                        className={`dropdown companyDropDown`}
+                        ref={dropdownRef}
+                      >
+                        {ProductIdFilterData.length > 0 ? (
+                          ProductIdFilterData?.map((item, index) => {
+                            return (
+                              <div
+                                className={`dropdown-row   ${
+                                  (highlightedIndex === index
+                                    ? " selected"
+                                    : "",
+                                  selectedIndex == -1
+                                    ? index == 0
+                                      ? "bg-red"
+                                      : ""
+                                    : selectedIndex == index
+                                    ? "bg-red"
+                                    : "")
+                                }`}
+                                onMouseEnter={() => setHighlightedIndex(index)}
+                                onClick={() => {
+                                  setProductId(item.product_id);
+                                  onSearch(item.product_id);
+                                }}
+                                key={index}
+                              >
+                                {item.product_id}
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <div className="text-danger">
+                            Company is not registered !
+                          </div>
+                        )}
+
+                        <div className="text-danger">
+                          {" "}
+                          {EnteredValueError == true
+                            ? "This Campany Name is not Available !"
+                            : ""}
+                        </div>
+                      </div>
+                    ) : (
+                      !isOpen &&
+                      EnteredValueError && (
+                        <div className="text-danger">
+                          No Campany Name is Available !
+                        </div>
+                      )
+                    )}
+                  </div> */}
+                  <div className="col-sm-12">
+                    <label>Remark</label>
+                    <textarea
+                      className="w-100 p-2"
+                      rows="5"
+                      cols="70"
+                      maxlength="200"
+                      placeholder="Add the Remark"
+                      value={remarkvalue}
+                      onChange={(e) => ReasonTextFun(e)}
+                    />
+                    {/* {ReasonActionInputFieldError && (
+                  <span className="text-danger">
+                    <small>Enter your Reason </small>
+                  </span>
+                )} */}
+                  </div>
+
+                  <div className="btngroups">
+                    <button
+                      type="button"
+                      className="save-btn"
+                      onClick={(e) => ConformAmountDebitFun(e)}
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      type="button"
+                      className="cancel-btn"
+                      onClick={(e) => {
+                        AddAmountCancelFun(e);
+                      }}
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </div>
               </div>

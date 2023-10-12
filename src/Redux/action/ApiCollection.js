@@ -2146,6 +2146,68 @@ export const GetSettingUserInfo = (payload) => {
   };
 };
 
+const PostUserOrderIdListDispatch = (data) => ({
+  type: actionType.PostUserOrderIdListDispatch_Type,
+  payload: data,
+});
+export const PostUserOrderIdList = (payload) => {
+  let data = JSON.stringify(payload);
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const response = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/user/order_list`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        // toast.success(res.data.message);
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostUserOrderIdListDispatch(response));
+  };
+};
+const PostAddAmountDebitDispatch = (data) => ({
+  type: actionType.PostAddAmountDebitDispatch_Type,
+  payload: data,
+});
+export const PostAddAmountDebit = (payload) => {
+  let data = JSON.stringify(payload);
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const response = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/wallet/add_deduct`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        // toast.success(res.data.message);
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostAddAmountDebitDispatch(response));
+  };
+};
 const DeleteAdminSettingDeleteUserDispatch = (data) => ({
   type: actionType.DeleteAdminSettingDeleteUserDispatch_Type,
   payload: data,
@@ -3649,10 +3711,9 @@ export const GetWalletBalance = (payload) => {
         toast.success(res.data.message);
         if (res.status == 200) {
           // dispatch(OrderPagesLoaderTrueFalse(false));
-          if(Is_delivery_boy!="true" || isEmployeData !== "true"){
+          if (Is_delivery_boy != "true" || isEmployeData !== "true") {
             dispatch(GetWalletHistory());
           }
-          
         }
         // if (res.status == 200) {
         //   dispatch(GetWalletHistory());

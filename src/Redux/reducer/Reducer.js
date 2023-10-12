@@ -59,6 +59,8 @@ const stateData = {
   GetSettingEmployeeInfoData: [],
   PostAdminSettingAddCategoryData: [],
   GetSettingUserInfoData: [],
+  PostUserOrderIdListData:[],
+  PostAddAmountDebitData:[],
   DeleteAdminSettingDeleteUserData: [],
   PatchEditUserPermissionData: [],
   GetSettingViewB2bFeedback: [],
@@ -902,6 +904,29 @@ export const GetSettingUserInfoReducer = (state = stateData, action) => {
   }
 };
 
+export const PostUserOrderIdListReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostUserOrderIdListDispatch_Type:
+      return {
+        ...state,
+        PostUserOrderIdListData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const PostAddAmountDebitReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostAddAmountDebitDispatch_Type:
+      return {
+        ...state,
+        PostAddAmountDebitData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 export const DeleteAdminSettingDeleteUserReducer = (
   state = stateData,
   action

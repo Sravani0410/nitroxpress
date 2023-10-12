@@ -72,6 +72,8 @@ export const actionType = {
   PostAdminSettingAddCategoryDispatch_Type:
     "PostAdminSettingAddCategoryDispatch_Type",
   GetSettingUserInfoDispatch_Type: "GetSettingUserInfoDispatch_Type",
+  PostUserOrderIdListDispatch_Type: "PostUserOrderIdListDispatch_Type",
+  PostAddAmountDebitDispatch_Type: "PostAddAmountDebitDispatch_Type",
   DeleteAdminSettingDeleteUserDispatch_Type:
     "DeleteAdminSettingDeleteUserDispatch_Type",
   PatchEditUserPermissionDispatch_Type: "PatchEditUserPermissionDispatch_Type",
