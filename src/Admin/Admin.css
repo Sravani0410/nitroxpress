@@ -5131,7 +5131,7 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
     max-width: 412px;
   }
 
-  .deliveryaction-popup .popupinner h2 {
+  .deliveryaction-popup .popupinner h2,.deliverypartneraction-popup .popupinner h2 {
     font-size: 22px;
     font-weight: 700;
     line-height: 30px;
@@ -5146,8 +5146,14 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
     margin-bottom: 5px;
   }
 
-  .deliveryaction-popup .popup-body {
+  .deliveryaction-popup .popup-body,.deliverypartneraction-popup .popup-body {
     height: calc(100% - 75px);
+  }
+
+  /* ------------------deliverypartneraction-popup--------- */
+  .deliverypartneraction-popup .popupinner{ 
+    max-height: 350px ;
+    max-width: 412px;
   }
 
   /* -------------------- remarkgroups------------*/

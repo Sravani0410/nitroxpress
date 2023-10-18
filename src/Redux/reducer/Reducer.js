@@ -52,6 +52,8 @@ const stateData = {
   PostAdminOrderActionData: [],
   DeleteAdminPendingOrderActionData: [],
   PostAdminSettingAddDeliveryboyData: [],
+  PostAdminSettingDeliveryPartnerData: [],
+  DeleteAdminSettingDeliverypartnerData:[],
   PostAssignDeliveryBoyPartnerData:[],
   PostAdminSettingAddData: [],
   GetCategoryDetailsData: [],
@@ -108,6 +110,7 @@ const stateData = {
   PostTrackingOrderDetails: [],
   PostCreateTicketData: [],
   PostTicketDetailData: [],
+  PostTicketAddCommentDetailData:[],
   DeleteSupportTicketData: [],
   PostTrackingOrderDetails: "",
   PostBillingCodRemittanceCountData: [],
@@ -792,6 +795,20 @@ export const PostAdminSettingAddDeliveryboyReducer = (
       return state;
   }
 };
+export const PostAdminSettingDeliveryPartnerReducer = (
+  state = stateData,
+  action
+) => {
+  switch (action.type) {
+    case actionType.PostAdminSettingDeliveryPartnerDispatch_Type:
+      return {
+        ...state,
+        PostAdminSettingDeliveryPartnerData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 export const PostAssignDeliveryBoyPartnerReducer = (
   state = stateData,
   action
@@ -942,6 +959,20 @@ export const DeleteAdminSettingDeleteUserReducer = (
   }
 };
 
+export const DeleteAdminSettingDeliverypartnerReducer = (
+  state = stateData,
+  action
+) => {
+  switch (action.type) {
+    case actionType.DeleteAdminSettingDeliverypartnerDispatch_Type:
+      return {
+        ...state,
+        DeleteAdminSettingDeliverypartnerData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 export const PatchEditUserPermissionReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.PatchEditUserPermissionDispatch_Type:
@@ -1527,6 +1558,17 @@ export const PostTicketDetailReducer = (state = stateData, action) => {
   }
 };
 
+export const PostTicketAddCommentDetailReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostTicketAddCommentDetailDispatch_Type:
+      return {
+        ...state,
+        PostTicketAddCommentDetailData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 export const DeleteSupportTicketReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.DeleteSupportTicketDispatch_Type:

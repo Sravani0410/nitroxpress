@@ -1894,7 +1894,64 @@ export const GetSettingDeliveryboyInfo = (payload) => {
   };
 };
 
-// admin_panel/orders/assign_delivery_partner
+const PostAdminSettingDeliveryPartnerDispatch = (data) => ({
+  type: actionType.PostAdminSettingDeliveryPartnerDispatch_Type,
+  payload: data,
+});
+export const PostAdminSettingDeliveryPartner = (payload) => {
+   return async (dispatch, getState) => {
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/add_delivery_partner`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        toast.success(res.data.message);
+        return res;
+      })
+      .catch((err) => {
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostAdminSettingDeliveryPartnerDispatch(responce));
+  };
+};
+const DeleteAdminSettingDeliverypartnerDispatch = (data) => ({
+  type: actionType.DeleteAdminSettingDeliverypartnerDispatch_Type,
+  payload: data,
+});
+export const DeleteAdminSettingDeliverypartner = (payload) => {
+  // let data = JSON.stringify(payload);
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const responce = await axios
+      .delete(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/delete_delivery_partner`,
+        {
+          data: payload,
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(GetSettingDeliveryboyInfo());
+        toast.success("User Deleted successfully");
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(DeleteAdminSettingDeliverypartnerDispatch(responce));
+  };
+};
 const PostAssignDeliveryBoyPartnerDispatch = (data) => ({
   type: actionType.PostAssignDeliveryBoyPartnerDispatch_Type,
   payload: data,
@@ -3997,6 +4054,37 @@ export const DeleteSupportTicket = (payload) => {
   };
 };
 
+const PostTicketAddCommentDetailDispatch = (data) => ({
+  type: actionType.PostTicketAddCommentDetailDispatch_Type,
+  payload: data,
+});
+export const PostTicketAddCommentDetail = (payload) => {
+  return async (dispatch, getState) => {
+    dispatch(OrderPagesLoaderTrueFalse(true));
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/add_comment`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        toast.warn(res?.data?.message);
+        return res;
+      })
+      .catch((err) => {
+        dispatch(OrderPagesLoaderTrueFalse(false));
+        err?.response?.status != 403 &&
+          toast.warn(err?.response?.data?.message);
+        return err;
+      });
+    dispatch(PostTicketAddCommentDetailDispatch(responce));
+  };
+};
 const PostCreateFeedbackDispatch = (data) => ({
   type: actionType.PostCreateFeedbackDispatch_Type,
   payload: data,

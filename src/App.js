@@ -46,6 +46,7 @@ import UserSetting from "./Admin/Setting/UserSetting";
 import AdminSetting from "./Admin/Setting/AdminSetting";
 import Warehouse from "./Admin/Setting/Warehouse";
 import DeliveryBoy from "./Admin/Setting/DeliveryBoy";
+import AddDeliveryPartner from "./Admin/Setting/AddDeliveryPartner";
 import B2B from "./Admin/Support/B2B";
 import B2C from "./Admin/Support/B2C";
 import Cod from "./Admin/Invoices/Cod";
@@ -305,6 +306,17 @@ function App({ auth }) {
             PermissionData()?.VIEW_SETTING_DELIVERY_BOY_PAGE ==
             "VIEW_SETTING_DELIVERY_BOY_PAGE" ? (
               <DeliveryBoy />
+            ) : (
+              <PageNotFound />
+            )
+          }
+        />
+        <Route
+          path="/admin/setting/adddeliverypartner"
+          element={
+            PermissionData()?.VIEW_SETTING_DELIVERY_BOY_PAGE ==
+            "VIEW_SETTING_DELIVERY_BOY_PAGE" ? (
+              <AddDeliveryPartner />
             ) : (
               <PageNotFound />
             )

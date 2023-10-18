@@ -3,9 +3,11 @@ import Sidebar from "../Sidebar";
 import Header from "../Header";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   GetSettingViewB2bFeedback,
   PostTicketDetail,
+  PostTicketAddCommentDetail,
   DeleteSupportTicket,
 } from "../../Redux/action/ApiCollection";
 import { isTomorrow } from "date-fns";
@@ -13,7 +15,7 @@ import { PermissionData } from "../../Permission";
 import { reactLocalStorage } from "reactjs-localstorage";
 import Popup from "reactjs-popup";
 import LodingSpiner from "../../Components/LodingSpiner";
-
+let B2BPartner = sessionStorage.getItem("Is_Business");
 function B2B() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -23,6 +25,12 @@ function B2B() {
   const [morepopupid, setMorePopupId] = useState(false);
   const [moredataid, setMoreDataId] = useState("");
   const [pickuppopup, setPickUpPopup] = useState(false);
+  const [ChatDetails, setChatDetails] = useState(false);
+  const [userPaymentDetails, setUserPaymentDetails] = useState();
+  const [comments, setComments] = useState();
+  const [selectImage, setSelectedImage] = useState();
+  const [types, setTypes] = useState();
+  const [userPaymentDetailsTrue, setUserPaymentDetailsTrue] = useState(false);
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
@@ -132,6 +140,67 @@ function B2B() {
     setMorePopupId(id);
     setMoreData(false);
   };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedImage(file);
+  };
+  const SendComment = () => {
+    console.log("hsdhg", getsettingviewalldata[0]?.feedback_id);
+    let formdata = new FormData();
+    formdata.append("comments", comments);
+    formdata.append("image", selectImage);
+    formdata.append("qr_details_id", userPaymentDetails?.qr_details_id);
+
+    if (!comments) {
+      toast.warn("Please Type Any Comments");
+    } else {
+      // dispatch(PostPaymentChat(formdata));
+      let payload = {
+        ticket_id: getsettingviewalldata[0]?.feedback_id,
+        description: comments,
+        image: selectImage,
+      };
+      setUserPaymentDetailsTrue(true);
+      dispatch(PostTicketAddCommentDetail(payload));
+      setComments("");
+      setSelectedImage("");
+    }
+  };
+
+  const PaymentApprovalAction = () => {
+    let payLoad = {
+      amount: userPaymentDetails?.amount,
+
+      qr_details_id: userPaymentDetails?.qr_details_id,
+
+      close_type: "approve",
+    };
+    // dispatch(PatchPaymentApprovalAction(payLoad));
+
+    setChatDetails(false);
+  };
+  const PaymentRejectionAction = () => {
+    let payLoad = {
+      amount: userPaymentDetails?.amount,
+
+      qr_details_id: userPaymentDetails?.qr_details_id,
+
+      close_type: "closed",
+    };
+    // dispatch(PatchPaymentApprovalAction(payLoad));
+    setChatDetails(false);
+  };
+  // useEffect(() => {
+  //   if (PatchPaymentApprovalActionData?.message == "Successfully updated") {
+  //     let Approve = {
+  //       chat_type: "open_chat",
+  //     };
+  //     dispatch(PostPaymentApproval(Approve));
+
+  //     let balance = {};
+  //     dispatch(GetWalletBalance(balance));
+  //   }
+  // }, [PatchPaymentApprovalActionData]);
   return (
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -145,8 +214,16 @@ function B2B() {
                 className=" form-select"
                 onChange={(e) => CustomerChangeFun(e)}
               >
-                {PermissionData()?.VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"?<option value="b2b">B2B</option>:""}
-                {isAdmin_Role == "true" || isEmploye_Role == "true" || PermissionData()?.VIEW_SUPPORT_B2C_PAGE == "VIEW_SUPPORT_B2C_PAGE"? (
+                {PermissionData()?.VIEW_SUPPORT_B2B_PAGE ==
+                "VIEW_SUPPORT_B2B_PAGE" ? (
+                  <option value="b2b">B2B</option>
+                ) : (
+                  ""
+                )}
+                {isAdmin_Role == "true" ||
+                isEmploye_Role == "true" ||
+                PermissionData()?.VIEW_SUPPORT_B2C_PAGE ==
+                  "VIEW_SUPPORT_B2C_PAGE" ? (
                   <option value="b2c">B2C</option>
                 ) : (
                   ""
@@ -161,12 +238,22 @@ function B2B() {
                   className=" form-select"
                   onChange={(e) => TicketChangeFun(e)}
                 >
-                 {PermissionData()?.VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"? <option value="new" className="px-3">
-                    New Tickets
-                  </option>:""}
-                  {PermissionData()?.VIEW_SUPPORT_B2B_RESOLVED_PAGE == "VIEW_SUPPORT_B2B_RESOLVED_PAGE"?<option value="close" className="px-3">
-                    Close Tickets
-                  </option>:""}
+                  {PermissionData()?.VIEW_SUPPORT_B2B_PAGE ==
+                  "VIEW_SUPPORT_B2B_PAGE" ? (
+                    <option value="new" className="px-3">
+                      New Tickets
+                    </option>
+                  ) : (
+                    ""
+                  )}
+                  {PermissionData()?.VIEW_SUPPORT_B2B_RESOLVED_PAGE ==
+                  "VIEW_SUPPORT_B2B_RESOLVED_PAGE" ? (
+                    <option value="close" className="px-3">
+                      Close Tickets
+                    </option>
+                  ) : (
+                    ""
+                  )}
                 </select>
               </div>
               <div className="select-box">
@@ -181,8 +268,9 @@ function B2B() {
             <ul className="support-list">
               {PermissionData()?.VIEW_B2B_TICKETS == "VIEW_B2B_TICKETS"
                 ? getsettingviewalldata &&
-                  getsettingviewalldata?.map((item, id) => {  
-                     return <li>
+                  getsettingviewalldata?.map((item, id) => {
+                    return (
+                      <li>
                         <div className="left-part">
                           <img src="/images/user.png" alt="img" />
                           <div>
@@ -290,6 +378,25 @@ function B2B() {
                             </button> */}
 
                               {/* <button className="btn chat-btn" type="button">
+                                <svg
+                                  viewBox="0 0 9 8"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
+                                    d="M0.693363 0.027649C0.386961 0.101228 0.146631 0.31892 0.0658023 0.596075C0.0244906 0.737696 0.0251613 4.96722 0.0665093 5.10899C0.147954 5.38821 0.389553 5.60328 0.703895 5.67641C0.783401 5.69491 0.921294 5.70056 1.29277 5.70056H1.77784L1.78293 6.39552C1.78786 7.06848 1.7892 7.09189 1.8254 7.13516C1.91558 7.243 2.06144 7.28284 2.17971 7.23196C2.21354 7.2174 2.71432 6.86722 3.29257 6.45376L4.34395 5.70199L6.15739 5.70128C8.12887 5.7005 8.06583 5.70324 8.27233 5.60978C8.40013 5.55195 8.56061 5.41135 8.62829 5.29793C8.74567 5.10127 8.73977 5.23065 8.73977 2.85131C8.73977 0.961719 8.73628 0.676777 8.71202 0.593631C8.63058 0.314404 8.38898 0.0993336 8.07464 0.0262081C7.92048 -0.0096504 0.842912 -0.00827433 0.693363 0.027649ZM8.02584 0.561577C8.05337 0.579935 8.09271 0.615065 8.11326 0.639656C8.15059 0.684289 8.15064 0.68798 8.15064 2.84971V5.01506L8.0984 5.07622C8.00225 5.1888 8.12282 5.18252 6.05872 5.18252C4.9064 5.18252 4.17466 5.18848 4.14633 5.19811C4.12108 5.20667 3.7128 5.49079 3.23905 5.82948C2.76528 6.16815 2.37377 6.44526 2.36903 6.44526C2.36429 6.44526 2.35805 6.19808 2.35519 5.896C2.35018 5.37034 2.34835 5.34481 2.31259 5.30204C2.29203 5.27748 2.25271 5.24235 2.2252 5.22399C2.17729 5.19202 2.14629 5.19027 1.48893 5.18252C0.831564 5.17476 0.800567 5.17301 0.752657 5.14104C0.72514 5.12268 0.685822 5.08755 0.665266 5.06296C0.628015 5.01843 0.62787 5.01062 0.622686 2.89465C0.619822 1.72666 0.622178 0.747571 0.627942 0.718885C0.640958 0.653999 0.717146 0.57129 0.790126 0.542814C0.835661 0.525038 1.47424 0.521849 4.4106 0.524714L7.97577 0.528195L8.02584 0.561577ZM1.95026 2.09692C1.83033 2.14377 1.7612 2.26792 1.7869 2.39026C1.8028 2.46596 1.89332 2.55541 1.97551 2.57663C2.02107 2.5884 2.78873 2.59227 4.42873 2.58898C6.80706 2.58421 6.81583 2.58408 6.8657 2.55081C6.96083 2.48738 6.99051 2.43564 6.99051 2.33326C6.99051 2.23088 6.96083 2.17914 6.8657 2.11572C6.8158 2.08243 6.80837 2.08232 4.4106 2.07882C2.43881 2.07596 1.9956 2.07921 1.95026 2.09692ZM1.95026 3.13293C1.83026 3.17999 1.7612 3.30403 1.7869 3.42636C1.8028 3.50201 1.89327 3.59147 1.97551 3.61281C2.02029 3.62443 2.44011 3.62844 3.26859 3.62516C4.47506 3.62037 4.49622 3.61973 4.54543 3.5869C4.64056 3.52347 4.67024 3.47173 4.67024 3.36936C4.67024 3.26698 4.64056 3.21524 4.54543 3.15181C4.49616 3.11893 4.47638 3.11838 3.25047 3.11483C2.24318 3.11194 1.995 3.11538 1.95026 3.13293Z"
+                                    fill="#FFC900"
+                                  />
+                                </svg>{" "}
+                                Chat
+                              </button> */}
+                            </div>
+                            <button
+                              className="btn chat-btn"
+                              type="button"
+                              onClick={() => setChatDetails(true)}
+                            >
                               <svg
                                 viewBox="0 0 9 8"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -302,8 +409,7 @@ function B2B() {
                                 />
                               </svg>{" "}
                               Chat
-                            </button> */}
-                            </div>
+                            </button>
                             <button
                               className={`${
                                 PermissionData()?.DISMISS_B2B_TICKETS ==
@@ -372,10 +478,162 @@ function B2B() {
                           ""
                         )}
                       </li>
-                    
+                    );
                   })
                 : ""}
             </ul>
+
+            {/* *****************************Chat Popup****************************** */}
+            {ChatDetails && (
+              <div className="popupouter profileview_popupChat">
+                <div className="popupinner">
+                  <h2>Add and View Chat</h2>
+                  <div
+                    className="close-btn"
+                    type="button"
+                    onClick={() => setChatDetails(false)}
+                  >
+                    <svg
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z"
+                        fill="black"
+                      />
+                    </svg>
+                  </div>
+
+                  <div className="popup-body">
+                    <div className="row px-3 mx-0">
+                      <div className="col-12 mb-3">
+                        <div className="trh-box p-3">
+                          {userPaymentDetails?.chat
+                            ? userPaymentDetails?.chat.map((item, id) => {
+                                return (
+                                  <div>
+                                    <h7>
+                                      {item?.auther == ""
+                                        ? "Admin"
+                                        : item?.auther}
+                                    </h7>
+                                    {item?.auther == "Admin" ? (
+                                      <div className="usercomment-box rounded shadow-sm bg-warning-subtle mb-2 p-1">
+                                        {item?.comment}
+                                        <span className="text-end">
+                                          {item.image !==
+                                          "https://nitro-xpress.s3.ap-south-1.amazonaws.com/" ? (
+                                            <a
+                                              href={item.image}
+                                              target="_blank"
+                                              className="ps-5"
+                                            >
+                                              <img
+                                                src={"/images/SSIcon.png"}
+                                                alt="img"
+                                              />
+                                            </a>
+                                          ) : (
+                                            ""
+                                          )}
+                                        </span>
+                                      </div>
+                                    ) : (
+                                      <div className="usercomment-box rounded shadow-sm bg-primary-subtle mb-2 p-1">
+                                        {item?.comment}
+                                        <span className="text-end">
+                                          {item.image !==
+                                          "https://nitro-xpress.s3.ap-south-1.amazonaws.com/" ? (
+                                            <a
+                                              href={item.image}
+                                              target="_blank"
+                                              className="ps-5"
+                                            >
+                                              <img
+                                                src={"/images/SSIcon.png"}
+                                                alt="img"
+                                              />
+                                            </a>
+                                          ) : (
+                                            ""
+                                          )}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })
+                            : ""}
+
+                          {/* <h4>Chats</h4>
+                            <div>
+                              <p className="pb-3 mb-0">Admin</p>
+                              <div className="row mx-0">
+                                <div className="col-6   text-black ">Hey</div>
+                                <div className="btngroups text-end col-6">
+                                  <a href={`#`} target="_blank">
+                                    <img src="/images/SSIcon.png" alt="img" />
+                                  </a>
+                                </div>
+                              </div>
+                            </div> */}
+                        </div>
+                      </div>
+
+                      {types == "close" ? (
+                        ""
+                      ) : (
+                        <div className="col-md-9 ">
+                          <label>Comments</label>
+                          <textarea
+                            type="text"
+                            className="form-control"
+                            placeholder="Your Comments"
+                            onChange={(e) => setComments(e.target.value)}
+                            value={comments}
+                          />
+                        </div>
+                      )}
+
+                      {types == "close" ? (
+                        ""
+                      ) : (
+                        <div className="col-md-3">
+                          <div className="row">
+                            <div className="col-4 text-center mt-3 mt-md-0">
+                              <label>ScreenShot</label>
+                              <div className="upload-form-control text-end">
+                                <input
+                                  // value={""}
+                                  className={`custom-file-input`}
+                                  accept="image/*"
+                                  type="file"
+                                  onChange={handleImageChange}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="col-8">
+                              <label></label>
+                              <div className="btngroups text-end my-3">
+                                <button
+                                  type="button"
+                                  className="btn save-btn"
+                                  onClick={(e) => SendComment(e)}
+                                >
+                                  Send
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* {*****************************POPUP*************************} */}
 

@@ -62,6 +62,7 @@ export const actionType = {
     "PostAdminSettingAddEmployeeDispatch_Type",
   PostAdminSettingAddDeliveryboyDispatch_Type:
     "PostAdminSettingAddDeliveryboyDispatch_Type",
+  PostAdminSettingDeliveryPartnerDispatch_Type:"PostAdminSettingDeliveryPartnerDispatch_Type",
     PostAssignDeliveryBoyPartnerDispatch_Type:
     "PostAssignDeliveryBoyPartnerDispatch_Type",
     GetSettingDeliveryboyInfoDispatch_Type: "GetSettingDeliveryboyInfoDispatch_Type",
@@ -76,6 +77,7 @@ export const actionType = {
   PostAddAmountDebitDispatch_Type: "PostAddAmountDebitDispatch_Type",
   DeleteAdminSettingDeleteUserDispatch_Type:
     "DeleteAdminSettingDeleteUserDispatch_Type",
+  DeleteAdminSettingDeliverypartnerDispatch_Type:"DeleteAdminSettingDeliverypartnerDispatch_Type",
   PatchEditUserPermissionDispatch_Type: "PatchEditUserPermissionDispatch_Type",
   GetSettingViewB2bFeedbackDispatch_Type:
     "GetSettingViewB2bFeedbackDispatch_Type",
@@ -140,6 +142,7 @@ export const actionType = {
   PostCreateTicketDispatch_Type: "PostCreateTicketDispatch_Type",
   PostTicketDetailDispatch_Type: "PostTicketDetailDispatch_Type",
   DeleteSupportTicketDispatch_Type: "DeleteSupportTicketDispatch_Type",
+  PostTicketAddCommentDetailDispatch_Type:"PostTicketAddCommentDetailDispatch_Type",
   PostBillingCodRemittanceCountDispatch_Type:
     "PostBillingCodRemittanceCountDispatch_Type",
   PostBillingCodRemittanceDetailsDispatch_Type:

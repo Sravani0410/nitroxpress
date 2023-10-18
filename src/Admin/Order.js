@@ -2202,7 +2202,7 @@ let payloaddata={...PayloadData}
                   )}
                 </li>
 
-                {/* upload csv */}
+                {/* single order upload csv */}
 
                 <li
                   className={`form-control  ${
@@ -2213,6 +2213,37 @@ let payloaddata={...PayloadData}
                 >
                   <input
                     accept=".csv"
+                    title="Single Order Upload"
+                    type={`${
+                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
+                        ? "file"
+                        : "text"
+                    }`}
+                    onChange={(e) =>
+                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
+                        ? SheetFile(e)
+                        : ""
+                    }
+                    className={`custom-file-input  
+                    ${
+                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
+                        ? " "
+                        : "permission_blur"
+                    }  }`}
+                  />
+                </li>
+
+                {/* Bulk order upload csv */}
+                <li
+                  className={`form-control  ${
+                    PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
+                      ? " "
+                      : "permission_blur"
+                  }`}
+                >
+                  <input
+                    accept=".csv"
+                    title="Bulk Orders Upload file"
                     type={`${
                       PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
                         ? "file"

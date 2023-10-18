@@ -119,6 +119,14 @@ const Setting = () => {
             ) : (
               ""
             )}
+            <li
+              onClick={(e) => {
+                navigate("/admin/setting/adddeliverypartner");
+              }}
+            >
+              <img src={Deliveryboy_img} alt="img" className="w-100" />
+              <h3>Add Delivery Partner</h3>
+            </li>
           </ul>
         </div>
       </div>
