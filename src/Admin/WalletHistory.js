@@ -181,14 +181,12 @@ const WalletHistory = () => {
 
     let dataa = JSON.parse(OrderDetailsId);
 
-    try{
+    try {
       let bodyContent;
       if (PostWalletAddMoneyData) {
         bodyContent = JSON.stringify({
           amount: parseFloat(amountValue),
-          // redirect_url:`http://localhost:3000/admin/wallethistory`
-          // redirect_url:`${process.env.REACT_APP_BASE_URL}/admin/wallethistory`
-          redirect_url:`https://d2ar2bguhc97cc.cloudfront.net/admin/wallethistory`
+          redirect_url: `${process.env.REACT_APP_REDIRECT_URL}/admin/wallethistory`,
         });
       }
       const data = await Axios({
@@ -202,15 +200,13 @@ const WalletHistory = () => {
         data: bodyContent,
       }).then((res) => {
         setLoadSpiner((o) => !o);
-        window.location.replace(`${res?.data?.pay_page_url}`)
+        window.location.replace(`${res?.data?.pay_page_url}`);
         return res;
       });
       dispatch(GetWalletHistory());
-    }
-    catch(err){
+    } catch (err) {
       setLoadSpiner(false);
     }
-   
   };
 
   const payment = (e) => {
@@ -228,27 +224,25 @@ const WalletHistory = () => {
   };
 
   const ConformOtpActionFun = (e) => {
-
-
     let formdata = new FormData();
-    formdata.append("amount",transactionAmount)
-    formdata.append("payment_id", transactionId)
-    formdata.append("image", selectImage)
+    formdata.append("amount", transactionAmount);
+    formdata.append("payment_id", transactionId);
+    formdata.append("image", selectImage);
 
-
-    if(!transactionAmount && !transactionId){
-      toast.warn("Please Fill All The Input Fields")
-    }else if(!transactionAmount){
-      toast.warn("Please Fill Transaction Amount")
-    }else if(!transactionId){
-      toast.warn("Please Fill Transaction Id")
-    }else{
-      dispatch(PostQrDetails(formdata))
-      setOtpActionPopup(false)
+    if (!transactionAmount && !transactionId) {
+      toast.warn("Please Fill All The Input Fields");
+    } else if (!transactionAmount) {
+      toast.warn("Please Fill Transaction Amount");
+    } else if (!transactionId) {
+      toast.warn("Please Fill Transaction Id");
+    } else {
+      dispatch(PostQrDetails(formdata));
+      setOtpActionPopup(false);
     }
   };
   const OrderPagesLoaderTrueFalseData = useSelector(
-    (state) => state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
+    (state) =>
+      state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
   );
 
   return (
@@ -313,11 +307,10 @@ const WalletHistory = () => {
                         />
                       </div> */}
 
+                  <span className="text-danger ">
+                    <small>Contact administrator after payment !</small>
+                  </span>
 
-                      <span className="text-danger ">
-                          <small>Contact administrator after payment !</small>
-                        </span>
-                       
                   <div className="">
                     <p>Rs.</p>
 
@@ -468,9 +461,8 @@ const WalletHistory = () => {
                       <label className="fw-bold">Name</label>
                     </div> */}
                     <div className="col-sm-12">
-                    <label className="fw-bold">QR Code</label>
+                      <label className="fw-bold">QR Code</label>
                       <div className="ml-4">
-                        
                         <img
                           src="/images/QR.png"
                           alt="img"

@@ -264,7 +264,7 @@ const UserB2C = () => {
             </div>
             <div className="right-part">
               <span>
-                <b>Upload Price</b>{" "}
+                <b>Upload Tariff Price</b>{" "}
                 <span className="upload-form-control">
                   <input
                     value={""}

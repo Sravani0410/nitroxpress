@@ -2162,7 +2162,9 @@ hover:bg-black
   max-width: 1000px;
 }
 
-
+.profileview_Image .popupinner{
+  max-width: 800px;
+}
 .profileview_popup .popupinner {
   max-width: 716px;
   max-height: 500px;
@@ -5155,7 +5157,30 @@ css-1wy0on6 css-1hb7zxy-IndicatorsContainer .editb2b-box label {
     max-height: 350px ;
     max-width: 412px;
   }
-
+  /* .chat .left{
+    float: left;
+    clear: both;
+  }
+  .chat .right{
+    float: right;
+    clear: both;
+  } */
+  .chat .left {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .chat .right {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .usercomment-box .screenshot{
+    height:40px
+  }
   /* -------------------- remarkgroups------------*/
 
   

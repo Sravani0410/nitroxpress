@@ -314,8 +314,8 @@ function App({ auth }) {
         <Route
           path="/admin/setting/adddeliverypartner"
           element={
-            PermissionData()?.VIEW_SETTING_DELIVERY_BOY_PAGE ==
-            "VIEW_SETTING_DELIVERY_BOY_PAGE" ? (
+            PermissionData()?.VIEW_SETTING_ADD_DELIVERY_PARTNER_PAGE ==
+            "VIEW_SETTING_ADD_DELIVERY_PARTNER_PAGE" ? (
               <AddDeliveryPartner />
             ) : (
               <PageNotFound />

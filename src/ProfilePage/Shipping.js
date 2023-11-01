@@ -600,8 +600,7 @@ const Shipping = () => {
           GetShipmentDetailsData?.calculation_details?.amount_format
             ?.total_price,
       },
-      redirect_url: `http://localhost:3000/shipping`,
-      // redirect_url:`https://d2ar2bguhc97cc.cloudfront.net/shipping`
+      redirect_url: `${process.env.REACT_APP_REDIRECT_URL}/shipping`,
     });
     const data = await Axios({
       url: `${process.env.REACT_APP_BASE_URL}/phonepe`,
@@ -1370,12 +1369,11 @@ const Shipping = () => {
                   </div>
                   <div className="col-md-4 col-6">
                     <h4>
-                      Rs.{" "}
                       {!GetShipmentDetailsData
                         ? "0"
                         : GetShipmentDetailsData &&
                           `${GetShipmentDetailsData.calculation_details.gst}`}
-                      /-
+                      %
                     </h4>
                   </div>
                   <div className="col-md-8 col-6">

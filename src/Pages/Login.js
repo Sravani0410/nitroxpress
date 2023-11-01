@@ -14,11 +14,11 @@ import { toast } from "react-toastify";
 
 const Login = () => {
   // const [email, setEmail] = useState("sandhyadevipyla4@gmail.com");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("nehadubet@gmail.com");
   const [loadspiner, setLoadSpiner] = useState(false);
   const [forgetemail, setForgetEmail] = useState("");
   // const [password, setPassword] = useState("Demo@123");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("Demo@123");
   const [showpassword, setShowPassword] = useState(false);
   const [popupture, setPopupTure] = useState("");
   const navigate = useNavigate();

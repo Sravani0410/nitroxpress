@@ -3,9 +3,11 @@ import Sidebar from "../Sidebar";
 import Header from "../Header";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   GetSettingViewB2bCloseFeedback,
   PostTicketDetail,
+  PostTicketAddCommentDetail,
 } from "../../Redux/action/ApiCollection";
 import { reactLocalStorage } from "reactjs-localstorage";
 import Popup from "reactjs-popup";
@@ -16,12 +18,22 @@ function B2BClose() {
   const dispatch = useDispatch();
   const [oldnewdata, setOldNewData] = useState(true);
   const [getsettingviewalldata, setGetSettingViewAllData] = useState("");
-   const [moredata, setMoreData] = useState(false);
+  console.log("getsettingviewalldata", getsettingviewalldata);
+  const [moredata, setMoreData] = useState(false);
   const [morepopupid, setMorePopupId] = useState(false);
   const [moredataid, setMoreDataId] = useState("");
   const [pickuppopup, setPickUpPopup] = useState(false);
+  const [ChatDetails, setChatDetails] = useState(false);
+  const [FeedbackId, setFeedbackId] = useState("");
+  const [userPaymentDetails, setUserPaymentDetails] = useState();
+  const [comments, setComments] = useState();
+  const [selectImage, setSelectedImage] = useState();
+  const [ImagePopup, setImagePopup] = useState(false);
+  const [image, setImage] = useState("");
+  const [types, setTypes] = useState();
+  const [userPaymentDetailsTrue, setUserPaymentDetailsTrue] = useState(false);
   let isAdmin_Role = sessionStorage.getItem("Admin_Role", false);
-  let isEmploye_Role=sessionStorage.getItem("isEmploye",false)
+  let isEmploye_Role = sessionStorage.getItem("isEmploye", false);
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
   );
@@ -35,8 +47,10 @@ function B2BClose() {
   const PostTicketDetailData = useSelector(
     (state) => state.PostTicketDetailReducer.PostTicketDetailData?.data
   );
+  console.log("shfahg", PostTicketDetailData);
   const OrderPagesLoaderTrueFalseData = useSelector(
-    (state) => state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
+    (state) =>
+      state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
   );
   useEffect(() => {
     let payload = {
@@ -83,7 +97,7 @@ function B2BClose() {
     PostTicketDetailData &&
       setGetSettingViewAllData(PostTicketDetailData?.info);
   }, [PostTicketDetailData]);
-   const ShowFeedbackDataFun = (e, value) => {
+  const ShowFeedbackDataFun = (e, value) => {
     if (value == "more") {
       setMoreData(true);
     } else {
@@ -101,6 +115,42 @@ function B2BClose() {
     setMorePopupId(id);
     setMoreData(false);
   };
+  const ChatFunDetails = (e, items) => {
+    setChatDetails(true);
+    setFeedbackId(items);
+    setGetSettingViewAllData(PostTicketDetailData?.info);
+  };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedImage(file);
+  };
+  const SendComment = () => {
+    let formdata = new FormData();
+    formdata.append("comments", comments);
+    formdata.append("image", selectImage);
+    formdata.append("qr_details_id", userPaymentDetails?.qr_details_id);
+
+    if (!comments) {
+      toast.warn("Please Type Any Comments");
+    } else {
+      // dispatch(PostPaymentChat(formdata));
+      let payload = {
+        ticket_id: FeedbackId,
+        description: comments,
+        image: selectImage,
+      };
+      let paylod1 = {};
+      setUserPaymentDetailsTrue(true);
+      dispatch(PostTicketAddCommentDetail(payload));
+      // dispatch(PostTicketDetail(payload1));
+      setComments("");
+      setSelectedImage("");
+    }
+  };
+  const imageFun = (e, image) => {
+    setImage(image);
+    setImagePopup(true);
+  };
   return (
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -114,25 +164,47 @@ function B2BClose() {
                 className=" form-select"
                 onChange={(e) => CustomerChangeFun(e)}
               >
-                {PermissionData()?.VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"?<option value="b2b">B2B</option>:""}
-                {isAdmin_Role=="true" || isEmploye_Role=="true" || PermissionData()?.VIEW_SUPPORT_B2C_PAGE == "VIEW_SUPPORT_B2C_PAGE"?<option value="b2c">B2C</option>:""}
+                {PermissionData()?.VIEW_SUPPORT_B2B_PAGE ==
+                "VIEW_SUPPORT_B2B_PAGE" ? (
+                  <option value="b2b">B2B</option>
+                ) : (
+                  ""
+                )}
+                {isAdmin_Role == "true" ||
+                isEmploye_Role == "true" ||
+                PermissionData()?.VIEW_SUPPORT_B2C_PAGE ==
+                  "VIEW_SUPPORT_B2C_PAGE" ? (
+                  <option value="b2c">B2C</option>
+                ) : (
+                  ""
+                )}
               </select>
             </div>
 
             <div className="sptitle">
               <div className="select-box">
-              <span>SORT BY : </span>
+                <span>SORT BY : </span>
 
                 <select
                   className=" form-select"
                   onChange={(e) => TicketChangeFun(e)}
                 >
-                 {PermissionData()?.VIEW_SUPPORT_B2B_RESOLVED_PAGE == "VIEW_SUPPORT_B2B_RESOLVED_PAGE"? <option value="close" className="px-3">
-                    Close Tickets
-                  </option>:""}
-                 {PermissionData()?.VIEW_SUPPORT_B2B_PAGE == "VIEW_SUPPORT_B2B_PAGE"? <option value="new" className="px-3">
-                    New Tickets
-                  </option>:""}
+                  {PermissionData()?.VIEW_SUPPORT_B2B_RESOLVED_PAGE ==
+                  "VIEW_SUPPORT_B2B_RESOLVED_PAGE" ? (
+                    <option value="close" className="px-3">
+                      Close Tickets
+                    </option>
+                  ) : (
+                    ""
+                  )}
+                  {PermissionData()?.VIEW_SUPPORT_B2B_PAGE ==
+                  "VIEW_SUPPORT_B2B_PAGE" ? (
+                    <option value="new" className="px-3">
+                      New Tickets
+                    </option>
+                  ) : (
+                    ""
+                  )}
                 </select>
               </div>
               <div className="select-box">
@@ -144,7 +216,7 @@ function B2BClose() {
               </div>
             </div>
 
-           <ul className="support-list">
+            <ul className="support-list">
               {getsettingviewalldata &&
                 getsettingviewalldata?.map((item, id) => {
                   return (
@@ -208,9 +280,9 @@ function B2BClose() {
                         <p className="mt-2">{item.title}</p>
                         <span className="date-text">{item.date}</span>
                         {/* <p className="mt-2">{item.description}</p> */}
-                         {item.description.length <= 40 ||
-                          (moredata == true &&
-                            morepopupid == item?.feedback_id) ? (
+                        {item.description.length <= 40 ||
+                        (moredata == true &&
+                          morepopupid == item?.feedback_id) ? (
                           <p className="ticket-description">
                             {item.description}
                           </p>
@@ -234,9 +306,8 @@ function B2BClose() {
                         )}
                         <div className="b2cbtn-box">
                           {" "}
-                      
-                          {/* <div className="">
-                            <button className="btn dismiss-btn" type="button">
+                          <div className="">
+                            {/* <button className="btn dismiss-btn" type="button">
                               <svg
                                 viewBox="0 0 10 7"
                                 fill="none"
@@ -250,9 +321,15 @@ function B2BClose() {
                                 />
                               </svg>{" "}
                               Mail
-                            </button>
+                            </button> */}
 
-                            <button className="btn dismiss-btn" type="button">
+                            <button
+                              className="btn chat-btn"
+                              type="button"
+                              onClick={(e) =>
+                                ChatFunDetails(e, item?.feedback_id)
+                              }
+                            >
                               <svg
                                 viewBox="0 0 9 8"
                                 fill="none"
@@ -267,7 +344,7 @@ function B2BClose() {
                               </svg>{" "}
                               Chat
                             </button>
-                          </div> */}
+                          </div>
                           {/* <button className="btn" type="button">
                             <svg
                               width="18"
@@ -285,7 +362,7 @@ function B2BClose() {
                           </button> */}
                         </div>
                       </div>
-                       {moredataid == item?.feedback_id ? (
+                      {moredataid == item?.feedback_id ? (
                         <Popup
                           open={pickuppopup}
                           position=""
@@ -337,6 +414,183 @@ function B2BClose() {
                   );
                 })}
             </ul>
+            {ChatDetails && (
+              <div className="popupouter profileview_popupChat">
+                <div className="popupinner">
+                  <h2>View Chat</h2>
+                  <div
+                    className="close-btn"
+                    type="button"
+                    onClick={() => setChatDetails(false)}
+                  >
+                    <svg
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z"
+                        fill="black"
+                      />
+                    </svg>
+                  </div>
+
+                  <div className="popup-body">
+                    <div className="row px-3 mx-0">
+                      <div className="col-12 mb-3 chat">
+                        {PostTicketDetailData?.info
+                          ? PostTicketDetailData?.info.map((item, id) => {
+                              console.log("dgshdd", item, id);
+                              return (
+                                item?.feedback_id == FeedbackId &&
+                                item?.comment_details?.map((itemsss, id) => {
+                                  return (
+                                    <>
+                                      {/* <div className="col-6"></div> */}
+                                      <div
+                                        className={`col-md-12 ${
+                                          itemsss?.author == "Admin"
+                                            ? "left"
+                                            : "right"
+                                        }`}
+                                        key={id}
+                                      >
+                                        <h7
+                                          className={`col-md-12 ${
+                                            itemsss?.author == "Admin"
+                                              ? "right"
+                                              : "right"
+                                          }`}
+                                        >
+                                          {itemsss?.author !== "Admin"
+                                            ? "Admin"
+                                            : "User"}
+                                        </h7>
+                                        <div
+                                          className={`usercomment-box rounded shadow-sm ${
+                                            itemsss?.author == "Admin"
+                                              ? "bg-primary-subtle"
+                                              : "bg-warning-subtle"
+                                          } mb-2 p-1`}
+                                        >
+                                          {itemsss?.description}
+                                          <span className="text-end">
+                                            {itemsss.image !== null &&
+                                            "https://nitro-xpress.s3.ap-south-1.amazonaws.com/" ? (
+                                              <a
+                                                // href={itemsss.image}
+                                                // target="_blank"
+                                                className="ps-5"
+                                                onClick={(e) =>
+                                                  imageFun(e, itemsss.image)
+                                                }
+                                              >
+                                                <img
+                                                  className="screenshot"
+                                                  src={itemsss.image}
+                                                  alt="img"
+                                                />
+                                              </a>
+                                            ) : (
+                                              ""
+                                            )}
+                                          </span>
+                                        </div>
+                                      </div>
+
+                                      {/* <div className="col-md-6" key={id}>
+                                              <h7>
+                                                {itemsss?.author !== "Admin"
+                                                  ? "Admin"
+                                                  : itemsss?.author}
+                                              </h7>
+                                              {itemsss?.author !== "Admin" ?  (
+                                                <div className="usercomment-box rounded shadow-sm bg-warning-subtle mb-2 p-1">
+                                                  {itemsss?.description}
+                                                  <span className="text-end">
+                                                    {itemsss.image !==
+                                                    "https://nitro-xpress.s3.ap-south-1.amazonaws.com/" ? (
+                                                      <a
+                                                        href={itemsss.image}
+                                                        target="_blank"
+                                                        className="ps-5"
+                                                      >
+                                                        <img
+                                                          src="/images/SSIcon.png"
+                                                          alt="img"
+                                                        />
+                                                      </a>
+                                                    ) : (
+                                                      ""
+                                                    )}
+                                                  </span>
+                                                </div>
+                                              ) : (
+                                                <div className="usercomment-box rounded shadow-sm bg-primary-subtle mb-2 p-1">
+                                                  {itemsss?.description}
+                                                  <span className="text-end">
+                                                    {itemsss.image !==
+                                                    "https://nitro-xpress.s3.ap-south-1.amazonaws.com/" ? (
+                                                      <a
+                                                        href={itemsss.image}
+                                                        target="_blank"
+                                                        className="ps-5"
+                                                      >
+                                                        <img
+                                                          src="/images/SSIcon.png"
+                                                          alt="img"
+                                                        />
+                                                      </a>
+                                                    ) : (
+                                                      ""
+                                                    )}
+                                                  </span>
+                                                </div>
+                                              )}
+                                            </div> */}
+                                    </>
+                                  );
+                                })
+                              );
+                            })
+                          : ""}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {ImagePopup && (
+              <div className="popupouter profileview_Image">
+                <div className="popupinner">
+                  <h2>View Screenshot</h2>
+                  <div
+                    className="close-btn"
+                    type="button"
+                    onClick={() => setImagePopup(false)}
+                  >
+                    <svg
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z"
+                        fill="black"
+                      />
+                    </svg>
+                  </div>
+
+                  <div className="popup-body">
+                    <div className="row px-2 mx-0">
+                      <div className="col-12 mb-3">
+                        <img src={image} alt="img" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <LodingSpiner loadspiner={OrderPagesLoaderTrueFalseData} />

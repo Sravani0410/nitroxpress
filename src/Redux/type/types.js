@@ -30,8 +30,10 @@ export const actionType = {
   PostAddRemarkDispatch_Type: "PostAddRemarkDispatch_Type",
   GetAdminOrderBookedDispatch_Type: "GetAdminOrderBookedDispatch_Type",
   GetAdminOrderPickedUpDispatch_Type: "GetAdminOrderPickedUpDispatch_Type",
-  GetAdminOrderReadyForPickupDispatch_Type: "GetAdminOrderReadyForPickupDispatch_Type",
-  GetAdminOrderReceivedAtHubDispatch_Type: "GetAdminOrderReceivedAtHubDispatch_Type",
+  GetAdminOrderReadyForPickupDispatch_Type:
+    "GetAdminOrderReadyForPickupDispatch_Type",
+  GetAdminOrderReceivedAtHubDispatch_Type:
+    "GetAdminOrderReceivedAtHubDispatch_Type",
   PostAdminOrderFilterationDispatch_Type:
     "PostAdminOrderFilterationDispatch_Type",
   ToggleSideBar_Type: "ToggleSideBar_Type",
@@ -54,18 +56,25 @@ export const actionType = {
     "PostAdminOrderPaymentOrderDispatch_Type",
   PostAdminOrderEwayBillDispatch_Type: "PostAdminOrderEwayBillDispatch_Type",
   GetAdminOrderCloneOrderDispatch_Type: "GetAdminOrderCloneOrderDispatch_Type",
-  PostAdminOrderActionDispatch_Type:
-    "PostAdminOrderActionDispatch_Type",
+  PostAdminOrderActionDispatch_Type: "PostAdminOrderActionDispatch_Type",
   DeleteAdminPendingOrderActionDispatch_Type:
     "DeleteAdminPendingOrderActionDispatch_Type",
   PostAdminSettingAddEmployeeDispatch_Type:
     "PostAdminSettingAddEmployeeDispatch_Type",
   PostAdminSettingAddDeliveryboyDispatch_Type:
     "PostAdminSettingAddDeliveryboyDispatch_Type",
-  PostAdminSettingDeliveryPartnerDispatch_Type:"PostAdminSettingDeliveryPartnerDispatch_Type",
-    PostAssignDeliveryBoyPartnerDispatch_Type:
+  PostAdminSettingDeliveryPartnerDispatch_Type:
+    "PostAdminSettingDeliveryPartnerDispatch_Type",
+  PostAssignDeliveryBoyPartnerDispatch_Type:
     "PostAssignDeliveryBoyPartnerDispatch_Type",
-    GetSettingDeliveryboyInfoDispatch_Type: "GetSettingDeliveryboyInfoDispatch_Type",
+  GetSettingDeliveryboyInfoDispatch_Type:
+    "GetSettingDeliveryboyInfoDispatch_Type",
+  GetAdminSettingDeliveryPartnerDispatch_Type:
+    "GetAdminSettingDeliveryPartnerDispatch_Type",
+  PatchAdminSettingDeliveryPartnerDispatch_Type:
+    "PatchAdminSettingDeliveryPartnerDispatch_Type",
+  DeleteAdminSettingDeliverypartnerDispatch_Type:
+    "DeleteAdminSettingDeliverypartnerDispatch_Type",
   GetCategoryDetailsDispatch_Type: "GetCategoryDetailsDispatch_Type",
   GetSettingViewPermissionDispatch_Type:
     "GetSettingViewPermissionDispatch_Type",
@@ -73,11 +82,10 @@ export const actionType = {
   PostAdminSettingAddCategoryDispatch_Type:
     "PostAdminSettingAddCategoryDispatch_Type",
   GetSettingUserInfoDispatch_Type: "GetSettingUserInfoDispatch_Type",
-  PostUserOrderIdListDispatch_Type: "PostUserOrderIdListDispatch_Type",
+  GetUserOrderIdListDispatch_Type: "GetUserOrderIdListDispatch_Type",
   PostAddAmountDebitDispatch_Type: "PostAddAmountDebitDispatch_Type",
   DeleteAdminSettingDeleteUserDispatch_Type:
     "DeleteAdminSettingDeleteUserDispatch_Type",
-  DeleteAdminSettingDeliverypartnerDispatch_Type:"DeleteAdminSettingDeliverypartnerDispatch_Type",
   PatchEditUserPermissionDispatch_Type: "PatchEditUserPermissionDispatch_Type",
   GetSettingViewB2bFeedbackDispatch_Type:
     "GetSettingViewB2bFeedbackDispatch_Type",
@@ -111,14 +119,13 @@ export const actionType = {
   GetBillingAmountCountDispatch_Type: "GetBillingAmountCountDispatch_Type",
   GetDashboardNotificationDispatch_Type:
     "GetDashboardNotificationDispatch_Type",
-    PostDeliveryBoyNotificationDispatch_Type:
+  PostDeliveryBoyNotificationDispatch_Type:
     "PostDeliveryBoyNotificationDispatch_Type",
-    GetDeliveryBoyNotificationDispatch_Type:
+  GetDeliveryBoyNotificationDispatch_Type:
     "GetDeliveryBoyNotificationDispatch_Type",
-    GetAdminRemarkNotificationDispatch_Type:
+  GetAdminRemarkNotificationDispatch_Type:
     "GetAdminRemarkNotificationDispatch_Type",
-    PostRemarkNotificationDispatch_Type:
-    "PostRemarkNotificationDispatch_Type",
+  PostRemarkNotificationDispatch_Type: "PostRemarkNotificationDispatch_Type",
   PostAddOrderTagDispatch_Type: "PostAddOrderTagDispatch_Type",
   PostUploadFileDispatch_Type: "PostUploadFileDispatch_Type",
   PostDashboardRevenueDispatch_Type: "PostDashboardRevenueDispatch_Type",
@@ -168,7 +175,8 @@ export const actionType = {
   GetCancelOrderDetailDispatch_Type: "GetCancelOrderDetailDispatch_Type",
   PostTrackingOtpDispatch_Type: "PostTrackingOtpDispatch_Type",
   GetAdminOrderRebookDispatch_Type: "GetAdminOrderRebookDispatch_Type",
-  PostTrackLocationDetailsDispatch_Type: "PostTrackLocationDetailsDispatch_Type",
+  PostTrackLocationDetailsDispatch_Type:
+    "PostTrackLocationDetailsDispatch_Type",
   OrderPagesLoaderTrueFalse_Type: "OrderPagesLoaderTrueFalse_Type",
   PostQrDetailsDispatch_Type: "PostQrDetailsDispatch_Type",
   PostPaymentApprovalDispatch_Type: "PostPaymentApprovalDispatch_Type",

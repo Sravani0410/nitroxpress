@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CSVLink } from "react-csv";
 import { actionType } from "../Redux/type/types";
 import { reactLocalStorage } from "reactjs-localstorage";
 import Sidebar from "./Sidebar";
 import LodingSpiner from "../Components/LodingSpiner";
 import confirmationimg from "../Images/confirmation.svg";
+import Select from "react-select";
 import dots from "../Images/dots.svg";
 import Header from "./Header";
+import axios, { CancelToken, isCancel } from "axios";
 import { toast } from "react-toastify";
 import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import OtpInput from "react-otp-input";
+// import OtpInput from "react-otp-input";
+import { ProgressBar } from "react-bootstrap";
 import Popup from "reactjs-popup";
 import Axios from "axios";
 import {
@@ -54,6 +57,7 @@ import {
   GetSettingDeliveryboyInfo,
   PostAssignDeliveryBoyPartner,
   PostTrackLocationDetails,
+  GetAdminSettingDeliveryPartner,
 } from "../Redux/action/ApiCollection";
 import tokenData from "../Authanticate";
 import {
@@ -63,6 +67,7 @@ import {
 import { PermissionData } from "../Permission";
 import { set } from "date-fns";
 import { Toast } from "bootstrap";
+let BearerToken = sessionStorage.getItem("token", false);
 let B2BPartner = sessionStorage.getItem("Is_Business");
 const Order = () => {
   const [otpvalue, setOtpValue] = useState("");
@@ -164,10 +169,10 @@ const Order = () => {
   const [TotalAmountValue, setTotalAmountValue] = useState("");
   const [BasePriceValue, setBasePriceValue] = useState("");
   const [Weight, setWeight] = useState("");
-    const [Length, setLength] = useState("");
+  const [Length, setLength] = useState("");
   const [Breadth, setBreadth] = useState("");
   const [Height, setHeight] = useState("");
-const [UserTypeData,setUserTypeData]=useState("")
+  const [UserTypeData, setUserTypeData] = useState("");
   const [ZoneValue, setZoneValue] = useState(null);
   const [TotalOrderEnable, setTotalOrderEnable] = useState(false);
   const [walletpaypopup, setWalletPayPopup] = useState(false);
@@ -175,7 +180,10 @@ const [UserTypeData,setUserTypeData]=useState("")
   const [customcheckbox, setCustomCheckBox] = useState(false);
   const [pickuppopup, setPickUpPopup] = useState(false);
   const [amountlessthenwalletpaypopup, setAmountLessThenWalletPayPopup] =
-  useState(false);
+    useState(false);
+  const [selectedPartnerIdOption, setselectedPartnerIdOption] = useState(null);
+  const [uploadPercentage, setUploadPercentage] = useState(0);
+  const cancelFileUpload = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let param = useLocation();
@@ -194,6 +202,11 @@ const [UserTypeData,setUserTypeData]=useState("")
   const GetAdminOrderPendingData = useSelector(
     (state) =>
       state?.GetAdminOrderPendingReducer?.GetAdminOrderPendingData?.data
+  );
+  const GetAdminSettingDeliveryPartnerData = useSelector(
+    (state) =>
+      state.GetAdminSettingDeliveryPartnerReducer
+        .GetAdminSettingDeliveryPartnerData
   );
   const GetAdminOrderPickedUpData = useSelector(
     (state) =>
@@ -289,11 +302,10 @@ const [UserTypeData,setUserTypeData]=useState("")
       state.PostAssignDeliveryBoyPartnerReducer
         ?.PostAssignDeliveryBoyPartnerData
   );
- console.log("PostViewOrderDetailsData",PostViewOrderDetailsData)
   let Is_delivery_boy = sessionStorage.getItem("Is_delivery_boy", false);
   useEffect(() => {
     if (param.hash == "#pending") {
-      if(Is_delivery_boy != "true"){
+      if (Is_delivery_boy != "true") {
         dispatch(GetAdminOrderPending());
       }
     } else if (param.hash == "#ready_for_pickup") {
@@ -301,6 +313,7 @@ const [UserTypeData,setUserTypeData]=useState("")
     } else if (param.hash == "#picked_up") {
       dispatch(GetAdminOrderPickedUp());
     } else if (param.hash == "#received_at_hub") {
+      dispatch(GetAdminSettingDeliveryPartner());
       dispatch(GetAdminOrderReceivedAtHub());
     } else if (param.hash == "#booked") {
       dispatch(GetAdminOrderBooked());
@@ -388,7 +401,7 @@ const [UserTypeData,setUserTypeData]=useState("")
 
   useEffect(() => {
     if (param.hash) {
-      if ( param.hash == "#pending") {
+      if (param.hash == "#pending") {
         navigate("#pending");
         setPandingTab({
           activeValue: "active",
@@ -404,8 +417,7 @@ const [UserTypeData,setUserTypeData]=useState("")
         setReturnTab("");
         setReturnDeliveredTab("");
         setCancelTab("");
-
-      } else if ( param.hash == "#ready_for_pickup") {
+      } else if (param.hash == "#ready_for_pickup") {
         navigate("#ready_for_pickup");
         setReadyForPickUpTab({
           activeValue: "active",
@@ -421,7 +433,7 @@ const [UserTypeData,setUserTypeData]=useState("")
         setReturnTab("");
         setReturnDeliveredTab("");
         setCancelTab("");
-      } else if ( param.hash == "#picked_up") {
+      } else if (param.hash == "#picked_up") {
         navigate("#picked_up");
         setPickUpTab({
           activeValue: "active",
@@ -437,7 +449,7 @@ const [UserTypeData,setUserTypeData]=useState("")
         setReturnTab("");
         setReturnDeliveredTab("");
         setCancelTab("");
-      } else if ( param.hash == "#received_at_hub") {
+      } else if (param.hash == "#received_at_hub") {
         navigate("#received_at_hub");
         setReceivedAtHubTab({
           activeValue: "active",
@@ -453,7 +465,7 @@ const [UserTypeData,setUserTypeData]=useState("")
         setReturnTab("");
         setReturnDeliveredTab("");
         setCancelTab("");
-      } else if ( param.hash == "#booked") {
+      } else if (param.hash == "#booked") {
         navigate("#booked");
         setBookTab({
           activeValue: "active",
@@ -469,7 +481,7 @@ const [UserTypeData,setUserTypeData]=useState("")
         setReturnTab("");
         setReturnDeliveredTab("");
         setCancelTab("");
-      } else if ( param.hash == "#transit") {
+      } else if (param.hash == "#transit") {
         navigate("#transit");
         setTransitTab({
           activeValue: "active",
@@ -485,7 +497,7 @@ const [UserTypeData,setUserTypeData]=useState("")
         setReturnTab("");
         setReturnDeliveredTab("");
         setCancelTab("");
-      } else if ( param.hash == "#delivered") {
+      } else if (param.hash == "#delivered") {
         navigate("#delivered");
         setDeliveredTab({
           activeValue: "active",
@@ -501,7 +513,7 @@ const [UserTypeData,setUserTypeData]=useState("")
         setReturnTab("");
         setReturnDeliveredTab("");
         setCancelTab("");
-      } else if ( param.hash == "#OUT_FOR_DELIVERY") {
+      } else if (param.hash == "#OUT_FOR_DELIVERY") {
         navigate("#OUT_FOR_DELIVERY");
         setOutForDeliveryTab({
           activeValue: "active",
@@ -517,7 +529,7 @@ const [UserTypeData,setUserTypeData]=useState("")
         setReturnTab("");
         setReturnDeliveredTab("");
         setCancelTab("");
-      } else if ( param.hash == "#return") {
+      } else if (param.hash == "#return") {
         navigate("#return");
         setReturnTab({
           activeValue: "active",
@@ -533,7 +545,7 @@ const [UserTypeData,setUserTypeData]=useState("")
         setTransitTab("");
         setReturnDeliveredTab("");
         setCancelTab("");
-      } else if ( param.hash == "#rto_delivered") {
+      } else if (param.hash == "#rto_delivered") {
         navigate("#rto_delivered");
         setReturnDeliveredTab({
           activeValue: "active",
@@ -549,7 +561,7 @@ const [UserTypeData,setUserTypeData]=useState("")
         setTransitTab("");
         setReturnTab("");
         setCancelTab("");
-      } else if ( param.hash == "#cancel") {
+      } else if (param.hash == "#cancel") {
         navigate("#cancel");
         setCancelTab({
           activeValue: "active",
@@ -849,10 +861,10 @@ const [UserTypeData,setUserTypeData]=useState("")
       });
       if (value === "") {
         setAdminOrderPendingData(GetAdminOrderPendingData);
-        setPayloadDeliveryBoyId("")       
+        setPayloadDeliveryBoyId("");
       } else {
         setAdminOrderPendingData(result);
-        setPayloadDeliveryBoyId("")
+        setPayloadDeliveryBoyId("");
       }
     }
     if (param.hash === "#ready_for_pickup") {
@@ -987,26 +999,26 @@ const [UserTypeData,setUserTypeData]=useState("")
     // PostAdminOrderPaymentCalReducerData?.data
     let payload = {
       product_order_id: pendingeditobjectdata.product_order_id,
-      delivery_partner: partner,
+      delivery_partner: selectedPartnerIdOption?.value,
       awb_number: awbcode,
       expected_date: expecteddeliverydate,
       zone: ZoneValue,
       total_amount: Number(TotalAmountValue),
-      length:  PostViewOrderDetailsData?.data[0]?.length == null
-      ? 0: Length,
-      breadth:  PostViewOrderDetailsData?.data[0]?.breadth == null
-      ? 0: Breadth,
-      height: PostViewOrderDetailsData?.data[0]?.height == null
-      ? 0: Height,
+      length: PostViewOrderDetailsData?.data[0]?.length == null ? 0 : Length,
+      breadth: PostViewOrderDetailsData?.data[0]?.breadth == null ? 0 : Breadth,
+      height: PostViewOrderDetailsData?.data[0]?.height == null ? 0 : Height,
       weight: Weight,
       amount_format: {
-        base_price: PostViewOrderDetailsData?.data[0]?.amount_format?.base_price,
+        base_price:
+          PostViewOrderDetailsData?.data[0]?.amount_format?.base_price,
         packaging_percent:
           PostViewOrderDetailsData?.data[0]?.amount_format?.packaging_percent,
-        fuel_charge: PostViewOrderDetailsData?.data[0]?.amount_format?.fuel_charge,
+        fuel_charge:
+          PostViewOrderDetailsData?.data[0]?.amount_format?.fuel_charge,
         fuel_charge_price:
           PostViewOrderDetailsData?.data[0]?.amount_format?.fuel_charge_price,
-        cod_percent: PostViewOrderDetailsData?.data[0]?.amount_format?.cod_percent,
+        cod_percent:
+          PostViewOrderDetailsData?.data[0]?.amount_format?.cod_percent,
         cod_percent_price:
           PostViewOrderDetailsData?.data[0]?.amount_format?.cod_percent_price,
         gst: PostViewOrderDetailsData?.data[0]?.amount_format?.gst,
@@ -1017,7 +1029,8 @@ const [UserTypeData,setUserTypeData]=useState("")
           PostViewOrderDetailsData?.data[0]?.amount_format?.insurance_price,
         price_without_gst:
           PostViewOrderDetailsData?.data[0]?.amount_format?.price_without_gst,
-        total_price: PostViewOrderDetailsData?.data[0]?.amount_format?.total_price,
+        total_price:
+          PostViewOrderDetailsData?.data[0]?.amount_format?.total_price,
       },
       // amount_format: {
       //   base_price: PostAdminOrderPaymentCalReducerData?.data?.base_price,
@@ -1043,8 +1056,8 @@ const [UserTypeData,setUserTypeData]=useState("")
     if (
       awbactive == false &&
       awbcode?.length != 0 &&
-      partner != "none" &&
-      partner != "" &&
+      selectedPartnerIdOption != "none" &&
+      selectedPartnerIdOption != "" &&
       expecteddeliverydate != ""
     ) {
       if (selected <= maxDate) {
@@ -1054,7 +1067,7 @@ const [UserTypeData,setUserTypeData]=useState("")
         setAwbActiveCheck((o) => !o);
         // setPending((o) => !o);
         setReceivedAtHubPopup((o) => !o);
-        setPartner("");
+        setselectedPartnerIdOption("");
         setAwbCode("");
         setExpectedDelliveryDate("");
       }
@@ -1070,11 +1083,11 @@ const [UserTypeData,setUserTypeData]=useState("")
     };
     setLoadSpiner(true);
     dispatch(DeleteAdminPendingOrderAction(payload));
-    if(Is_delivery_boy != "true"){
+    if (Is_delivery_boy != "true") {
       dispatch(GetWalletBalance());
-     }
+    }
     // dispatch(GetWalletBalance())
-    setPayloadDeliveryBoyId("")
+    setPayloadDeliveryBoyId("");
   };
 
   useEffect(() => {
@@ -1137,7 +1150,7 @@ const [UserTypeData,setUserTypeData]=useState("")
   };
 
   useEffect(() => {
-    if(Is_delivery_boy!="true"){
+    if (Is_delivery_boy != "true") {
       dispatch(GetSettingDeliveryboyInfo());
     }
     const today = new Date().toISOString().split("T")[0];
@@ -1145,7 +1158,8 @@ const [UserTypeData,setUserTypeData]=useState("")
   }, []);
 
   const PartnerNameFun = (e) => {
-    setPartner(e.target.value);
+    // setPartner(e.target.value);
+    setselectedPartnerIdOption(e.target.value);
     if (e.target.value?.length !== 0) {
       setPartnerNameActive(false);
     } else {
@@ -1410,14 +1424,68 @@ const [UserTypeData,setUserTypeData]=useState("")
     setOtpActionPopup(false);
     setReasonActionValue("null");
     setReasonActionPopup(false);
-    setReasonActionInputFieldData("")
+    setReasonActionInputFieldData("");
     setRemarkData("");
   };
 
-  const SheetFile = (e) => {
-    dispatch(PostUploadFile(e?.target?.files[0]));
+  const SheetFile = ({ target: { files } }) => {
+    let data = new FormData();
+    data.append("bulk_data", files[0]);
+
+    const options = {
+      onUploadProgress: (progressEvent) => {
+        const { loaded, total } = progressEvent;
+
+        console.log("mzhvxgxx0", progressEvent);
+
+        let percent = Math.floor((loaded * 100) / total);
+        console.log("vhgdfhgsd", percent);
+        if (percent < 100) {
+          setUploadPercentage(percent);
+        }
+      },
+      cancelToken: new CancelToken(
+        (cancel) => (cancelFileUpload.current = cancel)
+      ),
+
+      headers: {
+        Authorization: `Bearer ${BearerToken}`,
+      },
+    };
+    axios
+      .post(
+        // `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/bulk_order`,
+        `${process.env.REACT_APP_BASE_URL}admin_panel/orders/bulk_order_task`,
+
+        data,
+
+        options
+      )
+      .then((res) => {
+        console.log(res);
+        setUploadPercentage(100);
+
+        setTimeout(() => {
+          setUploadPercentage(0);
+        }, 1000);
+      })
+      .catch((err) => {
+        console.log(err);
+
+        if (isCancel(err)) {
+          alert(err.message);
+        }
+        setUploadPercentage(0);
+      });
+    // dispatch(PostUploadFile(e?.target?.files[0]));
   };
 
+  console.log("mnvx0zx0", uploadPercentage);
+
+  const cancelUpload = () => {
+    if (cancelFileUpload.current)
+      cancelFileUpload.current("User has canceled the file upload.");
+  };
   const CustomerTypeFun = (data) => {
     if (data === "B2B") {
       setB2BcheckBox((o) => !o);
@@ -1622,22 +1690,21 @@ const [UserTypeData,setUserTypeData]=useState("")
         setReasonActionValue("null");
         setReasonActionPopup(false);
         setReasonActionInputFieldData("");
-      }
-      else{
-        setReasonActionInputFieldData("")
+      } else {
+        setReasonActionInputFieldData("");
       }
       // dispatch(PostOrderTrack(payload))
     }
   };
-const receivedathubFun=()=>{
-  setReceivedAtHubPopup((o) => !o);
-  window.location.reload(false)
-  // dispatch(PostViewOrderDetails())
-  // setWeight("")
-  // setLength("")
-  // setHeight("")
-  // setBreadth("")
-}
+  const receivedathubFun = () => {
+    setReceivedAtHubPopup((o) => !o);
+    window.location.reload(false);
+    // dispatch(PostViewOrderDetails())
+    // setWeight("")
+    // setLength("")
+    // setHeight("")
+    // setBreadth("")
+  };
   const ConformOtpActionFun = (
     e,
     data //this data is comming from the OutForDevliveryActionFun Function
@@ -1716,18 +1783,16 @@ const receivedathubFun=()=>{
   };
   const AddPaymentFun = async () => {
     setLoadSpiner((o) => !o);
-   
-    try{
+
+    try {
       let amountValue = calculatedamount;
       let BearerToken = sessionStorage.getItem("token", false);
       let bodyContent;
       bodyContent = JSON.stringify({
         amount: parseFloat(amountValue),
-        // redirect_url:`http://localhost:3000/admin/order/#cancel`
-        // redirect_url:`${process.env.REACT_APP_BASE_URL}/admin/order/#cancel`
-        redirect_url: `https://d2ar2bguhc97cc.cloudfront.net/admin/order/#cancel`,
+        redirect_url: `${process.env.REACT_APP_REDIRECT_URL}/admin/order/#cancel`,
       });
-  
+
       const data = await Axios({
         url: `${process.env.REACT_APP_BASE_URL}/wallet/add_money`, //razorpay
         method: "POST",
@@ -1742,15 +1807,13 @@ const receivedathubFun=()=>{
         window.location.replace(`${res?.data?.pay_page_url}`);
         return res;
       });
-    }
-    catch(err){
+    } catch (err) {
       setLoadSpiner((o) => !o);
     }
-   
   };
   const ContinuePaymentFun = () => {
     // setLoadSpiner((o) => !o);
-    try{
+    try {
       let payLoad = {
         amount: Number(ReebookObjectDetails?.amount),
         order_id: Number(ReebookObjectDetails?.product_order_id),
@@ -1762,10 +1825,9 @@ const receivedathubFun=()=>{
           // PaymentFun() // This function open the RazorPay Popup
         } else {
           if (B2BPartner == "true") {
-            if(GetWalletBalanceData?.data?.b2b_negative_limit>0){
+            if (GetWalletBalanceData?.data?.b2b_negative_limit > 0) {
               dispatch(PostDebitBalance(payLoad));
-            }
-            else{   
+            } else {
               setWalletPayPopup(true);
             }
           } else {
@@ -1778,11 +1840,9 @@ const receivedathubFun=()=>{
       }
       // dispatch(PostDebitBalance(payLoad));
       // setPaymentMethodPopup(false);
-    }
-    catch(err){
+    } catch (err) {
       // setLoadSpiner((o) => !o);
     }
-   
   };
   useEffect(() => {
     if (PostDebitBalanceData) {
@@ -1947,15 +2007,15 @@ const receivedathubFun=()=>{
         //     : PostViewOrderDetailsData?.data[0]?.height
         // )
         length:
-        Number(Length) == Number(PostViewOrderDetailsData?.data[0]?.length)
+          Number(Length) == Number(PostViewOrderDetailsData?.data[0]?.length)
             ? Number(PostViewOrderDetailsData?.data[0]?.length)
             : Number(Length),
         breadth:
-        Number(Breadth) == Number(PostViewOrderDetailsData?.data[0]?.breadth)
+          Number(Breadth) == Number(PostViewOrderDetailsData?.data[0]?.breadth)
             ? Number(PostViewOrderDetailsData?.data[0]?.breadth)
             : Number(Breadth),
         height:
-        Number(Height) == Number(PostViewOrderDetailsData?.data[0]?.height)
+          Number(Height) == Number(PostViewOrderDetailsData?.data[0]?.height)
             ? Number(PostViewOrderDetailsData?.data[0]?.height)
             : Number(Height),
         quantity: Number(PostViewOrderDetailsData?.data[0]?.quantity),
@@ -1971,7 +2031,7 @@ const receivedathubFun=()=>{
         method: PostViewOrderDetailsData?.data[0]?.method,
         base_price: ZoneValue != "OTHER" ? 0 : BasePriceValue,
       };
-let payloaddata={...PayloadData}
+      let payloaddata = { ...PayloadData };
       if (ZoneValue == "OTHER") {
         if (
           BasePriceValue != PostViewOrderDetailsData?.data[0]?.base_price ||
@@ -1984,26 +2044,30 @@ let payloaddata={...PayloadData}
           dispatch(PostViewOrderDetails(ViewOrderDetailsPayload));
         }
       } else if (ZoneValue != "OTHER") {
-        if(ZoneValue != PostViewOrderDetailsData?.data[0]?.zone||
+        if (
+          ZoneValue != PostViewOrderDetailsData?.data[0]?.zone ||
           Length !== PostViewOrderDetailsData?.data[0]?.length ||
           Breadth !== PostViewOrderDetailsData?.data[0]?.breadth ||
-          Height !== PostViewOrderDetailsData?.data[0]?.height || Weight !== PostViewOrderDetailsData?.data[0]?.weight){
-            dispatch(PostAdminOrderPaymentCal(PayloadData))
-        }
-        else if(ZoneValue == PostViewOrderDetailsData?.data[0]?.zone||
+          Height !== PostViewOrderDetailsData?.data[0]?.height ||
+          Weight !== PostViewOrderDetailsData?.data[0]?.weight
+        ) {
+          dispatch(PostAdminOrderPaymentCal(PayloadData));
+        } else if (
+          ZoneValue == PostViewOrderDetailsData?.data[0]?.zone ||
           Length == PostViewOrderDetailsData?.data[0]?.length ||
           Breadth == PostViewOrderDetailsData?.data[0]?.breadth ||
-          Height == PostViewOrderDetailsData?.data[0]?.height || Weight == PostViewOrderDetailsData?.data[0]?.weight){
-            setBasePriceValue(PostViewOrderDetailsData?.data[0]?.base_price)
-            setTotalAmountValue(PostViewOrderDetailsData?.data[0]?.total_price);
-          }
-          else{
-            dispatch(PostAdminOrderPaymentCal(PayloadData));
-          }
+          Height == PostViewOrderDetailsData?.data[0]?.height ||
+          Weight == PostViewOrderDetailsData?.data[0]?.weight
+        ) {
+          setBasePriceValue(PostViewOrderDetailsData?.data[0]?.base_price);
+          setTotalAmountValue(PostViewOrderDetailsData?.data[0]?.total_price);
+        } else {
+          dispatch(PostAdminOrderPaymentCal(PayloadData));
+        }
         // else{
         //   setBasePriceValue(PostViewOrderDetailsData?.data[0]?.base_price)
         //   setTotalAmountValue(PostViewOrderDetailsData?.data[0]?.total_price);
-         
+
         //   // dispatch(PostViewOrderDetails(ViewOrderDetailsPayload))
         // }
         // dispatch(PostAdminOrderPaymentCal(PayloadData));
@@ -2052,7 +2116,7 @@ let payloaddata={...PayloadData}
       setRemarkData("");
       setLocationValue("");
       setLocationDate("");
-      setReasonActionInputFieldData("")
+      setReasonActionInputFieldData("");
     }
   };
 
@@ -2065,18 +2129,21 @@ let payloaddata={...PayloadData}
     setDeliveryBoyPopup(false);
   };
 
-
   const DeliveryBoyPopupFun = () => {
-    setDeliveryBoyPopup(false)
-    setPayloadOrderId("")
-  }
+    setDeliveryBoyPopup(false);
+    setPayloadOrderId("");
+  };
 
   useEffect(() => {
     if (PostAssignDeliveryBoyPartnerData.status == 201) {
-
     }
-
   }, [PostAssignDeliveryBoyPartnerData, deliveryboypopup]);
+  const partnerOptions = [
+    ...(GetAdminSettingDeliveryPartnerData?.data || [])?.map((option) => ({
+      value: option?.partner_name,
+      label: option?.partner_name,
+    })),
+  ];
 
   return (
     <>
@@ -2086,8 +2153,28 @@ let payloaddata={...PayloadData}
           <Sidebar />
 
           <div className="content-sec">
+            {uploadPercentage > 0 && (
+              <div className="row mt-3">
+                <div className="col pt-1">
+                  <ProgressBar
+                    now={uploadPercentage}
+                    striped={true}
+                    label={`${uploadPercentage}%`}
+                  />
+                </div>
+                <div className="col-auto">
+                  <span
+                    className="text-primary cursor-pointer"
+                    onClick={() => cancelUpload()}
+                  >
+                    Cancel
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="ordertittle-part">
               <h2>Orders</h2>
+
               <ul>
                 <li>
                   <div className="form-group">
@@ -2202,7 +2289,7 @@ let payloaddata={...PayloadData}
                   )}
                 </li>
 
-                {/* single order upload csv */}
+                {/* upload csv */}
 
                 <li
                   className={`form-control  ${
@@ -2242,18 +2329,14 @@ let payloaddata={...PayloadData}
                   }`}
                 >
                   <input
-                    accept=".csv"
+                    // accept=".csv"
                     title="Bulk Orders Upload file"
                     type={`${
                       PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
                         ? "file"
                         : "text"
                     }`}
-                    onChange={(e) =>
-                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
-                        ? SheetFile(e)
-                        : ""
-                    }
+                    onChange={SheetFile}
                     className={`custom-file-input  
                     ${
                       PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
@@ -4821,7 +4904,7 @@ let payloaddata={...PayloadData}
                 setRemarkData("");
                 setLocationValue("");
                 setLocationDate("");
-                setReasonActionInputFieldData("")
+                setReasonActionInputFieldData("");
               }}
             >
               <svg
@@ -4891,7 +4974,7 @@ let payloaddata={...PayloadData}
                     setRemarkData("");
                     setLocationValue("");
                     setLocationDate("");
-                    setReasonActionInputFieldData("")
+                    setReasonActionInputFieldData("");
                   }}
                 >
                   Cancel
@@ -4985,23 +5068,35 @@ let payloaddata={...PayloadData}
               <div className="col-sm-6">
                 <label>Delivery Partner</label>
                 <div className="express-box">
-                  <select
-                    className="form-select"
-                    onChange={(e) => PartnerNameFun(e)}
-                  >
-                    <option value="none" selected disabled hidden>
-                      Select Partner...
-                    </option>
-                    <option value="DTDC">DTDC</option>
-                    <option value="ANJANI">Anjani</option>
-                    <option value="DHL">DHL</option>
-                    <option value="SKYKING">Skyking</option>
-                    <option value="XPRESSBEES">Xpressbees</option>
-                    <option value="DELHIVERY">Delhivery</option>
-                    <option value="NITRO">Nitro</option>
-                  </select>
+                  <Select
+                    value={selectedPartnerIdOption}
+                    onChange={setselectedPartnerIdOption}
+                    options={partnerOptions}
+                    // filterOption={customFilter}
+                    // isClearable={true}
+                    placeholder="Select Partner Name ..."
+                    // onInputChange={SearchFilterPathFun}
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        outline: "none !important",
+                        border: "none !important",
+                        borderRadius: "14px !important",
+                        backgroundColor: "#f6f7f8 !important",
+                        boxShadow: "none !important",
+                      }),
+                    }}
+                    theme={(theme) => ({
+                      ...theme,
+                      borderRadius: 0,
+                      colors: {
+                        ...theme.colors,
+                        primary: "#FFDC5A",
+                      },
+                    })}
+                  />
                 </div>
-                {!partnernameactive && !partner ? (
+                {!partnernameactive && !selectedPartnerIdOption ? (
                   <div className="text-danger ">
                     <small> Select partner </small>
                   </div>
@@ -5358,12 +5453,12 @@ let payloaddata={...PayloadData}
 
                 <div className="col-sm-12 pt-3">
                   <div className="otp_container">
-                    <OtpInput
+                    {/* <OtpInput
                       value={otpvalue}
                       onChange={handleChange}
                       numInputs={4}
                       focusStyle={false}
-                    />
+                    /> */}
                   </div>
                   {otpvalue && otpvalue.length == 4 ? (
                     ""

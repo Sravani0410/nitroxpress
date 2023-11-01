@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import {
   GetSettingUserInfo,
-  PostUserOrderIdList,
+  GetUserOrderIdList,
   PostAddAmountDebit,
   DeleteAdminSettingDeleteUser,
   PatchEditUserPermission,
@@ -47,6 +47,7 @@ const UserProfile = () => {
   const [mindate, setMindate] = useState("");
   const [priceuserid, setPriceUserId] = useState("");
   const [addamount, setAddAmount] = useState("");
+  console.log("addamount",addamount)
   const [category, setCategory] = useState("");
   const [editcategoryvalue, setEditCategoryValue] = useState("");
   const [userpermission, setUserPermission] = useState("");
@@ -85,6 +86,7 @@ const UserProfile = () => {
   const [ProductIdFilterData, setProductIdFilterData] = useState([]);
   const [EnteredValue, setEnteredValue] = useState("");
   const [remarkvalue, setRemarkValue] = useState("");
+  const [totalorderid, setTotalOrderId] = useState([]);
   let isEmploye_Role = sessionStorage.getItem("isEmploye", false);
 
   let as_Business = sessionStorage.getItem("Is_Business", false);
@@ -115,10 +117,9 @@ const UserProfile = () => {
   const PostKYCdetailData = useSelector(
     (state) => state.PostKYCdetailReducer.PostKYCdetailData?.data
   );
-  const PostUserOrderIdListData = useSelector(
-    (state) => state.PostUserOrderIdListReducer.PostUserOrderIdListData
+  const GetUserOrderIdListData = useSelector(
+    (state) => state.GetUserOrderIdListReducer.GetUserOrderIdListData
   );
-  console.log("PostUserOrderIdListData", PostUserOrderIdListData);
   const OrderPagesLoaderTrueFalseData = useSelector(
     (state) =>
       state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
@@ -180,7 +181,7 @@ const UserProfile = () => {
     amountRef.current.blur();
   };
   const handleKeyDown = (event) => {
-    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
       event.preventDefault();
     }
   };
@@ -411,7 +412,7 @@ const UserProfile = () => {
     let Payload = {
       user_id: priceuserid?.user_id,
     };
-    dispatch(PostUserOrderIdList(Payload));
+    dispatch(GetUserOrderIdList(Payload));
     // let Payload = {
     //   user_id: priceuserid?.user_id,
     //   amount: transactionAmount,
@@ -439,6 +440,7 @@ const UserProfile = () => {
       //   dispatch(GetWalletBalance(payload))
       // }
       dispatch(GetWalletBalance(payload));
+      setTotalOrderId(GetUserOrderIdListData?.data);
     }
   }, [PostPaymentAddAmountData]);
 
@@ -450,79 +452,16 @@ const UserProfile = () => {
     //   dispatch(GetWalletBalance(payload))
     // }
     dispatch(GetWalletBalance(payload));
-  }, [priceuserid]);
-  let options = [
-    {
-      product_order_id: "107888278233",
-    },
+  }, [priceuserid, GetUserOrderIdListData]);
 
-    {
-      product_order_id: "107888278231",
-    },
-
-    {
-      product_order_id: "107888278229",
-    },
-
-    {
-      product_order_id: "107888278223",
-    },
-
-    {
-      product_order_id: "107888278224",
-    },
-
-    {
-      product_order_id: "107888278212",
-    },
-
-    {
-      product_order_id: "10766",
-    },
-
-    {
-      product_order_id: "8998900",
-    },
-
-    {
-      product_order_id: "107888278225",
-    },
-
-    {
-      product_order_id: "107888278226",
-    },
-
-    {
-      product_order_id: "107888278230",
-    },
-
-    {
-      product_order_id: "107888278228",
-    },
-
-    {
-      product_order_id: "8998901",
-    },
-
-    {
-      product_order_id: "8998902",
-    },
-
-    {
-      product_order_id: "8998904",
-    },
-  ];
-  // const productorderOptions = options.map((option) => ({
-  //   value: option.product_order_id,
-  //   label: option.product_order_id,
-  // }));
   const productorderOptions = [
     { value: "None", label: "None" },
-    ...options.map((option) => ({
-      value: option.product_order_id,
-      label: option.product_order_id,
+    ...(GetUserOrderIdListData?.data?.data || [])?.map((option) => ({
+      value: option?.product_order_id,
+      label: option?.product_order_id,
     })),
   ];
+
   const customFilter = (option, inputValue) => {
     if (option.value.toString().includes(inputValue)) {
       return true;
@@ -534,20 +473,40 @@ const UserProfile = () => {
     // setReasonActionInputFieldData(newStr);
     setRemarkValue(newStr);
   };
+
+  const numberInputOnWheelPreventChange = (e) => {
+      // Prevent the input value change
+      e.target.blur()
+      // Prevent the page/container scrolling
+      e.stopPropagation()
+      // Refocus immediately, on the next tick (after the current function is done)
+        setTimeout(() => {
+          e.target.focus()
+      }, 0)
+  } 
   const ConformAmountDebitFun = (e) => {
     let payload = {
-      amount: Number(addamount),
+      amount: Number(addamount).toFixed(2),
       user_id: priceuserid?.user_id,
       wallet_type: PaymentType,
       remark: remarkvalue,
       order_id: Number(selectedProductIdOption?.value),
     };
-    console.log("jdhsj", payload);
-    if(addamount.length==0 || PaymentType.length==0 || remarkvalue.length==0 || selectedProductIdOption?.value?.length==0){
-      toast.warn("please fill all the fields")
+    if (
+      addamount.length == 0 ||
+      PaymentType.length == 0 ||
+      remarkvalue.length == 0 ||
+      selectedProductIdOption?.value?.length == 0
+    ) {
+      toast.warn("please fill all the fields");
     }
-    else{
+    else {
       dispatch(PostAddAmountDebit(payload));
+      setAddamountWallet((o) => !o);
+      setAddAmount("");
+      setPaymentType("");
+      setRemarkValue("");
+      setSelectedProductIdOption("");
     }
   };
   const AddAmountCancelFun = (e) => {
@@ -594,35 +553,6 @@ const UserProfile = () => {
   const onSearch = (searchTerm) => {
     setValue(searchTerm);
     setIsOpen(false);
-  };
-
-  const onKeyDown = (e) => {
-    if (e.key === "Enter") {
-      onSearch(value);
-
-      let EnteredValueFilterData = ProductIdFilterData.filter(function (items) {
-        return (
-          items.product_id?.toString() == value?.toString() ||
-          items?.product_id?.toString() == ProductId?.toString()
-        );
-      });
-
-      if (EnteredValueFilterData.length != 0) {
-        setEnteredValueError(false);
-      } else {
-        setEnteredValueError(true);
-      }
-
-      setEnteredValue(value);
-    } else if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setSelectedIndex((prevIndex) => (prevIndex + 1) % filteredData.length);
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault(); // prevent cursor from moving to start of input
-      setSelectedIndex((prevIndex) =>
-        prevIndex === 0 ? filteredData.length - 1 : prevIndex - 1
-      );
-    }
   };
 
   useEffect(() => {
@@ -1368,10 +1298,11 @@ const UserProfile = () => {
                   <div className="col-sm-12">
                     <label>Enter Amount</label>
                     <input
-                      type="text"
+                      type="number"
                       className="form-control"
                       placeholder="Enter Amount"
                       value={addamount}
+                      onWheel={numberInputOnWheelPreventChange}
                       onChange={(e) => setAddAmount(e.target.value)}
                     />
                   </div>
@@ -1387,20 +1318,21 @@ const UserProfile = () => {
                       <option value="none" selected>
                         Select Payment Type
                       </option>
-                      <option value="Credit_Card">Credit Card</option>
-                      <option value="Debit_card">Debit Card</option>
+                      <option value="CREDIT">CREDIT</option>
+                      <option value="DEBIT">DEBIT</option>
                     </select>
                   </div>
                   <div className="col-sm-12">
                     <label>Product Order Type</label>
 
                     <Select
-                      defaultValue={selectedProductIdOption}
+                      value={selectedProductIdOption}
                       onChange={setSelectedProductIdOption}
                       options={productorderOptions}
                       // filterOption={customFilter}
-                      isClearable={true}
+                      // isClearable={true}
                       placeholder="Select Order Id ..."
+                      // onInputChange={SearchFilterPathFun}
                       styles={{
                         control: (baseStyles, state) => ({
                           ...baseStyles,
@@ -1416,8 +1348,7 @@ const UserProfile = () => {
                         borderRadius: 0,
                         colors: {
                           ...theme.colors,
-                          primary25: "#FFDC5A",
-                          // primary: 'white',
+                          primary: "#FFDC5A",
                         },
                       })}
                     />

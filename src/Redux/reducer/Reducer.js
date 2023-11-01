@@ -16,7 +16,7 @@ const stateData = {
   GetAdminDashboardViewOrderData: [],
   PostAdminDashboardTransactionData: [],
   PostAdminDashboardShippingMatrixData: [],
-  PostAdminOrderCsvFileData:[],
+  PostAdminOrderCsvFileData: [],
   GetAdminOrderIntransitData: [],
   GetAdminOrderDeliveredData: [],
   GetAdminOutForDeliveryData: [],
@@ -27,7 +27,7 @@ const stateData = {
   GetAdminOrderReturnData: [],
   GetAdminOrderRTODeliveredData: [],
   GetAdminOrderRebookData: [],
-  PostTrackLocationDetailsData:[],
+  PostTrackLocationDetailsData: [],
   GetAdminOrderSummaryData: [],
   PostAddRemarkData: [],
   GetAdminOrderBookedData: [],
@@ -53,16 +53,18 @@ const stateData = {
   DeleteAdminPendingOrderActionData: [],
   PostAdminSettingAddDeliveryboyData: [],
   PostAdminSettingDeliveryPartnerData: [],
-  DeleteAdminSettingDeliverypartnerData:[],
-  PostAssignDeliveryBoyPartnerData:[],
+  GetAdminSettingDeliveryPartnerData: [],
+  PatchAdminSettingDeliveryPartnerData: [],
+  DeleteAdminSettingDeliverypartnerData: [],
+  PostAssignDeliveryBoyPartnerData: [],
   PostAdminSettingAddData: [],
   GetCategoryDetailsData: [],
   GetSettingViewPermissionData: [],
   GetSettingEmployeeInfoData: [],
   PostAdminSettingAddCategoryData: [],
   GetSettingUserInfoData: [],
-  PostUserOrderIdListData:[],
-  PostAddAmountDebitData:[],
+  GetUserOrderIdListData: [],
+  PostAddAmountDebitData: [],
   DeleteAdminSettingDeleteUserData: [],
   PatchEditUserPermissionData: [],
   GetSettingViewB2bFeedback: [],
@@ -87,10 +89,10 @@ const stateData = {
   GetBillingInvoiceDetailData: [],
   GetBillingAmountCountData: [],
   GetDashboardNotificationData: [],
-  PostDeliveryBoyNotificationData:[],
-  GetDeliveryBoyNotificationData:[],
-  GetAdminRemarkNotificationData:[],
-  PostRemarkNotificationData:[],
+  PostDeliveryBoyNotificationData: [],
+  GetDeliveryBoyNotificationData: [],
+  GetAdminRemarkNotificationData: [],
+  PostRemarkNotificationData: [],
   PostAddOrderTagData: [],
   PostUploadFileData: [],
   PostDashboardRevenueData: [],
@@ -110,8 +112,8 @@ const stateData = {
   PostTrackingOrderDetails: [],
   PostCreateTicketData: [],
   PostTicketDetailData: [],
-  PostTicketAddCommentDetailData:[],
   DeleteSupportTicketData: [],
+  PostTicketAddCommentDetailData:[],
   PostTrackingOrderDetails: "",
   PostBillingCodRemittanceCountData: [],
   PostBillingCodRemittanceDetailsData: [],
@@ -467,7 +469,6 @@ export const GetAdminOrderBookedReducer = (state = stateData, action) => {
   }
 };
 
-
 export const GetAdminOrderPickedUpReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.GetAdminOrderPickedUpDispatch_Type:
@@ -480,7 +481,10 @@ export const GetAdminOrderPickedUpReducer = (state = stateData, action) => {
   }
 };
 
-export const GetAdminOrderReadyForPickupReducer = (state = stateData, action) => {
+export const GetAdminOrderReadyForPickupReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.GetAdminOrderReadyForPickupDispatch_Type:
       return {
@@ -492,7 +496,10 @@ export const GetAdminOrderReadyForPickupReducer = (state = stateData, action) =>
   }
 };
 
-export const GetAdminOrderReceivedAtHubReducer = (state = stateData, action) => {
+export const GetAdminOrderReceivedAtHubReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.GetAdminOrderReceivedAtHubDispatch_Type:
       return {
@@ -737,10 +744,7 @@ export const PostAdminOrderAddShipmentReducer = (state = stateData, action) => {
   }
 };
 
-export const PostAdminOrderActionReducer = (
-  state = stateData,
-  action
-) => {
+export const PostAdminOrderActionReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.PostAdminOrderActionDispatch_Type:
       return {
@@ -795,20 +799,6 @@ export const PostAdminSettingAddDeliveryboyReducer = (
       return state;
   }
 };
-export const PostAdminSettingDeliveryPartnerReducer = (
-  state = stateData,
-  action
-) => {
-  switch (action.type) {
-    case actionType.PostAdminSettingDeliveryPartnerDispatch_Type:
-      return {
-        ...state,
-        PostAdminSettingDeliveryPartnerData: action.payload,
-      };
-    default:
-      return state;
-  }
-};
 export const PostAssignDeliveryBoyPartnerReducer = (
   state = stateData,
   action
@@ -823,12 +813,54 @@ export const PostAssignDeliveryBoyPartnerReducer = (
       return state;
   }
 };
+export const PostAdminSettingDeliveryPartnerReducer = (
+  state = stateData,
+  action
+) => {
+  switch (action.type) {
+    case actionType.PostAdminSettingDeliveryPartnerDispatch_Type:
+      return {
+        ...state,
+        PostAdminSettingDeliveryPartnerData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 export const GetSettingDeliveryboyInfoReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.GetSettingDeliveryboyInfoDispatch_Type:
       return {
         ...state,
         GetSettingDeliveryboyInfoData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+export const GetAdminSettingDeliveryPartnerReducer = (
+  state = stateData,
+  action
+) => {
+  switch (action.type) {
+    case actionType.GetAdminSettingDeliveryPartnerDispatch_Type:
+      return {
+        ...state,
+        GetAdminSettingDeliveryPartnerData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+export const PatchAdminSettingDeliveryPartnerReducer = (
+  state = stateData,
+  action
+) => {
+  switch (action.type) {
+    case actionType.PatchAdminSettingDeliveryPartnerDispatch_Type:
+      return {
+        ...state,
+        PatchAdminSettingDeliveryPartnerData: action.payload,
       };
     default:
       return state;
@@ -921,12 +953,12 @@ export const GetSettingUserInfoReducer = (state = stateData, action) => {
   }
 };
 
-export const PostUserOrderIdListReducer = (state = stateData, action) => {
+export const GetUserOrderIdListReducer = (state = stateData, action) => {
   switch (action.type) {
-    case actionType.PostUserOrderIdListDispatch_Type:
+    case actionType.GetUserOrderIdListDispatch_Type:
       return {
         ...state,
-        PostUserOrderIdListData: action.payload,
+        GetUserOrderIdListData: action.payload,
       };
     default:
       return state;
@@ -958,7 +990,6 @@ export const DeleteAdminSettingDeleteUserReducer = (
       return state;
   }
 };
-
 export const DeleteAdminSettingDeliverypartnerReducer = (
   state = stateData,
   action
@@ -1265,7 +1296,10 @@ export const GetDashboardNotificationReducer = (state = stateData, action) => {
       return state;
   }
 };
-export const PostDeliveryBoyNotificationReducer = (state = stateData, action) => {
+export const PostDeliveryBoyNotificationReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.PostDeliveryBoyNotificationDispatch_Type:
       return {
@@ -1276,7 +1310,10 @@ export const PostDeliveryBoyNotificationReducer = (state = stateData, action) =>
       return state;
   }
 };
-export const GetDeliveryBoyNotificationReducer = (state = stateData, action) => {
+export const GetDeliveryBoyNotificationReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.GetDeliveryBoyNotificationDispatch_Type:
       return {
@@ -1287,7 +1324,10 @@ export const GetDeliveryBoyNotificationReducer = (state = stateData, action) => 
       return state;
   }
 };
-export const GetAdminRemarkNotificationReducer = (state = stateData, action) => {
+export const GetAdminRemarkNotificationReducer = (
+  state = stateData,
+  action
+) => {
   switch (action.type) {
     case actionType.GetAdminRemarkNotificationDispatch_Type:
       return {
@@ -1558,23 +1598,23 @@ export const PostTicketDetailReducer = (state = stateData, action) => {
   }
 };
 
-export const PostTicketAddCommentDetailReducer = (state = stateData, action) => {
-  switch (action.type) {
-    case actionType.PostTicketAddCommentDetailDispatch_Type:
-      return {
-        ...state,
-        PostTicketAddCommentDetailData: action.payload,
-      };
-    default:
-      return state;
-  }
-};
 export const DeleteSupportTicketReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.DeleteSupportTicketDispatch_Type:
       return {
         ...state,
         DeleteSupportTicketData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+export const PostTicketAddCommentDetailReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostTicketAddCommentDetailDispatch_Type:
+      return {
+        ...state,
+        PostTicketAddCommentDetailData: action.payload,
       };
     default:
       return state;

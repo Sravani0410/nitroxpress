@@ -21,15 +21,20 @@ function B2B() {
   const dispatch = useDispatch();
   const [oldnewdata, setOldNewData] = useState(true);
   const [getsettingviewalldata, setGetSettingViewAllData] = useState("");
+  console.log("getsettingviewalldata", getsettingviewalldata);
   const [moredata, setMoreData] = useState(false);
   const [morepopupid, setMorePopupId] = useState(false);
   const [moredataid, setMoreDataId] = useState("");
   const [pickuppopup, setPickUpPopup] = useState(false);
   const [ChatDetails, setChatDetails] = useState(false);
+  const [FeedbackId, setFeedbackId] = useState("");
+  console.log("ghsfga", FeedbackId);
   const [userPaymentDetails, setUserPaymentDetails] = useState();
   const [comments, setComments] = useState();
   const [selectImage, setSelectedImage] = useState();
   const [types, setTypes] = useState();
+  const [ImagePopup, setImagePopup] = useState(false);
+  const [image, setImage] = useState("");
   const [userPaymentDetailsTrue, setUserPaymentDetailsTrue] = useState(false);
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
@@ -47,6 +52,90 @@ function B2B() {
   const PostTicketDetailData = useSelector(
     (state) => state.PostTicketDetailReducer.PostTicketDetailData
   );
+  console.log("PostTicketDetailData", PostTicketDetailData?.data?.info);
+  let PostTicketDetails = [
+    {
+      info: [
+        {
+          feedback_id: 3,
+          title: "raise issuse",
+          description: "testing the raise issuse",
+          datetime: "2023-10-19T04:23:33.688829Z",
+          date: "2023-10-19",
+          username: "neha",
+          email: "nehadubet@gmail.com",
+          phone_number: "+91-8956761053",
+          company_name: null,
+          product_order_id: "10000002",
+          comment_details: [
+            {
+              user: "2",
+              description: "admin 1",
+              image: null,
+              ticket_id: 3,
+            },
+            {
+              user: "2",
+              description: "admin side",
+              image: null,
+              ticket_id: 3,
+            },
+            {
+              user: "3",
+              description: "b2b",
+              image: null,
+              ticket_id: 3,
+            },
+            {
+              user: "3",
+              description: "b2b side",
+              image: null,
+              ticket_id: 3,
+            },
+            {
+              user: "3",
+              description: "gafdghsafhg",
+              image: null,
+              ticket_id: 3,
+            },
+            {
+              user: "2",
+              description: "sdgahfhsa",
+              image: null,
+              ticket_id: 3,
+            },
+            {
+              user: "2",
+              description: "agshaf",
+              image:
+                "https://nitro-staging.s3.amazonaws.com/delivery_boy_page.drawio_2_34SE3Yt.png",
+              ticket_id: 3,
+            },
+          ],
+        },
+        {
+          feedback_id: 2,
+          title: "create ticket",
+          description: "testing2",
+          datetime: "2023-10-17T07:10:05.087629Z",
+          date: "2023-10-17",
+          username: "neha",
+          email: "nehadubet@gmail.com",
+          phone_number: "+91-8956761053",
+          company_name: null,
+          product_order_id: "10000001",
+          comment_details: [
+            {
+              user: "2",
+              description: "testing",
+              image: null,
+              ticket_id: 2,
+            },
+          ],
+        },
+      ],
+    },
+  ];
   const OrderPagesLoaderTrueFalseData = useSelector(
     (state) =>
       state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
@@ -54,7 +143,10 @@ function B2B() {
   const HeaderToggleClassAddData = useSelector(
     (state) => state.HeaderToggleClassAddReducer.HeaderToggleClassAddData
   );
-
+  const PostTicketAddCommentDetailData = useSelector(
+    (state) =>
+      state.PostTicketAddCommentDetailReducer.PostTicketAddCommentDetailData
+  );
   let isAdmin_Role = sessionStorage.getItem("Admin_Role", false);
   let isEmploye_Role = sessionStorage.getItem("isEmploye", false);
   useEffect(() => {
@@ -63,7 +155,7 @@ function B2B() {
       ticket_type: "active_ticket",
     };
     dispatch(PostTicketDetail(payload));
-  }, []);
+  }, [PostTicketAddCommentDetailData]);
   const DeleteTicket = (e, data) => {
     let payload = {
       id: data.feedback_id,
@@ -141,27 +233,31 @@ function B2B() {
     setMoreData(false);
   };
   const handleImageChange = (e) => {
+    console.log("djhfdhgs", e);
     const file = e.target.files[0];
+    console.log("file", file);
     setSelectedImage(file);
   };
   const SendComment = () => {
-    console.log("hsdhg", getsettingviewalldata[0]?.feedback_id);
-    let formdata = new FormData();
-    formdata.append("comments", comments);
-    formdata.append("image", selectImage);
-    formdata.append("qr_details_id", userPaymentDetails?.qr_details_id);
+    // let formdata = new FormData();
+    // formdata.append("comments", comments);
+    // formdata.append("image", selectImage);
+    // formdata.append("qr_details_id", userPaymentDetails?.qr_details_id);
 
     if (!comments) {
       toast.warn("Please Type Any Comments");
     } else {
       // dispatch(PostPaymentChat(formdata));
       let payload = {
-        ticket_id: getsettingviewalldata[0]?.feedback_id,
+        ticket_id: FeedbackId,
         description: comments,
         image: selectImage,
       };
+      console.log("ghfsgh", payload);
+      let paylod1 = {};
       setUserPaymentDetailsTrue(true);
       dispatch(PostTicketAddCommentDetail(payload));
+      // dispatch(PostTicketDetail(payload1));
       setComments("");
       setSelectedImage("");
     }
@@ -201,6 +297,14 @@ function B2B() {
   //     dispatch(GetWalletBalance(balance));
   //   }
   // }, [PatchPaymentApprovalActionData]);
+  const ChatFunDetails = (e, items) => {
+    setChatDetails(true);
+    setFeedbackId(items);
+  };
+  const imageFun = (e, image) => {
+    setImage(image);
+    setImagePopup(true);
+  };
   return (
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -395,7 +499,9 @@ function B2B() {
                             <button
                               className="btn chat-btn"
                               type="button"
-                              onClick={() => setChatDetails(true)}
+                              onClick={(e) =>
+                                ChatFunDetails(e, item?.feedback_id)
+                              }
                             >
                               <svg
                                 viewBox="0 0 9 8"
@@ -508,62 +614,129 @@ function B2B() {
                   <div className="popup-body">
                     <div className="row px-3 mx-0">
                       <div className="col-12 mb-3">
-                        <div className="trh-box p-3">
-                          {userPaymentDetails?.chat
-                            ? userPaymentDetails?.chat.map((item, id) => {
-                                return (
-                                  <div>
-                                    <h7>
-                                      {item?.auther == ""
-                                        ? "Admin"
-                                        : item?.auther}
-                                    </h7>
-                                    {item?.auther == "Admin" ? (
-                                      <div className="usercomment-box rounded shadow-sm bg-warning-subtle mb-2 p-1">
-                                        {item?.comment}
-                                        <span className="text-end">
-                                          {item.image !==
-                                          "https://nitro-xpress.s3.ap-south-1.amazonaws.com/" ? (
-                                            <a
-                                              href={item.image}
-                                              target="_blank"
-                                              className="ps-5"
+                        <div className="trh-box p-3 chat">
+                          {PostTicketDetailData?.data?.info
+                            ? PostTicketDetailData?.data?.info.map(
+                                (item, id) => {
+                                  console.log("dgshdd", item, id);
+                                  return (
+                                    item?.feedback_id == FeedbackId &&
+                                    item?.comment_details?.map(
+                                      (itemsss, id) => {
+                                        return (
+                                          <>
+                                            {/* <div className="col-6"></div> */}
+                                            <div
+                                              className={`col-md-12 ${
+                                                itemsss?.author == "Admin"
+                                                  ? "left"
+                                                  : "right"
+                                              }`}
+                                              key={id}
                                             >
-                                              <img
-                                                src={"/images/SSIcon.png"}
-                                                alt="img"
-                                              />
-                                            </a>
-                                          ) : (
-                                            ""
-                                          )}
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      <div className="usercomment-box rounded shadow-sm bg-primary-subtle mb-2 p-1">
-                                        {item?.comment}
-                                        <span className="text-end">
-                                          {item.image !==
-                                          "https://nitro-xpress.s3.ap-south-1.amazonaws.com/" ? (
-                                            <a
-                                              href={item.image}
-                                              target="_blank"
-                                              className="ps-5"
-                                            >
-                                              <img
-                                                src={"/images/SSIcon.png"}
-                                                alt="img"
-                                              />
-                                            </a>
-                                          ) : (
-                                            ""
-                                          )}
-                                        </span>
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              })
+                                              <h7
+                                                className={`col-md-12 ${
+                                                  itemsss?.author == "Admin"
+                                                    ? "right"
+                                                    : "right"
+                                                }`}
+                                              >
+                                                {itemsss?.author !== "Admin"
+                                                  ? "Admin"
+                                                  : "User"}
+                                              </h7>
+                                              <div
+                                                className={`usercomment-box rounded shadow-sm ${
+                                                  itemsss?.author == "Admin"
+                                                    ? "bg-primary-subtle"
+                                                    : "bg-warning-subtle"
+                                                } mb-2 p-1`}
+                                              >
+                                                {itemsss?.description}
+                                                <span className="text-end">
+                                                  {itemsss.image !== null &&
+                                                  "https://nitro-xpress.s3.ap-south-1.amazonaws.com/" ? (
+                                                    <a
+                                                      // href={itemsss.image}
+                                                      // target="_blank"
+                                                      className="ps-5"
+                                                      onClick={(e) =>
+                                                        imageFun(
+                                                          e,
+                                                          itemsss.image
+                                                        )
+                                                      }
+                                                    >
+                                                      <img
+                                                        className="screenshot"
+                                                        src={itemsss.image}
+                                                        alt="img"
+                                                      />
+                                                    </a>
+                                                  ) : (
+                                                    ""
+                                                  )}
+                                                </span>
+                                              </div>
+                                            </div>
+
+                                            {/* <div className="col-md-6" key={id}>
+                                              <h7>
+                                                {itemsss?.author !== "Admin"
+                                                  ? "Admin"
+                                                  : itemsss?.author}
+                                              </h7>
+                                              {itemsss?.author !== "Admin" ?  (
+                                                <div className="usercomment-box rounded shadow-sm bg-warning-subtle mb-2 p-1">
+                                                  {itemsss?.description}
+                                                  <span className="text-end">
+                                                    {itemsss.image !==
+                                                    "https://nitro-xpress.s3.ap-south-1.amazonaws.com/" ? (
+                                                      <a
+                                                        href={itemsss.image}
+                                                        target="_blank"
+                                                        className="ps-5"
+                                                      >
+                                                        <img
+                                                          src="/images/SSIcon.png"
+                                                          alt="img"
+                                                        />
+                                                      </a>
+                                                    ) : (
+                                                      ""
+                                                    )}
+                                                  </span>
+                                                </div>
+                                              ) : (
+                                                <div className="usercomment-box rounded shadow-sm bg-primary-subtle mb-2 p-1">
+                                                  {itemsss?.description}
+                                                  <span className="text-end">
+                                                    {itemsss.image !==
+                                                    "https://nitro-xpress.s3.ap-south-1.amazonaws.com/" ? (
+                                                      <a
+                                                        href={itemsss.image}
+                                                        target="_blank"
+                                                        className="ps-5"
+                                                      >
+                                                        <img
+                                                          src="/images/SSIcon.png"
+                                                          alt="img"
+                                                        />
+                                                      </a>
+                                                    ) : (
+                                                      ""
+                                                    )}
+                                                  </span>
+                                                </div>
+                                              )}
+                                            </div> */}
+                                          </>
+                                        );
+                                      }
+                                    )
+                                  );
+                                }
+                              )
                             : ""}
 
                           {/* <h4>Chats</h4>
@@ -609,7 +782,10 @@ function B2B() {
                                   className={`custom-file-input`}
                                   accept="image/*"
                                   type="file"
-                                  onChange={handleImageChange}
+                                  placeholder="Upload Screenshot"
+                                  onChange={(e) =>
+                                    setSelectedImage(e?.target?.files[0])
+                                  }
                                 />
                               </div>
                             </div>
@@ -634,7 +810,37 @@ function B2B() {
                 </div>
               </div>
             )}
+            {ImagePopup && (
+              <div className="popupouter profileview_Image">
+                <div className="popupinner">
+                  <h2>View Screenshot</h2>
+                  <div
+                    className="close-btn"
+                    type="button"
+                    onClick={() => setImagePopup(false)}
+                  >
+                    <svg
+                      viewBox="0 0 10 9"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4.31053 4.37167L0.19544 0H1.47666L4.97286 3.80037L8.46906 0H9.73941L5.65689 4.37167L10 9H8.70793L4.97286 4.95952L1.2595 9H0L4.31053 4.37167Z"
+                        fill="black"
+                      />
+                    </svg>
+                  </div>
 
+                  <div className="popup-body">
+                    <div className="row px-2 mx-0">
+                      <div className="col-12 mb-3">
+                        <img src={image} alt="img" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* {*****************************POPUP*************************} */}
 
             {/* <div className="popupouter feedback-popup">
