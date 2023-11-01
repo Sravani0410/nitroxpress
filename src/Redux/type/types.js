@@ -128,6 +128,7 @@ export const actionType = {
   PostRemarkNotificationDispatch_Type: "PostRemarkNotificationDispatch_Type",
   PostAddOrderTagDispatch_Type: "PostAddOrderTagDispatch_Type",
   PostUploadFileDispatch_Type: "PostUploadFileDispatch_Type",
+  PostBulkUploadFileDispatch_Type:"PostBulkUploadFileDispatch_Type",
   PostDashboardRevenueDispatch_Type: "PostDashboardRevenueDispatch_Type",
   PostDashboardViewOrderDispatch_Type: "PostDashboardViewOrderDispatch_Type",
   GetCodRemittanceDispatch_Type: "GetCodRemittanceDispatch_Type",

@@ -30,7 +30,9 @@ import Shipping from "./ProfilePage/Shipping";
 import Shippingpayment from "./ProfilePage/Shippingpayment";
 import Tracking from "./ProfilePage/Tracking";
 import AdminDashboard from "./Admin/AdminDashboard";
-import Order from "./Admin/Order";
+// import Order from "./Admin/Order";
+import Order from "./Admin/OrderPage/Order";
+
 import Orderinner from "./Admin/Orderinner";
 import User from "./Admin/AddOrder/User";
 import Ordertracking from "./Admin/AddOrder/Ordertracking";
@@ -199,6 +201,7 @@ function App({ auth }) {
           path="/admin/order"
           element={
             PermissionData()?.VIEW_ORDER_PAGE == "VIEW_ORDER_PAGE" ? (
+              // <Order />
               <Order />
             ) : (
               <PageNotFound />

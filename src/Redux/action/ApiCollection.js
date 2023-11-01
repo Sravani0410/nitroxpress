@@ -1940,7 +1940,6 @@ export const PostAdminSettingDeliveryPartner = (payload) => {
         return res;
       })
       .catch((err) => {
-        console.log("gdsah", err?.response?.data?.non_field_errors[0]);
         toast.warn(err?.response?.data?.non_field_errors[0]);
         return err;
       });
@@ -3368,6 +3367,37 @@ export const PostUploadFile = (payload) => {
     dispatch(PostUploadFileDispatch(responce));
   };
 };
+const PostBulkUploadFileDispatch = (data) => ({
+  type: actionType.PostBulkUploadFileDispatch_Type,
+  payload: data,
+});
+export const PostBulkUploadFile = (payload) => {
+  return async (dispatch, getState) => {
+    const responce = await axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/bulk_order_task`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${BearerToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        toast.success(res.data.message);
+        dispatch(GetAdminOrderPending());
+        return res;
+      })
+      .catch((err) => {
+        let errorData = `${err.response.data.errors[0].order_id} ${err.response.data.errors[0].error_msg}`;
+        toast.warn(errorData);
+        toast.warn(err?.response?.data?.message);
+        // toast.success(err.data.message);
+        return err;
+      });
+    dispatch(PostBulkUploadFileDispatch(responce));
+  };
+};
 
 const PostCompanyFileDispatch = (data) => ({
   type: actionType.PostCompanyFileDispatch_Type,
@@ -4133,7 +4163,6 @@ export const PostTicketAddCommentDetail = (payload) => {
     payload.image != undefined && formdata.append("image", payload.image);
     formdata.append("ticket_id", payload.ticket_id);
     let bodyContent = formdata;
-    console.log("gfdgahsf", bodyContent);
     const responce = await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}/admin_panel/setting/add_comment`,

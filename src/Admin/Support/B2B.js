@@ -15,20 +15,20 @@ import { PermissionData } from "../../Permission";
 import { reactLocalStorage } from "reactjs-localstorage";
 import Popup from "reactjs-popup";
 import LodingSpiner from "../../Components/LodingSpiner";
+let isAdmin_Role = sessionStorage.getItem("Admin_Role", false);
+let isEmploye_Role = sessionStorage.getItem("isEmploye", false);
 let B2BPartner = sessionStorage.getItem("Is_Business");
 function B2B() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [oldnewdata, setOldNewData] = useState(true);
   const [getsettingviewalldata, setGetSettingViewAllData] = useState("");
-  console.log("getsettingviewalldata", getsettingviewalldata);
   const [moredata, setMoreData] = useState(false);
   const [morepopupid, setMorePopupId] = useState(false);
   const [moredataid, setMoreDataId] = useState("");
   const [pickuppopup, setPickUpPopup] = useState(false);
   const [ChatDetails, setChatDetails] = useState(false);
   const [FeedbackId, setFeedbackId] = useState("");
-  console.log("ghsfga", FeedbackId);
   const [userPaymentDetails, setUserPaymentDetails] = useState();
   const [comments, setComments] = useState();
   const [selectImage, setSelectedImage] = useState();
@@ -52,90 +52,6 @@ function B2B() {
   const PostTicketDetailData = useSelector(
     (state) => state.PostTicketDetailReducer.PostTicketDetailData
   );
-  console.log("PostTicketDetailData", PostTicketDetailData?.data?.info);
-  let PostTicketDetails = [
-    {
-      info: [
-        {
-          feedback_id: 3,
-          title: "raise issuse",
-          description: "testing the raise issuse",
-          datetime: "2023-10-19T04:23:33.688829Z",
-          date: "2023-10-19",
-          username: "neha",
-          email: "nehadubet@gmail.com",
-          phone_number: "+91-8956761053",
-          company_name: null,
-          product_order_id: "10000002",
-          comment_details: [
-            {
-              user: "2",
-              description: "admin 1",
-              image: null,
-              ticket_id: 3,
-            },
-            {
-              user: "2",
-              description: "admin side",
-              image: null,
-              ticket_id: 3,
-            },
-            {
-              user: "3",
-              description: "b2b",
-              image: null,
-              ticket_id: 3,
-            },
-            {
-              user: "3",
-              description: "b2b side",
-              image: null,
-              ticket_id: 3,
-            },
-            {
-              user: "3",
-              description: "gafdghsafhg",
-              image: null,
-              ticket_id: 3,
-            },
-            {
-              user: "2",
-              description: "sdgahfhsa",
-              image: null,
-              ticket_id: 3,
-            },
-            {
-              user: "2",
-              description: "agshaf",
-              image:
-                "https://nitro-staging.s3.amazonaws.com/delivery_boy_page.drawio_2_34SE3Yt.png",
-              ticket_id: 3,
-            },
-          ],
-        },
-        {
-          feedback_id: 2,
-          title: "create ticket",
-          description: "testing2",
-          datetime: "2023-10-17T07:10:05.087629Z",
-          date: "2023-10-17",
-          username: "neha",
-          email: "nehadubet@gmail.com",
-          phone_number: "+91-8956761053",
-          company_name: null,
-          product_order_id: "10000001",
-          comment_details: [
-            {
-              user: "2",
-              description: "testing",
-              image: null,
-              ticket_id: 2,
-            },
-          ],
-        },
-      ],
-    },
-  ];
   const OrderPagesLoaderTrueFalseData = useSelector(
     (state) =>
       state.OrderPagesLoaderTrueFalseReducer?.OrderPagesLoaderTrueFalseData
@@ -147,8 +63,6 @@ function B2B() {
     (state) =>
       state.PostTicketAddCommentDetailReducer.PostTicketAddCommentDetailData
   );
-  let isAdmin_Role = sessionStorage.getItem("Admin_Role", false);
-  let isEmploye_Role = sessionStorage.getItem("isEmploye", false);
   useEffect(() => {
     let payload = {
       user_type: "b2b",
@@ -233,9 +147,7 @@ function B2B() {
     setMoreData(false);
   };
   const handleImageChange = (e) => {
-    console.log("djhfdhgs", e);
     const file = e.target.files[0];
-    console.log("file", file);
     setSelectedImage(file);
   };
   const SendComment = () => {
@@ -253,7 +165,6 @@ function B2B() {
         description: comments,
         image: selectImage,
       };
-      console.log("ghfsgh", payload);
       let paylod1 = {};
       setUserPaymentDetailsTrue(true);
       dispatch(PostTicketAddCommentDetail(payload));
@@ -618,36 +529,58 @@ function B2B() {
                           {PostTicketDetailData?.data?.info
                             ? PostTicketDetailData?.data?.info.map(
                                 (item, id) => {
-                                  console.log("dgshdd", item, id);
                                   return (
                                     item?.feedback_id == FeedbackId &&
                                     item?.comment_details?.map(
                                       (itemsss, id) => {
                                         return (
                                           <>
-                                            {/* <div className="col-6"></div> */}
                                             <div
                                               className={`col-md-12 ${
-                                                itemsss?.author == "Admin"
-                                                  ? "left"
-                                                  : "right"
+                                                (itemsss?.user_type ==
+                                                  "admin" &&
+                                                  isAdmin_Role == "true") ||
+                                                isEmploye_Role == "true"
+                                                  ? "right"
+                                                  : itemsss?.user_type ==
+                                                      "user" &&
+                                                    B2BPartner == "true"
+                                                  ? "right"
+                                                  : "left"
                                               }`}
                                               key={id}
                                             >
                                               <h7
                                                 className={`col-md-12 ${
-                                                  itemsss?.author == "Admin"
+                                                  (itemsss?.user_type ==
+                                                    "admin" &&
+                                                    isAdmin_Role == "true") ||
+                                                  isEmploye_Role == "true"
                                                     ? "right"
-                                                    : "right"
+                                                    : itemsss?.user_type ==
+                                                        "user" &&
+                                                      B2BPartner == "true"
+                                                    ? "right"
+                                                    : "left"
                                                 }`}
                                               >
-                                                {itemsss?.author !== "Admin"
-                                                  ? "Admin"
-                                                  : "User"}
+                                                {(itemsss?.user_type ==
+                                                  "admin" &&
+                                                  isAdmin_Role == "true") ||
+                                                isEmploye_Role == "true"
+                                                  ? itemsss?.user_type
+                                                  : itemsss?.user_type}
                                               </h7>
                                               <div
                                                 className={`usercomment-box rounded shadow-sm ${
-                                                  itemsss?.author == "Admin"
+                                                  (itemsss?.user_type ==
+                                                    "admin" &&
+                                                    isAdmin_Role == "true") ||
+                                                  isEmploye_Role == "true"
+                                                    ? "bg-primary-subtle"
+                                                    : itemsss?.user_type ==
+                                                        "user" &&
+                                                      B2BPartner == "true"
                                                     ? "bg-primary-subtle"
                                                     : "bg-warning-subtle"
                                                 } mb-2 p-1`}

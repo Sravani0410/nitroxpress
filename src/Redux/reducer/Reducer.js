@@ -95,6 +95,7 @@ const stateData = {
   PostRemarkNotificationData: [],
   PostAddOrderTagData: [],
   PostUploadFileData: [],
+  PostBulkUploadFileData:[],
   PostDashboardRevenueData: [],
   PostDashboardViewOrderData: [],
   GetCodRemittanceData: [],
@@ -1374,6 +1375,17 @@ export const PostUploadFileReducer = (state = stateData, action) => {
   }
 };
 
+export const PostBulkUploadFileReducer = (state = stateData, action) => {
+  switch (action.type) {
+    case actionType.PostBulkUploadFileDispatch_Type:
+      return {
+        ...state,
+        PostBulkUploadFileData: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 export const PostDashboardRevenueReducer = (state = stateData, action) => {
   switch (action.type) {
     case actionType.PostDashboardRevenueDispatch_Type:

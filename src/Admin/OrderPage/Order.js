@@ -1,27 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Children, useEffect, useState } from "react";
 import { CSVLink } from "react-csv";
-import { actionType } from "../Redux/type/types";
-import { reactLocalStorage } from "reactjs-localstorage";
-import Sidebar from "./Sidebar";
-import LodingSpiner from "../Components/LodingSpiner";
-import confirmationimg from "../Images/confirmation.svg";
-import Select from "react-select";
-import dots from "../Images/dots.svg";
-import Header from "./Header";
-import axios, { CancelToken, isCancel } from "axios";
+import Sidebar from "../Sidebar";
+import LodingSpiner from "../../Components/LodingSpiner";
+import confirmationimg from "../../Images/confirmation.svg";
+import dots from "../../Images/dots.svg";
+import Header from "../Header";
 import { toast } from "react-toastify";
-import { useNavigate, NavLink, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import OtpInput from "react-otp-input";
-import { ProgressBar } from "react-bootstrap";
+import OtpInput from "react-otp-input";
 import Popup from "reactjs-popup";
 import Axios from "axios";
-import {
-  RotatingLines,
-  ColorRing,
-  Watch,
-  ThreeDots,
-} from "react-loader-spinner";
+import PopupComponent from "../../ReusableComponents/Popup/PopupComponent";
 
 import {
   GetAdminOrderDelivered,
@@ -44,34 +34,34 @@ import {
   ToggleSideBarTrueFalse,
   GetAdminOutForDelivery,
   GetCancelOrderDetail,
-  PostTrackingOtp,
-  PostOtpTrackingUpdateOrder,
   GetWalletBalance,
   PostDebitBalance,
   PostAdminOrderRebook,
   OrderPagesLoaderTrueFalse,
   PostViewOrderDetails,
   PostAdminOrderPaymentCal,
-  PostOrderDownloadInvoiceFile,
-  PostOrderDownloadLabelGenerationFile,
   GetSettingDeliveryboyInfo,
   PostAssignDeliveryBoyPartner,
   PostTrackLocationDetails,
   GetAdminSettingDeliveryPartner,
-} from "../Redux/action/ApiCollection";
-import tokenData from "../Authanticate";
-import {
-  PostAdminOrderFilterationReducer,
-  PostOrderDownloadLabelGenerationFileReducer,
-} from "../Redux/reducer/Reducer";
-import { PermissionData } from "../Permission";
-import { set } from "date-fns";
-import { Toast } from "bootstrap";
-let BearerToken = sessionStorage.getItem("token", false);
+} from "../../Redux/action/ApiCollection";
+
+import { PermissionData } from "../../Permission";
+import PendingTab from "../OrderPage/PendingTab/PendingTab";
+import ReadyToPickup from "../OrderPage/ReadyToPickup/ReadyToPickup";
+import ReceivedAtHub from "../OrderPage/ReceivedAtHub/ReceivedAtHub";
+import Booked from "../OrderPage/Booked/Booked";
+import InTransit from "../OrderPage/InTransit/InTransit";
+import OutForDelivery from "../OrderPage/OutForDelivery/OutForDelivery";
+import Delivered from "../OrderPage/Delivered/Delivered";
+import RTO from "../OrderPage/RTO/RTO";
+import RTODelivered from "../OrderPage/RTODelivered/RTODelivered";
+import Cancel from "../OrderPage/Cancel/Cancel";
+import TabButton from "../OrderPage/TabButton/TabButton";
+import Select from "react-select";
 let B2BPartner = sessionStorage.getItem("Is_Business");
 const Order = () => {
   const [otpvalue, setOtpValue] = useState("");
-  const [pendingconfirmbutton, setPendingConfirmButton] = useState(false);
   const [partner, setPartner] = useState("");
   const [partnernameactive, setPartnerNameActive] = useState(false);
   const [pending, setPending] = useState(false);
@@ -79,7 +69,6 @@ const Order = () => {
   const [expecteddeliverydate, setExpectedDelliveryDate] = useState("");
   const [locationdate, setLocationDate] = useState("");
   const [activeButton, setActiveButton] = useState(null);
-  const [pendingconfirm, setPendingConfirm] = useState(false);
   const [awbactive, setAwbActive] = useState(false);
   const [awbactivecheck, setAwbActiveCheck] = useState(false);
   const [pendingeditobjectdata, setPendingEditObjectData] = useState("");
@@ -151,12 +140,6 @@ const Order = () => {
     useState(false);
   const [SelectedReasonTrue, setSelectedReasonTrue] = useState(false);
   const [otpActionPopup, setOtpActionPopup] = useState(false);
-  const [otpActionValue, setOtpActionValue] = useState(false);
-  const [otpActionRowData, setOtpActionRowData] = useState(false);
-  const [otpActionInputFieldData, setOtpActionInputFieldData] = useState("");
-  const [OtpActionInputFieldError, setOtpActionInputFieldError] =
-    useState(false);
-  const [SelectedOtpTrue, setSelectedOtpTrue] = useState(false);
   const [paymentmethodpopup, setPaymentMethodPopup] = useState(false);
   const [wallettab, setWalletTab] = useState("");
   const [activepaymentwallet, setActivePaymentWallet] = useState(false);
@@ -165,7 +148,7 @@ const Order = () => {
   const [PaymentStatusTrueFalse, setPaymentStatusTrueFalse] = useState(false);
   const [PaymentStatusActive, setPaymentStatusActive] = useState(false);
   const [minDate, setMinDate] = useState("");
-
+  const [selectedPartnerIdOption, setselectedPartnerIdOption] = useState(null);
   const [TotalAmountValue, setTotalAmountValue] = useState("");
   const [BasePriceValue, setBasePriceValue] = useState("");
   const [Weight, setWeight] = useState("");
@@ -181,9 +164,7 @@ const Order = () => {
   const [pickuppopup, setPickUpPopup] = useState(false);
   const [amountlessthenwalletpaypopup, setAmountLessThenWalletPayPopup] =
     useState(false);
-  const [selectedPartnerIdOption, setselectedPartnerIdOption] = useState(null);
-  const [uploadPercentage, setUploadPercentage] = useState(0);
-  const cancelFileUpload = useRef(null);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let param = useLocation();
@@ -203,11 +184,6 @@ const Order = () => {
     (state) =>
       state?.GetAdminOrderPendingReducer?.GetAdminOrderPendingData?.data
   );
-  const GetAdminSettingDeliveryPartnerData = useSelector(
-    (state) =>
-      state.GetAdminSettingDeliveryPartnerReducer
-        .GetAdminSettingDeliveryPartnerData
-  );
   const GetAdminOrderPickedUpData = useSelector(
     (state) =>
       state.GetAdminOrderPickedUpReducer.GetAdminOrderPickedUpData?.data
@@ -221,6 +197,11 @@ const Order = () => {
     (state) =>
       state.GetAdminOrderReceivedAtHubReducer.GetAdminOrderReceivedAtHubData
         ?.data
+  );
+  const GetAdminSettingDeliveryPartnerData = useSelector(
+    (state) =>
+      state.GetAdminSettingDeliveryPartnerReducer
+        .GetAdminSettingDeliveryPartnerData
   );
   const GetAdminOrderReturnData = useSelector(
     (state) => state.GetAdminOrderReturnReducer.GetAdminOrderReturnData
@@ -302,7 +283,9 @@ const Order = () => {
       state.PostAssignDeliveryBoyPartnerReducer
         ?.PostAssignDeliveryBoyPartnerData
   );
+
   let Is_delivery_boy = sessionStorage.getItem("Is_delivery_boy", false);
+
   useEffect(() => {
     if (param.hash == "#pending") {
       if (Is_delivery_boy != "true") {
@@ -996,7 +979,6 @@ const Order = () => {
     const selected = new Date(expecteddeliverydate);
     const maxDate = new Date();
     maxDate.setHours(0, 0, 0, 0);
-    // PostAdminOrderPaymentCalReducerData?.data
     let payload = {
       product_order_id: pendingeditobjectdata.product_order_id,
       delivery_partner: selectedPartnerIdOption?.value,
@@ -1032,26 +1014,6 @@ const Order = () => {
         total_price:
           PostViewOrderDetailsData?.data[0]?.amount_format?.total_price,
       },
-      // amount_format: {
-      //   base_price: PostAdminOrderPaymentCalReducerData?.data?.base_price,
-      //   packaging_percent:
-      //     PostAdminOrderPaymentCalReducerData?.data?.packaging_percent,
-      //   fuel_charge: PostAdminOrderPaymentCalReducerData?.data?.fuel_charge,
-      //   fuel_charge_price:
-      //     PostAdminOrderPaymentCalReducerData?.data?.fuel_charge_price,
-      //   cod_percent: PostAdminOrderPaymentCalReducerData?.data?.cod_percent,
-      //   cod_percent_price:
-      //     PostAdminOrderPaymentCalReducerData?.data?.cod_percent_price,
-      //   gst: PostAdminOrderPaymentCalReducerData?.data?.gst,
-      //   insurance: PostAdminOrderPaymentCalReducerData?.data?.insurance,
-      //   packaging_price:
-      //     PostAdminOrderPaymentCalReducerData?.data?.packaging_price,
-      //   insurance_price:
-      //     PostAdminOrderPaymentCalReducerData?.data?.insurance_price,
-      //   price_without_gst:
-      //     PostAdminOrderPaymentCalReducerData?.data?.price_without_gst,
-      //   total_price: PostAdminOrderPaymentCalReducerData?.data?.total_price,
-      // },
     };
     if (
       awbactive == false &&
@@ -1158,7 +1120,6 @@ const Order = () => {
   }, []);
 
   const PartnerNameFun = (e) => {
-    // setPartner(e.target.value);
     setselectedPartnerIdOption(e.target.value);
     if (e.target.value?.length !== 0) {
       setPartnerNameActive(false);
@@ -1428,64 +1389,10 @@ const Order = () => {
     setRemarkData("");
   };
 
-  const SheetFile = ({ target: { files } }) => {
-    let data = new FormData();
-    data.append("bulk_data", files[0]);
-
-    const options = {
-      onUploadProgress: (progressEvent) => {
-        const { loaded, total } = progressEvent;
-
-        console.log("mzhvxgxx0", progressEvent);
-
-        let percent = Math.floor((loaded * 100) / total);
-        console.log("vhgdfhgsd", percent);
-        if (percent < 100) {
-          setUploadPercentage(percent);
-        }
-      },
-      cancelToken: new CancelToken(
-        (cancel) => (cancelFileUpload.current = cancel)
-      ),
-
-      headers: {
-        Authorization: `Bearer ${BearerToken}`,
-      },
-    };
-    axios
-      .post(
-        // `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/bulk_order`,
-        `${process.env.REACT_APP_BASE_URL}admin_panel/orders/bulk_order_task`,
-
-        data,
-
-        options
-      )
-      .then((res) => {
-        console.log(res);
-        setUploadPercentage(100);
-
-        setTimeout(() => {
-          setUploadPercentage(0);
-        }, 1000);
-      })
-      .catch((err) => {
-        console.log(err);
-
-        if (isCancel(err)) {
-          alert(err.message);
-        }
-        setUploadPercentage(0);
-      });
-    // dispatch(PostUploadFile(e?.target?.files[0]));
+  const SheetFile = (e) => {
+    dispatch(PostUploadFile(e?.target?.files[0]));
   };
 
-  console.log("mnvx0zx0", uploadPercentage);
-
-  const cancelUpload = () => {
-    if (cancelFileUpload.current)
-      cancelFileUpload.current("User has canceled the file upload.");
-  };
   const CustomerTypeFun = (data) => {
     if (data === "B2B") {
       setB2BcheckBox((o) => !o);
@@ -1991,21 +1898,7 @@ const Order = () => {
             ? Number(PostViewOrderDetailsData?.data[0]?.weight)
             : Number(Weight),
         pack_shipment: PostViewOrderDetailsData?.data[0]?.pack_shipment,
-        // length: Number(
-        //   PostViewOrderDetailsData?.data[0]?.length == null
-        //     ? 0
-        //     : PostViewOrderDetailsData?.data[0]?.length
-        // ),
-        // breadth: Number(
-        //   PostViewOrderDetailsData?.data[0]?.breadth == null
-        //     ? 0
-        //     : PostViewOrderDetailsData?.data[0]?.breadth
-        // ),
-        // height: Number(
-        //   PostViewOrderDetailsData?.data[0]?.height == null
-        //     ? 0
-        //     : PostViewOrderDetailsData?.data[0]?.height
-        // )
+
         length:
           Number(Length) == Number(PostViewOrderDetailsData?.data[0]?.length)
             ? Number(PostViewOrderDetailsData?.data[0]?.length)
@@ -2134,17 +2027,187 @@ const Order = () => {
     setPayloadOrderId("");
   };
 
-  useEffect(() => {
-    if (PostAssignDeliveryBoyPartnerData.status == 201) {
-    }
-  }, [PostAssignDeliveryBoyPartnerData, deliveryboypopup]);
+  const pandingTabRoutFun = () => {
+    navigate("#pending");
+    window.location.reload(false);
+    setFilterShowHideBtn(false);
+    setShippingPartnerValue("");
+  };
+
+  const ReadyToPickupTabRoutFun = () => {
+    navigate("#ready_for_pickup");
+    setDeliveryBoyValue("");
+  };
+
+  const pickupTabRoutFun = () => {
+    navigate("#picked_up");
+    setDeliveryBoyValue("");
+  };
+  const ReceivedAtHubTabRoutFun = () => {
+    navigate("#received_at_hub");
+    setDeliveryBoyValue("");
+  };
+
+  const BookedTabRoutFun = () => {
+    navigate("#booked");
+    setDeliveryBoyValue("");
+    setShippingPartnerValue("");
+  };
+
+  const TransitTabRoutFun = () => {
+    navigate("#transit");
+    setDeliveryBoyValue("");
+    setShippingPartnerValue("");
+  };
+
+  const DeliveredTabRoutFun = () => {
+    navigate("#delivered");
+    setDeliveryBoyValue("");
+    setShippingPartnerValue("");
+  };
+
+  const ReturnsTabRoutFun = () => {
+    navigate("#return");
+    setDeliveryBoyValue("");
+    setShippingPartnerValue("");
+  };
+
+  const RtoDeliveredTabRoutFun = () => {
+    navigate("#rto_delivered");
+    setDeliveryBoyValue("");
+    setShippingPartnerValue("");
+  };
+
+  const CancelTabRoutFun = () => {
+    navigate("#cancel");
+    setDeliveryBoyValue("");
+    setShippingPartnerValue("");
+  };
+
+  const OutForDeliveryTabRoutFun = () => {
+    navigate("#OUT_FOR_DELIVERY");
+    setDeliveryBoyValue("");
+    setShippingPartnerValue("");
+  };
+
+  let tabData = [
+    {
+      name: "Pending",
+      pandingtab: pandingtab,
+      id: "pending-tab",
+      target: "#pending-tab-pane",
+      controls: "pending-tab-pane",
+      tabRoutFun: pandingTabRoutFun,
+      PermissionData: "AlwaysAllow",
+      permissionCheck: "AlwaysAllow",
+    },
+    {
+      name: "Ready To Pickup",
+      pandingtab: readyforpickuptab,
+      id: "readyforpickup-tab",
+      target: "#readyforpickup-tab-pane",
+      controls: "readyforpickup-tab-pane",
+      tabRoutFun: ReadyToPickupTabRoutFun,
+      PermissionData: PermissionData()?.VIEW_ORDER_READY_TO_PICKUP_PAGE,
+      permissionCheck: "VIEW_ORDER_READY_TO_PICKUP_PAGE",
+    },
+    {
+      name: "Picked Up",
+      PermissionData: PermissionData()?.VIEW_ORDER_PICKUP_PAGE,
+      permissionCheck: "VIEW_ORDER_PICKUP_PAGE",
+      pandingtab: pickuptab,
+      id: "pickup-tab",
+      target: "#pickup-tab-pane",
+      controls: "pickup-tab-pane",
+      tabRoutFun: pickupTabRoutFun,
+    },
+    {
+      name: "Received At Hub",
+      PermissionData: PermissionData()?.VIEW_ORDER_RECIEVED_AT_HUB_PAGE,
+      permissionCheck: "VIEW_ORDER_RECIEVED_AT_HUB_PAGE",
+      pandingtab: receivedathubtab,
+      id: "receivedathub-tab",
+      target: "#receivedathub-tab-pane",
+      controls: "receivedathub-tab-pane",
+      tabRoutFun: ReceivedAtHubTabRoutFun,
+    },
+    {
+      name: "Booked",
+      PermissionData: PermissionData()?.VIEW_ORDER_BOOKED_PAGE,
+      permissionCheck: "VIEW_ORDER_BOOKED_PAGE",
+      pandingtab: booktab,
+      id: "booked-tab",
+      target: "#booked-tab-pane",
+      controls: "booked-tab-pane",
+      tabRoutFun: BookedTabRoutFun,
+    },
+    {
+      name: "In-Transit",
+      PermissionData: PermissionData()?.VIEW_ORDER_INTRANSIT_PAGE,
+      permissionCheck: "VIEW_ORDER_INTRANSIT_PAGE",
+      pandingtab: transittab,
+      id: "transit-tab",
+      target: "#transit-tab-pane",
+      controls: "transit-tab-pane",
+      tabRoutFun: TransitTabRoutFun,
+    },
+    {
+      name: " Out-For-Delivery",
+      PermissionData: PermissionData()?.VIEW_ORDER_OUT_FOR_DELIVERED_PAGE,
+      permissionCheck: "VIEW_ORDER_OUT_FOR_DELIVERED_PAGE",
+      pandingtab: outfordeliverytab,
+      id: "outfordelivery-tab",
+      target: "#outfordelivery-tab-pane",
+      controls: "outfordelivery-tab-pane",
+      tabRoutFun: OutForDeliveryTabRoutFun,
+    },
+    {
+      name: "Delivered",
+      PermissionData: PermissionData()?.VIEW_ORDER_DELIVERED_PAGE,
+      permissionCheck: "VIEW_ORDER_DELIVERED_PAGE",
+      pandingtab: deliveredtab,
+      id: "delivered-tab",
+      target: "#delivered-tab-pane",
+      controls: "delivered-tab-pane",
+      tabRoutFun: DeliveredTabRoutFun,
+    },
+    {
+      name: "  RTO",
+      PermissionData: PermissionData()?.VIEW_ORDER_RTO_PAGE,
+      permissionCheck: "VIEW_ORDER_RTO_PAGE",
+      pandingtab: returntab,
+      id: "returns-tab",
+      target: "#returns-tab-pane",
+      controls: "returns-tab-pane",
+      tabRoutFun: ReturnsTabRoutFun,
+    },
+    {
+      name: "RTO Delivered",
+      PermissionData: PermissionData()?.VIEW_ORDER_RTO_DELIVERED_PAGE,
+      permissionCheck: "VIEW_ORDER_RTO_DELIVERED_PAGE",
+      pandingtab: returndeliveredtab,
+      id: "rto-delivered-tab",
+      target: "#rto-delivered-tab-pane",
+      controls: "rto-delivered-tab-pane",
+      tabRoutFun: RtoDeliveredTabRoutFun,
+    },
+    {
+      name: "Cancelled Orders",
+      PermissionData: PermissionData()?.VIEW_ORDER_CANCEL_PAGE,
+      permissionCheck: "VIEW_ORDER_CANCEL_PAGE",
+      pandingtab: canceltab,
+      id: "cancel-tab",
+      target: "#cancel-tab-pane",
+      controls: "cancel-tab-pane",
+      tabRoutFun: CancelTabRoutFun,
+    },
+  ];
   const partnerOptions = [
     ...(GetAdminSettingDeliveryPartnerData?.data || [])?.map((option) => ({
       value: option?.partner_name,
       label: option?.partner_name,
     })),
   ];
-
   return (
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -2153,28 +2216,8 @@ const Order = () => {
           <Sidebar />
 
           <div className="content-sec">
-            {uploadPercentage > 0 && (
-              <div className="row mt-3">
-                <div className="col pt-1">
-                  <ProgressBar
-                    now={uploadPercentage}
-                    striped={true}
-                    label={`${uploadPercentage}%`}
-                  />
-                </div>
-                <div className="col-auto">
-                  <span
-                    className="text-primary cursor-pointer"
-                    onClick={() => cancelUpload()}
-                  >
-                    Cancel
-                  </span>
-                </div>
-              </div>
-            )}
             <div className="ordertittle-part">
               <h2>Orders</h2>
-
               <ul>
                 <li>
                   <div className="form-group">
@@ -2300,7 +2343,6 @@ const Order = () => {
                 >
                   <input
                     accept=".csv"
-                    title="Single Order Upload"
                     type={`${
                       PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
                         ? "file"
@@ -2311,32 +2353,6 @@ const Order = () => {
                         ? SheetFile(e)
                         : ""
                     }
-                    className={`custom-file-input  
-                    ${
-                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
-                        ? " "
-                        : "permission_blur"
-                    }  }`}
-                  />
-                </li>
-
-                {/* Bulk order upload csv */}
-                <li
-                  className={`form-control  ${
-                    PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
-                      ? " "
-                      : "permission_blur"
-                  }`}
-                >
-                  <input
-                    // accept=".csv"
-                    title="Bulk Orders Upload file"
-                    type={`${
-                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
-                        ? "file"
-                        : "text"
-                    }`}
-                    onChange={SheetFile}
                     className={`custom-file-input  
                     ${
                       PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
@@ -2358,63 +2374,6 @@ const Order = () => {
                       : "permission_blur"
                   }`}
                 >
-                  {/* {tabfilteravailable !== "#pending" ? (
- 
-                <div
-                  className={`filter-part ${
-                    PermissionData()?.APPLY_ORDER_FILTER == "APPLY_ORDER_FILTER"
-                      ? " "
-                      : "permission_blur"
-                  }`}
-                >
-                  {tabfilteravailable !== "#pending" ? (
- 
-                    <button
-                      className={`${filteractive ? "bg-warning btn" : " btn"} `}
-                      onClick={(e) =>
-                        PermissionData()?.APPLY_ORDER_FILTER ==
-                        "APPLY_ORDER_FILTER"
-                          ? `${setFilterShowHideBtn(
-                              (o) => !o
-                            )} ${e.preventDefault()}`
-                          : e.preventDefault()
-                      }
-                    >
-                      Filter
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        xmlnsXlink="http://www.w3.org/1999/xlink"
-                      >
-                        <rect width="16" height="16" fill="url(#pattern0)" />
-                        <defs>
-                          <pattern
-                            id="pattern0"
-                            patternContentUnits="objectBoundingBox"
-                            width="1"
-                            height="1"
-                          >
-                            <use
-                              xlinkHref="#image0_751_22363"
-                              transform="scale(0.00195312)"
-                            />
-                          </pattern>
-                          <image
-                            id="image0_751_22363"
-                            width="512"
-                            height="512"
-                            xlinkHref="data:image/png;base64,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"
-                          />
-                        </defs>
-                      </svg>
-                    </button>
-                  ) : (
-                    ""
-                  )} */}
-
                   <button
                     className={`${filteractive ? "bg-warning btn" : " btn"} `}
                     onClick={(e) =>
@@ -2805,2093 +2764,217 @@ const Order = () => {
               </form>
 
               {/* {path} */}
+              {/* tab buttons */}
 
               <ul className="nav nav-tabs orderTab " id="myTab" role="tablist">
-                <li className="nav-item" role="presentation">
-                  <button
-                    className={`nav-link   ${
-                      pandingtab ? pandingtab?.activeValue : ""
-                    }`}
-                    id="pending-tab"
-                    data-bs-toggle="tab"
-                    data-bs-target="#pending-tab-pane"
-                    type="button"
-                    role="tab"
-                    aria-controls="pending-tab-pane"
-                    aria-selected={`${
-                      pandingtab ? pandingtab?.booleanValue : "false"
-                    }`}
-                    onClick={(e) => {
-                      navigate("#pending");
-                      window.location.reload(false);
-                      setFilterShowHideBtn(false);
-                      setShippingPartnerValue("");
-                    }}
-                  >
-                    Pending
-                  </button>
-                </li>
-                <li className="nav-item" role="presentation">
-                  {PermissionData()?.VIEW_ORDER_READY_TO_PICKUP_PAGE ==
-                  "VIEW_ORDER_READY_TO_PICKUP_PAGE" ? (
-                    <button
-                      className={`nav-link ${
-                        readyforpickuptab ? readyforpickuptab?.activeValue : ""
-                      }`}
-                      id="readyforpickup-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#readyforpickup-tab-pane"
-                      type="button"
-                      role="tab"
-                      aria-controls="readyforpickup-tab-pane"
-                      aria-selected={`${
-                        readyforpickuptab
-                          ? readyforpickuptab?.booleanValue
-                          : "false"
-                      }`}
-                      onClick={(e) => {
-                        navigate("#ready_for_pickup");
-                        setDeliveryBoyValue("");
-                      }}
-                    >
-                      Ready To Pickup
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </li>
-                <li className="nav-item" role="presentation">
-                  {PermissionData()?.VIEW_ORDER_PICKUP_PAGE ==
-                  "VIEW_ORDER_PICKUP_PAGE" ? (
-                    <button
-                      className={`nav-link ${
-                        pickuptab ? pickuptab?.activeValue : ""
-                      }`}
-                      id="pickup-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#pickup-tab-pane"
-                      type="button"
-                      role="tab"
-                      aria-controls="pickup-tab-pane"
-                      aria-selected={`${
-                        pickuptab ? pickuptab?.booleanValue : "false"
-                      }`}
-                      onClick={(e) => {
-                        navigate("#picked_up");
-                        setDeliveryBoyValue("");
-                      }}
-                    >
-                      Picked Up
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </li>
-                <li className="nav-item" role="presentation">
-                  {PermissionData()?.VIEW_ORDER_RECIEVED_AT_HUB_PAGE ==
-                  "VIEW_ORDER_RECIEVED_AT_HUB_PAGE" ? (
-                    <button
-                      className={`nav-link ${
-                        receivedathubtab ? receivedathubtab?.activeValue : ""
-                      }`}
-                      id="receivedathub-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#receivedathub-tab-pane"
-                      type="button"
-                      role="tab"
-                      aria-controls="receivedathub-tab-pane"
-                      aria-selected={`${
-                        receivedathubtab
-                          ? receivedathubtab?.booleanValue
-                          : "false"
-                      }`}
-                      onClick={(e) => {
-                        navigate("#received_at_hub");
-                        setDeliveryBoyValue("");
-                      }}
-                    >
-                      Received At Hub
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </li>
-                <li className="nav-item" role="presentation">
-                  {PermissionData()?.VIEW_ORDER_BOOKED_PAGE ==
-                  "VIEW_ORDER_BOOKED_PAGE" ? (
-                    <button
-                      className={`nav-link ${
-                        booktab ? booktab?.activeValue : ""
-                      }`}
-                      id="booked-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#booked-tab-pane"
-                      type="button"
-                      role="tab"
-                      aria-controls="booked-tab-pane"
-                      aria-selected={`${
-                        booktab ? booktab?.booleanValue : "false"
-                      }`}
-                      onClick={(e) => {
-                        navigate("#booked");
-                        setDeliveryBoyValue("");
-                        setShippingPartnerValue("");
-                      }}
-                    >
-                      Booked
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </li>
-                <li className="nav-item" role="presentation">
-                  {PermissionData()?.VIEW_ORDER_INTRANSIT_PAGE ==
-                  "VIEW_ORDER_INTRANSIT_PAGE" ? (
-                    <button
-                      className={`nav-link ${
-                        transittab ? transittab?.activeValue : ""
-                      }`}
-                      id="transit-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#transit-tab-pane"
-                      type="button"
-                      role="tab"
-                      aria-controls="transit-tab-pane"
-                      aria-selected={`${
-                        transittab ? transittab.booleanValue : "false"
-                      }`}
-                      onClick={(e) => {
-                        navigate("#transit");
-                        setDeliveryBoyValue("");
-                        setShippingPartnerValue("");
-                      }}
-                    >
-                      In-Transit
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </li>
-
-                <li className="nav-item" role="presentation">
-                  {PermissionData()?.VIEW_ORDER_OUT_FOR_DELIVERED_PAGE ==
-                  "VIEW_ORDER_OUT_FOR_DELIVERED_PAGE" ? (
-                    <button
-                      className={`nav-link ${
-                        outfordeliverytab ? outfordeliverytab?.activeValue : ""
-                      }`}
-                      id="outfordelivery-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#outfordelivery-tab-pane"
-                      type="button"
-                      role="tab"
-                      aria-controls="outfordelivery-tab-pane"
-                      aria-selected={`${
-                        outfordeliverytab
-                          ? outfordeliverytab?.booleanValue
-                          : "false"
-                      }`}
-                      onClick={(e) => {
-                        navigate("#OUT_FOR_DELIVERY");
-                        setDeliveryBoyValue("");
-                        setShippingPartnerValue("");
-                      }}
-                    >
-                      Out-For-Delivery
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </li>
-
-                <li className="nav-item" role="presentation">
-                  {PermissionData()?.VIEW_ORDER_DELIVERED_PAGE ==
-                  "VIEW_ORDER_DELIVERED_PAGE" ? (
-                    <button
-                      className={`nav-link ${
-                        deliveredtab ? deliveredtab?.activeValue : ""
-                      }`}
-                      id="delivered-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#delivered-tab-pane"
-                      type="button"
-                      role="tab"
-                      aria-controls="delivered-tab-pane"
-                      aria-selected={`${
-                        deliveredtab ? deliveredtab?.booleanValue : "false"
-                      }`}
-                      onClick={(e) => {
-                        navigate("#delivered");
-                        setDeliveryBoyValue("");
-                        setShippingPartnerValue("");
-                      }}
-                    >
-                      Delivered
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </li>
-
-                <li className="nav-item" role="presentation">
-                  {PermissionData()?.VIEW_ORDER_RTO_PAGE ==
-                  "VIEW_ORDER_RTO_PAGE" ? (
-                    <button
-                      className={`nav-link ${
-                        returntab ? returntab?.activeValue : ""
-                      }`}
-                      id="returns-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#returns-tab-pane"
-                      type="button"
-                      role="tab"
-                      aria-controls="returns-tab-pane"
-                      aria-selected={`${
-                        returntab ? returntab?.booleanValue : "false"
-                      }`}
-                      onClick={(e) => {
-                        navigate("#return");
-                        setDeliveryBoyValue("");
-                        setShippingPartnerValue("");
-                      }}
-                    >
-                      RTO
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </li>
-
-                <li className="nav-item" role="presentation">
-                  {PermissionData()?.VIEW_ORDER_RTO_DELIVERED_PAGE ==
-                  "VIEW_ORDER_RTO_DELIVERED_PAGE" ? (
-                    <button
-                      className={`nav-link ${
-                        returndeliveredtab
-                          ? returndeliveredtab?.activeValue
-                          : ""
-                      }`}
-                      id="rto-delivered-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#rto-delivered-tab-pane"
-                      type="button"
-                      role="tab"
-                      aria-controls="rto-delivered-tab"
-                      aria-selected={`${
-                        returndeliveredtab
-                          ? returndeliveredtab?.booleanValue
-                          : "false"
-                      }`}
-                      onClick={(e) => {
-                        navigate("#rto_delivered");
-                        setDeliveryBoyValue("");
-                        setShippingPartnerValue("");
-                      }}
-                    >
-                      RTO Delivered
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </li>
-
-                <li className="nav-item" role="presentation">
-                  {PermissionData()?.VIEW_ORDER_CANCEL_PAGE ==
-                  "VIEW_ORDER_CANCEL_PAGE" ? (
-                    <button
-                      className={`nav-link ${
-                        canceltab ? canceltab?.activeValue : ""
-                      }`}
-                      id="cancel-tab"
-                      data-bs-toggle="tab"
-                      data-bs-target="#cancel-tab-pane"
-                      type="button"
-                      role="tab"
-                      aria-controls="cancel-tab-pane"
-                      aria-selected={`${
-                        canceltab ? canceltab?.booleanValue : "false"
-                      }`}
-                      onClick={(e) => {
-                        navigate("#cancel");
-                        setDeliveryBoyValue("");
-                        setShippingPartnerValue("");
-                      }}
-                    >
-                      Cancelled Orders
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </li>
+                {tabData?.map((items, id) => {
+                  return (
+                    <TabButton
+                      name={items.name}
+                      pandingtab={items.pandingtab}
+                      id={items.id}
+                      target={items.target}
+                      controls={items.controls}
+                      tabRoutFun={items.tabRoutFun}
+                      PermissionData={items.PermissionData}
+                      permissionCheck={items.permissionCheck}
+                    />
+                  );
+                })}
               </ul>
 
               <div className="tab-content" id="myTabContent">
                 {/* {pending} */}
-                <div
-                  className={`tab-pane pending-tabpane fade   ${
+
+                <PendingTab
+                  classNameProp={`tab-pane pending-tabpane fade   ${
                     pandingtab ? "show active" : "-1"
                   }`}
-                  id="pending-tab-pane"
-                  role="tabpanel"
-                  aria-labelledby="pending-tab"
-                  tabindex={`${pandingtab ? "0" : "-1"}`}
-                >
-                  <table>
-                    <tr>
-                      <th> Order Date </th>
-                      <th>Order Id</th>
-                      <th>Customer Name</th>
-                      <th>Receiver Name</th>
-                      <th>Method</th>
-                      <th>Product Type</th>
-                      <th>Action</th>
-                      <th>Delivery Boy</th>
-                    </tr>
+                  tabindexProp={`${pandingtab ? "0" : "-1"}`}
+                  permission={PermissionData()}
+                  adminorderpendingdataProp={adminorderpendingdata}
+                  DeletePending={DeletePending}
+                  IntransitFun={IntransitFun}
+                  DeliveryBoy={DeliveryBoy}
+                  payloadorderidProp={payloadorderid}
+                  payloaddeliveryboyidProp={payloaddeliveryboyid}
+                  GetSettingDeliveryboyInfoDataProp={
+                    GetSettingDeliveryboyInfoData
+                  }
+                />
 
-                    {PermissionData()?.VIEW_ORDER_PENDING ==
-                    "VIEW_ORDER_PENDING"
-                      ? adminorderpendingdata &&
-                        adminorderpendingdata?.map((item, id) => {
-                          return (
-                            <tr>
-                              <td>{item.date}</td>
+                {/* ready to pickup */}
 
-                              <td>
-                                <b
-                                  onClick={(e) =>
-                                    PermissionData()?.VIEW_ORDER_SUMMARY_PAGE ==
-                                    "VIEW_ORDER_SUMMARY_PAGE"
-                                      ? IntransitFun(e, item.product_order_id)
-                                      : ""
-                                  }
-                                  style={{ cursor: "pointer" }}
-                                >
-                                  {" "}
-                                  {item.product_order_id}
-                                </b>
-                              </td>
+                {param.hash === "#ready_for_pickup" && (
+                  <ReadyToPickup
+                    Accesspage={"#ready_for_pickup"}
+                    classNameProp={`tab-pane fade ${
+                      readyforpickuptab ? "show active" : "-1"
+                    }`}
+                    tabindexProp={`${readyforpickuptab ? "0" : "-1"}`}
+                    Is_delivery_boy={Is_delivery_boy}
+                    PermissionData={PermissionData()}
+                    adminorderreadyforpickupdata={adminorderreadyforpickupdata}
+                    IntransitFun={IntransitFun}
+                    showAddressFun={showAddressFun}
+                    activeButton={activeButton}
+                    PickupTrack={PickupTrack}
+                  />
+                )}
 
-                              {/* <td>{item.product_order_id}</td> */}
-                              <td>{item.name ? item.name : ""}</td>
-                              <td>
-                                {item.receiver_name ? item.receiver_name : ""}
-                              </td>
-
-                              <td>{item.method}</td>
-                              <td>{item.product_type}</td>
-
-                              <td>
-                                {item.payment_status == "SUCCESSFUL" ? (
-                                  <div className="action-btngroup">
-                                    <button
-                                      type="button"
-                                      className={`${
-                                        PermissionData()?.ALLOW_CANCEL_ACTION ==
-                                        "ALLOW_CANCEL_ACTION"
-                                          ? " "
-                                          : "permission_blur"
-                                      }`}
-                                      onClick={(e) =>
-                                        PermissionData()?.ALLOW_CANCEL_ACTION ==
-                                        "ALLOW_CANCEL_ACTION"
-                                          ? DeletePending(
-                                              e,
-                                              item.product_order_id
-                                            )
-                                          : ""
-                                      }
-                                    >
-                                      <svg
-                                        width="25"
-                                        height="25"
-                                        viewBox="0 0 25 25"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          clipRule="evenodd"
-                                          d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM6.80954 6.98509L10.4481 12.5137L6.6175 18.2849H10.1146L12.4999 14.4138L14.875 18.2849H18.3822L14.5314 12.5137L18.2104 6.98509H14.7133L12.4999 10.5832L10.3066 6.98509H6.80954Z"
-                                          fill="#F14336"
-                                        />
-                                      </svg>
-                                    </button>
-                                    {/* <button
-                                    type="button"
-                                    className={`${PermissionData()
-                                      ?.ALLOW_PENDING_ACTION_APPROVE ==
-                                      "ALLOW_PENDING_ACTION_APPROVE"
-                                      ? " "
-                                      : "permission_blur"
-                                      }`}
-                                    onClick={(e) =>
-                                      PermissionData()
-                                        ?.ALLOW_PENDING_ACTION_APPROVE ==
-                                        "ALLOW_PENDING_ACTION_APPROVE"
-                                        ? ActionCorrectFun(e, item)
-                                        : ""
-                                    }
-                                  >
-                                    <svg
-                                      width="25"
-                                      height="25"
-                                      viewBox="0 0 25 25"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM18.7793 10.1941C19.4388 9.48749 19.4006 8.38011 18.6941 7.72065C17.9875 7.06119 16.8801 7.09938 16.2207 7.80594L10.4566 13.9817L8.23744 11.7626C7.55402 11.0791 6.44598 11.0791 5.76256 11.7626C5.07915 12.446 5.07915 13.554 5.76256 14.2374L9.26256 17.7374C9.59815 18.073 10.0556 18.2579 10.5302 18.2497C11.0047 18.2416 11.4555 18.041 11.7793 17.6941L18.7793 10.1941Z"
-                                        fill="#4BAE4F"
-                                      />
-                                    </svg>
-                                  </button> */}
-                                  </div>
-                                ) : (
-                                  <div className="action-btngroup">
-                                    <button
-                                      type="button"
-                                      className={`${
-                                        PermissionData()?.ALLOW_CANCEL_ACTION ==
-                                        "ALLOW_CANCEL_ACTION"
-                                          ? " "
-                                          : "permission_blur"
-                                      }`}
-                                      onClick={(e) =>
-                                        PermissionData()?.ALLOW_CANCEL_ACTION ==
-                                        "ALLOW_CANCEL_ACTION"
-                                          ? DeletePending(
-                                              e,
-                                              item.product_order_id
-                                            )
-                                          : ""
-                                      }
-                                    >
-                                      <svg
-                                        width="25"
-                                        height="25"
-                                        viewBox="0 0 25 25"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          clipRule="evenodd"
-                                          d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM6.80954 6.98509L10.4481 12.5137L6.6175 18.2849H10.1146L12.4999 14.4138L14.875 18.2849H18.3822L14.5314 12.5137L18.2104 6.98509H14.7133L12.4999 10.5832L10.3066 6.98509H6.80954Z"
-                                          fill="#F14336"
-                                        />
-                                      </svg>
-                                    </button>
-                                    {/* <button
-                                      type="button"
-                                      className={`btnnn ${pendingconfirmbutton ? "btn-active" : ""
-                                        }
-                                    ${item.payment_status == "SUCCESSFUL"
-                                          ? ""
-                                          : "display_opacity"
-                                        }
-                                      ${PermissionData()
-                                          ?.ALLOW_PENDING_ACTION_APPROVE ==
-                                          "ALLOW_PENDING_ACTION_APPROVE"
-                                          ? " "
-                                          : "permission_blur"
-                                        }`}
-                                    >
-                                      <svg
-                                        width="25"
-                                        height="25"
-                                        viewBox="0 0 25 25"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          clipRule="evenodd"
-                                          d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM18.7793 10.1941C19.4388 9.48749 19.4006 8.38011 18.6941 7.72065C17.9875 7.06119 16.8801 7.09938 16.2207 7.80594L10.4566 13.9817L8.23744 11.7626C7.55402 11.0791 6.44598 11.0791 5.76256 11.7626C5.07915 12.446 5.07915 13.554 5.76256 14.2374L9.26256 17.7374C9.59815 18.073 10.0556 18.2579 10.5302 18.2497C11.0047 18.2416 11.4555 18.041 11.7793 17.6941L18.7793 10.1941Z"
-                                          fill="#4BAE4F"
-                                        />
-                                      </svg>
-                                    </button> */}
-                                  </div>
-                                )}
-                              </td>
-                              <td>
-                                {item.payment_status == "SUCCESSFUL" ? (
-                                  <select
-                                    className={`${
-                                      PermissionData()
-                                        ?.ALLOW_PENDING_ACTION_APPROVE ==
-                                      "ALLOW_PENDING_ACTION_APPROVE"
-                                        ? "form-select"
-                                        : "permission_blur"
-                                    }`}
-                                    value={payloaddeliveryboyid[2]}
-                                    // selected={item.product_order_id==payloadorderid.product_order_id?"selected":""}
-                                    selected
-                                    // disabled
-                                    // hidden
-
-                                    onChange={(e) =>
-                                      PermissionData()
-                                        ?.ALLOW_PENDING_ACTION_APPROVE ==
-                                      "ALLOW_PENDING_ACTION_APPROVE"
-                                        ? DeliveryBoy(e, item)
-                                        : ""
-                                    }
-                                  >
-                                    <option
-                                      value={
-                                        payloaddeliveryboyid == ""
-                                          ? "none"
-                                          : payloaddeliveryboyid[2]
-                                      }
-                                    >
-                                      {payloaddeliveryboyid == ""
-                                        ? "Select Delivery Boy"
-                                        : item.product_order_id ==
-                                          payloadorderid.product_order_id
-                                        ? payloaddeliveryboyid[2]
-                                        : "Select Delivery Boy"}
-                                    </option>
-                                    {PermissionData()
-                                      ?.ALLOW_PENDING_ACTION_APPROVE ==
-                                    "ALLOW_PENDING_ACTION_APPROVE"
-                                      ? GetSettingDeliveryboyInfoData?.data?.delivery_boy_info?.map(
-                                          (item, id) => {
-                                            return (
-                                              <option
-                                                // selected={
-                                                //   item?.name ==
-                                                //   item.delivery_boy_id
-                                                // }
-                                                value={[
-                                                  item.delivery_boy_id,
-                                                  item?.email,
-                                                  item?.name,
-                                                ]}
-                                              >
-                                                {item?.name}
-                                              </option>
-                                            );
-                                          }
-                                        )
-                                      : ""}
-                                  </select>
-                                ) : (
-                                  <select
-                                    className={`form-select input_filed_block`}
-                                    disabled
-                                    onChange={(e) => DeliveryBoy(e, item)}
-                                  >
-                                    <option
-                                      value="none"
-                                      selected
-                                      disabled
-                                      hidden
-                                    >
-                                      Select Delivery Boy
-                                    </option>
-                                    {GetSettingDeliveryboyInfoData?.data?.delivery_boy_info?.map(
-                                      (item, id) => {
-                                        return (
-                                          <option
-                                            selected={
-                                              item?.name == item.delivery_boy_id
-                                            }
-                                            value={[
-                                              item.delivery_boy_id,
-                                              item?.email,
-                                              item?.name,
-                                            ]}
-                                          >
-                                            {item?.name}
-                                          </option>
-                                        );
-                                      }
-                                    )}
-                                  </select>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })
-                      : ""}
-                  </table>
-                </div>
-                {/* ready for pickup */}
-                <div
-                  className={`tab-pane fade ${
-                    readyforpickuptab ? "show active" : "-1"
-                  }`}
-                  id="readyforpickup-tab-pane"
-                  role="tabpanel"
-                  aria-labelledby="readyforpickup-tab"
-                  tabindex={`${readyforpickuptab ? "0" : "-1"}`}
-                >
-                  <table>
-                    <tr>
-                      {Is_delivery_boy !== "true" ? "" : <th>Date</th>}
-                      <th> Order Id </th>
-                      {Is_delivery_boy !== "true" ? (
-                        <th>Delivery Boy Name</th>
-                      ) : (
-                        <th>Picked Number</th>
-                      )}
-                      <th>Customer Name</th>
-                      {Is_delivery_boy !== "true" ? (
-                        <th style={{ textAlign: "center" }}>Receiver Name</th>
-                      ) : (
-                        <th style={{ textAlign: "center" }}>Pickedup Name</th>
-                      )}
-                      <th>Method</th>
-                      <th>Pickedup Address</th>
-                      <th>Action</th>
-                    </tr>
-                    {PermissionData()?.VIEW_ORDER_READY_TO_PICKUP ==
-                    "VIEW_ORDER_READY_TO_PICKUP"
-                      ? adminorderreadyforpickupdata &&
-                        adminorderreadyforpickupdata?.map((item, id) => {
-                          return (
-                            <tr>
-                              {Is_delivery_boy !== "true" ? (
-                                ""
-                              ) : (
-                                <td>
-                                  {new Date(
-                                    item?.date_time
-                                  )?.toLocaleDateString()}
-                                </td>
-                              )}
-                              <td>
-                                <b
-                                  type="button"
-                                  onClick={(e) =>
-                                    IntransitFun(e, item.product_order_id)
-                                  }
-                                >
-                                  {" "}
-                                  {item.product_order_id}
-                                </b>
-                              </td>
-                              {Is_delivery_boy !== "true" ? (
-                                <td>
-                                  {item.delivery_boy ? item.delivery_boy : ""}
-                                </td>
-                              ) : (
-                                <td>
-                                  {item?.address?.phone_number
-                                    ? item?.address?.phone_number
-                                    : ""}
-                                </td>
-                              )}
-                              <td>{item.name ? item.name : ""}</td>
-
-                              {Is_delivery_boy !== "true" ? (
-                                <td style={{ textAlign: "center" }}>
-                                  {item.receiver_name ? item.receiver_name : ""}
-                                </td>
-                              ) : (
-                                <td style={{ textAlign: "center" }}>
-                                  {item?.address?.name
-                                    ? item?.address?.name
-                                    : ""}
-                                </td>
-                              )}
-                              <td>{item.method}</td>
-
-                              <td>
-                                {item?.product_order_id != activeButton
-                                  ? item?.address?.address.slice(0, 10)
-                                  : item?.address?.address.slice(0, 10)}
-                                <span
-                                  onClick={(e) => showAddressFun(e, item)}
-                                  role="button"
-                                  style={{
-                                    color: "#faad14",
-                                    fontWeight: "400",
-                                    fontSize: "13px",
-                                  }}
-                                >
-                                  {item?.product_order_id != activeButton
-                                    ? "..more"
-                                    : "..less"}
-                                </span>
-
-                                <span
-                                  className="order-btn text-primary"
-                                  role="button"
-                                >
-                                  {item?.product_order_id == activeButton && (
-                                    <div className="dropdown">
-                                      <ul className=" address_all ">
-                                        <li className="text-dark text-nowrap">
-                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  )}
-                                </span>
-                              </td>
-                              <td>
-                                <div className="action-btngroup">
-                                  <button
-                                    type="button"
-                                    className={`btn btn-ship ${
-                                      PermissionData()
-                                        ?.ALLOW_READY_TO_PICKUP_ACTION ==
-                                      "ALLOW_READY_TO_PICKUP_ACTION"
-                                        ? " "
-                                        : "permission_blur"
-                                    }`}
-                                    onClick={(e) =>
-                                      PermissionData()
-                                        ?.ALLOW_READY_TO_PICKUP_ACTION ==
-                                      "ALLOW_READY_TO_PICKUP_ACTION"
-                                        ? PickupTrack(e, item.product_order_id)
-                                        : ""
-                                    }
-                                  >
-                                    Picked Up
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })
-                      : ""}
-                  </table>
-                </div>
                 {/* pickup */}
-                <div
-                  className={`tab-pane fade ${
-                    pickuptab ? "show active" : "-1"
-                  }`}
-                  id="pickup-tab-pane"
-                  role="tabpanel"
-                  aria-labelledby="pickup-tab"
-                  tabindex={`${pickuptab ? "0" : "-1"}`}
-                >
-                  <table>
-                    <tr>
-                      {Is_delivery_boy !== "true" ? "" : <th>Date</th>}
-                      <th> Order Id </th>
-                      {Is_delivery_boy !== "true" ? (
-                        <th>Delivery Boy Name</th>
-                      ) : (
-                        <th>Picked Number</th>
-                      )}
-                      <th>Customer Name</th>
-                      {Is_delivery_boy !== "true" ? (
-                        <th style={{ textAlign: "center" }}>Receiver Name</th>
-                      ) : (
-                        <th style={{ textAlign: "center" }}>Pickedup Name</th>
-                      )}
-                      <th>Method</th>
-                      <th>Pickedup Address</th>
-                      <th>Action</th>
-                    </tr>
-                    {PermissionData()?.VIEW_ORDER_PICKUP == "VIEW_ORDER_PICKUP"
-                      ? adminorderpickupdata &&
-                        adminorderpickupdata?.map((item, id) => {
-                          return (
-                            <tr>
-                              {Is_delivery_boy !== "true" ? (
-                                ""
-                              ) : (
-                                <td>
-                                  {new Date(
-                                    item?.date_time
-                                  )?.toLocaleDateString()}
-                                </td>
-                              )}
-                              <td>
-                                <b
-                                  type="button"
-                                  onClick={(e) =>
-                                    IntransitFun(e, item.product_order_id)
-                                  }
-                                >
-                                  {" "}
-                                  {item.product_order_id}
-                                </b>
-                              </td>
-                              {Is_delivery_boy !== "true" ? (
-                                <td>
-                                  {item.delivery_boy ? item.delivery_boy : ""}
-                                </td>
-                              ) : (
-                                <td>
-                                  {item?.address?.phone_number
-                                    ? item?.address?.phone_number
-                                    : ""}
-                                </td>
-                              )}
-                              <td>{item.name ? item.name : ""}</td>
 
-                              {Is_delivery_boy !== "true" ? (
-                                <td style={{ textAlign: "center" }}>
-                                  {item.receiver_name ? item.receiver_name : ""}
-                                </td>
-                              ) : (
-                                <td style={{ textAlign: "center" }}>
-                                  {item.address.name ? item.address.name : ""}
-                                </td>
-                              )}
-                              <td>{item.method}</td>
-
-                              <td>
-                                {item?.product_order_id != activeButton
-                                  ? item?.address?.address.slice(0, 10)
-                                  : item?.address?.address.slice(0, 10)}
-                                <span
-                                  onClick={(e) => showAddressFun(e, item)}
-                                  role="button"
-                                  style={{
-                                    color: "#faad14",
-                                    fontWeight: "400",
-                                    fontSize: "13px",
-                                  }}
-                                >
-                                  {item?.product_order_id != activeButton
-                                    ? "..more"
-                                    : "..less"}
-                                </span>
-
-                                <span
-                                  className="order-btn text-primary"
-                                  role="button"
-                                >
-                                  {item?.product_order_id == activeButton && (
-                                    <div className="dropdown">
-                                      <ul className=" address_all ">
-                                        <li className="text-dark text-nowrap">
-                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  )}
-                                </span>
-                              </td>
-                              <td>
-                                <div className="action-btngroup">
-                                  <button
-                                    type="button"
-                                    className={`btn btn-ship ${
-                                      PermissionData()?.ALLOW_PICKUP_ACTION ==
-                                      "ALLOW_PICKUP_ACTION"
-                                        ? " "
-                                        : "permission_blur"
-                                    }`}
-                                    onClick={(e) =>
-                                      PermissionData()?.ALLOW_PICKUP_ACTION ==
-                                      "ALLOW_PICKUP_ACTION"
-                                        ? ReceivedAtHubTrack(
-                                            e,
-                                            item.product_order_id
-                                          )
-                                        : ""
-                                    }
-                                  >
-                                    Recieved At Hub
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })
-                      : ""}
-                  </table>
-                </div>
+                {param.hash == "#picked_up" && (
+                  <ReadyToPickup
+                    Accesspage={"#picked_up"}
+                    classNamePro={`tab-pane fade ${
+                      pickuptab ? "show active" : "-1"
+                    }`}
+                    tabindexProp={`${pickuptab ? "0" : "-1"}`}
+                    Is_delivery_boy={Is_delivery_boy}
+                    PermissionData={PermissionData()}
+                    adminorderpickupdata={adminorderpickupdata}
+                    IntransitFun={IntransitFun}
+                    showAddressFun={showAddressFun}
+                    activeButton={activeButton}
+                    ReceivedAtHubTrack={ReceivedAtHubTrack}
+                  />
+                )}
 
                 {/* received at hub */}
-                <div
-                  className={`tab-pane fade ${
+
+                <ReceivedAtHub
+                  classNameProp={`tab-pane fade ${
                     receivedathubtab ? "show active" : "-1"
                   }`}
-                  id="receivedathub-tab-pane"
-                  role="tabpanel"
-                  aria-labelledby="receivedathub-tab"
-                  tabindex={`${receivedathubtab ? "0" : "-1"}`}
-                >
-                  <table>
-                    <tr>
-                      <th> Order Id </th>
-                      <th>Delivery Boy Name</th>
-                      <th>Customer Name</th>
-                      <th style={{ textAlign: "center" }}>Receiver Name</th>
-                      <th>Method</th>
-                      <th>Pickup Address</th>
-                      <th>Action</th>
-                    </tr>
-                    {PermissionData()?.VIEW_ORDER_RECIEVED_AT_HUB ==
-                    "VIEW_ORDER_RECIEVED_AT_HUB"
-                      ? adminorderreceivedathubdata &&
-                        adminorderreceivedathubdata?.map((item, id) => {
-                          return (
-                            <tr>
-                              <td>
-                                <b
-                                  type="button"
-                                  onClick={(e) =>
-                                    IntransitFun(e, item.product_order_id)
-                                  }
-                                >
-                                  {" "}
-                                  {item.product_order_id}
-                                </b>
-                              </td>
-                              <td>
-                                {item.delivery_boy ? item.delivery_boy : ""}
-                              </td>
-                              <td>{item.name ? item.name : ""}</td>
+                  tabindexProp={`${receivedathubtab ? "0" : "-1"}`}
+                  PermissionData={PermissionData()}
+                  adminorderreceivedathubdata={adminorderreceivedathubdata}
+                  IntransitFun={IntransitFun}
+                  showAddressFun={showAddressFun}
+                  activeButton={activeButton}
+                  ActionCorrectFun={ActionCorrectFun}
+                />
 
-                              <td style={{ textAlign: "center" }}>
-                                {item.receiver_name ? item.receiver_name : ""}
-                              </td>
-                              <td>{item.method}</td>
-
-                              <td>
-                                {item?.product_order_id != activeButton
-                                  ? item?.address?.address.slice(0, 10)
-                                  : item?.address?.address.slice(0, 10)}
-                                <span
-                                  onClick={(e) => showAddressFun(e, item)}
-                                  role="button"
-                                  style={{
-                                    color: "#faad14",
-                                    fontWeight: "400",
-                                    fontSize: "13px",
-                                  }}
-                                >
-                                  {item?.product_order_id != activeButton
-                                    ? "..more"
-                                    : "..less"}
-                                </span>
-
-                                <span
-                                  className="order-btn text-primary"
-                                  role="button"
-                                >
-                                  {item?.product_order_id == activeButton && (
-                                    <div className="dropdown">
-                                      <ul className=" address_all ">
-                                        <li className="text-dark text-nowrap">
-                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  )}
-                                </span>
-                              </td>
-                              <td>
-                                {
-                                  <div className="action-btngroup">
-                                    <button
-                                      type="button"
-                                      className={`${
-                                        PermissionData()
-                                          ?.ALLOW_RECIEVED_AT_HUB_ACTION ==
-                                        "ALLOW_RECIEVED_AT_HUB_ACTION"
-                                          ? " "
-                                          : "permission_blur"
-                                      }`}
-                                      onClick={(e) =>
-                                        PermissionData()
-                                          ?.ALLOW_RECIEVED_AT_HUB_ACTION ==
-                                        "ALLOW_RECIEVED_AT_HUB_ACTION"
-                                          ? ActionCorrectFun(e, item)
-                                          : ""
-                                      }
-                                    >
-                                      <svg
-                                        width="25"
-                                        height="25"
-                                        viewBox="0 0 25 25"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          clipRule="evenodd"
-                                          d="M12.5 25C19.4036 25 25 19.4036 25 12.5C25 5.59644 19.4036 0 12.5 0C5.59644 0 0 5.59644 0 12.5C0 19.4036 5.59644 25 12.5 25ZM18.7793 10.1941C19.4388 9.48749 19.4006 8.38011 18.6941 7.72065C17.9875 7.06119 16.8801 7.09938 16.2207 7.80594L10.4566 13.9817L8.23744 11.7626C7.55402 11.0791 6.44598 11.0791 5.76256 11.7626C5.07915 12.446 5.07915 13.554 5.76256 14.2374L9.26256 17.7374C9.59815 18.073 10.0556 18.2579 10.5302 18.2497C11.0047 18.2416 11.4555 18.041 11.7793 17.6941L18.7793 10.1941Z"
-                                          fill="#4BAE4F"
-                                        />
-                                      </svg>
-                                    </button>
-                                  </div>
-                                }
-                              </td>
-                            </tr>
-                          );
-                        })
-                      : ""}
-                  </table>
-                </div>
                 {/* {booked} */}
 
-                <div
-                  className={`tab-pane fade ${booktab ? "show active" : "-1"}`}
-                  id="booked-tab-pane"
-                  role="tabpanel"
-                  aria-labelledby="booked-tab"
-                  tabindex={`${booktab ? "0" : "-1"}`}
-                >
-                  <table>
-                    <tr>
-                      <th> Order Id </th>
-                      <th>Customer Name</th>
-                      <th>Receiver Name</th>
-                      <th style={{ textAlign: "center" }}>Package Detail</th>
-                      <th>Method</th>
-                      <th>Pickup Address</th>
-                      {/* <th>Status</th> */}
-                      <th>Action</th>
-                    </tr>
-                    {PermissionData()?.VIEW_ORDER_BOOKED == "VIEW_ORDER_BOOKED"
-                      ? adminorderbookeddata &&
-                        adminorderbookeddata?.map((item, id) => {
-                          return (
-                            <tr>
-                              {/* <td
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                <b> {item.product_order_id}</b>
-                              </td> */}
-                              <td>
-                                <b
-                                  type="button"
-                                  onClick={(e) =>
-                                    IntransitFun(e, item.product_order_id)
-                                  }
-                                >
-                                  {" "}
-                                  {item.product_order_id}
-                                </b>
-                              </td>
-                              <td>{item.name ? item.name : ""}</td>
-                              <td>
-                                {item.receiver_name ? item.receiver_name : ""}
-                              </td>
-
-                              <td style={{ textAlign: "center" }}>
-                                {item.package_details}
-                              </td>
-                              <td>{item.method}</td>
-
-                              <td>
-                                {item?.product_order_id != activeButton
-                                  ? item?.address?.address.slice(0, 10)
-                                  : item?.address?.address.slice(0, 10)}
-                                <span
-                                  onClick={(e) => showAddressFun(e, item)}
-                                  // className="order-btn text-primary"
-                                  role="button"
-                                  style={{
-                                    color: "#faad14",
-                                    fontWeight: "400",
-                                    fontSize: "13px",
-                                  }}
-                                >
-                                  {item?.product_order_id != activeButton
-                                    ? "..more"
-                                    : "..less"}
-                                </span>
-
-                                <span
-                                  className="order-btn text-primary"
-                                  role="button"
-                                >
-                                  {item?.product_order_id == activeButton && (
-                                    <div className="dropdown">
-                                      <ul className=" address_all ">
-                                        <li className="text-dark text-nowrap">
-                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  )}
-                                </span>
-                              </td>
-
-                              {/* 
-                              <td>
-                                {item?.product_order_id != activeButton
-                                  ? item?.address?.address.slice(0, 10)
-                                  : ""}
-
-                                {item?.product_order_id != activeButton && (
-                                  <b
-                                    onClick={(e) => showAddressFun(e, item)}
-                                    style={{
-                                      color: "#faad14",
-                                      fontWeight: "400",
-                                      fontSize: "13px",
-                                    }}
-                                    type="button"
-                                  >
-                                    {" "}
-                                    ...read more
-                                  </b>
-                                )}
-
-
-                                
-
-                                {item?.product_order_id == activeButton &&
-                                  `${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-
-                                {item?.product_order_id == activeButton && (
-                                  <b
-                                    onClick={(e) => showAddressFun(e, item)}
-                                    style={{
-                                      color: "#faad14",
-                                      fontWeight: "400",
-                                      fontSize: "13px",
-                                    }}
-                                    type="button"
-                                  >
-                                    {" "}
-                                    ...less
-                                  </b>
-                                )}
-
-                              </td> */}
-
-                              {/* <td>{item.cod_status}</td> */}
-                              <td>
-                                <div className="action-btngroup">
-                                  <button
-                                    type="button"
-                                    className={`btn btn-ship ${
-                                      PermissionData()?.ALLOW_BOOKED_ACTION ==
-                                      "ALLOW_BOOKED_ACTION"
-                                        ? " "
-                                        : "permission_blur"
-                                    }`}
-                                    onClick={(e) =>
-                                      PermissionData()?.ALLOW_BOOKED_ACTION ==
-                                      "ALLOW_BOOKED_ACTION"
-                                        ? TransitTrack(e, item.product_order_id)
-                                        : ""
-                                    }
-                                  >
-                                    In-Transit
-                                  </button>
-                                  {/* <button type="button" className="btn order-btn">
-                                    <img
-                                      src="/images/icon32.png"
-                                      alt="img"
-                                      onClick={(e) => EditCancelFun(e, item)}
-                                    />
-
-                                    {editcancelobjectdata ==
-                                      item.product_order_id && (
-                                        <ul className="dropdown">
-                                          <li
-                                            onClick={(e) =>
-                                              CancelOrder(e, item.product_order_id)
-                                            }
-                                          >
-                                            <a href="#">Cancel Order</a>
-                                          </li>
-                                        </ul>
-                                      )}
-                                  </button> */}
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })
-                      : ""}
-                  </table>
-                </div>
+                <Booked
+                  classNameProp={`tab-pane fade ${
+                    booktab ? "show active" : "-1"
+                  }`}
+                  tabindexProp={`${booktab ? "0" : "-1"}`}
+                  PermissionData={PermissionData()}
+                  adminorderbookeddata={adminorderbookeddata}
+                  IntransitFun={IntransitFun}
+                  showAddressFun={showAddressFun}
+                  activeButton={activeButton}
+                  TransitTrack={TransitTrack}
+                />
 
                 {/* in-transit start */}
 
-                <div
-                  className={`tab-pane fade   ${
-                    transittab ? "show active" : ""
+                <InTransit
+                  classNameProp={`tab-pane fade ${
+                    transittab ? "show active" : "-1"
                   }`}
-                  id="transit-tab-pane"
-                  role="tabpanel"
-                  aria-labelledby="transit-tab"
-                  tabindex={`${transittab ? "0" : "-1"}`}
-                >
-                  <table>
-                    <tr>
-                      <th> Order Id </th>
-                      <th>Customer Name</th>
-                      <th>Receiver Name</th>
-                      <th>Product Type</th>
-                      <th>Method</th>
-                      {B2BPartner == "false" ? <th>Partner</th> : ""}
-                      <th>Action</th>
-                    </tr>
-
-                    {PermissionData()?.VIEW_ORDER_IN_TRANSIT ==
-                    "VIEW_ORDER_IN_TRANSIT"
-                      ? adminorderintransitDate &&
-                        adminorderintransitDate.map((item, id) => {
-                          return (
-                            <tr>
-                              {/* <td
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                <b> {item.product_order_id}</b>
-                              </td> */}
-                              <td>
-                                <b
-                                  type="button"
-                                  onClick={(e) =>
-                                    IntransitFun(e, item.product_order_id)
-                                  }
-                                >
-                                  {" "}
-                                  {item.product_order_id}
-                                </b>
-                              </td>
-                              <td> {item.name ? item.name : ""}</td>
-                              <td>
-                                {" "}
-                                {item.receiver_name ? item.receiver_name : ""}
-                              </td>
-                              <td> {item.product_type} </td>
-                              <td> {item.method} </td>
-                              {B2BPartner == "false" ? (
-                                <td> {item.delivery_partner}</td>
-                              ) : (
-                                ""
-                              )}
-                              <td>
-                                <div className="action-btngroup actionordergroup">
-                                  <button
-                                    type="button"
-                                    className={`btn btn-ship ${
-                                      PermissionData()
-                                        ?.ALLOW_OUT_FOR_DELIVERY_ACTION ==
-                                      "ALLOW_OUT_FOR_DELIVERY_ACTION"
-                                        ? " "
-                                        : "permission_blur"
-                                    }`}
-                                    onClick={(e) =>
-                                      PermissionData()
-                                        ?.ALLOW_OUT_FOR_DELIVERY_ACTION ==
-                                      "ALLOW_OUT_FOR_DELIVERY_ACTION"
-                                        ? DeliveredTrack(
-                                            e,
-                                            item.product_order_id
-                                          )
-                                        : ""
-                                    }
-                                  >
-                                    {" "}
-                                    Out For Delivery
-                                  </button>
-                                  <div className="actionordergroup">
-                                    {PermissionData()
-                                      ?.ALLOW_TRACKING_INTRANSIT_ACTION ==
-                                    "ALLOW_TRACKING_INTRANSIT_ACTION" ? (
-                                      <button className="actionordermenu">
-                                        <img
-                                          src={dots}
-                                          alt="img"
-                                          onClick={(e) =>
-                                            TrackLocation(e, item)
-                                          }
-                                        />{" "}
-                                      </button>
-                                    ) : (
-                                      ""
-                                    )}
-                                    {/* <ul className="actionorder-menulist">
-                                      <li> <a href="#"> Edit Order </a> </li>
-                                      <li> <a href="#"> Cancel Order </a> </li>
-                                    </ul> */}
-                                  </div>
-
-                                  {/* <select type="button" className="btn order-btn"
-                                    onChange={(e) => IntransitActionFun(e, item)}
-                                  >
-
-                                    <option selected={reasonActionValue == "null"} value="null"  >
-                                      Select
-                                    </option>
-                                  
-
-                                    {PermissionData()?.ALLOW_OUT_FOR_DELIVERY_ACTION == "ALLOW_OUT_FOR_DELIVERY_ACTION" ? <option value="OUT_FOR_DELIVERED">
-                                      Out For Delivery
-                                    </option>
-                                      : <option disabled className={`btn ${PermissionData()?.ALLOW_OUT_FOR_DELIVERY_ACTION == "ALLOW_OUT_FOR_DELIVERY_ACTION" ? "permission_blur" : ""}`} 
-                                      value="OFD">Out For Delivery
-                                      </option>
-                                    }
-                                
-                                    {PermissionData()?.ALLOW_RETURN_ACTION == "ALLOW_RETURN_ACTION" ? <option value="RTO">
-                                      RTO
-                                    </option>
-                                      : <option disabled className={`btn ${PermissionData()?.ALLOW_RETURN_ACTION == "ALLOW_RETURN_ACTION" ? "permission_blur" : ""}`} 
-                                      value="rto">RTO
-                                      </option>
-                                    }
-                                  
-
-                                  </select>
-                             */}
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })
-                      : ""}
-                  </table>
-                </div>
-
-                {/* {Delivered} */}
-
-                <div
-                  className={`tab-pane fade ${
-                    deliveredtab ? "show active" : ""
-                  }`}
-                  id="delivered-tab-pane"
-                  role="tabpanel"
-                  aria-labelledby="delivered-tab"
-                  tabindex={`${deliveredtab ? "0" : "-1"}`}
-                >
-                  <table>
-                    <tr>
-                      <th> Order Id </th>
-                      <th>Customer Name</th>
-                      <th>Receiver Name</th>
-                      <th>Product Type</th>
-                      <th>Method</th>
-                      {B2BPartner == "false" ? <th>Partner</th> : ""}
-                    </tr>
-
-                    {PermissionData()?.VIEW_ORDER_DELIVERED ==
-                    "VIEW_ORDER_DELIVERED"
-                      ? adminorderdeliveredData &&
-                        adminorderdeliveredData.map((item, id) => {
-                          return (
-                            <tr>
-                              <td>
-                                <b
-                                  type="button"
-                                  onClick={(e) =>
-                                    IntransitFun(e, item.product_order_id)
-                                  }
-                                >
-                                  {" "}
-                                  {item.product_order_id}
-                                </b>
-                              </td>
-
-                              <td> {item.name ? item.name : ""}</td>
-                              <td>
-                                {" "}
-                                {item.receiver_name ? item.receiver_name : ""}
-                              </td>
-                              <td> {item.product_type}</td>
-                              <td> {item.method}</td>
-                              {B2BPartner == "false" ? (
-                                <td> {item.delivery_partner}</td>
-                              ) : (
-                                ""
-                              )}
-                              {/* <td>
-                              <div className="action-btngroup"> */}
-                              {/* <select
-                                  type="button"
-                                  className={`  btn order-btn ${PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? " " : "permission_blur"}`}
-                                  onChange={((e) => PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION"
-                                    ? ReturnTrack(e, item.product_order_id) : "")}
-                                >
-                                  <option value="" selected={SelectedReasonTrue}  >
-                                    Select
-                                  </option>
-                                  <option value="RTO" selected={!SelectedReasonTrue}  >
-                                    Return
-                                  </option>
-                                </select> */}
-                              {/* <button type="button"  
-
-                                    className={`btn btn-ship ${PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? " " : "permission_blur"}`}
-                                   onClick={((e) => PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION"
-                                   ? OutForDevliveryActionFun(e, item) : "")}>
-                                  {" "}
-                                 Return{" "}
-                                </button> */}
-
-                              {/* <button type="button" className="btn order-btn">
-                                  <img
-                                    src="/images/icon32.png"
-                                    alt="img"
-                                    onClick={(e) => EditCancelFun(e, item)}
-                                  />
-
-                                  {editcancelobjectdata ==
-                                    item.product_order_id && (
-                                      <ul className="dropdown">
-                                        <li
-                                          onClick={(e) =>
-                                            CancelOrder(e, item.product_order_id)
-                                          }
-                                        >
-                                          <a href="#">Cancel Order</a>
-                                        </li>
-                                      </ul>
-                                    )}
-                                </button> */}
-                              {/* </div>
-                            </td> */}
-                            </tr>
-                          );
-                        })
-                      : ""}
-                  </table>
-                </div>
+                  tabindexProp={`${transittab ? "0" : "-1"}`}
+                  B2BPartner={B2BPartner}
+                  PermissionData={PermissionData()}
+                  adminorderintransitDate={adminorderintransitDate}
+                  IntransitFun={IntransitFun}
+                  showAddressFun={showAddressFun}
+                  activeButton={activeButton}
+                  DeliveredTrack={DeliveredTrack}
+                  dots={dots} //image
+                  TrackLocation={TrackLocation}
+                />
 
                 {/* {OUt For Deliviry} */}
 
-                <div
-                  className={`tab-pane fade ${
-                    outfordeliverytab ? "show active" : ""
+                <OutForDelivery
+                  classNameProp={`tab-pane fade ${
+                    outfordeliverytab ? "show active" : "-1"
                   }`}
-                  id="outfordelivery-tab-pane"
-                  role="tabpanel"
-                  aria-labelledby="outfordelivery-tab"
-                  tabindex={`${outfordeliverytab ? "0" : "-1"}`}
-                >
-                  <table>
-                    <tr>
-                      <th> Order Id </th>
-                      <th>Customer Name</th>
-                      <th>Receiver Name</th>
-                      <th>Product Type</th>
-                      <th>Method</th>
-                      {B2BPartner == "false" ? <th>Partner</th> : ""}
-                      <th>Action</th>
-                    </tr>
+                  tabindexProp={`${outfordeliverytab ? "0" : "-1"}`}
+                  B2BPartner={B2BPartner}
+                  PermissionData={PermissionData()}
+                  adminoutfordeliveryData={adminoutfordeliveryData}
+                  IntransitFun={IntransitFun}
+                  OutForDevliveryActionFun={OutForDevliveryActionFun}
+                  reasonActionValue={reasonActionValue}
+                  showAddressFun={showAddressFun}
+                  activeButton={activeButton}
+                  DeliveredTrack={DeliveredTrack}
+                  dots={dots} //image
+                  TrackLocation={TrackLocation}
+                />
 
-                    {PermissionData()?.VIEW_ORDER_OUT_FOR_DELIVERED ==
-                    "VIEW_ORDER_OUT_FOR_DELIVERED"
-                      ? adminoutfordeliveryData &&
-                        adminoutfordeliveryData.map((item, id) => {
-                          return (
-                            <tr>
-                              <td>
-                                <b
-                                  onClick={(e) =>
-                                    IntransitFun(e, item.product_order_id)
-                                  }
-                                  style={{ cursor: "pointer" }}
-                                >
-                                  {" "}
-                                  {item.product_order_id}
-                                </b>
-                              </td>
-                              <td> {item.name ? item.name : " "}</td>
-                              <td>
-                                {" "}
-                                {item.receiver_name ? item.receiver_name : " "}
-                              </td>
-                              <td> {item.product_type}</td>
-                              <td> {item.method}</td>
-                              {B2BPartner == "false" ? (
-                                <td> {item.delivery_partner}</td>
-                              ) : (
-                                ""
-                              )}
-                              <td>
-                                <div className="action-btngroup actionordergroup">
-                                  <select
-                                    disabled={
-                                      PermissionData()
-                                        ?.ALLOW_DELIVERED_ACTION ==
-                                        "ALLOW_DELIVERED_ACTION" ||
-                                      PermissionData()
-                                        ?.ALLOW_IN_TRANSIT_ACTION ==
-                                        "ALLOW_IN_TRANSIT_ACTION" ||
-                                      PermissionData()?.ALLOW_RETURN_ACTION ==
-                                        "ALLOW_RETURN_ACTION"
-                                        ? ""
-                                        : "disabled"
-                                    }
-                                    type="button"
-                                    className="btn order-btn"
-                                    onChange={(e) =>
-                                      OutForDevliveryActionFun(e, item)
-                                    }
-                                  >
-                                    <option
-                                      selected={reasonActionValue == "null"}
-                                      value="null"
-                                    >
-                                      Select
-                                    </option>
-                                    {PermissionData()?.ALLOW_DELIVERED_ACTION ==
-                                    "ALLOW_DELIVERED_ACTION" ? (
-                                      <option value="DELIVERED">
-                                        Delivered
-                                      </option>
-                                    ) : (
-                                      <option
-                                        value="delivered"
-                                        disabled
-                                        className={`btn ${
-                                          PermissionData()
-                                            ?.ALLOW_DELIVERED_ACTION ==
-                                          "ALLOW_DELIVERED_ACTION"
-                                            ? "permission_blur"
-                                            : ""
-                                        }`}
-                                      >
-                                        Delivered
-                                      </option>
-                                    )}
-                                    {PermissionData()
-                                      ?.ALLOW_IN_TRANSIT_ACTION ==
-                                    "ALLOW_IN_TRANSIT_ACTION" ? (
-                                      <option value="IN_TRANSIT">
-                                        In-Transit
-                                      </option>
-                                    ) : (
-                                      <option
-                                        value="intransit"
-                                        disabled
-                                        className={`btn permission-btn ${
-                                          PermissionData()
-                                            ?.ALLOW_IN_TRANSIT_ACTION ==
-                                          "ALLOW_IN_TRANSIT_ACTION"
-                                            ? "permission_blur"
-                                            : ""
-                                        }`}
-                                      >
-                                        In-transit
-                                      </option>
-                                    )}
-                                    {PermissionData()?.ALLOW_RETURN_ACTION ==
-                                    "ALLOW_RETURN_ACTION" ? (
-                                      <option value="RTO">RTO</option>
-                                    ) : (
-                                      <option
-                                        disabled
-                                        className={`btn ${
-                                          PermissionData()
-                                            ?.ALLOW_RETURN_ACTION ==
-                                          "ALLOW_RETURN_ACTION"
-                                            ? "permission_blur"
-                                            : ""
-                                        }`}
-                                        value="rto"
-                                      >
-                                        RTO
-                                      </option>
-                                    )}
+                {/* {Delivered} */}
 
-                                    {/* <option value="IN_TRANSIT" 
-                                   className={`btn ${PermissionData()?.ALLOW_IN_TRANSIT_ACTION !== "ALLOW_IN_TRANSIT_ACTION" ? "permission_blur" : "permission_blur"}`} 
-                                   onClick={(e) => PermissionData()?.ALLOW_IN_TRANSIT_ACTION !== "ALLOW_IN_TRANSIT_ACTION" ? OutForDevliveryActionFun(e, item) : ""} >
-                                    In-transit
-                                  </option>  */}
-                                  </select>
-
-                                  {/* <button type="button"
-                                  className={`btn btn-ship ${PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? " " : "permission_blur"}`}
-                                  onClick={((e) => PermissionData()?.ALLOW_DELIVERED_ACTION == "ALLOW_DELIVERED_ACTION" ? ReturnTrack(e, item.product_order_id) : "")}>
-                                  {" "}
-                                   
-                                </button> */}
-                                  {/* <button type="button" className="btn order-btn">
-                                  <img
-                                    src="/images/icon32.png"
-                                    alt="img"
-                                    onClick={(e) => EditCancelFun(e, item)}
-                                  />
-
-                                  {editcancelobjectdata ==
-                                    item.product_order_id && (
-                                      <ul className="dropdown">
-                                        <li
-                                          onClick={(e) =>
-                                            CancelOrder(e, item.product_order_id)
-                                          }
-                                        >
-                                          <a href="#">Cancel Order</a>
-                                        </li>
-                                      </ul>
-                                    )}
-                                </button> */}
-                                  <div className="actionordergroup ms-2">
-                                    {PermissionData()
-                                      ?.ALLOW_TRACKING_OUT_FOR_DELIVERY_ACTION ==
-                                    "ALLOW_TRACKING_OUT_FOR_DELIVERY_ACTION" ? (
-                                      <button className="actionordermenu">
-                                        <img
-                                          src={dots}
-                                          alt="img"
-                                          onClick={(e) =>
-                                            TrackLocation(e, item)
-                                          }
-                                        />{" "}
-                                      </button>
-                                    ) : (
-                                      ""
-                                    )}
-                                  </div>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })
-                      : ""}
-                  </table>
-                </div>
+                <Delivered
+                  classNameProp={`tab-pane fade ${
+                    deliveredtab ? "show active" : "-1"
+                  }`}
+                  tabindexProp={`${deliveredtab ? "0" : "-1"}`}
+                  B2BPartner={B2BPartner}
+                  PermissionData={PermissionData()}
+                  adminorderdeliveredData={adminorderdeliveredData}
+                  IntransitFun={IntransitFun}
+                />
 
                 {/* {return} */}
 
-                <div
-                  className={`tab-pane fade ${returntab ? "show active" : ""}`}
-                  id="returns-tab-pane"
-                  role="tabpanel"
-                  aria-labelledby="returns-tab"
-                  tabindex={`${returntab ? "0" : "-1"}`}
-                >
-                  <table>
-                    <tr>
-                      <th>Order Id </th>
-
-                      <th>Customer Name</th>
-                      <th>Receiver Name</th>
-                      <th>Shipped Date</th>
-                      <th>Product Type</th>
-                      <th>RTO Address</th>
-                      {B2BPartner == "false" ? <th>Partner</th> : ""}
-                      <th>Action</th>
-                    </tr>
-                    {PermissionData()?.VIEW_ORDER_RETURNS ==
-                    "VIEW_ORDER_RETURNS"
-                      ? adminorderreturnData &&
-                        adminorderreturnData?.map((item, id) => {
-                          return (
-                            <tr>
-                              {/* <td
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                <b>{item.product_order_id}</b>
-                              </td> */}
-
-                              <td>
-                                <b
-                                  type="button"
-                                  onClick={(e) =>
-                                    IntransitFun(e, item.product_order_id)
-                                  }
-                                >
-                                  {" "}
-                                  {item.product_order_id}
-                                </b>
-                              </td>
-                              <td>{item.name ? item.name : ""}</td>
-                              <td>
-                                {item.receiver_name ? item.receiver_name : ""}
-                              </td>
-                              <td>
-                                {new Date(item.date_time).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    month: "short",
-                                    year: "numeric",
-                                    day: "numeric",
-                                  }
-                                )}
-                              </td>
-                              <td>{item.product_type}</td>
-                              <td>
-                                {item?.product_order_id != activeButton
-                                  ? item?.address?.address.slice(0, 10)
-                                  : item?.address?.address.slice(0, 10)}
-                                <span
-                                  onClick={(e) => showAddressFun(e, item)}
-                                  // className="order-btn text-primary"
-                                  role="button"
-                                  style={{
-                                    color: "#faad14",
-                                    fontWeight: "400",
-                                    fontSize: "13px",
-                                  }}
-                                >
-                                  {item?.product_order_id != activeButton
-                                    ? "..more"
-                                    : "..less"}
-                                </span>
-
-                                <span
-                                  className="order-btn text-primary"
-                                  role="button"
-                                >
-                                  {item?.product_order_id == activeButton && (
-                                    <div className="dropdown">
-                                      <ul className=" address_all ">
-                                        <li className="text-dark text-nowrap">
-                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  )}
-                                </span>
-                              </td>
-                              {B2BPartner == "false" ? (
-                                <td>{item.delivery_partner} </td>
-                              ) : (
-                                ""
-                              )}
-                              <td>
-                                <div className="action-btngroup actionordergroup">
-                                  <button
-                                    type="button"
-                                    className={`btn btn-ship ${
-                                      PermissionData()
-                                        ?.ALLOW_RTO_DELIVERED_ACTION ==
-                                      "ALLOW_RTO_DELIVERED_ACTION"
-                                        ? " "
-                                        : "permission_blur"
-                                    }`}
-                                    onClick={
-                                      (e) =>
-                                        PermissionData()
-                                          ?.ALLOW_RTO_DELIVERED_ACTION ==
-                                        "ALLOW_RTO_DELIVERED_ACTION"
-                                          ? ReturnDeliveredTrack(
-                                              e,
-                                              item.product_order_id
-                                            )
-                                          : ""
-                                      // ReturnDeliveredTrack(e, item.product_order_id)
-                                    }
-                                  >
-                                    RTO Delivered
-                                  </button>
-                                  <div className="actionordergroup ms-4">
-                                    {PermissionData()
-                                      ?.ALLOW_TRACKING_RTO_ACTION ==
-                                    "ALLOW_TRACKING_RTO_ACTION" ? (
-                                      <button className="actionordermenu">
-                                        <img
-                                          src={dots}
-                                          alt="img"
-                                          onClick={(e) =>
-                                            TrackLocation(e, item)
-                                          }
-                                        />{" "}
-                                      </button>
-                                    ) : (
-                                      ""
-                                    )}
-                                  </div>
-
-                                  {/* <button type="button" className="btn order-btn">
-                                    <img
-                                      src="/images/icon32.png"
-                                      alt="img"
-                                      onClick={(e) => EditCancelFun(e, item)}
-                                    />
-
-                                    {editcancelobjectdata ==
-                                      item.product_order_id && (
-                                        <ul className="dropdown">
-                                          <li
-                                            onClick={(e) =>
-                                              CancelOrder(e, item.product_order_id)
-                                            }
-                                          >
-                                            <a href="#">Cancel Order</a>
-                                          </li>
-                                        </ul>
-                                      )}
-                                  </button> */}
-                                </div>
-                              </td>
-                              {/*  <td>
-                                {" "}
-                                <div className="action-btngroup">
-                                  <button type="button" className="btn btn-ship">
-                                    {" "}
-                                    Ship Now{" "}
-                                  </button>
-
-                                   <button type="button" className="btn order-btn">
-                                    <img
-                                      src="/images/icon32.png"
-                                      alt="img"
-                                      onClick={(e) => EditCancelFun(e, item)}
-                                    />
-
-                                    {editcancelobjectdata ==
-                                      item.product_order_id && (
-                                        <ul className="dropdown">
-                                          <li
-                                            onClick={(e) =>
-                                              CancelOrder(e, item.product_order_id)
-                                            }
-                                          >
-                                            <a href="#">Cancel Order</a>
-                                          </li>
-                                        </ul>
-                                      )}
-                                  </button>  
-                                </div>
-                              </td>*/}
-                            </tr>
-                          );
-                        })
-                      : ""}
-                  </table>
-                </div>
+                <RTO
+                  classNameProp={`tab-pane fade ${
+                    returntab ? "show active" : "-1"
+                  }`}
+                  tabindexProp={`${returntab ? "0" : "-1"}`}
+                  B2BPartner={B2BPartner}
+                  PermissionData={PermissionData()}
+                  adminorderreturnData={adminorderreturnData}
+                  IntransitFun={IntransitFun}
+                  OutForDevliveryActionFun={OutForDevliveryActionFun}
+                  reasonActionValue={reasonActionValue}
+                  showAddressFun={showAddressFun}
+                  activeButton={activeButton}
+                  ReturnDeliveredTrack={ReturnDeliveredTrack}
+                  dots={dots} //image
+                  TrackLocation={TrackLocation}
+                />
 
                 {/* return delivered */}
 
-                <div
-                  className={`tab-pane fade ${
-                    returndeliveredtab ? "show active" : ""
+                <RTODelivered
+                  classNameProp={`tab-pane fade ${
+                    returndeliveredtab ? "show active" : "-1"
                   }`}
-                  id="rto-delivered-tab-pane"
-                  role="tabpanel"
-                  aria-labelledby="rto-delivered-tab"
-                  tabindex={`${returndeliveredtab ? "0" : "-1"}`}
-                >
-                  <table>
-                    <tr>
-                      <th>Order Id </th>
-
-                      <th>Customer Name</th>
-                      <th>Receiver Name</th>
-                      <th>Shipped Date</th>
-                      <th>Product Type</th>
-                      <th>RTO Address</th>
-                      {B2BPartner == "false" ? <th>Partner</th> : ""}
-                      {/* <th>Action</th> */}
-                    </tr>
-
-                    {PermissionData()?.VIEW_ORDER_RTO_DELIVERED ==
-                    "VIEW_ORDER_RTO_DELIVERED"
-                      ? adminorderrtodeliveredData &&
-                        adminorderrtodeliveredData?.map((item, id) => {
-                          return (
-                            <tr>
-                              {/* <td
-                                onClick={(e) =>
-                                  IntransitFun(e, item.product_order_id)
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                <b>{item.product_order_id}</b>
-                              </td> */}
-                              <td>
-                                <b
-                                  type="button"
-                                  onClick={(e) =>
-                                    IntransitFun(e, item.product_order_id)
-                                  }
-                                >
-                                  {" "}
-                                  {item.product_order_id}
-                                </b>
-                              </td>
-                              <td>{item.name ? item.name : " "}</td>
-                              <td>
-                                {item.receiver_name ? item.receiver_name : " "}
-                              </td>
-                              <td>
-                                {new Date(item.date_time).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    month: "short",
-                                    year: "numeric",
-                                    day: "numeric",
-                                  }
-                                )}
-                              </td>
-                              <td>{item.product_type}</td>
-                              <td>
-                                {item?.product_order_id != activeButton
-                                  ? item?.address?.address.slice(0, 10)
-                                  : item?.address?.address.slice(0, 10)}
-                                <span
-                                  onClick={(e) => showAddressFun(e, item)}
-                                  // className="order-btn text-primary"
-                                  role="button"
-                                  style={{
-                                    color: "#faad14",
-                                    fontWeight: "400",
-                                    fontSize: "13px",
-                                  }}
-                                >
-                                  {item?.product_order_id != activeButton
-                                    ? "..more"
-                                    : "..less"}
-                                </span>
-
-                                <span
-                                  className="order-btn text-primary"
-                                  role="button"
-                                >
-                                  {item?.product_order_id == activeButton && (
-                                    <div className="dropdown">
-                                      <ul className=" address_all ">
-                                        <li className="text-dark text-nowrap">
-                                          {`${item?.address?.address}, ${item?.address?.city}, ${item?.address?.pincode}, ${item?.address?.state}`}
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  )}
-                                </span>
-                              </td>
-
-                              {B2BPartner == "false" ? (
-                                <td>{item.delivery_partner} </td>
-                              ) : (
-                                ""
-                              )}
-
-                              {/*  <td>
-                                {" "}
-                                <div className="action-btngroup">
-                                  <button type="button" className="btn btn-ship">
-                                    {" "}
-                                    Ship Now{" "}
-                                  </button>
-
-                                   <button type="button" className="btn order-btn">
-                                    <img
-                                      src="/images/icon32.png"
-                                      alt="img"
-                                      onClick={(e) => EditCancelFun(e, item)}
-                                    />
-
-                                    {editcancelobjectdata ==
-                                      item.product_order_id && (
-                                        <ul className="dropdown">
-                                          <li
-                                            onClick={(e) =>
-                                              CancelOrder(e, item.product_order_id)
-                                            }
-                                          >
-                                            <a href="#">Cancel Order</a>
-                                          </li>
-                                        </ul>
-                                      )}
-                                  </button>  
-                                </div>
-                              </td>*/}
-                            </tr>
-                          );
-                        })
-                      : ""}
-                  </table>
-                </div>
+                  tabindexProp={`${returndeliveredtab ? "0" : "-1"}`}
+                  B2BPartner={B2BPartner}
+                  PermissionData={PermissionData()}
+                  adminorderrtodeliveredData={adminorderrtodeliveredData}
+                  IntransitFun={IntransitFun}
+                  showAddressFun={showAddressFun}
+                  activeButton={activeButton}
+                />
 
                 {/* {cancel} */}
 
-                <div
-                  className={`tab-pane fade   ${
+                <Cancel
+                  classNameProp={`tab-pane fade ${
                     canceltab ? "show active" : "-1"
                   }`}
-                  id="cancel-tab-pane"
-                  role="tabpanel"
-                  aria-labelledby="cancel-tab"
-                  tabindex={`${canceltab ? "0" : "-1"}`}
-                >
-                  <table>
-                    <tr>
-                      <th> Order Date </th>
-                      <th>Order Id</th>
-
-                      <th>Customer Name</th>
-                      <th>Receiver Name</th>
-                      <th>Method</th>
-                      <th>Product Type</th>
-                      <th>Action</th>
-                    </tr>
-
-                    {PermissionData()?.VIEW_ORDER_CANCEL_DETAILS ==
-                    "VIEW_ORDER_CANCEL_DETAILS"
-                      ? adminordercancelData &&
-                        adminordercancelData?.map((item, id) => {
-                          return (
-                            <tr>
-                              <td>
-                                {new Date(item.date_time).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    month: "short",
-                                    year: "numeric",
-                                    day: "numeric",
-                                  }
-                                )}
-                              </td>
-
-                              <td>
-                                <b
-                                  type="button"
-                                  onClick={(e) =>
-                                    IntransitFun(e, item.product_order_id)
-                                  }
-                                >
-                                  {" "}
-                                  {item.product_order_id}
-                                </b>
-                              </td>
-
-                              {/* <td>{item.product_order_id}</td> */}
-                              <td>{item.name ? item.name : " "}</td>
-                              <td>
-                                {item.receiver_name ? item.receiver_name : " "}
-                              </td>
-                              <td>{item.method}</td>
-                              <td>{item.product_type}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className={`btn btn-ship  ${
-                                    PermissionData()?.ALLOW_REBOOK_ACTION ==
-                                    "ALLOW_REBOOK_ACTION"
-                                      ? " "
-                                      : "permission_blur"
-                                  }`}
-                                  onClick={(e) =>
-                                    PermissionData()?.ALLOW_REBOOK_ACTION ==
-                                    "ALLOW_REBOOK_ACTION"
-                                      ? RebookFun(e, item)
-                                      : ""
-                                  }
-                                  // style={{whiteSpace: "nowrap"}}
-                                >
-                                  {" "}
-                                  Rebook
-                                  {/* Delivered{" "} */}
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })
-                      : ""}
-                  </table>
-                </div>
+                  tabindexProp={`${canceltab ? "0" : "-1"}`}
+                  PermissionData={PermissionData()}
+                  adminordercancelData={adminordercancelData}
+                  IntransitFun={IntransitFun}
+                  RebookFun={RebookFun}
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
+
       {tracklocationactionpopup && (
         <div className="popupouter tracking-popup">
           <div className="popupinner">
@@ -4984,6 +3067,40 @@ const Order = () => {
           </div>
         </div>
       )}
+      {/* {deliveryboypopup && <PopupComponent
+      DeliveryBoyPopupFun={DeliveryBoyPopupFun}
+      confirmationimg={confirmationimg}
+      payloaddeliveryboyid={payloaddeliveryboyid}
+      SavedDeliveryBoyFun={SavedDeliveryBoyFun}
+      payloadorderid={payloadorderid}  
+      >
+         <>
+              <div className="">
+                <img src={confirmationimg} alt="img" />
+              </div>
+              <div className="popup-body">
+                <h2>Are you sure you want to select this delivery boy</h2>
+                <p>
+                  {" "}
+                  <b> Delivery Boy Name:</b> {payloaddeliveryboyid[2]}{" "}
+                </p>
+                <p>
+                  {" "}
+                  <b>Delivery Boy Email:</b> {payloaddeliveryboyid[1]}{" "}
+                </p>
+
+                
+
+                <p className="my-3">
+                  {" "}
+                  <b> Do You Want To Confirm? </b>{" "}
+                </p>
+
+              </div>
+            </>
+         
+        </PopupComponent>
+      } */}
       {deliveryboypopup && (
         <div className="popupouter deliveryaction-popup">
           <div className="popupinner">
@@ -5044,6 +3161,7 @@ const Order = () => {
           </div>
         </div>
       )}
+
       {receivedathubpopup && (
         <div className="popupouter">
           <div className="editb2b-box">
@@ -5453,12 +3571,12 @@ const Order = () => {
 
                 <div className="col-sm-12 pt-3">
                   <div className="otp_container">
-                    {/* <OtpInput
+                    <OtpInput
                       value={otpvalue}
                       onChange={handleChange}
                       numInputs={4}
                       focusStyle={false}
-                    /> */}
+                    />
                   </div>
                   {otpvalue && otpvalue.length == 4 ? (
                     ""
@@ -5540,7 +3658,6 @@ const Order = () => {
                     <p className="mb-0">
                       Current Balance :
                       <b>
-                        {" "}
                         {GetWalletBalanceData?.data?.b2b_balance_status ==
                         "NEGATIVE"
                           ? `-${GetWalletBalanceData?.data?.b2b_balance}`
@@ -5581,6 +3698,7 @@ const Order = () => {
           </div>
         </div>
       </Popup>
+
       <Popup open={walletpaypopup} position="" model className="sign_up_loader">
         <div className="wallet-popup">
           <div className="popupinner">
@@ -5660,6 +3778,7 @@ const Order = () => {
           </div>
         </div>
       </Popup>
+
       <LodingSpiner loadspiner={loadspiner} />
       <LodingSpiner loadspiner={OrderPagesLoaderTrueFalseData} />
     </>

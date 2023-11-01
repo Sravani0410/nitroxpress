@@ -22,8 +22,13 @@ import {
   PostPincodesAvailability,
   PostPincodesDelivered,
   GetB2bCompanyInfo,
+  PostBulkUploadFile,
 } from "../../Redux/action/ApiCollection";
 import Popup from "reactjs-popup";
+import { PermissionData } from "../../Permission";
+import PopupComponent from "../../ReusableComponents/Popup/PopupComponent";
+import SearchCompany from "../../ReusableComponents/Popup/SearchBox/SearchBox";
+import usePopupHook from "../../CoustomeHooks/usePopupHook/usePopupHook";
 
 const User = () => {
   const pickUpPincodeRef = useRef();
@@ -49,18 +54,20 @@ const User = () => {
   const [pickupaddressactive, setPickupAddressActive] = useState(false);
   const [deliverpincodeactive, setDeliverPinCodeActive] = useState(false);
   const [deliveraddressactive, setDeliverAddressActive] = useState(false);
-
+  const [BulkUploadFileData, setBulkUploadFileData] = useState("");
   // search functionality
   const [value, setValue] = useState("");
+  const [popupvalue, setPopupValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [popupisOpen, setPopupIsOpen] = useState(false);
   const [CompanyName, setCompanyName] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [popupselectedIndex, setPopupSelectedIndex] = useState(-1);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [OpenPathSearch, setOpenPathSearch] = useState(false);
   const [selectedOptionclass, setSelectedOptionClass] = useState("");
   const [pageData, setPageData] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
-
   // const [addamount, setAddAmount] = useState(null)
 
   // const [addamountfieldopenclose, setAddAmountFieldOpenClose] = useState("")
@@ -71,11 +78,15 @@ const User = () => {
   const [filterpincodedata, setFilterPincodeData] = useState("");
   const [CompanyFilterData, setCompanyFilterData] = useState([]);
   const [EnteredValue, setEnteredValue] = useState("");
+  const [PopupEnteredValue, setPopupEnteredValue] = useState("");
   const [EnteredValueError, setEnteredValueError] = useState(false);
-
+  const [BulkUpload, setBulkUpload] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const dropdownRef = useRef(null);
+
+  // const PopupHookData =usePopupHook(false)
+  const [PopupHookData, PopupHookDataFun] = usePopupHook("");
 
   const ToggleFunData = useSelector(
     (state) => state.ToggleSideBarReducer.ToggleSideBarData
@@ -616,6 +627,11 @@ const User = () => {
     const name = item.company_name.toLowerCase();
     return searchTerm && name.includes(searchTerm);
   });
+  const filteredpopupData = GetB2bCompanyInfoData?.filter((item) => {
+    const searchTerm = popupvalue.toLowerCase();
+    const name = item.company_name.toLowerCase();
+    return searchTerm && name.includes(searchTerm);
+  });
 
   const onChange = (e) => {
     setEnteredValueError(false);
@@ -633,7 +649,28 @@ const User = () => {
     });
     setCompanyFilterData(array);
   };
-
+  const onPopupChange = (e) => {
+    console.log("dgghdf",e)
+    setEnteredValueError(false);
+    setPopupValue(e.target.value);
+    setPopupIsOpen(true);
+    setCompanyName(null);
+    setHighlightedIndex(-1);
+    let array = [];
+    GetB2bCompanyInfoData?.filter((item) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const name = item.company_name.toLowerCase();
+      return searchTerm && name.includes(searchTerm);
+    }).map((items) => {
+      array.push(items);
+    });
+    setCompanyFilterData(array);
+  };
+  const handleClick = () => {
+    PopupHookDataFun(false);
+    setBulkUploadFileData("");
+    setCompanyName("");
+  };
   useEffect(() => {
     if (UserDetailOfLocalStorage?.company_name !== "") {
       let array = [];
@@ -645,18 +682,6 @@ const User = () => {
   }, [UserDetailOfLocalStorage?.company_name]);
 
   useEffect(() => {
-    // if(UserDetailOfLocalStorage?.company_name!=="")
-    // {
-
-    //   let array = []
-
-    //   GetB2bCompanyInfoData?.map((items) => {
-    //       array.push(items)
-    //     }
-    //     )
-    //   setCompanyFilterData(array)
-    // }
-
     if (CompanyName) {
       let EnteredValueFilterData = CompanyFilterData.filter(function (items) {
         return (
@@ -677,19 +702,20 @@ const User = () => {
         setEnteredValueError(true);
       }
     }
-  }, [EnteredValue, CompanyName]);
-
-  // EnteredValue
+  }, [EnteredValue, CompanyName, PopupEnteredValue]);
 
   const onSearch = (searchTerm) => {
     setValue(searchTerm);
     setIsOpen(false);
   };
+  const onPopupSearch = (searchTerm) => {
+    setPopupValue(searchTerm);
+    setPopupIsOpen(false);
+  };
 
   const onKeyDown = (e) => {
     if (e.key === "Enter") {
       onSearch(value);
-
       let EnteredValueFilterData = CompanyFilterData.filter(function (items) {
         return (
           items.company_name?.toString() == value?.toString() ||
@@ -707,31 +733,39 @@ const User = () => {
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       setSelectedIndex((prevIndex) => (prevIndex + 1) % filteredData.length);
-
-      // setSelectedIndex((prevIndex) => {
-      //   const newIndex = prevIndex + 1;
-      //   if (newIndex < filteredData.length) {
-      //     return newIndex;
-      //   } else {
-      //     return prevIndex;
-      //   }
-      // });
-      // setCompanyName(filteredData[selectedIndex + 1]?.company_name || null);
     } else if (e.key === "ArrowUp") {
       e.preventDefault(); // prevent cursor from moving to start of input
       setSelectedIndex((prevIndex) =>
         prevIndex === 0 ? filteredData.length - 1 : prevIndex - 1
       );
+    }
+  };
+  const onPopupKeyDown = (e) => {
+    if (e.key === "Enter") {
+      onPopupSearch(popupvalue);
+      let EnteredValueFilterData = CompanyFilterData.filter(function (items) {
+        return (
+          items.company_name?.toString() == popupvalue?.toString() ||
+          items?.company_name?.toString() == CompanyName?.toString()
+        );
+      });
 
-      // setSelectedIndex((prevIndex) => {
-      //   const newIndex = prevIndex - 1;
-      //   if (newIndex >= 0) {
-      //     return newIndex;
-      //   } else {
-      //     return prevIndex;
-      //   }
-      // });
-      // setCompanyName(filteredData[selectedIndex - 1]?.company_name || null);
+      if (EnteredValueFilterData.length != 0) {
+        setEnteredValueError(false);
+      } else {
+        setEnteredValueError(true);
+      }
+      setPopupEnteredValue(popupvalue);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setPopupSelectedIndex(
+        (prevIndex) => (prevIndex + 1) % filteredpopupData.length
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault(); // prevent cursor from moving to start of input
+      setPopupSelectedIndex((prevIndex) =>
+        prevIndex === 0 ? filteredpopupData.length - 1 : prevIndex - 1
+      );
     }
   };
 
@@ -751,12 +785,50 @@ const User = () => {
       setCompanyName(filteredData[selectedIndex]?.company_name || null);
       setHighlightedIndex(selectedIndex);
     }
-  }, [selectedIndex]);
+    if (popupselectedIndex !== -1) {
+      setCompanyName(
+        filteredpopupData[popupselectedIndex]?.company_name || null
+      );
+      setHighlightedIndex(popupselectedIndex);
+    }
+  }, [selectedIndex, popupselectedIndex]);
 
   let orderType = [
     { value: "PREPAID", data: "Prepaid" },
     { data: "COD", value: "COD" },
   ];
+
+  const BulkUploadPopup = () => {
+    PopupHookDataFun(true);
+  };
+
+  const SheetFile = (e) => {
+    console.log("jhgfdg");
+    setBulkUploadFileData(e?.target?.files[0]);
+    // dispatch(PostUploadFile(e?.target?.files[0]));
+  };
+  const BulkUploadFun = (e) => {
+    console.log("CompanyName", CompanyName, BulkUploadFileData?.name);
+    let data = new FormData();
+    data.append("bulk_data", BulkUploadFileData);
+    data.append("company_name", CompanyName);
+    dispatch(PostBulkUploadFile(data));
+    PopupHookDataFun(false);
+    setBulkUploadFileData("");
+    setCompanyName("");
+    // if (
+    //   CompanyName?.length !== 0 ||
+    //   CompanyName !== null ||
+    //   BulkUploadFileData?.name?.length !== null
+    // ) {
+    //   toast.warn("Please Select Field");
+    // } else {
+    //   dispatch(PostBulkUploadFile(data));
+    //   PopupHookDataFun(false);
+    //   setBulkUploadFileData("");
+    //   setCompanyName("");
+    // }  
+  };
 
   return (
     <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -764,6 +836,83 @@ const User = () => {
       <div className={`dashboard-part`}>
         <Sidebar />
         <div className="content-sec">
+          <div className="d-flex bulkorder">
+            <button
+              type="button"
+              className={`btn bulkbtn  ${
+                PermissionData()?.UPLOAD_BULK_ORDER_CSV !==
+                "UPLOAD_BULK_ORDER_CSV"
+                  ? " "
+                  : "permission_blur"
+              }`}
+              onClick={(e) =>
+                PermissionData()?.UPLOAD_BULK_ORDER_CSV !==
+                "UPLOAD_BULK_ORDER_CSV"
+                  ? BulkUploadPopup(e)
+                  : ""
+              }
+            >
+              Bulk Order
+            </button>
+
+            {PopupHookData && (
+              <PopupComponent
+                namesuccess={"Upload"}
+                namecancel={"Cancel"}
+                sucessButton={BulkUploadFun}
+                handleClick={handleClick}
+                PopupHookDataFun={PopupHookDataFun}
+              >
+                <p className="float-start">Select Company</p>
+                <SearchCompany
+                  selectedOptionclass={selectedOptionclass}
+                  value={popupvalue}
+                  OnChange={onPopupChange}
+                  CompanyName={CompanyName}
+                  onKeyDown={onPopupKeyDown}
+                  isOpen={popupisOpen}
+                  dropdownRef={dropdownRef}
+                  CompanyFilterData={CompanyFilterData}
+                  highlightedIndex={highlightedIndex}
+                  selectedIndex={popupselectedIndex}
+                  setCompanyName={setCompanyName}
+                  setHighlightedIndex={setHighlightedIndex}
+                  onSearch={onPopupSearch}
+                  EnteredValueError={EnteredValueError}
+                />{" "}
+                <p className="float-start mt-1  ">Upload Excel File</p>
+                <div className="mt-5">
+                  <li
+                    className={`form-control  ${
+                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
+                        ? " "
+                        : "permission_blur"
+                    }`}
+                  >
+                    <input
+                      accept=".csv"
+                      type={`${
+                        PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
+                          ? "file"
+                          : "text"
+                      }`}
+                      onChange={(e) =>
+                        PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
+                          ? SheetFile(e)
+                          : ""
+                      }
+                      className={`custom-file-input 
+                    ${
+                      PermissionData()?.UPLOAD_ORDER_CSV == "UPLOAD_ORDER_CSV"
+                        ? " "
+                        : "permission_blur"
+                    }  }`}
+                    />
+                  </li>
+                </div>
+              </PopupComponent>
+            )}
+          </div>
           <div className="orderdetail-part">
             <ul className="user-list">
               <li

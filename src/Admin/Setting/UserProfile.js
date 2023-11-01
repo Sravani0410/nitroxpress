@@ -47,8 +47,10 @@ const UserProfile = () => {
   const [mindate, setMindate] = useState("");
   const [priceuserid, setPriceUserId] = useState("");
   const [addamount, setAddAmount] = useState("");
-  console.log("addamount",addamount)
-  const [category, setCategory] = useState("");
+
+   const [category, setCategory] = useState("");
+ 
+ 
   const [editcategoryvalue, setEditCategoryValue] = useState("");
   const [userpermission, setUserPermission] = useState("");
 
@@ -555,6 +557,7 @@ const UserProfile = () => {
     setIsOpen(false);
   };
 
+ 
   useEffect(() => {
     if (highlightedIndex !== -1 && dropdownRef.current) {
       const selectedItem = dropdownRef.current.children[highlightedIndex];
