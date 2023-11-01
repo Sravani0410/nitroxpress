@@ -25,6 +25,7 @@
     "react-dom": "^18.2.0",
     "react-loader-spinner": "^5.3.3",
     "react-otp-input": "^3.0.2",
+    "react-paginate": "^8.2.0",
     "react-pdf": "^5.7.2",
     "react-phone-input-2": "^2.15.1",
     "react-places-autocomplete": "^7.3.0",

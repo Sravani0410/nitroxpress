@@ -12,6 +12,7 @@ import OtpInput from "react-otp-input";
 import Popup from "reactjs-popup";
 import Axios from "axios";
 import PopupComponent from "../../ReusableComponents/Popup/PopupComponent";
+import ReactPaginate from "react-paginate";
 
 import {
   GetAdminOrderDelivered,
@@ -2208,6 +2209,30 @@ const Order = () => {
       label: option?.partner_name,
     })),
   ];
+  const itemsPerPage = 4;
+  const [items, setItems] = useState([]);
+  const [currentItems, setCurrentItems] = useState([]);
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
+
+  // Simulated data source (replace with your actual data source).
+  useEffect(() => {
+    // Simulating data fetching (replace with your actual data source).
+    let datacount = adminorderpendingdata?.length + 1;
+    console.log("sacgggjsh", datacount);
+    const data = [...Array(datacount).keys()];
+    setItems(data);
+
+    // Calculate the initial items to display.
+    const endOffset = itemOffset + itemsPerPage;
+    setCurrentItems(data.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(data.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage, adminorderpendingdata]);
+
+  const handlePageClick = (event) => {
+    const newOffset = event.selected * itemsPerPage;
+    setItemOffset(newOffset);
+  };
   return (
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -2801,6 +2826,11 @@ const Order = () => {
                   GetSettingDeliveryboyInfoDataProp={
                     GetSettingDeliveryboyInfoData
                   }
+                  handlePageClick={handlePageClick}
+                  ReactPaginate={ReactPaginate}
+                  currentItems={currentItems}
+                  pageCount={pageCount}
+                  items={items}
                 />
 
                 {/* ready to pickup */}
