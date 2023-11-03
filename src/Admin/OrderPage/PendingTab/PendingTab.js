@@ -12,8 +12,11 @@ const PendingTab = ({
   handlePageClick,
   ReactPaginate,
   currentItems,
+  itemsPerPage,
+  currentPage,
   pageCount,
   items,
+  data,
 }) => {
   console.log("currentItem", currentItems, items);
   return (
@@ -397,19 +400,26 @@ const PendingTab = ({
                   </tr>
                 );
               })} */}
-            {/* {currentItems.map((item) => (
-              <div key={item}>
-                <h3>Item #{item}</h3>
+            {/* {currentItems &&
+              currentItems?.map((item) => (
+                <div key={item}>
+                  <h3>Item #{item}</h3>
+                </div>
+              ))} */}
+            {data?.results?.map((franchise, index) => (
+              <div key={index}>
+                <strong>Name: {franchise.franchise_name}</strong>
+                {/* <p>Description: {franchise.description}</p> */}
               </div>
-            ))} */}
+            ))}
           </div>
           <ReactPaginate
-            nextLabel="next >"
+            previousLabel={"Previous"}
+            nextLabel={"Next"}
+            pageCount={Math.ceil(data?.count / itemsPerPage)}
             onPageChange={handlePageClick}
-            pageRangeDisplayed={3}
-            marginPagesDisplayed={2}
-            pageCount={pageCount}
-            previousLabel="< previous"
+            forcePage={currentPage}
+            disabledClassName={"disabled"}
             pageClassName="page-item"
             pageLinkClassName="page-link"
             previousClassName="page-item"

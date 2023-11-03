@@ -790,8 +790,8 @@ export const GetAdminOrderPending = (payload) => {
   return async (dispatch, getState) => {
     dispatch(OrderPagesLoaderTrueFalse(true));
     const response = await axios
-      .get(
-        `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/pending_order_details`,
+      .get(`http://13.233.224.46/restaurant_app/franchises/?page=${payload?.page}`,
+        // `${process.env.REACT_APP_BASE_URL}/admin_panel/orders/pending_order_details`,
         {
           headers: {
             Authorization: `Bearer ${BearerToken}`,

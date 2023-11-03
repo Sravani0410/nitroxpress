@@ -76,3 +76,6 @@ product_order_id is when we generate the id for clone order
 
 the amount is shwoing when we add money from wallet ,before process completed in history we can see the amount ,
 soo ,after add money  the add_mony api is hidted and we get  order_id from the responce soo,if we have any order_id the we will no show the history for showing the histroy data we are calling history api and at the  last index we see the add amount data 
+
+
+Pagination is applied on basis of resturatent qr code. changes in app.css(import bootstrap version),order.js(what things we are using in pendingtab.js),pendingtab.js(reactpaginate component),apicollection(change the url as:`http://13.233.224.46/restaurant_app/franchises/?page=${payload?.page}`) 

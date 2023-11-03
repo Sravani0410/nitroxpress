@@ -289,9 +289,13 @@ const Order = () => {
 
   useEffect(() => {
     if (param.hash == "#pending") {
-      if (Is_delivery_boy != "true") {
-        dispatch(GetAdminOrderPending());
-      }
+      let Payload = {
+        page: 2,
+      };
+      dispatch(GetAdminOrderPending(Payload));
+      // if (Is_delivery_boy != "true") {
+      //   dispatch(GetAdminOrderPending());
+      // }
     } else if (param.hash == "#ready_for_pickup") {
       dispatch(GetAdminOrderReadyForPickup());
     } else if (param.hash == "#picked_up") {
@@ -683,17 +687,17 @@ const Order = () => {
     }
     if (param.hash === "#pending") {
       setFilterDataHideAfterTabChange(false); //this will false the if condition so when the tab is changed the if condition will false and then the tab is changed then the all data will show
-      if (PostAdminOrderFilterationData && filterdatahideaftertabchange) {
-        setAdminOrderPendingData(PostAdminOrderFilterationData?.data);
-        setFilterActive(true);
-      } else {
-        if (GetAdminOrderPendingData?.length > 0) {
-          dispatch(OrderPagesLoaderTrueFalse(false));
-        }
-        setAdminOrderPendingData(GetAdminOrderPendingData);
-        setFilterActive(false);
-      }
-      // setAdminOrderPendingData(GetAdminOrderPendingData);
+      // if (PostAdminOrderFilterationData && filterdatahideaftertabchange) {
+      //   setAdminOrderPendingData(PostAdminOrderFilterationData?.data);
+      //   setFilterActive(true);
+      // } else {
+      //   if (GetAdminOrderPendingData?.length > 0) {
+      //     dispatch(OrderPagesLoaderTrueFalse(false));
+      //   }
+      //   setAdminOrderPendingData(GetAdminOrderPendingData);
+      //   setFilterActive(false);
+      // }
+      setAdminOrderPendingData(GetAdminOrderPendingData);
       // setFilterDataHideAfterTabChange(false);
     } else if (param.hash === "#ready_for_pickup") {
       setFilterDataHideAfterTabChange(false); //this will false the if condition so when the tab is changed the if condition will false and then the tab is changed then the all data will show
@@ -844,10 +848,10 @@ const Order = () => {
         }
       });
       if (value === "") {
-        setAdminOrderPendingData(GetAdminOrderPendingData);
+        // setAdminOrderPendingData(GetAdminOrderPendingData);
         setPayloadDeliveryBoyId("");
       } else {
-        setAdminOrderPendingData(result);
+        // setAdminOrderPendingData(result);
         setPayloadDeliveryBoyId("");
       }
     }
@@ -1354,33 +1358,33 @@ const Order = () => {
     setEditCancelObjectData((o) => !o);
   };
 
-  useEffect(() => {
-    CsvDownload();
-  }, [
-    param,
-    GetAdminOrderPendingData,
-    GetAdminOrderReadyForPickupData,
-    GetAdminOrderPickedUpData,
-    GetAdminOrderReceivedAtHubData,
-    GetAdminOrderBookedData,
-    GetAdminOrderIntransitDate,
-    GetAdminOrderDeliveredData,
-    GetAdminOutForDeliveryData,
-    GetAdminOrderReturnData?.data,
-    GetAdminOrderRTODeliveredData,
-    GetCancelOrderDetailData,
-    adminorderpendingdata,
-    adminorderpickupdata,
-    adminorderreadyforpickupdata,
-    adminorderreceivedathubdata,
-    adminorderbookeddata,
-    adminorderintransitDate,
-    adminorderdeliveredData,
-    adminoutfordeliveryData,
-    adminorderreturnData,
-    adminorderrtodeliveredData,
-    adminordercancelData,
-  ]);
+  // useEffect(() => {
+  //   CsvDownload();
+  // }, [
+  //   param,
+  //   GetAdminOrderPendingData,
+  //   GetAdminOrderReadyForPickupData,
+  //   GetAdminOrderPickedUpData,
+  //   GetAdminOrderReceivedAtHubData,
+  //   GetAdminOrderBookedData,
+  //   GetAdminOrderIntransitDate,
+  //   GetAdminOrderDeliveredData,
+  //   GetAdminOutForDeliveryData,
+  //   GetAdminOrderReturnData?.data,
+  //   GetAdminOrderRTODeliveredData,
+  //   GetCancelOrderDetailData,
+  //   adminorderpendingdata,
+  //   adminorderpickupdata,
+  //   adminorderreadyforpickupdata,
+  //   adminorderreceivedathubdata,
+  //   adminorderbookeddata,
+  //   adminorderintransitDate,
+  //   adminorderdeliveredData,
+  //   adminoutfordeliveryData,
+  //   adminorderreturnData,
+  //   adminorderrtodeliveredData,
+  //   adminordercancelData,
+  // ]);
 
   const CloseOtp = () => {
     setOtpActionPopup(false);
@@ -2209,30 +2213,67 @@ const Order = () => {
       label: option?.partner_name,
     })),
   ];
-  const itemsPerPage = 4;
+  // const itemsPerPage = GetAdminOrderPendingData?.count;
   const [items, setItems] = useState([]);
+  console.log("items", items);
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
+  const paginaondata = [
+    {
+      count: 50,
+      next: "http://13.233.224.46/restaurant_app/franchises/?page=3",
+      previous: "http://13.233.224.46/restaurant_app/franchises/",
+      results: [
+        {
+          description: "",
+          franchise_name: "qwerty11",
+        },
+        {
+          description: "",
+          franchise_name: "qwerty112",
+        },
+      ],
+    },
+  ];
+  const itemsPerPage = 3; // Number of items to display per page.
+  const [data, setData] = useState({ results: [] });
+  const [currentPage, setCurrentPage] = useState(0);
 
-  // Simulated data source (replace with your actual data source).
   useEffect(() => {
-    // Simulating data fetching (replace with your actual data source).
-    let datacount = adminorderpendingdata?.length + 1;
-    console.log("sacgggjsh", datacount);
-    const data = [...Array(datacount).keys()];
-    setItems(data);
+    fetchData(1); // Fetch the initial data for page 1.
+  }, []);
 
-    // Calculate the initial items to display.
-    const endOffset = itemOffset + itemsPerPage;
-    setCurrentItems(data.slice(itemOffset, endOffset));
-    setPageCount(Math.ceil(data.length / itemsPerPage));
-  }, [itemOffset, itemsPerPage, adminorderpendingdata]);
-
-  const handlePageClick = (event) => {
-    const newOffset = event.selected * itemsPerPage;
-    setItemOffset(newOffset);
+  const fetchData = (page) => {
+    fetch(`http://13.233.224.46/restaurant_app/franchises/?page=${page}`)
+      .then((response) => response.json())
+      .then((data) => setData(data));
   };
+
+  const handlePageClick = (selectedPage) => {
+    const page = selectedPage.selected + 1; // React-paginate uses 0-based indexing.
+    // GetAdminOrderPending(page);
+    fetchData(page);
+    // setCurrentItems(page)
+    setCurrentPage(page - 1);
+  };
+  //   useEffect(() => {
+  //     console.log("adminorderpendingdata", GetAdminOrderPendingData);
+  //     let datacount = GetAdminOrderPendingData?.count;
+  //     console.log("sacgggjsh", datacount);
+  //     const data = [...Array(Number(datacount))?.keys()];
+  //     setItems(data);
+  // // console.log("gfghadf11",items)
+  //     // Calculate the initial items to display.
+  //     const endOffset = itemOffset + itemsPerPage;
+  //     setCurrentItems(data?.slice(itemOffset, endOffset));
+  //     setPageCount(Math?.ceil(data?.length / itemsPerPage));
+  //   }, [itemOffset, itemsPerPage, adminorderpendingdata]);
+
+  //   const handlePageClick = (event) => {
+  //     const newOffset = event.selected * itemsPerPage;
+  //     setItemOffset(newOffset);
+  //   };
   return (
     <>
       <div className={`${ToggleFunData ? "collapsemenu" : ""}`}>
@@ -2308,9 +2349,9 @@ const Order = () => {
                     <>
                       <CSVLink data={PostAdminOrderCsvFileData}>
                         <div
-                          onClick={(e) =>
-                            downloadcsvpermission == true ? CsvDownload(e) : ""
-                          }
+                          // onClick={(e) =>
+                          //   downloadcsvpermission == true ? CsvDownload(e) : ""
+                          // }
                           className={`download-item d-flex align-items-center justify-content-center  `}
                         >
                           <svg
@@ -2332,9 +2373,9 @@ const Order = () => {
                     </>
                   ) : (
                     <div
-                      onClick={(e) =>
-                        downloadcsvpermission == true ? CsvDownload(e) : ""
-                      }
+                      // onClick={(e) =>
+                      //   downloadcsvpermission == true ? CsvDownload(e) : ""
+                      // }
                       className={`download-item d-flex align-items-center justify-content-center ${
                         downloadcsvpermission ? " " : "permission_blur"
                       }`}
@@ -2831,6 +2872,9 @@ const Order = () => {
                   currentItems={currentItems}
                   pageCount={pageCount}
                   items={items}
+                  itemsPerPage={itemsPerPage}
+                  currentPage={currentPage}
+                  data={data}
                 />
 
                 {/* ready to pickup */}
