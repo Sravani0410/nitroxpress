@@ -218,8 +218,8 @@ const PendingTab = ({
           : ""} */}
         <div className="App">
           <div className="items">
-            {/* {items &&
-              items?.map((item, id) => {
+            {currentItems &&
+              currentItems?.map((item, id) => {
                 console.log("shgdhas", item);
                 return (
                   <tr>
@@ -316,7 +316,7 @@ const PendingTab = ({
                       )}
                     </td>
                     <td>
-                      {item.payment_status == "SUCCESSFUL" ? (
+                      {item.payment_status !== "SUCCESSFUL" ? (
                         <select
                           className={`${
                             permission?.ALLOW_PENDING_ACTION_APPROVE ==
@@ -396,35 +396,35 @@ const PendingTab = ({
                     </td>
                   </tr>
                 );
-              })} */}
+              })}
             {/* {currentItems.map((item) => (
               <div key={item}>
                 <h3>Item #{item}</h3>
               </div>
             ))} */}
           </div>
-          <ReactPaginate
-            nextLabel="next >"
-            onPageChange={handlePageClick}
-            pageRangeDisplayed={3}
-            marginPagesDisplayed={2}
-            pageCount={pageCount}
-            previousLabel="< previous"
-            pageClassName="page-item"
-            pageLinkClassName="page-link"
-            previousClassName="page-item"
-            previousLinkClassName="page-link"
-            nextClassName="page-item"
-            nextLinkClassName="page-link"
-            breakLabel="..."
-            breakClassName="page-item"
-            breakLinkClassName="page-link"
-            containerClassName="pagination"
-            activeClassName="active"
-            renderOnZeroPageCount={null}
-          />
         </div>
       </table>
+      <ReactPaginate
+        nextLabel="next >"
+        onPageChange={handlePageClick}
+        pageRangeDisplayed={3}
+        marginPagesDisplayed={2}
+        pageCount={pageCount}
+        previousLabel="< previous"
+        pageClassName="page-item"
+        pageLinkClassName="page-link"
+        previousClassName="page-item"
+        previousLinkClassName="page-link"
+        nextClassName="page-item"
+        nextLinkClassName="page-link"
+        breakLabel="..."
+        breakClassName="page-item"
+        breakLinkClassName="page-link"
+        containerClassName="pagination"
+        activeClassName="active"
+        renderOnZeroPageCount={null}
+      />
     </div>
   );
 };
